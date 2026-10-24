@@ -3390,6 +3390,53 @@
       ]
     },
     {
+      "kind": "Struct",
+      "name": "IntersectionPropertiesStruct",
+      "shapeIdentifier": {
+        "prefix": "",
+        "reference": "IntersectionPropertiesStruct",
+        "termType": "NamedNode",
+        "value": "http://example.com/IntersectionPropertiesStruct"
+      },
+      "properties": [
+        {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
+          "name": "namedStructIntersection",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/namedStructIntersection)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_286"
+          },
+          "type": {
+            "comment": "Node shape that sh:and's other struct node shapes. This will be generated as an intersection type or flattened into a single type.",
+            "kind": "Intersection",
+            "name": "StructIntersection",
+            "shapeIdentifier": {
+              "prefix": "",
+              "reference": "StructIntersection",
+              "termType": "NamedNode",
+              "value": "http://example.com/StructIntersection"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "comment": "Node shape that sh:and's other struct node shapes. This will be generated as an intersection type or flattened into a single type.",
+      "kind": "Intersection",
+      "name": "StructIntersection",
+      "shapeIdentifier": {
+        "prefix": "",
+        "reference": "StructIntersection",
+        "termType": "NamedNode",
+        "value": "http://example.com/StructIntersection"
+      }
+    },
+    {
       "comment": "A node shape that only allows IRI identifiers.",
       "kind": "Struct",
       "name": "IriIdentifierStruct",
@@ -7451,9 +7498,9 @@
         },
         {
           "kind": "Shacl",
-          "name": "intersectionMemberCommon",
+          "name": "structIntersectionMemberCommon",
           "order": 0,
-          "path": "PredicatePath(http://example.com/intersectionMemberCommon)",
+          "path": "PredicatePath(http://example.com/structIntersectionMemberCommon)",
           "shapeIdentifier": {
             "prefix": "",
             "reference": "StructIntersectionMember-common",
@@ -7481,9 +7528,9 @@
         },
         {
           "kind": "Shacl",
-          "name": "intersectionMember1Distinct",
+          "name": "structIntersectionMember1Distinct",
           "order": 0,
-          "path": "PredicatePath(http://example.com/intersectionMember1Distinct)",
+          "path": "PredicatePath(http://example.com/structIntersectionMember1Distinct)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_422"
@@ -7536,9 +7583,9 @@
         },
         {
           "kind": "Shacl",
-          "name": "intersectionMemberCommon",
+          "name": "structIntersectionMemberCommon",
           "order": 0,
-          "path": "PredicatePath(http://example.com/intersectionMemberCommon)",
+          "path": "PredicatePath(http://example.com/structIntersectionMemberCommon)",
           "shapeIdentifier": {
             "prefix": "",
             "reference": "StructIntersectionMember-common",
@@ -7566,9 +7613,9 @@
         },
         {
           "kind": "Shacl",
-          "name": "intersectionMember2Distinct",
+          "name": "structIntersectionMember2Distinct",
           "order": 0,
-          "path": "PredicatePath(http://example.com/intersectionMember2Distinct)",
+          "path": "PredicatePath(http://example.com/structIntersectionMember2Distinct)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_423"

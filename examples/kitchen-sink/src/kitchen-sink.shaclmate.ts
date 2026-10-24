@@ -2629,8 +2629,10 @@ export namespace $PropertyPath {
 
   export type Schema = typeof schema;
 
-  export const toRdfResource: $ToRdfResourceFunction<$PropertyPath> =
-    RdfxResourcePropertyPath.toResource;
+  export const toRdfResource: $ToRdfResourceFunction<
+    Resource.Identifier,
+    $PropertyPath
+  > = RdfxResourcePropertyPath.toResource;
 
   export const $toString = RdfxResourcePropertyPath.toString;
 }
@@ -3637,8 +3639,8 @@ export type $ToJsonFunction<T, JsonT> = (value: T) => JsonT;
 export type $ToLoggableFunction<T> = (value: T) => any;
 
 export type $ToRdfResourceFunction<
+  IdentifierT extends Resource.Identifier,
   ObjectT extends object,
-  IdentifierT extends Resource.Identifier = Resource.Identifier,
 > = (
   object: ObjectT,
   options?: {
@@ -3768,19 +3770,19 @@ function $wrap_ToRdfResourceFunction<
   ObjectT extends { $identifier: () => IdentifierT },
 >(
   _toRdfResourceFunction: $_ToRdfResourceFunction<IdentifierT, ObjectT>,
-): $ToRdfResourceFunction<ObjectT, IdentifierT>;
+): $ToRdfResourceFunction<IdentifierT, ObjectT>;
 function $wrap_ToRdfResourceFunction<
   _IdentifierT extends BlankNode,
   ObjectT extends object,
 >(
   _toRdfResourceFunction: $_ToRdfResourceFunction<BlankNode, ObjectT>,
-): $ToRdfResourceFunction<ObjectT, BlankNode>;
+): $ToRdfResourceFunction<BlankNode, ObjectT>;
 function $wrap_ToRdfResourceFunction<
   IdentifierT extends Resource.Identifier,
   ObjectT extends object & { $identifier?: () => IdentifierT },
 >(
   _toRdfResourceFunction: $_ToRdfResourceFunction<IdentifierT, ObjectT>,
-): $ToRdfResourceFunction<ObjectT, IdentifierT> {
+): $ToRdfResourceFunction<IdentifierT, ObjectT> {
   return (object, options) => {
     let { graph, ignoreRdfType = false, resourceSet } = options ?? {};
     if (!resourceSet) {
@@ -3912,14 +3914,14 @@ export namespace $DefaultPartial {
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     $DefaultPartial.Identifier,
-    $DefaultPartial
+    Pick<$DefaultPartial, "$identifier">
   > = (parameters) => {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<$DefaultPartial> = (
-    _defaultPartial,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<$DefaultPartial, "$identifier">
+  > = (_defaultPartial) =>
     `$DefaultPartial(${JSON.stringify($DefaultPartial.toStringRecord(_defaultPartial))})`;
 
   export const create: <
@@ -3978,7 +3980,10 @@ export namespace $DefaultPartial {
       | (keyof $DefaultNamespaceT & string);
   }): $DefaultPartial => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<$DefaultPartial> = (left, right) =>
+  export const equals: $EqualsFunction<Pick<$DefaultPartial, "$identifier">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -3987,7 +3992,7 @@ export namespace $DefaultPartial {
 
   export const filter: $FilterFunction<
     $DefaultPartial.Filter,
-    $DefaultPartial
+    Pick<$DefaultPartial, "$identifier">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -4028,7 +4033,7 @@ export namespace $DefaultPartial {
 
   export const fromJson: $FromJsonFunction<
     $DefaultPartial,
-    $DefaultPartial.Json
+    Omit<$DefaultPartial.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -4189,7 +4194,7 @@ export namespace $DefaultPartial {
   }
 
   export const toJson: $ToJsonFunction<
-    $DefaultPartial,
+    Pick<$DefaultPartial, "$identifier">,
     $DefaultPartial.Json
   > = (_defaultPartial) =>
     JSON.parse(
@@ -4198,27 +4203,28 @@ export namespace $DefaultPartial {
           _defaultPartial.$identifier().termType === "BlankNode"
             ? `_:${_defaultPartial.$identifier().value}`
             : _defaultPartial.$identifier().value,
-        $type: _defaultPartial.$type,
+        $type: "DefaultPartial",
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<$DefaultPartial> = (
-    _defaultPartial,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Pick<$DefaultPartial, "$identifier">
+  > = (_defaultPartial) =>
     $compactRecord({
       $identifier: _defaultPartial.$identifier().value,
       $type: "DefaultPartial",
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    $DefaultPartial,
-    $DefaultPartial.Identifier
-  > = $wrap_ToRdfResourceFunction<$DefaultPartial.Identifier, $DefaultPartial>(
-    $DefaultPartial._toRdfResourceFunction,
-  );
+    $DefaultPartial.Identifier,
+    Pick<$DefaultPartial, "$identifier">
+  > = $wrap_ToRdfResourceFunction<
+    $DefaultPartial.Identifier,
+    Pick<$DefaultPartial, "$identifier">
+  >($DefaultPartial._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    $DefaultPartial,
+    Pick<$DefaultPartial, "$identifier">,
     BlankNode | NamedNode
   > = (value, options) => [
     $DefaultPartial.toRdfResource(value, {
@@ -4227,9 +4233,9 @@ export namespace $DefaultPartial {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<$DefaultPartial> = (
-    _defaultPartial,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<$DefaultPartial, "$identifier">
+  > = (_defaultPartial) =>
     $compactRecord({ $identifier: _defaultPartial.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -4289,14 +4295,14 @@ export namespace $NamedDefaultPartial {
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     $NamedDefaultPartial.Identifier,
-    $NamedDefaultPartial
+    Pick<$NamedDefaultPartial, "$identifier">
   > = (parameters) => {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<$NamedDefaultPartial> = (
-    _namedDefaultPartial,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<$NamedDefaultPartial, "$identifier">
+  > = (_namedDefaultPartial) =>
     `$NamedDefaultPartial(${JSON.stringify($NamedDefaultPartial.toStringRecord(_namedDefaultPartial))})`;
 
   export const create: <
@@ -4351,7 +4357,9 @@ export namespace $NamedDefaultPartial {
       | NamedNode;
   }): $NamedDefaultPartial => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<$NamedDefaultPartial> = (left, right) =>
+  export const equals: $EqualsFunction<
+    Pick<$NamedDefaultPartial, "$identifier">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -4360,7 +4368,7 @@ export namespace $NamedDefaultPartial {
 
   export const filter: $FilterFunction<
     $NamedDefaultPartial.Filter,
-    $NamedDefaultPartial
+    Pick<$NamedDefaultPartial, "$identifier">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -4401,7 +4409,7 @@ export namespace $NamedDefaultPartial {
 
   export const fromJson: $FromJsonFunction<
     $NamedDefaultPartial,
-    $NamedDefaultPartial.Json
+    Omit<$NamedDefaultPartial.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, NamedNode>(
@@ -4559,34 +4567,34 @@ export namespace $NamedDefaultPartial {
   }
 
   export const toJson: $ToJsonFunction<
-    $NamedDefaultPartial,
+    Pick<$NamedDefaultPartial, "$identifier">,
     $NamedDefaultPartial.Json
   > = (_namedDefaultPartial) =>
     JSON.parse(
       JSON.stringify({
         "@id": _namedDefaultPartial.$identifier().value,
-        $type: _namedDefaultPartial.$type,
+        $type: "NamedDefaultPartial",
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<$NamedDefaultPartial> = (
-    _namedDefaultPartial,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Pick<$NamedDefaultPartial, "$identifier">
+  > = (_namedDefaultPartial) =>
     $compactRecord({
       $identifier: _namedDefaultPartial.$identifier().value,
       $type: "NamedDefaultPartial",
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    $NamedDefaultPartial,
-    $NamedDefaultPartial.Identifier
+    $NamedDefaultPartial.Identifier,
+    Pick<$NamedDefaultPartial, "$identifier">
   > = $wrap_ToRdfResourceFunction<
     $NamedDefaultPartial.Identifier,
-    $NamedDefaultPartial
+    Pick<$NamedDefaultPartial, "$identifier">
   >($NamedDefaultPartial._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    $NamedDefaultPartial,
+    Pick<$NamedDefaultPartial, "$identifier">,
     NamedNode
   > = (value, options) => [
     $NamedDefaultPartial.toRdfResource(value, {
@@ -4595,9 +4603,9 @@ export namespace $NamedDefaultPartial {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<$NamedDefaultPartial> = (
-    _namedDefaultPartial,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<$NamedDefaultPartial, "$identifier">
+  > = (_namedDefaultPartial) =>
     $compactRecord({
       $identifier: _namedDefaultPartial.$identifier().toString(),
     });
@@ -4656,32 +4664,54 @@ export namespace AnonymousTypesStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     AnonymousTypesStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [AnonymousTypesStruct.schema.properties.$rdfType.fromRdfType],
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
+          ...options,
+          focusResource: resource,
+          propertyPath: $rdf_subject,
+          schema: AnonymousTypesStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [AnonymousTypesStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      anonymousStruct: $shaclPropertyFromRdf<
+        Maybe<{
+          readonly $identifier: () => BlankNode | NamedNode;
+          readonly anonymousStructString: string;
+        }>,
+        $MaybeSchema<{
+          properties: {
+            $identifier: {
+              readonly kind: "Identifier";
+              readonly type: $IdentifierSchema;
+            };
+            anonymousStructString: {
+              readonly kind: "Shacl";
+              readonly path: $PropertyPath;
+              readonly type: $StringSchema<string>;
+            };
+          };
+        }>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: AnonymousTypesStruct.schema.properties.anonymousStruct,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: AnonymousTypesStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        anonymousStruct: $shaclPropertyFromRdf<
-          Maybe<{
             readonly $identifier: () => BlankNode | NamedNode;
             readonly anonymousStructString: string;
-          }>,
-          $MaybeSchema<{
+          },
+          {
             properties: {
               $identifier: {
                 readonly kind: "Identifier";
@@ -4693,140 +4723,108 @@ export namespace AnonymousTypesStruct {
                 readonly type: $StringSchema<string>;
               };
             };
-          }>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            AnonymousTypesStruct.schema.properties.anonymousStruct,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            {
-              readonly $identifier: () => BlankNode | NamedNode;
-              readonly anonymousStructString: string;
-            },
-            {
-              properties: {
-                $identifier: {
-                  readonly kind: "Identifier";
-                  readonly type: $IdentifierSchema;
-                };
-                anonymousStructString: {
-                  readonly kind: "Shacl";
-                  readonly path: $PropertyPath;
-                  readonly type: $StringSchema<string>;
-                };
-              };
-            }
-          >((values, options) =>
-            values.chainMap((value) =>
-              value.toResource().chain((resource) =>
-                (
-                  $wrap_FromRdfResourceFunction(((resource, options) =>
-                    $sequenceRecord({
-                      $identifier: $identifierFromRdfResourceValues(
-                        $rdfResourceIdentifierValues(resource),
-                        {
-                          ...options,
-                          focusResource: resource,
-                          propertyPath: $rdf_subject,
-                          schema: { kind: "Identifier" as const },
-                        },
-                      ).chain((values) => values.head()),
-                      anonymousStructString: $shaclPropertyFromRdf<
-                        string,
-                        $StringSchema<string>
-                      >({
+          }
+        >((values, options) =>
+          values.chainMap((value) =>
+            value.toResource().chain((resource) =>
+              (
+                $wrap_FromRdfResourceFunction(((resource, options) =>
+                  $sequenceRecord({
+                    $identifier: $identifierFromRdfResourceValues(
+                      $rdfResourceIdentifierValues(resource),
+                      {
                         ...options,
                         focusResource: resource,
-                        ignoreRdfType: true,
-                        propertySchema: {
-                          kind: "Shacl",
-                          path: dataFactory.namedNode(
-                            "http://example.com/anonymousStructString",
-                          ),
-                          type: { kind: "String" as const },
-                        },
-                        typeFromRdfResourceValues:
-                          $stringFromRdfResourceValues<string>,
-                      }),
-                    }).chain((properties) =>
-                      (<
-                        $DefaultNamespaceT extends
-                          $NamespaceBuilder = $NamespaceBuilder,
-                      >(parameters: {
-                        readonly $defaultNamespace?: $DefaultNamespaceT;
-                        readonly $identifier?:
-                          | (() => BlankNode | NamedNode)
-                          | BlankNode
-                          | NamedNode
-                          | (keyof $DefaultNamespaceT & string);
-                        readonly anonymousStructString: string;
-                      }) =>
-                        $sequenceRecord({
-                          $identifier: $convertToIdentifierProperty(
-                            parameters.$identifier,
-                            parameters.$defaultNamespace,
-                          ),
-                          anonymousStructString: Either.of(
-                            parameters.anonymousStructString,
-                          ),
-                        }).map((object) =>
-                          $monkeyPatchObject(object, {
-                            toJson: ((_object) =>
-                              JSON.parse(
-                                JSON.stringify({
-                                  "@id":
-                                    _object.$identifier().termType ===
-                                    "BlankNode"
-                                      ? `_:${_object.$identifier().value}`
-                                      : _object.$identifier().value,
-                                  anonymousStructString:
-                                    _object.anonymousStructString,
-                                }),
-                              )) satisfies $ToJsonFunction<
-                              {
-                                readonly $identifier: () =>
-                                  | BlankNode
-                                  | NamedNode;
-
-                                readonly anonymousStructString: string;
-                              },
-                              { "@id": string; anonymousStructString: string }
-                            >,
-                            $toString: ((_object) =>
-                              JSON.stringify(
-                                ((_object) =>
-                                  $compactRecord({
-                                    $identifier: _object
-                                      .$identifier()
-                                      .toString(),
-                                  }))(_object),
-                              )) satisfies $ToStringFunction<{
+                        propertyPath: $rdf_subject,
+                        schema: { kind: "Identifier" as const },
+                      },
+                    ).chain((values) => values.head()),
+                    anonymousStructString: $shaclPropertyFromRdf<
+                      string,
+                      $StringSchema<string>
+                    >({
+                      ...options,
+                      focusResource: resource,
+                      ignoreRdfType: true,
+                      propertySchema: {
+                        kind: "Shacl",
+                        path: dataFactory.namedNode(
+                          "http://example.com/anonymousStructString",
+                        ),
+                        type: { kind: "String" as const },
+                      },
+                      typeFromRdfResourceValues:
+                        $stringFromRdfResourceValues<string>,
+                    }),
+                  }).chain((properties) =>
+                    (<
+                      $DefaultNamespaceT extends
+                        $NamespaceBuilder = $NamespaceBuilder,
+                    >(parameters: {
+                      readonly $defaultNamespace?: $DefaultNamespaceT;
+                      readonly $identifier?:
+                        | (() => BlankNode | NamedNode)
+                        | BlankNode
+                        | NamedNode
+                        | (keyof $DefaultNamespaceT & string);
+                      readonly anonymousStructString: string;
+                    }) =>
+                      $sequenceRecord({
+                        $identifier: $convertToIdentifierProperty(
+                          parameters.$identifier,
+                          parameters.$defaultNamespace,
+                        ),
+                        anonymousStructString: Either.of(
+                          parameters.anonymousStructString,
+                        ),
+                      }).map((object) =>
+                        $monkeyPatchObject(object, {
+                          toJson: ((_object) =>
+                            JSON.parse(
+                              JSON.stringify({
+                                "@id":
+                                  _object.$identifier().termType === "BlankNode"
+                                    ? `_:${_object.$identifier().value}`
+                                    : _object.$identifier().value,
+                                anonymousStructString:
+                                  _object.anonymousStructString,
+                              }),
+                            )) satisfies $ToJsonFunction<
+                            {
                               readonly $identifier: () => BlankNode | NamedNode;
 
                               readonly anonymousStructString: string;
-                            }>,
-                          }),
-                        ))(properties),
-                    )) satisfies $_FromRdfResourceFunction<{
-                    readonly $identifier: () => BlankNode | NamedNode;
-                    readonly anonymousStructString: string;
-                  }>) satisfies $FromRdfResourceFunction<{
-                    readonly $identifier: () => BlankNode | NamedNode;
-                    readonly anonymousStructString: string;
-                  }>
-                )(resource, options),
-              ),
+                            },
+                            { "@id": string; anonymousStructString: string }
+                          >,
+                          $toString: ((_object) =>
+                            JSON.stringify(
+                              ((_object) =>
+                                $compactRecord({
+                                  $identifier: _object.$identifier().toString(),
+                                }))(_object),
+                            )) satisfies $ToStringFunction<{
+                            readonly $identifier: () => BlankNode | NamedNode;
+                          }>,
+                        }),
+                      ))(properties),
+                  )) satisfies $_FromRdfResourceFunction<{
+                  readonly $identifier: () => BlankNode | NamedNode;
+                  readonly anonymousStructString: string;
+                }>) satisfies $FromRdfResourceFunction<{
+                  readonly $identifier: () => BlankNode | NamedNode;
+                  readonly anonymousStructString: string;
+                }>
+              )(resource, options),
             ),
           ),
-        }),
-      }).chain((properties) => AnonymousTypesStruct.create(properties)),
-    );
+        ),
+      }),
+    }).chain((properties) => AnonymousTypesStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     AnonymousTypesStruct.Identifier,
-    AnonymousTypesStruct
+    Omit<AnonymousTypesStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -4874,9 +4872,9 @@ export namespace AnonymousTypesStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<AnonymousTypesStruct> = (
-    _anonymousTypesStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<AnonymousTypesStruct, "$identifier">
+  > = (_anonymousTypesStruct) =>
     `AnonymousTypesStruct(${JSON.stringify(AnonymousTypesStruct.toStringRecord(_anonymousTypesStruct))})`;
 
   export const create: <
@@ -4986,7 +4984,6 @@ export namespace AnonymousTypesStruct {
                       }))(_object),
                   )) satisfies $ToStringFunction<{
                   readonly $identifier: () => BlankNode | NamedNode;
-                  readonly anonymousStructString: string;
                 }>,
               }),
             ))({ ...value, $defaultNamespace }),
@@ -5055,7 +5052,9 @@ export namespace AnonymousTypesStruct {
         }>;
   }): AnonymousTypesStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<AnonymousTypesStruct> = (left, right) =>
+  export const equals: $EqualsFunction<
+    Pick<AnonymousTypesStruct, "$identifier" | "anonymousStruct">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -5091,7 +5090,7 @@ export namespace AnonymousTypesStruct {
 
   export const filter: $FilterFunction<
     AnonymousTypesStruct.Filter,
-    AnonymousTypesStruct
+    Pick<AnonymousTypesStruct, "$identifier" | "anonymousStruct">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -5377,7 +5376,7 @@ export namespace AnonymousTypesStruct {
 
   export const fromJson: $FromJsonFunction<
     AnonymousTypesStruct,
-    AnonymousTypesStruct.Json
+    Omit<AnonymousTypesStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -5442,7 +5441,6 @@ export namespace AnonymousTypesStruct {
                         }))(_object),
                     )) satisfies $ToStringFunction<{
                     readonly $identifier: () => BlankNode | NamedNode;
-                    readonly anonymousStructString: string;
                   }>,
                 }),
               )) satisfies <
@@ -5695,7 +5693,7 @@ export namespace AnonymousTypesStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    AnonymousTypesStruct,
+    Omit<AnonymousTypesStruct, "$type">,
     AnonymousTypesStruct.Json
   > = (_anonymousTypesStruct) =>
     JSON.parse(
@@ -5705,7 +5703,7 @@ export namespace AnonymousTypesStruct {
             ? `_:${_anonymousTypesStruct.$identifier().value}`
             : _anonymousTypesStruct.$identifier().value,
         "@type": "http://example.com/AnonymousTypesStruct",
-        $type: _anonymousTypesStruct.$type,
+        $type: "AnonymousTypesStruct",
         anonymousStruct: _anonymousTypesStruct.anonymousStruct
           .map((item) =>
             (
@@ -5731,9 +5729,9 @@ export namespace AnonymousTypesStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<AnonymousTypesStruct> = (
-    _anonymousTypesStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Pick<AnonymousTypesStruct, "$identifier" | "anonymousStruct">
+  > = (_anonymousTypesStruct) =>
     $compactRecord({
       $identifier: _anonymousTypesStruct.$identifier().value,
       $type: "AnonymousTypesStruct",
@@ -5749,15 +5747,15 @@ export namespace AnonymousTypesStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    AnonymousTypesStruct,
-    AnonymousTypesStruct.Identifier
+    AnonymousTypesStruct.Identifier,
+    Omit<AnonymousTypesStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     AnonymousTypesStruct.Identifier,
-    AnonymousTypesStruct
+    Omit<AnonymousTypesStruct, "$type">
   >(AnonymousTypesStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    AnonymousTypesStruct,
+    Omit<AnonymousTypesStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     AnonymousTypesStruct.toRdfResource(value, {
@@ -5766,9 +5764,9 @@ export namespace AnonymousTypesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<AnonymousTypesStruct> = (
-    _anonymousTypesStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<AnonymousTypesStruct, "$identifier">
+  > = (_anonymousTypesStruct) =>
     $compactRecord({
       $identifier: _anonymousTypesStruct.$identifier().toString(),
     });
@@ -5819,38 +5817,35 @@ export namespace BlankNodeIdentifierStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     BlankNodeIdentifierStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [BlankNodeIdentifierStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        blankNodeIdentifierString: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            BlankNodeIdentifierStruct.schema.properties
-              .blankNodeIdentifierString,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-      }).chain((properties) => BlankNodeIdentifierStruct.create(properties)),
-    );
+    $sequenceRecord({
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [BlankNodeIdentifierStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      blankNodeIdentifierString: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          BlankNodeIdentifierStruct.schema.properties.blankNodeIdentifierString,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+    }).chain((properties) => BlankNodeIdentifierStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     BlankNodeIdentifierStruct.Identifier,
-    BlankNodeIdentifierStruct
+    Omit<BlankNodeIdentifierStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -5870,7 +5865,7 @@ export namespace BlankNodeIdentifierStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<BlankNodeIdentifierStruct> = (
+  export const $toString: $ToStringFunction<object> = (
     _blankNodeIdentifierStruct,
   ) =>
     `BlankNodeIdentifierStruct(${JSON.stringify(
@@ -5923,10 +5918,9 @@ export namespace BlankNodeIdentifierStruct {
     readonly blankNodeIdentifierString?: string | Maybe<string>;
   }): BlankNodeIdentifierStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<BlankNodeIdentifierStruct> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Pick<BlankNodeIdentifierStruct, "blankNodeIdentifierString">
+  > = (left, right) =>
     $propertyEquals(
       {
         equalsFunction: (left, right) =>
@@ -5939,7 +5933,7 @@ export namespace BlankNodeIdentifierStruct {
 
   export const filter: $FilterFunction<
     BlankNodeIdentifierStruct.Filter,
-    BlankNodeIdentifierStruct
+    Pick<BlankNodeIdentifierStruct, "blankNodeIdentifierString">
   > = (filter, value) => {
     if (
       filter.blankNodeIdentifierString !== undefined &&
@@ -6073,7 +6067,7 @@ export namespace BlankNodeIdentifierStruct {
 
   export const fromJson: $FromJsonFunction<
     BlankNodeIdentifierStruct,
-    BlankNodeIdentifierStruct.Json
+    Omit<BlankNodeIdentifierStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       blankNodeIdentifierString: Maybe.fromNullable(
@@ -6260,13 +6254,13 @@ export namespace BlankNodeIdentifierStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    BlankNodeIdentifierStruct,
+    Omit<BlankNodeIdentifierStruct, "$type">,
     BlankNodeIdentifierStruct.Json
   > = (_blankNodeIdentifierStruct) =>
     JSON.parse(
       JSON.stringify({
         "@type": "http://example.com/BlankNodeIdentifierStruct",
-        $type: _blankNodeIdentifierStruct.$type,
+        $type: "BlankNodeIdentifierStruct",
         blankNodeIdentifierString:
           _blankNodeIdentifierStruct.blankNodeIdentifierString
             .map((item) => item)
@@ -6274,9 +6268,9 @@ export namespace BlankNodeIdentifierStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<BlankNodeIdentifierStruct> = (
-    _blankNodeIdentifierStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Pick<BlankNodeIdentifierStruct, "blankNodeIdentifierString">
+  > = (_blankNodeIdentifierStruct) =>
     $compactRecord({
       $type: "BlankNodeIdentifierStruct",
       blankNodeIdentifierString:
@@ -6286,15 +6280,15 @@ export namespace BlankNodeIdentifierStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    BlankNodeIdentifierStruct,
-    BlankNodeIdentifierStruct.Identifier
+    BlankNodeIdentifierStruct.Identifier,
+    Omit<BlankNodeIdentifierStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     BlankNodeIdentifierStruct.Identifier,
-    BlankNodeIdentifierStruct
+    Omit<BlankNodeIdentifierStruct, "$type">
   >(BlankNodeIdentifierStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    BlankNodeIdentifierStruct,
+    Omit<BlankNodeIdentifierStruct, "$type">,
     BlankNode
   > = (value, options) => [
     BlankNodeIdentifierStruct.toRdfResource(value, {
@@ -6303,9 +6297,9 @@ export namespace BlankNodeIdentifierStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<
-    BlankNodeIdentifierStruct
-  > = (_blankNodeIdentifierStruct) => $compactRecord({});
+  export const toStringRecord: $ToStringRecordFunction<object> = (
+    _blankNodeIdentifierStruct,
+  ) => $compactRecord({});
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     BlankNodeIdentifierStruct.Filter,
@@ -6355,53 +6349,49 @@ export namespace BlankNodeOrIriIdentifierStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     BlankNodeOrIriIdentifierStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [
-            BlankNodeOrIriIdentifierStruct.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              BlankNodeOrIriIdentifierStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        blankNodeOrIriIdentifierString: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            BlankNodeOrIriIdentifierStruct.schema.properties
-              .blankNodeOrIriIdentifierString,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-      }).chain((properties) =>
-        BlankNodeOrIriIdentifierStruct.create(properties),
-      ),
-    );
+          propertyPath: $rdf_subject,
+          schema:
+            BlankNodeOrIriIdentifierStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [
+              BlankNodeOrIriIdentifierStruct.schema.properties.$rdfType
+                .fromRdfType,
+            ],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      blankNodeOrIriIdentifierString: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          BlankNodeOrIriIdentifierStruct.schema.properties
+            .blankNodeOrIriIdentifierString,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+    }).chain((properties) => BlankNodeOrIriIdentifierStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     BlankNodeOrIriIdentifierStruct.Identifier,
-    BlankNodeOrIriIdentifierStruct
+    Omit<BlankNodeOrIriIdentifierStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -6421,9 +6411,9 @@ export namespace BlankNodeOrIriIdentifierStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<BlankNodeOrIriIdentifierStruct> = (
-    _blankNodeOrIriIdentifierStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<BlankNodeOrIriIdentifierStruct, "$identifier">
+  > = (_blankNodeOrIriIdentifierStruct) =>
     `BlankNodeOrIriIdentifierStruct(${JSON.stringify(
       BlankNodeOrIriIdentifierStruct.toStringRecord(
         _blankNodeOrIriIdentifierStruct,
@@ -6502,10 +6492,12 @@ export namespace BlankNodeOrIriIdentifierStruct {
     readonly blankNodeOrIriIdentifierString?: string | Maybe<string>;
   }): BlankNodeOrIriIdentifierStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<BlankNodeOrIriIdentifierStruct> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Pick<
+      BlankNodeOrIriIdentifierStruct,
+      "$identifier" | "blankNodeOrIriIdentifierString"
+    >
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -6524,7 +6516,10 @@ export namespace BlankNodeOrIriIdentifierStruct {
 
   export const filter: $FilterFunction<
     BlankNodeOrIriIdentifierStruct.Filter,
-    BlankNodeOrIriIdentifierStruct
+    Pick<
+      BlankNodeOrIriIdentifierStruct,
+      "$identifier" | "blankNodeOrIriIdentifierString"
+    >
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -6681,7 +6676,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
 
   export const fromJson: $FromJsonFunction<
     BlankNodeOrIriIdentifierStruct,
-    BlankNodeOrIriIdentifierStruct.Json
+    Omit<BlankNodeOrIriIdentifierStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -6892,7 +6887,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    BlankNodeOrIriIdentifierStruct,
+    Omit<BlankNodeOrIriIdentifierStruct, "$type">,
     BlankNodeOrIriIdentifierStruct.Json
   > = (_blankNodeOrIriIdentifierStruct) =>
     JSON.parse(
@@ -6902,7 +6897,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
             ? `_:${_blankNodeOrIriIdentifierStruct.$identifier().value}`
             : _blankNodeOrIriIdentifierStruct.$identifier().value,
         "@type": "http://example.com/BlankNodeOrIriIdentifierStruct",
-        $type: _blankNodeOrIriIdentifierStruct.$type,
+        $type: "BlankNodeOrIriIdentifierStruct",
         blankNodeOrIriIdentifierString:
           _blankNodeOrIriIdentifierStruct.blankNodeOrIriIdentifierString
             .map((item) => item)
@@ -6911,7 +6906,10 @@ export namespace BlankNodeOrIriIdentifierStruct {
     );
 
   export const toLoggable: $ToLoggableFunction<
-    BlankNodeOrIriIdentifierStruct
+    Pick<
+      BlankNodeOrIriIdentifierStruct,
+      "$identifier" | "blankNodeOrIriIdentifierString"
+    >
   > = (_blankNodeOrIriIdentifierStruct) =>
     $compactRecord({
       $identifier: _blankNodeOrIriIdentifierStruct.$identifier().value,
@@ -6923,15 +6921,15 @@ export namespace BlankNodeOrIriIdentifierStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    BlankNodeOrIriIdentifierStruct,
-    BlankNodeOrIriIdentifierStruct.Identifier
+    BlankNodeOrIriIdentifierStruct.Identifier,
+    Omit<BlankNodeOrIriIdentifierStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     BlankNodeOrIriIdentifierStruct.Identifier,
-    BlankNodeOrIriIdentifierStruct
+    Omit<BlankNodeOrIriIdentifierStruct, "$type">
   >(BlankNodeOrIriIdentifierStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    BlankNodeOrIriIdentifierStruct,
+    Omit<BlankNodeOrIriIdentifierStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     BlankNodeOrIriIdentifierStruct.toRdfResource(value, {
@@ -6941,7 +6939,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    BlankNodeOrIriIdentifierStruct
+    Pick<BlankNodeOrIriIdentifierStruct, "$identifier">
   > = (_blankNodeOrIriIdentifierStruct) =>
     $compactRecord({
       $identifier: _blankNodeOrIriIdentifierStruct.$identifier().toString(),
@@ -7018,97 +7016,95 @@ export namespace ClassConstraintsStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     ClassConstraintsStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [ClassConstraintsStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: ClassConstraintsStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        iriClass: $shaclPropertyFromRdf<
-          Maybe<NamedNode>,
-          $MaybeSchema<$IriSchema<string>>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ClassConstraintsStruct.schema.properties.iriClass,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        multiClass: $shaclPropertyFromRdf<
-          Maybe<BlankNode | NamedNode>,
-          $MaybeSchema<$IdentifierSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ClassConstraintsStruct.schema.properties.multiClass,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            BlankNode | NamedNode,
-            $IdentifierSchema
-          >($identifierFromRdfResourceValues),
-        }),
-        nodeClass1: $shaclPropertyFromRdf<
-          Maybe<NonClassStruct>,
-          $MaybeSchema<typeof NonClassStruct.schema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ClassConstraintsStruct.schema.properties.nodeClass1,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            NonClassStruct,
-            typeof NonClassStruct.schema
-          >(NonClassStruct.fromRdfResourceValues),
-        }),
-        nodeClass2: $shaclPropertyFromRdf<
-          Maybe<PartialStruct>,
-          $MaybeSchema<typeof PartialStruct.schema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ClassConstraintsStruct.schema.properties.nodeClass2,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            PartialStruct,
-            typeof PartialStruct.schema
-          >(PartialStruct.fromRdfResourceValues),
-        }),
-        singleClass: $shaclPropertyFromRdf<
-          Maybe<BlankNode | NamedNode>,
-          $MaybeSchema<$IdentifierSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ClassConstraintsStruct.schema.properties.singleClass,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            BlankNode | NamedNode,
-            $IdentifierSchema
-          >($identifierFromRdfResourceValues),
-        }),
-      }).chain((properties) => ClassConstraintsStruct.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: ClassConstraintsStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [ClassConstraintsStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      iriClass: $shaclPropertyFromRdf<
+        Maybe<NamedNode>,
+        $MaybeSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ClassConstraintsStruct.schema.properties.iriClass,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      multiClass: $shaclPropertyFromRdf<
+        Maybe<BlankNode | NamedNode>,
+        $MaybeSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ClassConstraintsStruct.schema.properties.multiClass,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          BlankNode | NamedNode,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+      nodeClass1: $shaclPropertyFromRdf<
+        Maybe<NonClassStruct>,
+        $MaybeSchema<typeof NonClassStruct.schema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ClassConstraintsStruct.schema.properties.nodeClass1,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          NonClassStruct,
+          typeof NonClassStruct.schema
+        >(NonClassStruct.fromRdfResourceValues),
+      }),
+      nodeClass2: $shaclPropertyFromRdf<
+        Maybe<PartialStruct>,
+        $MaybeSchema<typeof PartialStruct.schema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ClassConstraintsStruct.schema.properties.nodeClass2,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          PartialStruct,
+          typeof PartialStruct.schema
+        >(PartialStruct.fromRdfResourceValues),
+      }),
+      singleClass: $shaclPropertyFromRdf<
+        Maybe<BlankNode | NamedNode>,
+        $MaybeSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ClassConstraintsStruct.schema.properties.singleClass,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          BlankNode | NamedNode,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+    }).chain((properties) => ClassConstraintsStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     ClassConstraintsStruct.Identifier,
-    ClassConstraintsStruct
+    Omit<ClassConstraintsStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -7163,9 +7159,9 @@ export namespace ClassConstraintsStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<ClassConstraintsStruct> = (
-    _classConstraintsStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<ClassConstraintsStruct, "$identifier">
+  > = (_classConstraintsStruct) =>
     `ClassConstraintsStruct(${JSON.stringify(ClassConstraintsStruct.toStringRecord(_classConstraintsStruct))})`;
 
   export const create: <
@@ -7333,10 +7329,9 @@ export namespace ClassConstraintsStruct {
       | Maybe<BlankNode | NamedNode>;
   }): ClassConstraintsStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<ClassConstraintsStruct> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Omit<ClassConstraintsStruct, "$type">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -7400,7 +7395,7 @@ export namespace ClassConstraintsStruct {
 
   export const filter: $FilterFunction<
     ClassConstraintsStruct.Filter,
-    ClassConstraintsStruct
+    Omit<ClassConstraintsStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -7704,7 +7699,7 @@ export namespace ClassConstraintsStruct {
 
   export const fromJson: $FromJsonFunction<
     ClassConstraintsStruct,
-    ClassConstraintsStruct.Json
+    Omit<ClassConstraintsStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -8012,7 +8007,7 @@ export namespace ClassConstraintsStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    ClassConstraintsStruct,
+    Omit<ClassConstraintsStruct, "$type">,
     ClassConstraintsStruct.Json
   > = (_classConstraintsStruct) =>
     JSON.parse(
@@ -8022,7 +8017,7 @@ export namespace ClassConstraintsStruct {
             ? `_:${_classConstraintsStruct.$identifier().value}`
             : _classConstraintsStruct.$identifier().value,
         "@type": "http://example.com/ClassConstraintsStruct",
-        $type: _classConstraintsStruct.$type,
+        $type: "ClassConstraintsStruct",
         iriClass: _classConstraintsStruct.iriClass
           .map((item) => item.value)
           .extract(),
@@ -8045,9 +8040,9 @@ export namespace ClassConstraintsStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<ClassConstraintsStruct> = (
-    _classConstraintsStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<ClassConstraintsStruct, "$type">
+  > = (_classConstraintsStruct) =>
     $compactRecord({
       $identifier: _classConstraintsStruct.$identifier().value,
       $type: "ClassConstraintsStruct",
@@ -8069,15 +8064,15 @@ export namespace ClassConstraintsStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    ClassConstraintsStruct,
-    ClassConstraintsStruct.Identifier
+    ClassConstraintsStruct.Identifier,
+    Omit<ClassConstraintsStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     ClassConstraintsStruct.Identifier,
-    ClassConstraintsStruct
+    Omit<ClassConstraintsStruct, "$type">
   >(ClassConstraintsStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    ClassConstraintsStruct,
+    Omit<ClassConstraintsStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     ClassConstraintsStruct.toRdfResource(value, {
@@ -8087,7 +8082,7 @@ export namespace ClassConstraintsStruct {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    ClassConstraintsStruct
+    Pick<ClassConstraintsStruct, "$identifier">
   > = (_classConstraintsStruct) =>
     $compactRecord({
       $identifier: _classConstraintsStruct.$identifier().toString(),
@@ -8167,188 +8162,185 @@ export namespace ConvertibleTypesStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     ConvertibleTypesStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [ConvertibleTypesStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: ConvertibleTypesStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        convertibleIri: $shaclPropertyFromRdf<NamedNode, $IriSchema<string>>({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            ConvertibleTypesStruct.schema.properties.convertibleIri,
-          typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
-        }),
-        convertibleIriNonEmptySet: $shaclPropertyFromRdf<
-          readonly NamedNode[],
-          $CollectionSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            ConvertibleTypesStruct.schema.properties.convertibleIriNonEmptySet,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        convertibleIriOption: $shaclPropertyFromRdf<
-          Maybe<NamedNode>,
-          $MaybeSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            ConvertibleTypesStruct.schema.properties.convertibleIriOption,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        convertibleIriSet: $shaclPropertyFromRdf<
-          readonly NamedNode[],
-          $CollectionSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            ConvertibleTypesStruct.schema.properties.convertibleIriSet,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        convertibleLiteral: $shaclPropertyFromRdf<Literal, $LiteralSchema>({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            ConvertibleTypesStruct.schema.properties.convertibleLiteral,
-          typeFromRdfResourceValues: $literalFromRdfResourceValues,
-        }),
-        convertibleLiteralNonEmptySet: $shaclPropertyFromRdf<
-          readonly Literal[],
-          $CollectionSchema<$LiteralSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            ConvertibleTypesStruct.schema.properties
-              .convertibleLiteralNonEmptySet,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            Literal,
-            $LiteralSchema
-          >($literalFromRdfResourceValues),
-        }),
-        convertibleLiteralOption: $shaclPropertyFromRdf<
-          Maybe<Literal>,
-          $MaybeSchema<$LiteralSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            ConvertibleTypesStruct.schema.properties.convertibleLiteralOption,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Literal,
-            $LiteralSchema
-          >($literalFromRdfResourceValues),
-        }),
-        convertibleLiteralSet: $shaclPropertyFromRdf<
-          readonly Literal[],
-          $CollectionSchema<$LiteralSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            ConvertibleTypesStruct.schema.properties.convertibleLiteralSet,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            Literal,
-            $LiteralSchema
-          >($literalFromRdfResourceValues),
-        }),
-        convertibleTerm: $shaclPropertyFromRdf<
+          propertyPath: $rdf_subject,
+          schema: ConvertibleTypesStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [ConvertibleTypesStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      convertibleIri: $shaclPropertyFromRdf<NamedNode, $IriSchema<string>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ConvertibleTypesStruct.schema.properties.convertibleIri,
+        typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
+      }),
+      convertibleIriNonEmptySet: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleIriNonEmptySet,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      convertibleIriOption: $shaclPropertyFromRdf<
+        Maybe<NamedNode>,
+        $MaybeSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleIriOption,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      convertibleIriSet: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleIriSet,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      convertibleLiteral: $shaclPropertyFromRdf<Literal, $LiteralSchema>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleLiteral,
+        typeFromRdfResourceValues: $literalFromRdfResourceValues,
+      }),
+      convertibleLiteralNonEmptySet: $shaclPropertyFromRdf<
+        readonly Literal[],
+        $CollectionSchema<$LiteralSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties
+            .convertibleLiteralNonEmptySet,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          Literal,
+          $LiteralSchema
+        >($literalFromRdfResourceValues),
+      }),
+      convertibleLiteralOption: $shaclPropertyFromRdf<
+        Maybe<Literal>,
+        $MaybeSchema<$LiteralSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleLiteralOption,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Literal,
+          $LiteralSchema
+        >($literalFromRdfResourceValues),
+      }),
+      convertibleLiteralSet: $shaclPropertyFromRdf<
+        readonly Literal[],
+        $CollectionSchema<$LiteralSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleLiteralSet,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          Literal,
+          $LiteralSchema
+        >($literalFromRdfResourceValues),
+      }),
+      convertibleTerm: $shaclPropertyFromRdf<
+        BlankNode | NamedNode | Literal,
+        $TermSchema<BlankNode | NamedNode | Literal>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleTerm,
+        typeFromRdfResourceValues: $termFromRdfResourceValues<
+          BlankNode | NamedNode | Literal
+        >,
+      }),
+      convertibleTermNonEmptySet: $shaclPropertyFromRdf<
+        readonly (BlankNode | NamedNode | Literal)[],
+        $CollectionSchema<$TermSchema<BlankNode | NamedNode | Literal>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleTermNonEmptySet,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
           BlankNode | NamedNode | Literal,
           $TermSchema<BlankNode | NamedNode | Literal>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            ConvertibleTypesStruct.schema.properties.convertibleTerm,
-          typeFromRdfResourceValues: $termFromRdfResourceValues<
-            BlankNode | NamedNode | Literal
-          >,
-        }),
-        convertibleTermNonEmptySet: $shaclPropertyFromRdf<
-          readonly (BlankNode | NamedNode | Literal)[],
-          $CollectionSchema<$TermSchema<BlankNode | NamedNode | Literal>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            ConvertibleTypesStruct.schema.properties.convertibleTermNonEmptySet,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            BlankNode | NamedNode | Literal,
-            $TermSchema<BlankNode | NamedNode | Literal>
-          >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
-        }),
-        convertibleTermOption: $shaclPropertyFromRdf<
-          Maybe<BlankNode | NamedNode | Literal>,
-          $MaybeSchema<$TermSchema<BlankNode | NamedNode | Literal>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            ConvertibleTypesStruct.schema.properties.convertibleTermOption,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            BlankNode | NamedNode | Literal,
-            $TermSchema<BlankNode | NamedNode | Literal>
-          >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
-        }),
-        convertibleTermSet: $shaclPropertyFromRdf<
-          readonly (BlankNode | NamedNode | Literal)[],
-          $CollectionSchema<$TermSchema<BlankNode | NamedNode | Literal>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            ConvertibleTypesStruct.schema.properties.convertibleTermSet,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            BlankNode | NamedNode | Literal,
-            $TermSchema<BlankNode | NamedNode | Literal>
-          >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
-        }),
-      }).chain((properties) => ConvertibleTypesStruct.create(properties)),
-    );
+        >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
+      }),
+      convertibleTermOption: $shaclPropertyFromRdf<
+        Maybe<BlankNode | NamedNode | Literal>,
+        $MaybeSchema<$TermSchema<BlankNode | NamedNode | Literal>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleTermOption,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          BlankNode | NamedNode | Literal,
+          $TermSchema<BlankNode | NamedNode | Literal>
+        >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
+      }),
+      convertibleTermSet: $shaclPropertyFromRdf<
+        readonly (BlankNode | NamedNode | Literal)[],
+        $CollectionSchema<$TermSchema<BlankNode | NamedNode | Literal>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleTermSet,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          BlankNode | NamedNode | Literal,
+          $TermSchema<BlankNode | NamedNode | Literal>
+        >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
+      }),
+    }).chain((properties) => ConvertibleTypesStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     ConvertibleTypesStruct.Identifier,
-    ConvertibleTypesStruct
+    Omit<ConvertibleTypesStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -8421,9 +8413,9 @@ export namespace ConvertibleTypesStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<ConvertibleTypesStruct> = (
-    _convertibleTypesStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<ConvertibleTypesStruct, "$identifier">
+  > = (_convertibleTypesStruct) =>
     `ConvertibleTypesStruct(${JSON.stringify(ConvertibleTypesStruct.toStringRecord(_convertibleTypesStruct))})`;
 
   export const create: <
@@ -8794,10 +8786,9 @@ export namespace ConvertibleTypesStruct {
       | readonly (BlankNode | NamedNode | Literal)[];
   }): ConvertibleTypesStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<ConvertibleTypesStruct> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Omit<ConvertibleTypesStruct, "$type">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -8926,7 +8917,7 @@ export namespace ConvertibleTypesStruct {
 
   export const filter: $FilterFunction<
     ConvertibleTypesStruct.Filter,
-    ConvertibleTypesStruct
+    Omit<ConvertibleTypesStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -9512,7 +9503,7 @@ export namespace ConvertibleTypesStruct {
 
   export const fromJson: $FromJsonFunction<
     ConvertibleTypesStruct,
-    ConvertibleTypesStruct.Json
+    Omit<ConvertibleTypesStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -10183,7 +10174,7 @@ export namespace ConvertibleTypesStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    ConvertibleTypesStruct,
+    Omit<ConvertibleTypesStruct, "$type">,
     ConvertibleTypesStruct.Json
   > = (_convertibleTypesStruct) =>
     JSON.parse(
@@ -10193,7 +10184,7 @@ export namespace ConvertibleTypesStruct {
             ? `_:${_convertibleTypesStruct.$identifier().value}`
             : _convertibleTypesStruct.$identifier().value,
         "@type": "http://example.com/ConvertibleTypesStruct",
-        $type: _convertibleTypesStruct.$type,
+        $type: "ConvertibleTypesStruct",
         convertibleIri: _convertibleTypesStruct.convertibleIri.value,
         convertibleIriNonEmptySet:
           _convertibleTypesStruct.convertibleIriNonEmptySet.map(
@@ -10329,9 +10320,9 @@ export namespace ConvertibleTypesStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<ConvertibleTypesStruct> = (
-    _convertibleTypesStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<ConvertibleTypesStruct, "$type">
+  > = (_convertibleTypesStruct) =>
     $compactRecord({
       $identifier: _convertibleTypesStruct.$identifier().value,
       $type: "ConvertibleTypesStruct",
@@ -10469,15 +10460,15 @@ export namespace ConvertibleTypesStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    ConvertibleTypesStruct,
-    ConvertibleTypesStruct.Identifier
+    ConvertibleTypesStruct.Identifier,
+    Omit<ConvertibleTypesStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     ConvertibleTypesStruct.Identifier,
-    ConvertibleTypesStruct
+    Omit<ConvertibleTypesStruct, "$type">
   >(ConvertibleTypesStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    ConvertibleTypesStruct,
+    Omit<ConvertibleTypesStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     ConvertibleTypesStruct.toRdfResource(value, {
@@ -10487,7 +10478,7 @@ export namespace ConvertibleTypesStruct {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    ConvertibleTypesStruct
+    Pick<ConvertibleTypesStruct, "$identifier">
   > = (_convertibleTypesStruct) =>
     $compactRecord({
       $identifier: _convertibleTypesStruct.$identifier().toString(),
@@ -10608,1328 +10599,1350 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     DatatypeDiscriminatedUnionsStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [
-            DatatypeDiscriminatedUnionsStruct.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              DatatypeDiscriminatedUnionsStruct.schema.properties.$identifier
-                .type,
-          },
-        ).chain((values) => values.head()),
-        dateOrDateTime: $shaclPropertyFromRdf<
-          { $type: "date"; value: Date } | { $type: "dateTime"; value: Date },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly date: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-              readonly dateTime: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-            };
-          }
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DatatypeDiscriminatedUnionsStruct.schema.properties.dateOrDateTime,
-          typeFromRdfResourceValues: (inputValues, options) => {
-            const memberInputValues: Resource.Values[] = Array.from({
-              length: 2,
-            }).map(() =>
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              }),
-            );
-            for (const inputValue of inputValues) {
-              const inputValueAsValues = inputValue.toValues();
-              let memberOutputValuesEither: Either<Error, unknown> | undefined;
-              for (let memberI = 0; memberI < 2; memberI++) {
-                if (memberI === 0) {
-                  memberOutputValuesEither = $dateFromRdfResourceValues(
-                    inputValueAsValues,
-                    {
-                      ...options,
-                      ignoreRdfType: false,
-                      schema: options.schema.members["date"].type,
-                    },
-                  );
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                } else if (memberI === 1) {
-                  memberOutputValuesEither = $dateTimeFromRdfResourceValues(
-                    inputValueAsValues,
+          propertyPath: $rdf_subject,
+          schema:
+            DatatypeDiscriminatedUnionsStruct.schema.properties.$identifier
+              .type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [
+              DatatypeDiscriminatedUnionsStruct.schema.properties.$rdfType
+                .fromRdfType,
+            ],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      dateOrDateTime: $shaclPropertyFromRdf<
+        { $type: "date"; value: Date } | { $type: "dateTime"; value: Date },
+        {
+          kind: "DiscriminatedUnion";
+          members: {
+            readonly date: {
+              discriminantValues: readonly (number | string)[];
+              type: $DateSchema;
+            };
+            readonly dateTime: {
+              discriminantValues: readonly (number | string)[];
+              type: $DateSchema;
+            };
+          };
+        }
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties.dateOrDateTime,
+        typeFromRdfResourceValues: (inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $dateFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["date"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $dateTimeFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["dateTime"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              }
+            }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
+
+          let collectedOutputValues: Resource.Values<
+            { $type: "date"; value: Date } | { $type: "dateTime"; value: Date }
+          > = Resource.Values.empty({
+            focusResource: inputValues.focusResource,
+            propertyPath: inputValues.propertyPath,
+          });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$dateFromRdfResourceValues(memberInputValues[memberI], {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["date"].type,
+                  })
+                    .map((values) =>
+                      values.map(
+                        (value) =>
+                          ({
+                            $type: "date" as const,
+                            value,
+                          }) as
+                            | { $type: "date"; value: Date }
+                            | { $type: "dateTime"; value: Date },
+                      ),
+                    )
+                    .unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$dateTimeFromRdfResourceValues(
+                    memberInputValues[memberI],
                     {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["dateTime"].type,
                     },
-                  );
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
+                  )
+                    .map((values) =>
+                      values.map(
+                        (value) =>
+                          ({
+                            $type: "dateTime" as const,
+                            value,
+                          }) as
+                            | { $type: "date"; value: Date }
+                            | { $type: "dateTime"; value: Date },
+                      ),
+                    )
+                    .unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        },
+      }),
+      dateOrString: $shaclPropertyFromRdf<
+        Date | string,
+        {
+          kind: "DiscriminatedUnion";
+          members: {
+            readonly object: {
+              discriminantValues: readonly (number | string)[];
+              type: $DateSchema;
+            };
+            readonly string: {
+              discriminantValues: readonly (number | string)[];
+              type: $StringSchema<string>;
+            };
+          };
+        }
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties.dateOrString,
+        typeFromRdfResourceValues: (inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $dateFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["object"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["string"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
                 }
               }
-              if (memberOutputValuesEither!.isLeft()) {
-                return memberOutputValuesEither;
-              }
             }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
 
-            let collectedOutputValues: Resource.Values<
-              | { $type: "date"; value: Date }
-              | { $type: "dateTime"; value: Date }
-            > = Resource.Values.empty({
+          let collectedOutputValues: Resource.Values<Date | string> =
+            Resource.Values.empty({
               focusResource: inputValues.focusResource,
               propertyPath: inputValues.propertyPath,
             });
-            for (let memberI = 0; memberI < 2; memberI++) {
-              if (memberInputValues[memberI].length === 0) {
-                continue;
-              }
-              switch (memberI) {
-                case 0:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$dateFromRdfResourceValues(memberInputValues[memberI], {
-                      ...options,
-                      ignoreRdfType: false,
-                      schema: options.schema.members["date"].type,
-                    })
-                      .map((values) =>
-                        values.map(
-                          (value) =>
-                            ({
-                              $type: "date" as const,
-                              value,
-                            }) as
-                              | { $type: "date"; value: Date }
-                              | { $type: "dateTime"; value: Date },
-                        ),
-                      )
-                      .unsafeCoerce(),
-                  );
-                  break;
-                case 1:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$dateTimeFromRdfResourceValues(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["dateTime"].type,
-                      },
-                    )
-                      .map((values) =>
-                        values.map(
-                          (value) =>
-                            ({
-                              $type: "dateTime" as const,
-                              value,
-                            }) as
-                              | { $type: "date"; value: Date }
-                              | { $type: "dateTime"; value: Date },
-                        ),
-                      )
-                      .unsafeCoerce(),
-                  );
-                  break;
-              }
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
             }
-            return Right(collectedOutputValues);
-          },
-        }),
-        dateOrString: $shaclPropertyFromRdf<
-          Date | string,
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DatatypeDiscriminatedUnionsStruct.schema.properties.dateOrString,
-          typeFromRdfResourceValues: (inputValues, options) => {
-            const memberInputValues: Resource.Values[] = Array.from({
-              length: 2,
-            }).map(() =>
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              }),
-            );
-            for (const inputValue of inputValues) {
-              const inputValueAsValues = inputValue.toValues();
-              let memberOutputValuesEither: Either<Error, unknown> | undefined;
-              for (let memberI = 0; memberI < 2; memberI++) {
-                if (memberI === 0) {
-                  memberOutputValuesEither = $dateFromRdfResourceValues(
-                    inputValueAsValues,
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$dateFromRdfResourceValues(memberInputValues[memberI], {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["object"].type,
+                  }).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
                     {
                       ...options,
                       ignoreRdfType: false,
-                      schema: options.schema.members["object"].type,
-                    },
-                  );
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                } else if (memberI === 1) {
-                  memberOutputValuesEither =
-                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
-                      ...options,
-                      ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
-                    });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        },
+      }),
+      dateTimeOrDate: $shaclPropertyFromRdf<
+        { $type: "dateTime"; value: Date } | { $type: "date"; value: Date },
+        {
+          kind: "DiscriminatedUnion";
+          members: {
+            readonly dateTime: {
+              discriminantValues: readonly (number | string)[];
+              type: $DateSchema;
+            };
+            readonly date: {
+              discriminantValues: readonly (number | string)[];
+              type: $DateSchema;
+            };
+          };
+        }
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties.dateTimeOrDate,
+        typeFromRdfResourceValues: (inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $dateTimeFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["dateTime"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $dateFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["date"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
                 }
               }
-              if (memberOutputValuesEither!.isLeft()) {
-                return memberOutputValuesEither;
-              }
             }
-
-            let collectedOutputValues: Resource.Values<Date | string> =
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              });
-            for (let memberI = 0; memberI < 2; memberI++) {
-              if (memberInputValues[memberI].length === 0) {
-                continue;
-              }
-              switch (memberI) {
-                case 0:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$dateFromRdfResourceValues(memberInputValues[memberI], {
-                      ...options,
-                      ignoreRdfType: false,
-                      schema: options.schema.members["object"].type,
-                    }).unsafeCoerce(),
-                  );
-                  break;
-                case 1:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$stringFromRdfResourceValues<string>(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["string"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-              }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
             }
-            return Right(collectedOutputValues);
-          },
-        }),
-        dateTimeOrDate: $shaclPropertyFromRdf<
-          { $type: "dateTime"; value: Date } | { $type: "date"; value: Date },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly dateTime: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-              readonly date: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-            };
           }
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DatatypeDiscriminatedUnionsStruct.schema.properties.dateTimeOrDate,
-          typeFromRdfResourceValues: (inputValues, options) => {
-            const memberInputValues: Resource.Values[] = Array.from({
-              length: 2,
-            }).map(() =>
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              }),
-            );
-            for (const inputValue of inputValues) {
-              const inputValueAsValues = inputValue.toValues();
-              let memberOutputValuesEither: Either<Error, unknown> | undefined;
-              for (let memberI = 0; memberI < 2; memberI++) {
-                if (memberI === 0) {
-                  memberOutputValuesEither = $dateTimeFromRdfResourceValues(
-                    inputValueAsValues,
+
+          let collectedOutputValues: Resource.Values<
+            { $type: "dateTime"; value: Date } | { $type: "date"; value: Date }
+          > = Resource.Values.empty({
+            focusResource: inputValues.focusResource,
+            propertyPath: inputValues.propertyPath,
+          });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$dateTimeFromRdfResourceValues(
+                    memberInputValues[memberI],
                     {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["dateTime"].type,
                     },
-                  );
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                } else if (memberI === 1) {
-                  memberOutputValuesEither = $dateFromRdfResourceValues(
-                    inputValueAsValues,
-                    {
-                      ...options,
-                      ignoreRdfType: false,
-                      schema: options.schema.members["date"].type,
-                    },
-                  );
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
+                  )
+                    .map((values) =>
+                      values.map(
+                        (value) =>
+                          ({
+                            $type: "dateTime" as const,
+                            value,
+                          }) as
+                            | { $type: "dateTime"; value: Date }
+                            | { $type: "date"; value: Date },
+                      ),
+                    )
+                    .unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$dateFromRdfResourceValues(memberInputValues[memberI], {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["date"].type,
+                  })
+                    .map((values) =>
+                      values.map(
+                        (value) =>
+                          ({
+                            $type: "date" as const,
+                            value,
+                          }) as
+                            | { $type: "dateTime"; value: Date }
+                            | { $type: "date"; value: Date },
+                      ),
+                    )
+                    .unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        },
+      }),
+      decimalOrString: $shaclPropertyFromRdf<
+        BigDecimal | string,
+        {
+          kind: "DiscriminatedUnion";
+          members: {
+            readonly object: {
+              discriminantValues: readonly (number | string)[];
+              type: $NumericSchema<BigDecimal>;
+            };
+            readonly string: {
+              discriminantValues: readonly (number | string)[];
+              type: $StringSchema<string>;
+            };
+          };
+        }
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties.decimalOrString,
+        typeFromRdfResourceValues: (inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $bigDecimalFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["object"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["string"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
                 }
               }
-              if (memberOutputValuesEither!.isLeft()) {
-                return memberOutputValuesEither;
-              }
             }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
 
-            let collectedOutputValues: Resource.Values<
-              | { $type: "dateTime"; value: Date }
-              | { $type: "date"; value: Date }
-            > = Resource.Values.empty({
+          let collectedOutputValues: Resource.Values<BigDecimal | string> =
+            Resource.Values.empty({
               focusResource: inputValues.focusResource,
               propertyPath: inputValues.propertyPath,
             });
-            for (let memberI = 0; memberI < 2; memberI++) {
-              if (memberInputValues[memberI].length === 0) {
-                continue;
-              }
-              switch (memberI) {
-                case 0:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$dateTimeFromRdfResourceValues(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["dateTime"].type,
-                      },
-                    )
-                      .map((values) =>
-                        values.map(
-                          (value) =>
-                            ({
-                              $type: "dateTime" as const,
-                              value,
-                            }) as
-                              | { $type: "dateTime"; value: Date }
-                              | { $type: "date"; value: Date },
-                        ),
-                      )
-                      .unsafeCoerce(),
-                  );
-                  break;
-                case 1:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$dateFromRdfResourceValues(memberInputValues[memberI], {
-                      ...options,
-                      ignoreRdfType: false,
-                      schema: options.schema.members["date"].type,
-                    })
-                      .map((values) =>
-                        values.map(
-                          (value) =>
-                            ({
-                              $type: "date" as const,
-                              value,
-                            }) as
-                              | { $type: "dateTime"; value: Date }
-                              | { $type: "date"; value: Date },
-                        ),
-                      )
-                      .unsafeCoerce(),
-                  );
-                  break;
-              }
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
             }
-            return Right(collectedOutputValues);
-          },
-        }),
-        decimalOrString: $shaclPropertyFromRdf<
-          BigDecimal | string,
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<BigDecimal>;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DatatypeDiscriminatedUnionsStruct.schema.properties.decimalOrString,
-          typeFromRdfResourceValues: (inputValues, options) => {
-            const memberInputValues: Resource.Values[] = Array.from({
-              length: 2,
-            }).map(() =>
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              }),
-            );
-            for (const inputValue of inputValues) {
-              const inputValueAsValues = inputValue.toValues();
-              let memberOutputValuesEither: Either<Error, unknown> | undefined;
-              for (let memberI = 0; memberI < 2; memberI++) {
-                if (memberI === 0) {
-                  memberOutputValuesEither = $bigDecimalFromRdfResourceValues(
-                    inputValueAsValues,
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$bigDecimalFromRdfResourceValues(
+                    memberInputValues[memberI],
                     {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["object"].type,
                     },
-                  );
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                } else if (memberI === 1) {
-                  memberOutputValuesEither =
-                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
-                    });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        },
+      }),
+      integerOrString: $shaclPropertyFromRdf<
+        bigint | string,
+        {
+          kind: "DiscriminatedUnion";
+          members: {
+            readonly bigint: {
+              discriminantValues: readonly (number | string)[];
+              type: $NumericSchema<bigint>;
+            };
+            readonly string: {
+              discriminantValues: readonly (number | string)[];
+              type: $StringSchema<string>;
+            };
+          };
+        }
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties.integerOrString,
+        typeFromRdfResourceValues: (inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $bigIntFromRdfResourceValues<bigint>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["bigint"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["string"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
                 }
               }
-              if (memberOutputValuesEither!.isLeft()) {
-                return memberOutputValuesEither;
-              }
             }
-
-            let collectedOutputValues: Resource.Values<BigDecimal | string> =
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              });
-            for (let memberI = 0; memberI < 2; memberI++) {
-              if (memberInputValues[memberI].length === 0) {
-                continue;
-              }
-              switch (memberI) {
-                case 0:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$bigDecimalFromRdfResourceValues(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["object"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-                case 1:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$stringFromRdfResourceValues<string>(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["string"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-              }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
             }
-            return Right(collectedOutputValues);
-          },
-        }),
-        integerOrString: $shaclPropertyFromRdf<
-          bigint | string,
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly bigint: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<bigint>;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
           }
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DatatypeDiscriminatedUnionsStruct.schema.properties.integerOrString,
-          typeFromRdfResourceValues: (inputValues, options) => {
-            const memberInputValues: Resource.Values[] = Array.from({
-              length: 2,
-            }).map(() =>
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              }),
-            );
-            for (const inputValue of inputValues) {
-              const inputValueAsValues = inputValue.toValues();
-              let memberOutputValuesEither: Either<Error, unknown> | undefined;
-              for (let memberI = 0; memberI < 2; memberI++) {
-                if (memberI === 0) {
-                  memberOutputValuesEither =
-                    $bigIntFromRdfResourceValues<bigint>(inputValueAsValues, {
+
+          let collectedOutputValues: Resource.Values<bigint | string> =
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$bigIntFromRdfResourceValues<bigint>(
+                    memberInputValues[memberI],
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["bigint"].type,
-                    });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                } else if (memberI === 1) {
-                  memberOutputValuesEither =
-                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
-                    });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        },
+      }),
+      jsPrimitive: $shaclPropertyFromRdf<
+        boolean | number | bigint | string,
+        {
+          kind: "DiscriminatedUnion";
+          members: {
+            readonly boolean: {
+              discriminantValues: readonly (number | string)[];
+              type: $BooleanSchema<boolean>;
+            };
+            readonly number: {
+              discriminantValues: readonly (number | string)[];
+              type: $NumericSchema<number>;
+            };
+            readonly bigint: {
+              discriminantValues: readonly (number | string)[];
+              type: $NumericSchema<bigint>;
+            };
+            readonly string: {
+              discriminantValues: readonly (number | string)[];
+              type: $StringSchema<string>;
+            };
+          };
+        }
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties.jsPrimitive,
+        typeFromRdfResourceValues: (inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 4,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 4; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither =
+                  $booleanFromRdfResourceValues<boolean>(inputValueAsValues, {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["boolean"].type,
+                  });
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $floatFromRdfResourceValues<number>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["number"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 2) {
+                memberOutputValuesEither = $bigIntFromRdfResourceValues<bigint>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["bigint"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 3) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["string"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
                 }
               }
-              if (memberOutputValuesEither!.isLeft()) {
-                return memberOutputValuesEither;
-              }
             }
-
-            let collectedOutputValues: Resource.Values<bigint | string> =
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              });
-            for (let memberI = 0; memberI < 2; memberI++) {
-              if (memberInputValues[memberI].length === 0) {
-                continue;
-              }
-              switch (memberI) {
-                case 0:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$bigIntFromRdfResourceValues<bigint>(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["bigint"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-                case 1:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$stringFromRdfResourceValues<string>(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["string"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-              }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
             }
-            return Right(collectedOutputValues);
-          },
-        }),
-        jsPrimitive: $shaclPropertyFromRdf<
-          boolean | number | bigint | string,
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly boolean: {
-                discriminantValues: readonly (number | string)[];
-                type: $BooleanSchema<boolean>;
-              };
-              readonly number: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<number>;
-              };
-              readonly bigint: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<bigint>;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
           }
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DatatypeDiscriminatedUnionsStruct.schema.properties.jsPrimitive,
-          typeFromRdfResourceValues: (inputValues, options) => {
-            const memberInputValues: Resource.Values[] = Array.from({
-              length: 4,
-            }).map(() =>
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              }),
-            );
-            for (const inputValue of inputValues) {
-              const inputValueAsValues = inputValue.toValues();
-              let memberOutputValuesEither: Either<Error, unknown> | undefined;
-              for (let memberI = 0; memberI < 4; memberI++) {
-                if (memberI === 0) {
-                  memberOutputValuesEither =
-                    $booleanFromRdfResourceValues<boolean>(inputValueAsValues, {
+
+          let collectedOutputValues: Resource.Values<
+            boolean | number | bigint | string
+          > = Resource.Values.empty({
+            focusResource: inputValues.focusResource,
+            propertyPath: inputValues.propertyPath,
+          });
+          for (let memberI = 0; memberI < 4; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$booleanFromRdfResourceValues<boolean>(
+                    memberInputValues[memberI],
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["boolean"].type,
-                    });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                } else if (memberI === 1) {
-                  memberOutputValuesEither =
-                    $floatFromRdfResourceValues<number>(inputValueAsValues, {
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$floatFromRdfResourceValues<number>(
+                    memberInputValues[memberI],
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["number"].type,
-                    });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                } else if (memberI === 2) {
-                  memberOutputValuesEither =
-                    $bigIntFromRdfResourceValues<bigint>(inputValueAsValues, {
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 2:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$bigIntFromRdfResourceValues<bigint>(
+                    memberInputValues[memberI],
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["bigint"].type,
-                    });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                } else if (memberI === 3) {
-                  memberOutputValuesEither =
-                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 3:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
-                    });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        },
+      }),
+      langStringOrString: $shaclPropertyFromRdf<
+        Literal | string,
+        {
+          kind: "DiscriminatedUnion";
+          members: {
+            readonly object: {
+              discriminantValues: readonly (number | string)[];
+              type: $LangStringSchema;
+            };
+            readonly string: {
+              discriminantValues: readonly (number | string)[];
+              type: $StringSchema<string>;
+            };
+          };
+        }
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties
+            .langStringOrString,
+        typeFromRdfResourceValues: (inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $langStringFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["object"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["string"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
                 }
               }
-              if (memberOutputValuesEither!.isLeft()) {
-                return memberOutputValuesEither;
-              }
             }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
 
-            let collectedOutputValues: Resource.Values<
-              boolean | number | bigint | string
-            > = Resource.Values.empty({
+          let collectedOutputValues: Resource.Values<Literal | string> =
+            Resource.Values.empty({
               focusResource: inputValues.focusResource,
               propertyPath: inputValues.propertyPath,
             });
-            for (let memberI = 0; memberI < 4; memberI++) {
-              if (memberInputValues[memberI].length === 0) {
-                continue;
-              }
-              switch (memberI) {
-                case 0:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$booleanFromRdfResourceValues<boolean>(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["boolean"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-                case 1:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$floatFromRdfResourceValues<number>(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["number"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-                case 2:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$bigIntFromRdfResourceValues<bigint>(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["bigint"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-                case 3:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$stringFromRdfResourceValues<string>(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["string"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-              }
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
             }
-            return Right(collectedOutputValues);
-          },
-        }),
-        langStringOrString: $shaclPropertyFromRdf<
-          Literal | string,
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $LangStringSchema;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DatatypeDiscriminatedUnionsStruct.schema.properties
-              .langStringOrString,
-          typeFromRdfResourceValues: (inputValues, options) => {
-            const memberInputValues: Resource.Values[] = Array.from({
-              length: 2,
-            }).map(() =>
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              }),
-            );
-            for (const inputValue of inputValues) {
-              const inputValueAsValues = inputValue.toValues();
-              let memberOutputValuesEither: Either<Error, unknown> | undefined;
-              for (let memberI = 0; memberI < 2; memberI++) {
-                if (memberI === 0) {
-                  memberOutputValuesEither = $langStringFromRdfResourceValues(
-                    inputValueAsValues,
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$langStringFromRdfResourceValues(
+                    memberInputValues[memberI],
                     {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["object"].type,
                     },
-                  );
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                } else if (memberI === 1) {
-                  memberOutputValuesEither =
-                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
-                    });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        },
+      }),
+      namedDatatypeDiscriminatedUnion1: $shaclPropertyFromRdf<
+        DatatypeDiscriminatedUnion1,
+        typeof DatatypeDiscriminatedUnion1.schema
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties
+            .namedDatatypeDiscriminatedUnion1,
+        typeFromRdfResourceValues:
+          DatatypeDiscriminatedUnion1.fromRdfResourceValues,
+      }),
+      namedDatatypeDiscriminatedUnion2: $shaclPropertyFromRdf<
+        DatatypeDiscriminatedUnion2,
+        typeof DatatypeDiscriminatedUnion2.schema
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties
+            .namedDatatypeDiscriminatedUnion2,
+        typeFromRdfResourceValues:
+          DatatypeDiscriminatedUnion2.fromRdfResourceValues,
+      }),
+      stringOrDate: $shaclPropertyFromRdf<
+        string | Date,
+        {
+          kind: "DiscriminatedUnion";
+          members: {
+            readonly string: {
+              discriminantValues: readonly (number | string)[];
+              type: $StringSchema<string>;
+            };
+            readonly object: {
+              discriminantValues: readonly (number | string)[];
+              type: $DateSchema;
+            };
+          };
+        }
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrDate,
+        typeFromRdfResourceValues: (inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["string"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $dateFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["object"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
                 }
               }
-              if (memberOutputValuesEither!.isLeft()) {
-                return memberOutputValuesEither;
-              }
             }
-
-            let collectedOutputValues: Resource.Values<Literal | string> =
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              });
-            for (let memberI = 0; memberI < 2; memberI++) {
-              if (memberInputValues[memberI].length === 0) {
-                continue;
-              }
-              switch (memberI) {
-                case 0:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$langStringFromRdfResourceValues(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["object"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-                case 1:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$stringFromRdfResourceValues<string>(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["string"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-              }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
             }
-            return Right(collectedOutputValues);
-          },
-        }),
-        namedDatatypeDiscriminatedUnion1: $shaclPropertyFromRdf<
-          DatatypeDiscriminatedUnion1,
-          typeof DatatypeDiscriminatedUnion1.schema
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DatatypeDiscriminatedUnionsStruct.schema.properties
-              .namedDatatypeDiscriminatedUnion1,
-          typeFromRdfResourceValues:
-            DatatypeDiscriminatedUnion1.fromRdfResourceValues,
-        }),
-        namedDatatypeDiscriminatedUnion2: $shaclPropertyFromRdf<
-          DatatypeDiscriminatedUnion2,
-          typeof DatatypeDiscriminatedUnion2.schema
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DatatypeDiscriminatedUnionsStruct.schema.properties
-              .namedDatatypeDiscriminatedUnion2,
-          typeFromRdfResourceValues:
-            DatatypeDiscriminatedUnion2.fromRdfResourceValues,
-        }),
-        stringOrDate: $shaclPropertyFromRdf<
-          string | Date,
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-            };
           }
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrDate,
-          typeFromRdfResourceValues: (inputValues, options) => {
-            const memberInputValues: Resource.Values[] = Array.from({
-              length: 2,
-            }).map(() =>
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              }),
-            );
-            for (const inputValue of inputValues) {
-              const inputValueAsValues = inputValue.toValues();
-              let memberOutputValuesEither: Either<Error, unknown> | undefined;
-              for (let memberI = 0; memberI < 2; memberI++) {
-                if (memberI === 0) {
-                  memberOutputValuesEither =
-                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
+
+          let collectedOutputValues: Resource.Values<string | Date> =
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
-                    });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                } else if (memberI === 1) {
-                  memberOutputValuesEither = $dateFromRdfResourceValues(
-                    inputValueAsValues,
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$dateFromRdfResourceValues(memberInputValues[memberI], {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["object"].type,
+                  }).unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        },
+      }),
+      stringOrDecimal: $shaclPropertyFromRdf<
+        string | BigDecimal,
+        {
+          kind: "DiscriminatedUnion";
+          members: {
+            readonly string: {
+              discriminantValues: readonly (number | string)[];
+              type: $StringSchema<string>;
+            };
+            readonly object: {
+              discriminantValues: readonly (number | string)[];
+              type: $NumericSchema<BigDecimal>;
+            };
+          };
+        }
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrDecimal,
+        typeFromRdfResourceValues: (inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["string"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $bigDecimalFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["object"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              }
+            }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
+
+          let collectedOutputValues: Resource.Values<string | BigDecimal> =
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["string"].type,
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$bigDecimalFromRdfResourceValues(
+                    memberInputValues[memberI],
                     {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["object"].type,
                     },
-                  );
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
+                  ).unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        },
+      }),
+      stringOrInteger: $shaclPropertyFromRdf<
+        string | bigint,
+        {
+          kind: "DiscriminatedUnion";
+          members: {
+            readonly string: {
+              discriminantValues: readonly (number | string)[];
+              type: $StringSchema<string>;
+            };
+            readonly bigint: {
+              discriminantValues: readonly (number | string)[];
+              type: $NumericSchema<bigint>;
+            };
+          };
+        }
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrInteger,
+        typeFromRdfResourceValues: (inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["string"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $bigIntFromRdfResourceValues<bigint>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["bigint"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
                 }
               }
-              if (memberOutputValuesEither!.isLeft()) {
-                return memberOutputValuesEither;
-              }
             }
-
-            let collectedOutputValues: Resource.Values<string | Date> =
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              });
-            for (let memberI = 0; memberI < 2; memberI++) {
-              if (memberInputValues[memberI].length === 0) {
-                continue;
-              }
-              switch (memberI) {
-                case 0:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$stringFromRdfResourceValues<string>(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["string"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-                case 1:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$dateFromRdfResourceValues(memberInputValues[memberI], {
-                      ...options,
-                      ignoreRdfType: false,
-                      schema: options.schema.members["object"].type,
-                    }).unsafeCoerce(),
-                  );
-                  break;
-              }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
             }
-            return Right(collectedOutputValues);
-          },
-        }),
-        stringOrDecimal: $shaclPropertyFromRdf<
-          string | BigDecimal,
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<BigDecimal>;
-              };
-            };
           }
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrDecimal,
-          typeFromRdfResourceValues: (inputValues, options) => {
-            const memberInputValues: Resource.Values[] = Array.from({
-              length: 2,
-            }).map(() =>
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              }),
-            );
-            for (const inputValue of inputValues) {
-              const inputValueAsValues = inputValue.toValues();
-              let memberOutputValuesEither: Either<Error, unknown> | undefined;
-              for (let memberI = 0; memberI < 2; memberI++) {
-                if (memberI === 0) {
-                  memberOutputValuesEither =
-                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
-                      ...options,
-                      ignoreRdfType: false,
-                      schema: options.schema.members["string"].type,
-                    });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                } else if (memberI === 1) {
-                  memberOutputValuesEither = $bigDecimalFromRdfResourceValues(
-                    inputValueAsValues,
+
+          let collectedOutputValues: Resource.Values<string | bigint> =
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
                     {
                       ...options,
                       ignoreRdfType: false,
-                      schema: options.schema.members["object"].type,
-                    },
-                  );
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                }
-              }
-              if (memberOutputValuesEither!.isLeft()) {
-                return memberOutputValuesEither;
-              }
-            }
-
-            let collectedOutputValues: Resource.Values<string | BigDecimal> =
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              });
-            for (let memberI = 0; memberI < 2; memberI++) {
-              if (memberInputValues[memberI].length === 0) {
-                continue;
-              }
-              switch (memberI) {
-                case 0:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$stringFromRdfResourceValues<string>(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["string"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-                case 1:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$bigDecimalFromRdfResourceValues(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["object"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-              }
-            }
-            return Right(collectedOutputValues);
-          },
-        }),
-        stringOrInteger: $shaclPropertyFromRdf<
-          string | bigint,
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-              readonly bigint: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<bigint>;
-              };
-            };
-          }
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrInteger,
-          typeFromRdfResourceValues: (inputValues, options) => {
-            const memberInputValues: Resource.Values[] = Array.from({
-              length: 2,
-            }).map(() =>
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              }),
-            );
-            for (const inputValue of inputValues) {
-              const inputValueAsValues = inputValue.toValues();
-              let memberOutputValuesEither: Either<Error, unknown> | undefined;
-              for (let memberI = 0; memberI < 2; memberI++) {
-                if (memberI === 0) {
-                  memberOutputValuesEither =
-                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
-                      ...options,
-                      ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
-                    });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                } else if (memberI === 1) {
-                  memberOutputValuesEither =
-                    $bigIntFromRdfResourceValues<bigint>(inputValueAsValues, {
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$bigIntFromRdfResourceValues<bigint>(
+                    memberInputValues[memberI],
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["bigint"].type,
-                    });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        },
+      }),
+      stringOrLangString: $shaclPropertyFromRdf<
+        string | Literal,
+        {
+          kind: "DiscriminatedUnion";
+          members: {
+            readonly string: {
+              discriminantValues: readonly (number | string)[];
+              type: $StringSchema<string>;
+            };
+            readonly object: {
+              discriminantValues: readonly (number | string)[];
+              type: $LangStringSchema;
+            };
+          };
+        }
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties
+            .stringOrLangString,
+        typeFromRdfResourceValues: (inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["string"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $langStringFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["object"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
                 }
               }
-              if (memberOutputValuesEither!.isLeft()) {
-                return memberOutputValuesEither;
-              }
             }
-
-            let collectedOutputValues: Resource.Values<string | bigint> =
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              });
-            for (let memberI = 0; memberI < 2; memberI++) {
-              if (memberInputValues[memberI].length === 0) {
-                continue;
-              }
-              switch (memberI) {
-                case 0:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$stringFromRdfResourceValues<string>(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["string"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-                case 1:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$bigIntFromRdfResourceValues<bigint>(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["bigint"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-              }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
             }
-            return Right(collectedOutputValues);
-          },
-        }),
-        stringOrLangString: $shaclPropertyFromRdf<
-          string | Literal,
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $LangStringSchema;
-              };
-            };
           }
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DatatypeDiscriminatedUnionsStruct.schema.properties
-              .stringOrLangString,
-          typeFromRdfResourceValues: (inputValues, options) => {
-            const memberInputValues: Resource.Values[] = Array.from({
-              length: 2,
-            }).map(() =>
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              }),
-            );
-            for (const inputValue of inputValues) {
-              const inputValueAsValues = inputValue.toValues();
-              let memberOutputValuesEither: Either<Error, unknown> | undefined;
-              for (let memberI = 0; memberI < 2; memberI++) {
-                if (memberI === 0) {
-                  memberOutputValuesEither =
-                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
+
+          let collectedOutputValues: Resource.Values<string | Literal> =
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
-                    });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                } else if (memberI === 1) {
-                  memberOutputValuesEither = $langStringFromRdfResourceValues(
-                    inputValueAsValues,
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$langStringFromRdfResourceValues(
+                    memberInputValues[memberI],
                     {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["object"].type,
                     },
-                  );
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                }
-              }
-              if (memberOutputValuesEither!.isLeft()) {
-                return memberOutputValuesEither;
-              }
+                  ).unsafeCoerce(),
+                );
+                break;
             }
-
-            let collectedOutputValues: Resource.Values<string | Literal> =
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              });
-            for (let memberI = 0; memberI < 2; memberI++) {
-              if (memberInputValues[memberI].length === 0) {
-                continue;
-              }
-              switch (memberI) {
-                case 0:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$stringFromRdfResourceValues<string>(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["string"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-                case 1:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$langStringFromRdfResourceValues(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["object"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-              }
-            }
-            return Right(collectedOutputValues);
-          },
-        }),
-      }).chain((properties) =>
-        DatatypeDiscriminatedUnionsStruct.create(properties),
-      ),
+          }
+          return Right(collectedOutputValues);
+        },
+      }),
+    }).chain((properties) =>
+      DatatypeDiscriminatedUnionsStruct.create(properties),
     );
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     DatatypeDiscriminatedUnionsStruct.Identifier,
-    DatatypeDiscriminatedUnionsStruct
+    Omit<DatatypeDiscriminatedUnionsStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -12223,7 +12236,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   };
 
   export const $toString: $ToStringFunction<
-    DatatypeDiscriminatedUnionsStruct
+    Pick<DatatypeDiscriminatedUnionsStruct, "$identifier">
   > = (_datatypeDiscriminatedUnionsStruct) =>
     `DatatypeDiscriminatedUnionsStruct(${JSON.stringify(
       DatatypeDiscriminatedUnionsStruct.toStringRecord(
@@ -12400,10 +12413,9 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     readonly stringOrLangString: string | Literal;
   }): DatatypeDiscriminatedUnionsStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<DatatypeDiscriminatedUnionsStruct> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Omit<DatatypeDiscriminatedUnionsStruct, "$type">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -12763,7 +12775,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
 
   export const filter: $FilterFunction<
     DatatypeDiscriminatedUnionsStruct.Filter,
-    DatatypeDiscriminatedUnionsStruct
+    Omit<DatatypeDiscriminatedUnionsStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -14104,7 +14116,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
 
   export const fromJson: $FromJsonFunction<
     DatatypeDiscriminatedUnionsStruct,
-    DatatypeDiscriminatedUnionsStruct.Json
+    Omit<DatatypeDiscriminatedUnionsStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -15172,7 +15184,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    DatatypeDiscriminatedUnionsStruct,
+    Omit<DatatypeDiscriminatedUnionsStruct, "$type">,
     DatatypeDiscriminatedUnionsStruct.Json
   > = (_datatypeDiscriminatedUnionsStruct) =>
     JSON.parse(
@@ -15183,7 +15195,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             ? `_:${_datatypeDiscriminatedUnionsStruct.$identifier().value}`
             : _datatypeDiscriminatedUnionsStruct.$identifier().value,
         "@type": "http://example.com/DatatypeDiscriminatedUnionsStruct",
-        $type: _datatypeDiscriminatedUnionsStruct.$type,
+        $type: "DatatypeDiscriminatedUnionsStruct",
         dateOrDateTime: ((value) => {
           if (value["$type"] === "date") {
             return {
@@ -15406,7 +15418,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     );
 
   export const toLoggable: $ToLoggableFunction<
-    DatatypeDiscriminatedUnionsStruct
+    Omit<DatatypeDiscriminatedUnionsStruct, "$type">
   > = (_datatypeDiscriminatedUnionsStruct) =>
     $compactRecord({
       $identifier: _datatypeDiscriminatedUnionsStruct.$identifier().value,
@@ -15495,15 +15507,15 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    DatatypeDiscriminatedUnionsStruct,
-    DatatypeDiscriminatedUnionsStruct.Identifier
+    DatatypeDiscriminatedUnionsStruct.Identifier,
+    Omit<DatatypeDiscriminatedUnionsStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     DatatypeDiscriminatedUnionsStruct.Identifier,
-    DatatypeDiscriminatedUnionsStruct
+    Omit<DatatypeDiscriminatedUnionsStruct, "$type">
   >(DatatypeDiscriminatedUnionsStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    DatatypeDiscriminatedUnionsStruct,
+    Omit<DatatypeDiscriminatedUnionsStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     DatatypeDiscriminatedUnionsStruct.toRdfResource(value, {
@@ -15513,7 +15525,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    DatatypeDiscriminatedUnionsStruct
+    Pick<DatatypeDiscriminatedUnionsStruct, "$identifier">
   > = (_datatypeDiscriminatedUnionsStruct) =>
     $compactRecord({
       $identifier: _datatypeDiscriminatedUnionsStruct.$identifier().toString(),
@@ -15572,67 +15584,63 @@ export namespace DatesStruct {
     resource,
     options,
   ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [DatesStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: DatesStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        date: $shaclPropertyFromRdf<Maybe<Date>, $MaybeSchema<$DateSchema>>({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: DatesStruct.schema.properties.date,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Date,
-            $DateSchema
-          >($dateFromRdfResourceValues),
-        }),
-        dateTime: $shaclPropertyFromRdf<Maybe<Date>, $MaybeSchema<$DateSchema>>(
-          {
-            ...options,
-            focusResource: resource,
-            ignoreRdfType: true,
-            propertySchema: DatesStruct.schema.properties.dateTime,
-            typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-              Date,
-              $DateSchema
-            >($dateTimeFromRdfResourceValues),
-          },
-        ),
-        dateTimeStamp: $shaclPropertyFromRdf<
-          Maybe<Date>,
-          $MaybeSchema<$DateSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: DatesStruct.schema.properties.dateTimeStamp,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Date,
-            $DateSchema
-          >($dateTimeFromRdfResourceValues),
-        }),
-      }).chain((properties) => DatesStruct.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: DatesStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [DatesStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      date: $shaclPropertyFromRdf<Maybe<Date>, $MaybeSchema<$DateSchema>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: DatesStruct.schema.properties.date,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Date,
+          $DateSchema
+        >($dateFromRdfResourceValues),
+      }),
+      dateTime: $shaclPropertyFromRdf<Maybe<Date>, $MaybeSchema<$DateSchema>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: DatesStruct.schema.properties.dateTime,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Date,
+          $DateSchema
+        >($dateTimeFromRdfResourceValues),
+      }),
+      dateTimeStamp: $shaclPropertyFromRdf<
+        Maybe<Date>,
+        $MaybeSchema<$DateSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: DatesStruct.schema.properties.dateTimeStamp,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Date,
+          $DateSchema
+        >($dateTimeFromRdfResourceValues),
+      }),
+    }).chain((properties) => DatesStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     DatesStruct.Identifier,
-    DatesStruct
+    Omit<DatesStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -15665,7 +15673,9 @@ export namespace DatesStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<DatesStruct> = (_datesStruct) =>
+  export const $toString: $ToStringFunction<
+    Pick<DatesStruct, "$identifier">
+  > = (_datesStruct) =>
     `DatesStruct(${JSON.stringify(DatesStruct.toStringRecord(_datesStruct))})`;
 
   export const create: <
@@ -15760,7 +15770,10 @@ export namespace DatesStruct {
     readonly dateTimeStamp?: Date | Maybe<Date>;
   }): DatesStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<DatesStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<DatesStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -15800,10 +15813,10 @@ export namespace DatesStruct {
         ),
       );
 
-  export const filter: $FilterFunction<DatesStruct.Filter, DatesStruct> = (
-    filter,
-    value,
-  ) => {
+  export const filter: $FilterFunction<
+    DatesStruct.Filter,
+    Omit<DatesStruct, "$type">
+  > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier())
@@ -16025,9 +16038,10 @@ export namespace DatesStruct {
     return patterns;
   };
 
-  export const fromJson: $FromJsonFunction<DatesStruct, DatesStruct.Json> = (
-    $json,
-  ) =>
+  export const fromJson: $FromJsonFunction<
+    DatesStruct,
+    Omit<DatesStruct.Json, "$type">
+  > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
         $json["@id"].startsWith("_:")
@@ -16256,9 +16270,10 @@ export namespace DatesStruct {
     );
   }
 
-  export const toJson: $ToJsonFunction<DatesStruct, DatesStruct.Json> = (
-    _datesStruct,
-  ) =>
+  export const toJson: $ToJsonFunction<
+    Omit<DatesStruct, "$type">,
+    DatesStruct.Json
+  > = (_datesStruct) =>
     JSON.parse(
       JSON.stringify({
         "@id":
@@ -16266,7 +16281,7 @@ export namespace DatesStruct {
             ? `_:${_datesStruct.$identifier().value}`
             : _datesStruct.$identifier().value,
         "@type": "http://example.com/DatesStruct",
-        $type: _datesStruct.$type,
+        $type: "DatesStruct",
         date: _datesStruct.date.map((item) => $toIsoDateString(item)).extract(),
         dateTime: _datesStruct.dateTime
           .map((item) => item.toISOString())
@@ -16277,7 +16292,9 @@ export namespace DatesStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<DatesStruct> = (_datesStruct) =>
+  export const toLoggable: $ToLoggableFunction<Omit<DatesStruct, "$type">> = (
+    _datesStruct,
+  ) =>
     $compactRecord({
       $identifier: _datesStruct.$identifier().value,
       $type: "DatesStruct",
@@ -16291,14 +16308,15 @@ export namespace DatesStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    DatesStruct,
-    DatesStruct.Identifier
-  > = $wrap_ToRdfResourceFunction<DatesStruct.Identifier, DatesStruct>(
-    DatesStruct._toRdfResourceFunction,
-  );
+    DatesStruct.Identifier,
+    Omit<DatesStruct, "$type">
+  > = $wrap_ToRdfResourceFunction<
+    DatesStruct.Identifier,
+    Omit<DatesStruct, "$type">
+  >(DatesStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    DatesStruct,
+    Omit<DatesStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     DatesStruct.toRdfResource(value, {
@@ -16307,9 +16325,10 @@ export namespace DatesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<DatesStruct> = (
-    _datesStruct,
-  ) => $compactRecord({ $identifier: _datesStruct.$identifier().toString() });
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<DatesStruct, "$identifier">
+  > = (_datesStruct) =>
+    $compactRecord({ $identifier: _datesStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     DatesStruct.Filter,
@@ -16369,116 +16388,113 @@ export namespace DefaultValuesStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     DefaultValuesStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [DefaultValuesStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: DefaultValuesStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        dateDefaultValue: $shaclPropertyFromRdf<
-          Date,
-          $DefaultValueSchema<$DateSchema>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DefaultValuesStruct.schema.properties.dateDefaultValue,
-          typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
-            Date,
-            $DateSchema
-          >($dateFromRdfResourceValues),
-        }),
-        dateTimeDefaultValue: $shaclPropertyFromRdf<
+          propertyPath: $rdf_subject,
+          schema: DefaultValuesStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [DefaultValuesStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      dateDefaultValue: $shaclPropertyFromRdf<
+        Date,
+        $DefaultValueSchema<$DateSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: DefaultValuesStruct.schema.properties.dateDefaultValue,
+        typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
           Date,
-          $DefaultValueSchema<$DateSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DefaultValuesStruct.schema.properties.dateTimeDefaultValue,
-          typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
-            Date,
-            $DateSchema
-          >($dateTimeFromRdfResourceValues),
-        }),
-        falseBooleanDefaultValue: $shaclPropertyFromRdf<
+          $DateSchema
+        >($dateFromRdfResourceValues),
+      }),
+      dateTimeDefaultValue: $shaclPropertyFromRdf<
+        Date,
+        $DefaultValueSchema<$DateSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DefaultValuesStruct.schema.properties.dateTimeDefaultValue,
+        typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
+          Date,
+          $DateSchema
+        >($dateTimeFromRdfResourceValues),
+      }),
+      falseBooleanDefaultValue: $shaclPropertyFromRdf<
+        boolean,
+        $DefaultValueSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DefaultValuesStruct.schema.properties.falseBooleanDefaultValue,
+        typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
           boolean,
-          $DefaultValueSchema<$BooleanSchema<boolean>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DefaultValuesStruct.schema.properties.falseBooleanDefaultValue,
-          typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
-            boolean,
-            $BooleanSchema<boolean>
-          >($booleanFromRdfResourceValues<boolean>),
-        }),
-        numberDefaultValue: $shaclPropertyFromRdf<
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+      numberDefaultValue: $shaclPropertyFromRdf<
+        number,
+        $DefaultValueSchema<$NumericSchema<number>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DefaultValuesStruct.schema.properties.numberDefaultValue,
+        typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
           number,
-          $DefaultValueSchema<$NumericSchema<number>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DefaultValuesStruct.schema.properties.numberDefaultValue,
-          typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
-            number,
-            $NumericSchema<number>
-          >($floatFromRdfResourceValues<number>),
-        }),
-        stringDefaultValue: $shaclPropertyFromRdf<
+          $NumericSchema<number>
+        >($floatFromRdfResourceValues<number>),
+      }),
+      stringDefaultValue: $shaclPropertyFromRdf<
+        string,
+        $DefaultValueSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DefaultValuesStruct.schema.properties.stringDefaultValue,
+        typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
           string,
-          $DefaultValueSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DefaultValuesStruct.schema.properties.stringDefaultValue,
-          typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        trueBooleanDefaultValue: $shaclPropertyFromRdf<
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      trueBooleanDefaultValue: $shaclPropertyFromRdf<
+        boolean,
+        $DefaultValueSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          DefaultValuesStruct.schema.properties.trueBooleanDefaultValue,
+        typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
           boolean,
-          $DefaultValueSchema<$BooleanSchema<boolean>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DefaultValuesStruct.schema.properties.trueBooleanDefaultValue,
-          typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
-            boolean,
-            $BooleanSchema<boolean>
-          >($booleanFromRdfResourceValues<boolean>),
-        }),
-      }).chain((properties) => DefaultValuesStruct.create(properties)),
-    );
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+    }).chain((properties) => DefaultValuesStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     DefaultValuesStruct.Identifier,
-    DefaultValuesStruct
+    Omit<DefaultValuesStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -16558,9 +16574,9 @@ export namespace DefaultValuesStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<DefaultValuesStruct> = (
-    _defaultValuesStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<DefaultValuesStruct, "$identifier">
+  > = (_defaultValuesStruct) =>
     `DefaultValuesStruct(${JSON.stringify(DefaultValuesStruct.toStringRecord(_defaultValuesStruct))})`;
 
   export const create: <
@@ -16667,7 +16683,10 @@ export namespace DefaultValuesStruct {
     readonly trueBooleanDefaultValue?: boolean;
   }): DefaultValuesStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<DefaultValuesStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<DefaultValuesStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -16718,7 +16737,7 @@ export namespace DefaultValuesStruct {
 
   export const filter: $FilterFunction<
     DefaultValuesStruct.Filter,
-    DefaultValuesStruct
+    Omit<DefaultValuesStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -17047,7 +17066,7 @@ export namespace DefaultValuesStruct {
 
   export const fromJson: $FromJsonFunction<
     DefaultValuesStruct,
-    DefaultValuesStruct.Json
+    Omit<DefaultValuesStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -17339,7 +17358,7 @@ export namespace DefaultValuesStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    DefaultValuesStruct,
+    Omit<DefaultValuesStruct, "$type">,
     DefaultValuesStruct.Json
   > = (_defaultValuesStruct) =>
     JSON.parse(
@@ -17349,7 +17368,7 @@ export namespace DefaultValuesStruct {
             ? `_:${_defaultValuesStruct.$identifier().value}`
             : _defaultValuesStruct.$identifier().value,
         "@type": "http://example.com/DefaultValuesStruct",
-        $type: _defaultValuesStruct.$type,
+        $type: "DefaultValuesStruct",
         dateDefaultValue: $toIsoDateString(
           _defaultValuesStruct.dateDefaultValue,
         ),
@@ -17362,9 +17381,9 @@ export namespace DefaultValuesStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<DefaultValuesStruct> = (
-    _defaultValuesStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<DefaultValuesStruct, "$type">
+  > = (_defaultValuesStruct) =>
     $compactRecord({
       $identifier: _defaultValuesStruct.$identifier().value,
       $type: "DefaultValuesStruct",
@@ -17378,15 +17397,15 @@ export namespace DefaultValuesStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    DefaultValuesStruct,
-    DefaultValuesStruct.Identifier
+    DefaultValuesStruct.Identifier,
+    Omit<DefaultValuesStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     DefaultValuesStruct.Identifier,
-    DefaultValuesStruct
+    Omit<DefaultValuesStruct, "$type">
   >(DefaultValuesStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    DefaultValuesStruct,
+    Omit<DefaultValuesStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     DefaultValuesStruct.toRdfResource(value, {
@@ -17395,9 +17414,9 @@ export namespace DefaultValuesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<DefaultValuesStruct> = (
-    _defaultValuesStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<DefaultValuesStruct, "$identifier">
+  > = (_defaultValuesStruct) =>
     $compactRecord({
       $identifier: _defaultValuesStruct.$identifier().toString(),
     });
@@ -17447,46 +17466,43 @@ export namespace DirectRecursiveStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     DirectRecursiveStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [DirectRecursiveStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: DirectRecursiveStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        directRecursive: $shaclPropertyFromRdf<
-          Maybe<DirectRecursiveStruct>,
-          $MaybeSchema<typeof DirectRecursiveStruct.schema>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            DirectRecursiveStruct.schema.properties.directRecursive,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            DirectRecursiveStruct,
-            typeof DirectRecursiveStruct.schema
-          >(DirectRecursiveStruct.fromRdfResourceValues),
-        }),
-      }).chain((properties) => DirectRecursiveStruct.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: DirectRecursiveStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [DirectRecursiveStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      directRecursive: $shaclPropertyFromRdf<
+        Maybe<DirectRecursiveStruct>,
+        $MaybeSchema<typeof DirectRecursiveStruct.schema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: DirectRecursiveStruct.schema.properties.directRecursive,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          DirectRecursiveStruct,
+          typeof DirectRecursiveStruct.schema
+        >(DirectRecursiveStruct.fromRdfResourceValues),
+      }),
+    }).chain((properties) => DirectRecursiveStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     DirectRecursiveStruct.Identifier,
-    DirectRecursiveStruct
+    Omit<DirectRecursiveStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -17512,9 +17528,9 @@ export namespace DirectRecursiveStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<DirectRecursiveStruct> = (
-    _directRecursiveStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<DirectRecursiveStruct, "$identifier">
+  > = (_directRecursiveStruct) =>
     `DirectRecursiveStruct(${JSON.stringify(DirectRecursiveStruct.toStringRecord(_directRecursiveStruct))})`;
 
   export const create: <
@@ -17594,7 +17610,9 @@ export namespace DirectRecursiveStruct {
       | Maybe<DirectRecursiveStruct>;
   }): DirectRecursiveStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<DirectRecursiveStruct> = (left, right) =>
+  export const equals: $EqualsFunction<
+    Pick<DirectRecursiveStruct, "$identifier" | "directRecursive">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -17613,7 +17631,7 @@ export namespace DirectRecursiveStruct {
 
   export const filter: $FilterFunction<
     DirectRecursiveStruct.Filter,
-    DirectRecursiveStruct
+    Pick<DirectRecursiveStruct, "$identifier" | "directRecursive">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -17734,7 +17752,7 @@ export namespace DirectRecursiveStruct {
 
   export const fromJson: $FromJsonFunction<
     DirectRecursiveStruct,
-    DirectRecursiveStruct.Json
+    Omit<DirectRecursiveStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -17943,7 +17961,7 @@ export namespace DirectRecursiveStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    DirectRecursiveStruct,
+    Omit<DirectRecursiveStruct, "$type">,
     DirectRecursiveStruct.Json
   > = (_directRecursiveStruct) =>
     JSON.parse(
@@ -17953,16 +17971,16 @@ export namespace DirectRecursiveStruct {
             ? `_:${_directRecursiveStruct.$identifier().value}`
             : _directRecursiveStruct.$identifier().value,
         "@type": "http://example.com/DirectRecursiveStruct",
-        $type: _directRecursiveStruct.$type,
+        $type: "DirectRecursiveStruct",
         directRecursive: _directRecursiveStruct.directRecursive
           .map((item) => DirectRecursiveStruct.toJson(item))
           .extract(),
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<DirectRecursiveStruct> = (
-    _directRecursiveStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Pick<DirectRecursiveStruct, "$identifier" | "directRecursive">
+  > = (_directRecursiveStruct) =>
     $compactRecord({
       $identifier: _directRecursiveStruct.$identifier().value,
       $type: "DirectRecursiveStruct",
@@ -17972,15 +17990,15 @@ export namespace DirectRecursiveStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    DirectRecursiveStruct,
-    DirectRecursiveStruct.Identifier
+    DirectRecursiveStruct.Identifier,
+    Omit<DirectRecursiveStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     DirectRecursiveStruct.Identifier,
-    DirectRecursiveStruct
+    Omit<DirectRecursiveStruct, "$type">
   >(DirectRecursiveStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    DirectRecursiveStruct,
+    Omit<DirectRecursiveStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     DirectRecursiveStruct.toRdfResource(value, {
@@ -17990,7 +18008,7 @@ export namespace DirectRecursiveStruct {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    DirectRecursiveStruct
+    Pick<DirectRecursiveStruct, "$identifier">
   > = (_directRecursiveStruct) =>
     $compactRecord({
       $identifier: _directRecursiveStruct.$identifier().toString(),
@@ -18058,62 +18076,59 @@ export namespace DisplayStruct {
     resource,
     options,
   ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [DisplayStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: DisplayStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        explicitFalseDisplay: $shaclPropertyFromRdf<
-          string,
-          $StringSchema<string>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: DisplayStruct.schema.properties.explicitFalseDisplay,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-        explicitTrueDisplay: $shaclPropertyFromRdf<
-          string,
-          $StringSchema<string>
-        >({
+          propertyPath: $rdf_subject,
+          schema: DisplayStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [DisplayStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      explicitFalseDisplay: $shaclPropertyFromRdf<
+        string,
+        $StringSchema<string>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: DisplayStruct.schema.properties.explicitFalseDisplay,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+      explicitTrueDisplay: $shaclPropertyFromRdf<string, $StringSchema<string>>(
+        {
           ...options,
           focusResource: resource,
           ignoreRdfType: true,
           propertySchema: DisplayStruct.schema.properties.explicitTrueDisplay,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-        implicitFalseDisplay: $shaclPropertyFromRdf<
-          string,
-          $StringSchema<string>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: DisplayStruct.schema.properties.implicitFalseDisplay,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-      }).chain((properties) => DisplayStruct.create(properties)),
-    );
+        },
+      ),
+      implicitFalseDisplay: $shaclPropertyFromRdf<
+        string,
+        $StringSchema<string>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: DisplayStruct.schema.properties.implicitFalseDisplay,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) => DisplayStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     DisplayStruct.Identifier,
-    DisplayStruct
+    Omit<DisplayStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -18140,7 +18155,9 @@ export namespace DisplayStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<DisplayStruct> = (_displayStruct) =>
+  export const $toString: $ToStringFunction<
+    Pick<DisplayStruct, "$identifier" | "explicitTrueDisplay">
+  > = (_displayStruct) =>
     `DisplayStruct(${JSON.stringify(DisplayStruct.toStringRecord(_displayStruct))})`;
 
   export const create: <
@@ -18211,7 +18228,10 @@ export namespace DisplayStruct {
     readonly implicitFalseDisplay: string;
   }): DisplayStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<DisplayStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<DisplayStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -18239,10 +18259,10 @@ export namespace DisplayStruct {
         ),
       );
 
-  export const filter: $FilterFunction<DisplayStruct.Filter, DisplayStruct> = (
-    filter,
-    value,
-  ) => {
+  export const filter: $FilterFunction<
+    DisplayStruct.Filter,
+    Omit<DisplayStruct, "$type">
+  > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier())
@@ -18442,7 +18462,7 @@ export namespace DisplayStruct {
 
   export const fromJson: $FromJsonFunction<
     DisplayStruct,
-    DisplayStruct.Json
+    Omit<DisplayStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -18660,9 +18680,10 @@ export namespace DisplayStruct {
     );
   }
 
-  export const toJson: $ToJsonFunction<DisplayStruct, DisplayStruct.Json> = (
-    _displayStruct,
-  ) =>
+  export const toJson: $ToJsonFunction<
+    Omit<DisplayStruct, "$type">,
+    DisplayStruct.Json
+  > = (_displayStruct) =>
     JSON.parse(
       JSON.stringify({
         "@id":
@@ -18670,14 +18691,14 @@ export namespace DisplayStruct {
             ? `_:${_displayStruct.$identifier().value}`
             : _displayStruct.$identifier().value,
         "@type": "http://example.com/DisplayStruct",
-        $type: _displayStruct.$type,
+        $type: "DisplayStruct",
         explicitFalseDisplay: _displayStruct.explicitFalseDisplay,
         explicitTrueDisplay: _displayStruct.explicitTrueDisplay,
         implicitFalseDisplay: _displayStruct.implicitFalseDisplay,
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<DisplayStruct> = (
+  export const toLoggable: $ToLoggableFunction<Omit<DisplayStruct, "$type">> = (
     _displayStruct,
   ) =>
     $compactRecord({
@@ -18689,14 +18710,15 @@ export namespace DisplayStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    DisplayStruct,
-    DisplayStruct.Identifier
-  > = $wrap_ToRdfResourceFunction<DisplayStruct.Identifier, DisplayStruct>(
-    DisplayStruct._toRdfResourceFunction,
-  );
+    DisplayStruct.Identifier,
+    Omit<DisplayStruct, "$type">
+  > = $wrap_ToRdfResourceFunction<
+    DisplayStruct.Identifier,
+    Omit<DisplayStruct, "$type">
+  >(DisplayStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    DisplayStruct,
+    Omit<DisplayStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     DisplayStruct.toRdfResource(value, {
@@ -18705,9 +18727,9 @@ export namespace DisplayStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<DisplayStruct> = (
-    _displayStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<DisplayStruct, "$identifier" | "explicitTrueDisplay">
+  > = (_displayStruct) =>
     $compactRecord({
       $identifier: _displayStruct.$identifier().toString(),
       explicitTrueDisplay: _displayStruct.explicitTrueDisplay.toString(),
@@ -18764,45 +18786,46 @@ export namespace ExplicitFromToRdfTypesStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     ExplicitFromToRdfTypesStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [ExplicitFromToRdfTypesStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              ExplicitFromToRdfTypesStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        explicitFromToRdfTypesString: $shaclPropertyFromRdf<
-          string,
-          $StringSchema<string>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            ExplicitFromToRdfTypesStruct.schema.properties
-              .explicitFromToRdfTypesString,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-      }).chain((properties) => ExplicitFromToRdfTypesStruct.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema:
+            ExplicitFromToRdfTypesStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [
+              ExplicitFromToRdfTypesStruct.schema.properties.$rdfType
+                .fromRdfType,
+            ],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      explicitFromToRdfTypesString: $shaclPropertyFromRdf<
+        string,
+        $StringSchema<string>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          ExplicitFromToRdfTypesStruct.schema.properties
+            .explicitFromToRdfTypesString,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) => ExplicitFromToRdfTypesStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     ExplicitFromToRdfTypesStruct.Identifier,
-    ExplicitFromToRdfTypesStruct
+    Omit<ExplicitFromToRdfTypesStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -18820,9 +18843,9 @@ export namespace ExplicitFromToRdfTypesStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<ExplicitFromToRdfTypesStruct> = (
-    _explicitFromToRdfTypesStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<ExplicitFromToRdfTypesStruct, "$identifier">
+  > = (_explicitFromToRdfTypesStruct) =>
     `ExplicitFromToRdfTypesStruct(${JSON.stringify(
       ExplicitFromToRdfTypesStruct.toStringRecord(
         _explicitFromToRdfTypesStruct,
@@ -18892,10 +18915,12 @@ export namespace ExplicitFromToRdfTypesStruct {
     readonly explicitFromToRdfTypesString: string;
   }): ExplicitFromToRdfTypesStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<ExplicitFromToRdfTypesStruct> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Pick<
+      ExplicitFromToRdfTypesStruct,
+      "$identifier" | "explicitFromToRdfTypesString"
+    >
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -18910,7 +18935,10 @@ export namespace ExplicitFromToRdfTypesStruct {
 
   export const filter: $FilterFunction<
     ExplicitFromToRdfTypesStruct.Filter,
-    ExplicitFromToRdfTypesStruct
+    Pick<
+      ExplicitFromToRdfTypesStruct,
+      "$identifier" | "explicitFromToRdfTypesString"
+    >
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -19061,7 +19089,7 @@ export namespace ExplicitFromToRdfTypesStruct {
 
   export const fromJson: $FromJsonFunction<
     ExplicitFromToRdfTypesStruct,
-    ExplicitFromToRdfTypesStruct.Json
+    Omit<ExplicitFromToRdfTypesStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -19262,7 +19290,7 @@ export namespace ExplicitFromToRdfTypesStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    ExplicitFromToRdfTypesStruct,
+    Omit<ExplicitFromToRdfTypesStruct, "$type">,
     ExplicitFromToRdfTypesStruct.Json
   > = (_explicitFromToRdfTypesStruct) =>
     JSON.parse(
@@ -19275,15 +19303,18 @@ export namespace ExplicitFromToRdfTypesStruct {
           "http://example.com/ToRdfType",
           "http://example.com/FromRdfType",
         ],
-        $type: _explicitFromToRdfTypesStruct.$type,
+        $type: "ExplicitFromToRdfTypesStruct",
         explicitFromToRdfTypesString:
           _explicitFromToRdfTypesStruct.explicitFromToRdfTypesString,
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<ExplicitFromToRdfTypesStruct> = (
-    _explicitFromToRdfTypesStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Pick<
+      ExplicitFromToRdfTypesStruct,
+      "$identifier" | "explicitFromToRdfTypesString"
+    >
+  > = (_explicitFromToRdfTypesStruct) =>
     $compactRecord({
       $identifier: _explicitFromToRdfTypesStruct.$identifier().value,
       $type: "ExplicitFromToRdfTypesStruct",
@@ -19292,15 +19323,15 @@ export namespace ExplicitFromToRdfTypesStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    ExplicitFromToRdfTypesStruct,
-    ExplicitFromToRdfTypesStruct.Identifier
+    ExplicitFromToRdfTypesStruct.Identifier,
+    Omit<ExplicitFromToRdfTypesStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     ExplicitFromToRdfTypesStruct.Identifier,
-    ExplicitFromToRdfTypesStruct
+    Omit<ExplicitFromToRdfTypesStruct, "$type">
   >(ExplicitFromToRdfTypesStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    ExplicitFromToRdfTypesStruct,
+    Omit<ExplicitFromToRdfTypesStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     ExplicitFromToRdfTypesStruct.toRdfResource(value, {
@@ -19310,7 +19341,7 @@ export namespace ExplicitFromToRdfTypesStruct {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    ExplicitFromToRdfTypesStruct
+    Pick<ExplicitFromToRdfTypesStruct, "$identifier">
   > = (_explicitFromToRdfTypesStruct) =>
     $compactRecord({
       $identifier: _explicitFromToRdfTypesStruct.$identifier().toString(),
@@ -19366,43 +19397,41 @@ export namespace ExplicitRdfTypeStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     ExplicitRdfTypeStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [ExplicitRdfTypeStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: ExplicitRdfTypeStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        explicitRdfTypeString: $shaclPropertyFromRdf<
-          string,
-          $StringSchema<string>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            ExplicitRdfTypeStruct.schema.properties.explicitRdfTypeString,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-      }).chain((properties) => ExplicitRdfTypeStruct.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: ExplicitRdfTypeStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [ExplicitRdfTypeStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      explicitRdfTypeString: $shaclPropertyFromRdf<
+        string,
+        $StringSchema<string>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          ExplicitRdfTypeStruct.schema.properties.explicitRdfTypeString,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) => ExplicitRdfTypeStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     ExplicitRdfTypeStruct.Identifier,
-    ExplicitRdfTypeStruct
+    Omit<ExplicitRdfTypeStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -19419,9 +19448,9 @@ export namespace ExplicitRdfTypeStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<ExplicitRdfTypeStruct> = (
-    _explicitRdfTypeStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<ExplicitRdfTypeStruct, "$identifier">
+  > = (_explicitRdfTypeStruct) =>
     `ExplicitRdfTypeStruct(${JSON.stringify(ExplicitRdfTypeStruct.toStringRecord(_explicitRdfTypeStruct))})`;
 
   export const create: <
@@ -19485,7 +19514,9 @@ export namespace ExplicitRdfTypeStruct {
     readonly explicitRdfTypeString: string;
   }): ExplicitRdfTypeStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<ExplicitRdfTypeStruct> = (left, right) =>
+  export const equals: $EqualsFunction<
+    Pick<ExplicitRdfTypeStruct, "$identifier" | "explicitRdfTypeString">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -19500,7 +19531,7 @@ export namespace ExplicitRdfTypeStruct {
 
   export const filter: $FilterFunction<
     ExplicitRdfTypeStruct.Filter,
-    ExplicitRdfTypeStruct
+    Pick<ExplicitRdfTypeStruct, "$identifier" | "explicitRdfTypeString">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -19644,7 +19675,7 @@ export namespace ExplicitRdfTypeStruct {
 
   export const fromJson: $FromJsonFunction<
     ExplicitRdfTypeStruct,
-    ExplicitRdfTypeStruct.Json
+    Omit<ExplicitRdfTypeStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -19833,7 +19864,7 @@ export namespace ExplicitRdfTypeStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    ExplicitRdfTypeStruct,
+    Omit<ExplicitRdfTypeStruct, "$type">,
     ExplicitRdfTypeStruct.Json
   > = (_explicitRdfTypeStruct) =>
     JSON.parse(
@@ -19843,14 +19874,14 @@ export namespace ExplicitRdfTypeStruct {
             ? `_:${_explicitRdfTypeStruct.$identifier().value}`
             : _explicitRdfTypeStruct.$identifier().value,
         "@type": "http://example.com/RdfType",
-        $type: _explicitRdfTypeStruct.$type,
+        $type: "ExplicitRdfTypeStruct",
         explicitRdfTypeString: _explicitRdfTypeStruct.explicitRdfTypeString,
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<ExplicitRdfTypeStruct> = (
-    _explicitRdfTypeStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Pick<ExplicitRdfTypeStruct, "$identifier" | "explicitRdfTypeString">
+  > = (_explicitRdfTypeStruct) =>
     $compactRecord({
       $identifier: _explicitRdfTypeStruct.$identifier().value,
       $type: "ExplicitRdfTypeStruct",
@@ -19858,15 +19889,15 @@ export namespace ExplicitRdfTypeStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    ExplicitRdfTypeStruct,
-    ExplicitRdfTypeStruct.Identifier
+    ExplicitRdfTypeStruct.Identifier,
+    Omit<ExplicitRdfTypeStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     ExplicitRdfTypeStruct.Identifier,
-    ExplicitRdfTypeStruct
+    Omit<ExplicitRdfTypeStruct, "$type">
   >(ExplicitRdfTypeStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    ExplicitRdfTypeStruct,
+    Omit<ExplicitRdfTypeStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     ExplicitRdfTypeStruct.toRdfResource(value, {
@@ -19876,7 +19907,7 @@ export namespace ExplicitRdfTypeStruct {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    ExplicitRdfTypeStruct
+    Pick<ExplicitRdfTypeStruct, "$identifier">
   > = (_explicitRdfTypeStruct) =>
     $compactRecord({
       $identifier: _explicitRdfTypeStruct.$identifier().toString(),
@@ -19927,51 +19958,48 @@ export namespace FlattenDiscriminatedUnionMember3 {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     FlattenDiscriminatedUnionMember3
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [
-            FlattenDiscriminatedUnionMember3.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              FlattenDiscriminatedUnionMember3.schema.properties.$identifier
-                .type,
-          },
-        ).chain((values) => values.head()),
-        flattenDiscriminatedUnionMember3String: $shaclPropertyFromRdf<
-          string,
-          $StringSchema<string>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            FlattenDiscriminatedUnionMember3.schema.properties
-              .flattenDiscriminatedUnionMember3String,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-      }).chain((properties) =>
-        FlattenDiscriminatedUnionMember3.create(properties),
-      ),
+          propertyPath: $rdf_subject,
+          schema:
+            FlattenDiscriminatedUnionMember3.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [
+              FlattenDiscriminatedUnionMember3.schema.properties.$rdfType
+                .fromRdfType,
+            ],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      flattenDiscriminatedUnionMember3String: $shaclPropertyFromRdf<
+        string,
+        $StringSchema<string>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          FlattenDiscriminatedUnionMember3.schema.properties
+            .flattenDiscriminatedUnionMember3String,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) =>
+      FlattenDiscriminatedUnionMember3.create(properties),
     );
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     FlattenDiscriminatedUnionMember3.Identifier,
-    FlattenDiscriminatedUnionMember3
+    Omit<FlattenDiscriminatedUnionMember3, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -19994,7 +20022,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
   };
 
   export const $toString: $ToStringFunction<
-    FlattenDiscriminatedUnionMember3
+    Pick<FlattenDiscriminatedUnionMember3, "$identifier">
   > = (_flattenDiscriminatedUnionMember3) =>
     `FlattenDiscriminatedUnionMember3(${JSON.stringify(
       FlattenDiscriminatedUnionMember3.toStringRecord(
@@ -20065,10 +20093,12 @@ export namespace FlattenDiscriminatedUnionMember3 {
     readonly flattenDiscriminatedUnionMember3String: string;
   }): FlattenDiscriminatedUnionMember3 => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<FlattenDiscriminatedUnionMember3> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Pick<
+      FlattenDiscriminatedUnionMember3,
+      "$identifier" | "flattenDiscriminatedUnionMember3String"
+    >
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -20086,7 +20116,10 @@ export namespace FlattenDiscriminatedUnionMember3 {
 
   export const filter: $FilterFunction<
     FlattenDiscriminatedUnionMember3.Filter,
-    FlattenDiscriminatedUnionMember3
+    Pick<
+      FlattenDiscriminatedUnionMember3,
+      "$identifier" | "flattenDiscriminatedUnionMember3String"
+    >
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -20237,7 +20270,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
 
   export const fromJson: $FromJsonFunction<
     FlattenDiscriminatedUnionMember3,
-    FlattenDiscriminatedUnionMember3.Json
+    Omit<FlattenDiscriminatedUnionMember3.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -20444,7 +20477,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
   }
 
   export const toJson: $ToJsonFunction<
-    FlattenDiscriminatedUnionMember3,
+    Omit<FlattenDiscriminatedUnionMember3, "$type">,
     FlattenDiscriminatedUnionMember3.Json
   > = (_flattenDiscriminatedUnionMember3) =>
     JSON.parse(
@@ -20455,14 +20488,17 @@ export namespace FlattenDiscriminatedUnionMember3 {
             ? `_:${_flattenDiscriminatedUnionMember3.$identifier().value}`
             : _flattenDiscriminatedUnionMember3.$identifier().value,
         "@type": "http://example.com/FlattenDiscriminatedUnionMember3",
-        $type: _flattenDiscriminatedUnionMember3.$type,
+        $type: "FlattenDiscriminatedUnionMember3",
         flattenDiscriminatedUnionMember3String:
           _flattenDiscriminatedUnionMember3.flattenDiscriminatedUnionMember3String,
       }),
     );
 
   export const toLoggable: $ToLoggableFunction<
-    FlattenDiscriminatedUnionMember3
+    Pick<
+      FlattenDiscriminatedUnionMember3,
+      "$identifier" | "flattenDiscriminatedUnionMember3String"
+    >
   > = (_flattenDiscriminatedUnionMember3) =>
     $compactRecord({
       $identifier: _flattenDiscriminatedUnionMember3.$identifier().value,
@@ -20472,15 +20508,15 @@ export namespace FlattenDiscriminatedUnionMember3 {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    FlattenDiscriminatedUnionMember3,
-    FlattenDiscriminatedUnionMember3.Identifier
+    FlattenDiscriminatedUnionMember3.Identifier,
+    Omit<FlattenDiscriminatedUnionMember3, "$type">
   > = $wrap_ToRdfResourceFunction<
     FlattenDiscriminatedUnionMember3.Identifier,
-    FlattenDiscriminatedUnionMember3
+    Omit<FlattenDiscriminatedUnionMember3, "$type">
   >(FlattenDiscriminatedUnionMember3._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    FlattenDiscriminatedUnionMember3,
+    Omit<FlattenDiscriminatedUnionMember3, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     FlattenDiscriminatedUnionMember3.toRdfResource(value, {
@@ -20490,7 +20526,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    FlattenDiscriminatedUnionMember3
+    Pick<FlattenDiscriminatedUnionMember3, "$identifier">
   > = (_flattenDiscriminatedUnionMember3) =>
     $compactRecord({
       $identifier: _flattenDiscriminatedUnionMember3.$identifier().toString(),
@@ -20575,7 +20611,7 @@ export namespace HasValuesStruct {
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     HasValuesStruct.Identifier,
-    HasValuesStruct
+    Omit<HasValuesStruct, "$type">
   > = (parameters) => {
     parameters.resource.add(
       HasValuesStruct.schema.properties.hasIriValue.path,
@@ -20590,9 +20626,9 @@ export namespace HasValuesStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<HasValuesStruct> = (
-    _hasValuesStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<HasValuesStruct, "$identifier">
+  > = (_hasValuesStruct) =>
     `HasValuesStruct(${JSON.stringify(HasValuesStruct.toStringRecord(_hasValuesStruct))})`;
 
   export const create: <
@@ -20664,7 +20700,10 @@ export namespace HasValuesStruct {
     readonly hasLiteralValue: string;
   }): HasValuesStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<HasValuesStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<HasValuesStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -20687,7 +20726,7 @@ export namespace HasValuesStruct {
 
   export const filter: $FilterFunction<
     HasValuesStruct.Filter,
-    HasValuesStruct
+    Omit<HasValuesStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -20791,7 +20830,7 @@ export namespace HasValuesStruct {
 
   export const fromJson: $FromJsonFunction<
     HasValuesStruct,
-    HasValuesStruct.Json
+    Omit<HasValuesStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -20991,7 +21030,7 @@ export namespace HasValuesStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    HasValuesStruct,
+    Omit<HasValuesStruct, "$type">,
     HasValuesStruct.Json
   > = (_hasValuesStruct) =>
     JSON.parse(
@@ -21000,15 +21039,15 @@ export namespace HasValuesStruct {
           _hasValuesStruct.$identifier().termType === "BlankNode"
             ? `_:${_hasValuesStruct.$identifier().value}`
             : _hasValuesStruct.$identifier().value,
-        $type: _hasValuesStruct.$type,
+        $type: "HasValuesStruct",
         hasIriValue: _hasValuesStruct.hasIriValue.value,
         hasLiteralValue: _hasValuesStruct.hasLiteralValue,
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<HasValuesStruct> = (
-    _hasValuesStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<HasValuesStruct, "$type">
+  > = (_hasValuesStruct) =>
     $compactRecord({
       $identifier: _hasValuesStruct.$identifier().value,
       $type: "HasValuesStruct",
@@ -21017,14 +21056,15 @@ export namespace HasValuesStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    HasValuesStruct,
-    HasValuesStruct.Identifier
-  > = $wrap_ToRdfResourceFunction<HasValuesStruct.Identifier, HasValuesStruct>(
-    HasValuesStruct._toRdfResourceFunction,
-  );
+    HasValuesStruct.Identifier,
+    Omit<HasValuesStruct, "$type">
+  > = $wrap_ToRdfResourceFunction<
+    HasValuesStruct.Identifier,
+    Omit<HasValuesStruct, "$type">
+  >(HasValuesStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    HasValuesStruct,
+    Omit<HasValuesStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     HasValuesStruct.toRdfResource(value, {
@@ -21033,9 +21073,9 @@ export namespace HasValuesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<HasValuesStruct> = (
-    _hasValuesStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<HasValuesStruct, "$identifier">
+  > = (_hasValuesStruct) =>
     $compactRecord({ $identifier: _hasValuesStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -21147,7 +21187,7 @@ export namespace IgnoredPropertiesStruct {
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     IgnoredPropertiesStruct.Identifier,
-    IgnoredPropertiesStruct
+    Omit<IgnoredPropertiesStruct, "$type">
   > = (parameters) => {
     parameters.resource.add(
       IgnoredPropertiesStruct.schema.properties.severityDefaultProperty.path,
@@ -21168,9 +21208,9 @@ export namespace IgnoredPropertiesStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<IgnoredPropertiesStruct> = (
-    _ignoredPropertiesStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<IgnoredPropertiesStruct, "$identifier">
+  > = (_ignoredPropertiesStruct) =>
     `IgnoredPropertiesStruct(${JSON.stringify(IgnoredPropertiesStruct.toStringRecord(_ignoredPropertiesStruct))})`;
 
   export const create: <
@@ -21248,10 +21288,9 @@ export namespace IgnoredPropertiesStruct {
     readonly shaclmateIgnoreFalseProperty: string;
   }): IgnoredPropertiesStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<IgnoredPropertiesStruct> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Omit<IgnoredPropertiesStruct, "$type">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -21284,7 +21323,7 @@ export namespace IgnoredPropertiesStruct {
 
   export const filter: $FilterFunction<
     IgnoredPropertiesStruct.Filter,
-    IgnoredPropertiesStruct
+    Omit<IgnoredPropertiesStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -21435,7 +21474,7 @@ export namespace IgnoredPropertiesStruct {
 
   export const fromJson: $FromJsonFunction<
     IgnoredPropertiesStruct,
-    IgnoredPropertiesStruct.Json
+    Omit<IgnoredPropertiesStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -21664,7 +21703,7 @@ export namespace IgnoredPropertiesStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    IgnoredPropertiesStruct,
+    Omit<IgnoredPropertiesStruct, "$type">,
     IgnoredPropertiesStruct.Json
   > = (_ignoredPropertiesStruct) =>
     JSON.parse(
@@ -21673,7 +21712,7 @@ export namespace IgnoredPropertiesStruct {
           _ignoredPropertiesStruct.$identifier().termType === "BlankNode"
             ? `_:${_ignoredPropertiesStruct.$identifier().value}`
             : _ignoredPropertiesStruct.$identifier().value,
-        $type: _ignoredPropertiesStruct.$type,
+        $type: "IgnoredPropertiesStruct",
         severityDefaultProperty:
           _ignoredPropertiesStruct.severityDefaultProperty,
         severityViolationProperty:
@@ -21683,9 +21722,9 @@ export namespace IgnoredPropertiesStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<IgnoredPropertiesStruct> = (
-    _ignoredPropertiesStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<IgnoredPropertiesStruct, "$type">
+  > = (_ignoredPropertiesStruct) =>
     $compactRecord({
       $identifier: _ignoredPropertiesStruct.$identifier().value,
       $type: "IgnoredPropertiesStruct",
@@ -21697,15 +21736,15 @@ export namespace IgnoredPropertiesStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    IgnoredPropertiesStruct,
-    IgnoredPropertiesStruct.Identifier
+    IgnoredPropertiesStruct.Identifier,
+    Omit<IgnoredPropertiesStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     IgnoredPropertiesStruct.Identifier,
-    IgnoredPropertiesStruct
+    Omit<IgnoredPropertiesStruct, "$type">
   >(IgnoredPropertiesStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    IgnoredPropertiesStruct,
+    Omit<IgnoredPropertiesStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     IgnoredPropertiesStruct.toRdfResource(value, {
@@ -21715,7 +21754,7 @@ export namespace IgnoredPropertiesStruct {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    IgnoredPropertiesStruct
+    Pick<IgnoredPropertiesStruct, "$identifier">
   > = (_ignoredPropertiesStruct) =>
     $compactRecord({
       $identifier: _ignoredPropertiesStruct.$identifier().toString(),
@@ -21766,46 +21805,44 @@ export namespace IndirectRecursiveStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     IndirectRecursiveStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [IndirectRecursiveStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: IndirectRecursiveStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        indirectRecursiveHelper: $shaclPropertyFromRdf<
-          Maybe<IndirectRecursiveStructHelper>,
-          $MaybeSchema<typeof IndirectRecursiveStructHelper.schema>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            IndirectRecursiveStruct.schema.properties.indirectRecursiveHelper,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            IndirectRecursiveStructHelper,
-            typeof IndirectRecursiveStructHelper.schema
-          >(IndirectRecursiveStructHelper.fromRdfResourceValues),
-        }),
-      }).chain((properties) => IndirectRecursiveStruct.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: IndirectRecursiveStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [IndirectRecursiveStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      indirectRecursiveHelper: $shaclPropertyFromRdf<
+        Maybe<IndirectRecursiveStructHelper>,
+        $MaybeSchema<typeof IndirectRecursiveStructHelper.schema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          IndirectRecursiveStruct.schema.properties.indirectRecursiveHelper,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          IndirectRecursiveStructHelper,
+          typeof IndirectRecursiveStructHelper.schema
+        >(IndirectRecursiveStructHelper.fromRdfResourceValues),
+      }),
+    }).chain((properties) => IndirectRecursiveStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     IndirectRecursiveStruct.Identifier,
-    IndirectRecursiveStruct
+    Omit<IndirectRecursiveStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -21832,9 +21869,9 @@ export namespace IndirectRecursiveStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<IndirectRecursiveStruct> = (
-    _indirectRecursiveStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<IndirectRecursiveStruct, "$identifier">
+  > = (_indirectRecursiveStruct) =>
     `IndirectRecursiveStruct(${JSON.stringify(IndirectRecursiveStruct.toStringRecord(_indirectRecursiveStruct))})`;
 
   export const create: <
@@ -21915,10 +21952,9 @@ export namespace IndirectRecursiveStruct {
       | Maybe<IndirectRecursiveStructHelper>;
   }): IndirectRecursiveStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<IndirectRecursiveStruct> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Pick<IndirectRecursiveStruct, "$identifier" | "indirectRecursiveHelper">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -21937,7 +21973,7 @@ export namespace IndirectRecursiveStruct {
 
   export const filter: $FilterFunction<
     IndirectRecursiveStruct.Filter,
-    IndirectRecursiveStruct
+    Pick<IndirectRecursiveStruct, "$identifier" | "indirectRecursiveHelper">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -22062,7 +22098,7 @@ export namespace IndirectRecursiveStruct {
 
   export const fromJson: $FromJsonFunction<
     IndirectRecursiveStruct,
-    IndirectRecursiveStruct.Json
+    Omit<IndirectRecursiveStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -22279,7 +22315,7 @@ export namespace IndirectRecursiveStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    IndirectRecursiveStruct,
+    Omit<IndirectRecursiveStruct, "$type">,
     IndirectRecursiveStruct.Json
   > = (_indirectRecursiveStruct) =>
     JSON.parse(
@@ -22289,7 +22325,7 @@ export namespace IndirectRecursiveStruct {
             ? `_:${_indirectRecursiveStruct.$identifier().value}`
             : _indirectRecursiveStruct.$identifier().value,
         "@type": "http://example.com/IndirectRecursiveStruct",
-        $type: _indirectRecursiveStruct.$type,
+        $type: "IndirectRecursiveStruct",
         indirectRecursiveHelper:
           _indirectRecursiveStruct.indirectRecursiveHelper
             .map((item) => IndirectRecursiveStructHelper.toJson(item))
@@ -22297,9 +22333,9 @@ export namespace IndirectRecursiveStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<IndirectRecursiveStruct> = (
-    _indirectRecursiveStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Pick<IndirectRecursiveStruct, "$identifier" | "indirectRecursiveHelper">
+  > = (_indirectRecursiveStruct) =>
     $compactRecord({
       $identifier: _indirectRecursiveStruct.$identifier().value,
       $type: "IndirectRecursiveStruct",
@@ -22309,15 +22345,15 @@ export namespace IndirectRecursiveStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    IndirectRecursiveStruct,
-    IndirectRecursiveStruct.Identifier
+    IndirectRecursiveStruct.Identifier,
+    Omit<IndirectRecursiveStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     IndirectRecursiveStruct.Identifier,
-    IndirectRecursiveStruct
+    Omit<IndirectRecursiveStruct, "$type">
   >(IndirectRecursiveStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    IndirectRecursiveStruct,
+    Omit<IndirectRecursiveStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     IndirectRecursiveStruct.toRdfResource(value, {
@@ -22327,7 +22363,7 @@ export namespace IndirectRecursiveStruct {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    IndirectRecursiveStruct
+    Pick<IndirectRecursiveStruct, "$identifier">
   > = (_indirectRecursiveStruct) =>
     $compactRecord({
       $identifier: _indirectRecursiveStruct.$identifier().toString(),
@@ -22378,52 +22414,48 @@ export namespace IndirectRecursiveStructHelper {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     IndirectRecursiveStructHelper
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [
-            IndirectRecursiveStructHelper.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              IndirectRecursiveStructHelper.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        indirectRecursive: $shaclPropertyFromRdf<
-          Maybe<IndirectRecursiveStruct>,
-          $MaybeSchema<typeof IndirectRecursiveStruct.schema>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            IndirectRecursiveStructHelper.schema.properties.indirectRecursive,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            IndirectRecursiveStruct,
-            typeof IndirectRecursiveStruct.schema
-          >(IndirectRecursiveStruct.fromRdfResourceValues),
-        }),
-      }).chain((properties) =>
-        IndirectRecursiveStructHelper.create(properties),
-      ),
-    );
+          propertyPath: $rdf_subject,
+          schema:
+            IndirectRecursiveStructHelper.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [
+              IndirectRecursiveStructHelper.schema.properties.$rdfType
+                .fromRdfType,
+            ],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      indirectRecursive: $shaclPropertyFromRdf<
+        Maybe<IndirectRecursiveStruct>,
+        $MaybeSchema<typeof IndirectRecursiveStruct.schema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          IndirectRecursiveStructHelper.schema.properties.indirectRecursive,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          IndirectRecursiveStruct,
+          typeof IndirectRecursiveStruct.schema
+        >(IndirectRecursiveStruct.fromRdfResourceValues),
+      }),
+    }).chain((properties) => IndirectRecursiveStructHelper.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     IndirectRecursiveStructHelper.Identifier,
-    IndirectRecursiveStructHelper
+    Omit<IndirectRecursiveStructHelper, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -22450,9 +22482,9 @@ export namespace IndirectRecursiveStructHelper {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<IndirectRecursiveStructHelper> = (
-    _indirectRecursiveStructHelper,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<IndirectRecursiveStructHelper, "$identifier">
+  > = (_indirectRecursiveStructHelper) =>
     `IndirectRecursiveStructHelper(${JSON.stringify(
       IndirectRecursiveStructHelper.toStringRecord(
         _indirectRecursiveStructHelper,
@@ -22537,10 +22569,9 @@ export namespace IndirectRecursiveStructHelper {
       | Maybe<IndirectRecursiveStruct>;
   }): IndirectRecursiveStructHelper => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<IndirectRecursiveStructHelper> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Pick<IndirectRecursiveStructHelper, "$identifier" | "indirectRecursive">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -22559,7 +22590,7 @@ export namespace IndirectRecursiveStructHelper {
 
   export const filter: $FilterFunction<
     IndirectRecursiveStructHelper.Filter,
-    IndirectRecursiveStructHelper
+    Pick<IndirectRecursiveStructHelper, "$identifier" | "indirectRecursive">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -22682,7 +22713,7 @@ export namespace IndirectRecursiveStructHelper {
 
   export const fromJson: $FromJsonFunction<
     IndirectRecursiveStructHelper,
-    IndirectRecursiveStructHelper.Json
+    Omit<IndirectRecursiveStructHelper.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -22897,7 +22928,7 @@ export namespace IndirectRecursiveStructHelper {
   }
 
   export const toJson: $ToJsonFunction<
-    IndirectRecursiveStructHelper,
+    Omit<IndirectRecursiveStructHelper, "$type">,
     IndirectRecursiveStructHelper.Json
   > = (_indirectRecursiveStructHelper) =>
     JSON.parse(
@@ -22907,7 +22938,7 @@ export namespace IndirectRecursiveStructHelper {
             ? `_:${_indirectRecursiveStructHelper.$identifier().value}`
             : _indirectRecursiveStructHelper.$identifier().value,
         "@type": "http://example.com/IndirectRecursiveStructHelper",
-        $type: _indirectRecursiveStructHelper.$type,
+        $type: "IndirectRecursiveStructHelper",
         indirectRecursive: _indirectRecursiveStructHelper.indirectRecursive
           .map((item) => IndirectRecursiveStruct.toJson(item))
           .extract(),
@@ -22915,7 +22946,7 @@ export namespace IndirectRecursiveStructHelper {
     );
 
   export const toLoggable: $ToLoggableFunction<
-    IndirectRecursiveStructHelper
+    Pick<IndirectRecursiveStructHelper, "$identifier" | "indirectRecursive">
   > = (_indirectRecursiveStructHelper) =>
     $compactRecord({
       $identifier: _indirectRecursiveStructHelper.$identifier().value,
@@ -22926,15 +22957,15 @@ export namespace IndirectRecursiveStructHelper {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    IndirectRecursiveStructHelper,
-    IndirectRecursiveStructHelper.Identifier
+    IndirectRecursiveStructHelper.Identifier,
+    Omit<IndirectRecursiveStructHelper, "$type">
   > = $wrap_ToRdfResourceFunction<
     IndirectRecursiveStructHelper.Identifier,
-    IndirectRecursiveStructHelper
+    Omit<IndirectRecursiveStructHelper, "$type">
   >(IndirectRecursiveStructHelper._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    IndirectRecursiveStructHelper,
+    Omit<IndirectRecursiveStructHelper, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     IndirectRecursiveStructHelper.toRdfResource(value, {
@@ -22944,7 +22975,7 @@ export namespace IndirectRecursiveStructHelper {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    IndirectRecursiveStructHelper
+    Pick<IndirectRecursiveStructHelper, "$identifier">
   > = (_indirectRecursiveStructHelper) =>
     $compactRecord({
       $identifier: _indirectRecursiveStructHelper.$identifier().toString(),
@@ -22998,46 +23029,43 @@ export namespace InIdentifierStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     InIdentifierStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [InIdentifierStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $iriFromRdfResourceValues<
-          | "http://example.com/InIdentifierStructInstance1"
-          | "http://example.com/InIdentifierStructInstance2"
-        >($rdfResourceIdentifierValues(resource), {
-          ...options,
-          focusResource: resource,
-          propertyPath: $rdf_subject,
-          schema: InIdentifierStruct.schema.properties.$identifier.type,
-        }).chain((values) => values.head()),
-        inIdentifierString: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            InIdentifierStruct.schema.properties.inIdentifierString,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-      }).chain((properties) => InIdentifierStruct.create(properties)),
-    );
+    $sequenceRecord({
+      $identifier: $iriFromRdfResourceValues<
+        | "http://example.com/InIdentifierStructInstance1"
+        | "http://example.com/InIdentifierStructInstance2"
+      >($rdfResourceIdentifierValues(resource), {
+        ...options,
+        focusResource: resource,
+        propertyPath: $rdf_subject,
+        schema: InIdentifierStruct.schema.properties.$identifier.type,
+      }).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [InIdentifierStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      inIdentifierString: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: InIdentifierStruct.schema.properties.inIdentifierString,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+    }).chain((properties) => InIdentifierStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     InIdentifierStruct.Identifier,
-    InIdentifierStruct
+    Omit<InIdentifierStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -23056,9 +23084,9 @@ export namespace InIdentifierStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<InIdentifierStruct> = (
-    _inIdentifierStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<InIdentifierStruct, "$identifier">
+  > = (_inIdentifierStruct) =>
     `InIdentifierStruct(${JSON.stringify(InIdentifierStruct.toStringRecord(_inIdentifierStruct))})`;
 
   export const create: <
@@ -23150,7 +23178,9 @@ export namespace InIdentifierStruct {
     readonly inIdentifierString?: string | Maybe<string>;
   }): InIdentifierStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<InIdentifierStruct> = (left, right) =>
+  export const equals: $EqualsFunction<
+    Pick<InIdentifierStruct, "$identifier" | "inIdentifierString">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -23169,7 +23199,7 @@ export namespace InIdentifierStruct {
 
   export const filter: $FilterFunction<
     InIdentifierStruct.Filter,
-    InIdentifierStruct
+    Pick<InIdentifierStruct, "$identifier" | "inIdentifierString">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -23320,7 +23350,7 @@ export namespace InIdentifierStruct {
 
   export const fromJson: $FromJsonFunction<
     InIdentifierStruct,
-    InIdentifierStruct.Json
+    Omit<InIdentifierStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<
@@ -23559,23 +23589,23 @@ export namespace InIdentifierStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    InIdentifierStruct,
+    Omit<InIdentifierStruct, "$type">,
     InIdentifierStruct.Json
   > = (_inIdentifierStruct) =>
     JSON.parse(
       JSON.stringify({
         "@id": _inIdentifierStruct.$identifier().value,
         "@type": "http://example.com/InIdentifierStruct",
-        $type: _inIdentifierStruct.$type,
+        $type: "InIdentifierStruct",
         inIdentifierString: _inIdentifierStruct.inIdentifierString
           .map((item) => item)
           .extract(),
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<InIdentifierStruct> = (
-    _inIdentifierStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Pick<InIdentifierStruct, "$identifier" | "inIdentifierString">
+  > = (_inIdentifierStruct) =>
     $compactRecord({
       $identifier: _inIdentifierStruct.$identifier().value,
       $type: "InIdentifierStruct",
@@ -23585,15 +23615,15 @@ export namespace InIdentifierStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    InIdentifierStruct,
-    InIdentifierStruct.Identifier
+    InIdentifierStruct.Identifier,
+    Omit<InIdentifierStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     InIdentifierStruct.Identifier,
-    InIdentifierStruct
+    Omit<InIdentifierStruct, "$type">
   >(InIdentifierStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    InIdentifierStruct,
+    Omit<InIdentifierStruct, "$type">,
     NamedNode
   > = (value, options) => [
     InIdentifierStruct.toRdfResource(value, {
@@ -23602,9 +23632,9 @@ export namespace InIdentifierStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<InIdentifierStruct> = (
-    _inIdentifierStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<InIdentifierStruct, "$identifier">
+  > = (_inIdentifierStruct) =>
     $compactRecord({
       $identifier: _inIdentifierStruct.$identifier().toString(),
     });
@@ -23713,124 +23743,116 @@ export namespace InPropertiesStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     InPropertiesStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [InPropertiesStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: InPropertiesStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        inBooleans: $shaclPropertyFromRdf<
-          Maybe<true>,
-          $MaybeSchema<$BooleanSchema<true>>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: InPropertiesStruct.schema.properties.inBooleans,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            true,
-            $BooleanSchema<true>
-          >($booleanFromRdfResourceValues<true>),
-        }),
-        inDateTimes: $shaclPropertyFromRdf<
-          Maybe<Date>,
-          $MaybeSchema<$DateSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: InPropertiesStruct.schema.properties.inDateTimes,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Date,
-            $DateSchema
-          >($dateTimeFromRdfResourceValues),
-        }),
-        inDoubles: $shaclPropertyFromRdf<
-          Maybe<1 | 2>,
-          $MaybeSchema<$NumericSchema<1 | 2>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: InPropertiesStruct.schema.properties.inDoubles,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            1 | 2,
-            $NumericSchema<1 | 2>
-          >($floatFromRdfResourceValues<1 | 2>),
-        }),
-        inIntegers: $shaclPropertyFromRdf<
-          Maybe<1n | 2n>,
-          $MaybeSchema<$NumericSchema<1n | 2n>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: InPropertiesStruct.schema.properties.inIntegers,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            1n | 2n,
-            $NumericSchema<1n | 2n>
-          >($bigIntFromRdfResourceValues<1n | 2n>),
-        }),
-        inIris: $shaclPropertyFromRdf<
-          Maybe<
-            NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
+          propertyPath: $rdf_subject,
+          schema: InPropertiesStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [InPropertiesStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      inBooleans: $shaclPropertyFromRdf<
+        Maybe<true>,
+        $MaybeSchema<$BooleanSchema<true>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: InPropertiesStruct.schema.properties.inBooleans,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          true,
+          $BooleanSchema<true>
+        >($booleanFromRdfResourceValues<true>),
+      }),
+      inDateTimes: $shaclPropertyFromRdf<
+        Maybe<Date>,
+        $MaybeSchema<$DateSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: InPropertiesStruct.schema.properties.inDateTimes,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Date,
+          $DateSchema
+        >($dateTimeFromRdfResourceValues),
+      }),
+      inDoubles: $shaclPropertyFromRdf<
+        Maybe<1 | 2>,
+        $MaybeSchema<$NumericSchema<1 | 2>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: InPropertiesStruct.schema.properties.inDoubles,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          1 | 2,
+          $NumericSchema<1 | 2>
+        >($floatFromRdfResourceValues<1 | 2>),
+      }),
+      inIntegers: $shaclPropertyFromRdf<
+        Maybe<1n | 2n>,
+        $MaybeSchema<$NumericSchema<1n | 2n>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: InPropertiesStruct.schema.properties.inIntegers,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          1n | 2n,
+          $NumericSchema<1n | 2n>
+        >($bigIntFromRdfResourceValues<1n | 2n>),
+      }),
+      inIris: $shaclPropertyFromRdf<
+        Maybe<
+          NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
+        >,
+        $MaybeSchema<
+          $IriSchema<"http://example.com/InIri1" | "http://example.com/InIri2">
+        >
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: InPropertiesStruct.schema.properties.inIris,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">,
+          $IriSchema<"http://example.com/InIri1" | "http://example.com/InIri2">
+        >(
+          $iriFromRdfResourceValues<
+            "http://example.com/InIri1" | "http://example.com/InIri2"
           >,
-          $MaybeSchema<
-            $IriSchema<
-              "http://example.com/InIri1" | "http://example.com/InIri2"
-            >
-          >
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: InPropertiesStruct.schema.properties.inIris,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            NamedNode<
-              "http://example.com/InIri1" | "http://example.com/InIri2"
-            >,
-            $IriSchema<
-              "http://example.com/InIri1" | "http://example.com/InIri2"
-            >
-          >(
-            $iriFromRdfResourceValues<
-              "http://example.com/InIri1" | "http://example.com/InIri2"
-            >,
-          ),
-        }),
-        inStrings: $shaclPropertyFromRdf<
-          Maybe<"text" | "html">,
-          $MaybeSchema<$StringSchema<"text" | "html">>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: InPropertiesStruct.schema.properties.inStrings,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            "text" | "html",
-            $StringSchema<"text" | "html">
-          >($stringFromRdfResourceValues<"text" | "html">),
-        }),
-      }).chain((properties) => InPropertiesStruct.create(properties)),
-    );
+        ),
+      }),
+      inStrings: $shaclPropertyFromRdf<
+        Maybe<"text" | "html">,
+        $MaybeSchema<$StringSchema<"text" | "html">>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: InPropertiesStruct.schema.properties.inStrings,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          "text" | "html",
+          $StringSchema<"text" | "html">
+        >($stringFromRdfResourceValues<"text" | "html">),
+      }),
+    }).chain((properties) => InPropertiesStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     InPropertiesStruct.Identifier,
-    InPropertiesStruct
+    Omit<InPropertiesStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -23882,9 +23904,9 @@ export namespace InPropertiesStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<InPropertiesStruct> = (
-    _inPropertiesStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<InPropertiesStruct, "$identifier">
+  > = (_inPropertiesStruct) =>
     `InPropertiesStruct(${JSON.stringify(InPropertiesStruct.toStringRecord(_inPropertiesStruct))})`;
 
   export const create: <
@@ -24042,7 +24064,10 @@ export namespace InPropertiesStruct {
     readonly inStrings?: "text" | "html" | Maybe<"text" | "html">;
   }): InPropertiesStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<InPropertiesStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<InPropertiesStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -24117,7 +24142,7 @@ export namespace InPropertiesStruct {
 
   export const filter: $FilterFunction<
     InPropertiesStruct.Filter,
-    InPropertiesStruct
+    Omit<InPropertiesStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -24463,7 +24488,7 @@ export namespace InPropertiesStruct {
 
   export const fromJson: $FromJsonFunction<
     InPropertiesStruct,
-    InPropertiesStruct.Json
+    Omit<InPropertiesStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -24782,7 +24807,7 @@ export namespace InPropertiesStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    InPropertiesStruct,
+    Omit<InPropertiesStruct, "$type">,
     InPropertiesStruct.Json
   > = (_inPropertiesStruct) =>
     JSON.parse(
@@ -24792,7 +24817,7 @@ export namespace InPropertiesStruct {
             ? `_:${_inPropertiesStruct.$identifier().value}`
             : _inPropertiesStruct.$identifier().value,
         "@type": "http://example.com/InPropertiesStruct",
-        $type: _inPropertiesStruct.$type,
+        $type: "InPropertiesStruct",
         inBooleans: _inPropertiesStruct.inBooleans
           .map((item) => item)
           .extract(),
@@ -24808,9 +24833,9 @@ export namespace InPropertiesStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<InPropertiesStruct> = (
-    _inPropertiesStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<InPropertiesStruct, "$type">
+  > = (_inPropertiesStruct) =>
     $compactRecord({
       $identifier: _inPropertiesStruct.$identifier().value,
       $type: "InPropertiesStruct",
@@ -24825,15 +24850,15 @@ export namespace InPropertiesStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    InPropertiesStruct,
-    InPropertiesStruct.Identifier
+    InPropertiesStruct.Identifier,
+    Omit<InPropertiesStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     InPropertiesStruct.Identifier,
-    InPropertiesStruct
+    Omit<InPropertiesStruct, "$type">
   >(InPropertiesStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    InPropertiesStruct,
+    Omit<InPropertiesStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     InPropertiesStruct.toRdfResource(value, {
@@ -24842,9 +24867,9 @@ export namespace InPropertiesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<InPropertiesStruct> = (
-    _inPropertiesStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<InPropertiesStruct, "$identifier">
+  > = (_inPropertiesStruct) =>
     $compactRecord({
       $identifier: _inPropertiesStruct.$identifier().toString(),
     });
@@ -24882,6 +24907,518 @@ export namespace InPropertiesStruct {
     );
 }
 
+export type IntersectionPropertiesStruct = {
+  readonly $identifier: () => IntersectionPropertiesStruct.Identifier;
+
+  readonly $type: "IntersectionPropertiesStruct";
+
+  readonly namedStructIntersection: StructIntersection;
+};
+
+export namespace IntersectionPropertiesStruct {
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    IntersectionPropertiesStruct
+  > = (resource, options) =>
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
+          ...options,
+          focusResource: resource,
+          propertyPath: $rdf_subject,
+          schema:
+            IntersectionPropertiesStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      namedStructIntersection: $shaclPropertyFromRdf<
+        StructIntersection,
+        typeof StructIntersection.schema
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          IntersectionPropertiesStruct.schema.properties
+            .namedStructIntersection,
+        typeFromRdfResourceValues: StructIntersection.fromRdfResourceValues,
+      }),
+    }).chain((properties) => IntersectionPropertiesStruct.create(properties));
+
+  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+    IntersectionPropertiesStruct.Identifier,
+    Omit<IntersectionPropertiesStruct, "$type">
+  > = (parameters) => {
+    parameters.resource.add(
+      IntersectionPropertiesStruct.schema.properties.namedStructIntersection
+        .path,
+      StructIntersection.toRdfResourceValues(
+        parameters.object.namedStructIntersection,
+        {
+          ignoreRdfType: parameters.ignoreRdfType,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
+          propertyPath:
+            IntersectionPropertiesStruct.schema.properties
+              .namedStructIntersection.path,
+        },
+      ),
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const $toString: $ToStringFunction<
+    Pick<IntersectionPropertiesStruct, "$identifier">
+  > = (_intersectionPropertiesStruct) =>
+    `IntersectionPropertiesStruct(${JSON.stringify(
+      IntersectionPropertiesStruct.toStringRecord(
+        _intersectionPropertiesStruct,
+      ),
+    )})`;
+
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => IntersectionPropertiesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly namedStructIntersection: StructIntersection;
+  }) => Either<Error, IntersectionPropertiesStruct> = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => IntersectionPropertiesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly namedStructIntersection: StructIntersection;
+  }): Either<Error, IntersectionPropertiesStruct> =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      namedStructIntersection: Either.of(parameters.namedStructIntersection),
+    })
+      .map((properties) => ({
+        ...properties,
+        $type: "IntersectionPropertiesStruct" as const,
+      }))
+      .map((object) =>
+        $monkeyPatchObject(object, {
+          toJson: IntersectionPropertiesStruct.toJson,
+          $toString: IntersectionPropertiesStruct.$toString,
+        }),
+      );
+
+  export const createUnsafe: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => IntersectionPropertiesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly namedStructIntersection: StructIntersection;
+  }) => IntersectionPropertiesStruct = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => IntersectionPropertiesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly namedStructIntersection: StructIntersection;
+  }): IntersectionPropertiesStruct => create(parameters).unsafeCoerce();
+
+  export const equals: $EqualsFunction<
+    Omit<IntersectionPropertiesStruct, "$type">
+  > = (left, right) =>
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        {
+          equalsFunction: StructIntersection.equals,
+          name: "namedStructIntersection",
+        },
+        [left, left.namedStructIntersection],
+        [right, right.namedStructIntersection],
+      ),
+    );
+
+  export const filter: $FilterFunction<
+    IntersectionPropertiesStruct.Filter,
+    Omit<IntersectionPropertiesStruct, "$type">
+  > = (filter, value) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.namedStructIntersection !== undefined &&
+      !StructIntersection.filter(
+        filter.namedStructIntersection,
+        value.namedStructIntersection,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly namedStructIntersection?: StructIntersection.Filter;
+  };
+
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    IntersectionPropertiesStruct.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.namedStructIntersection,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "namedStructIntersection",
+        propertySchema:
+          IntersectionPropertiesStruct.schema.properties
+            .namedStructIntersection,
+        typeSparqlConstructTriples:
+          StructIntersection.valueSparqlConstructTriples,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    IntersectionPropertiesStruct.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema:
+            IntersectionPropertiesStruct.schema.properties.$identifier.type,
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.namedStructIntersection,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "namedStructIntersection",
+        propertySchema:
+          IntersectionPropertiesStruct.schema.properties
+            .namedStructIntersection,
+        typeSparqlWherePatterns: StructIntersection.valueSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
+  export const fromJson: $FromJsonFunction<
+    IntersectionPropertiesStruct,
+    Omit<IntersectionPropertiesStruct.Json, "$type">
+  > = ($json) =>
+    $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      namedStructIntersection: StructIntersection.fromJson(
+        $json["namedStructIntersection"],
+      ),
+    }).chain(IntersectionPropertiesStruct.create);
+
+  export const fromRdfResource: $FromRdfResourceFunction<IntersectionPropertiesStruct> =
+    $wrap_FromRdfResourceFunction(
+      IntersectionPropertiesStruct._fromRdfResource,
+    );
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    IntersectionPropertiesStruct,
+    typeof IntersectionPropertiesStruct.schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) =>
+          IntersectionPropertiesStruct.fromRdfResource(resource, options),
+        ),
+    );
+
+  export const hash: $HashFunction<
+    Omit<IntersectionPropertiesStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => IntersectionPropertiesStruct.Identifier;
+      readonly $type?: "IntersectionPropertiesStruct";
+    }
+  > = (hasher, _intersectionPropertiesStruct) => {
+    if (_intersectionPropertiesStruct.$identifier) {
+      hasher.update(_intersectionPropertiesStruct.$identifier().value);
+    }
+    if (_intersectionPropertiesStruct.$type) {
+      hasher.update(_intersectionPropertiesStruct.$type);
+    }
+    StructIntersection.hash(
+      hasher,
+      _intersectionPropertiesStruct.namedStructIntersection,
+    );
+  };
+
+  export type Identifier = BlankNode | NamedNode;
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+  }
+
+  export const isIntersectionPropertiesStruct = (
+    object: $Object,
+  ): object is IntersectionPropertiesStruct =>
+    object.$type === "IntersectionPropertiesStruct";
+
+  export type Json = {
+    "@id": string;
+    $type: "IntersectionPropertiesStruct";
+    namedStructIntersection: StructIntersection.Json;
+  };
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("IntersectionPropertiesStruct"),
+        namedStructIntersection: StructIntersection.Json.schema(),
+      }) satisfies z.ZodType<Json>;
+    }
+
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "IntersectionPropertiesStruct" as const },
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/namedStructIntersection`,
+            type: "Control",
+          },
+        ],
+        type: "Group",
+        label: "IntersectionPropertiesStruct",
+      };
+    };
+  }
+
+  export const schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      $type: { kind: "Discriminant", value: "IntersectionPropertiesStruct" },
+      namedStructIntersection: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://example.com/namedStructIntersection",
+        ),
+        get type() {
+          return StructIntersection.schema;
+        },
+      },
+    },
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: IntersectionPropertiesStruct.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "intersectionPropertiesStruct";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        IntersectionPropertiesStruct.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          IntersectionPropertiesStruct.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof IntersectionPropertiesStruct.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      IntersectionPropertiesStruct.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export const toJson: $ToJsonFunction<
+    Omit<IntersectionPropertiesStruct, "$type">,
+    IntersectionPropertiesStruct.Json
+  > = (_intersectionPropertiesStruct) =>
+    JSON.parse(
+      JSON.stringify({
+        "@id":
+          _intersectionPropertiesStruct.$identifier().termType === "BlankNode"
+            ? `_:${_intersectionPropertiesStruct.$identifier().value}`
+            : _intersectionPropertiesStruct.$identifier().value,
+        $type: "IntersectionPropertiesStruct",
+        namedStructIntersection: StructIntersection.toJson(
+          _intersectionPropertiesStruct.namedStructIntersection,
+        ),
+      }),
+    );
+
+  export const toLoggable: $ToLoggableFunction<
+    Omit<IntersectionPropertiesStruct, "$type">
+  > = (_intersectionPropertiesStruct) =>
+    $compactRecord({
+      $identifier: _intersectionPropertiesStruct.$identifier().value,
+      $type: "IntersectionPropertiesStruct",
+      namedStructIntersection: StructIntersection.toLoggable(
+        _intersectionPropertiesStruct.namedStructIntersection,
+      ),
+    });
+
+  export const toRdfResource: $ToRdfResourceFunction<
+    IntersectionPropertiesStruct.Identifier,
+    Omit<IntersectionPropertiesStruct, "$type">
+  > = $wrap_ToRdfResourceFunction<
+    IntersectionPropertiesStruct.Identifier,
+    Omit<IntersectionPropertiesStruct, "$type">
+  >(IntersectionPropertiesStruct._toRdfResourceFunction);
+
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    Omit<IntersectionPropertiesStruct, "$type">,
+    BlankNode | NamedNode
+  > = (value, options) => [
+    IntersectionPropertiesStruct.toRdfResource(value, {
+      graph: options.graph,
+      resourceSet: options.resourceSet,
+    }).identifier,
+  ];
+
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<IntersectionPropertiesStruct, "$identifier">
+  > = (_intersectionPropertiesStruct) =>
+    $compactRecord({
+      $identifier: _intersectionPropertiesStruct.$identifier().toString(),
+    });
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    IntersectionPropertiesStruct.Filter,
+    typeof IntersectionPropertiesStruct.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    IntersectionPropertiesStruct.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    IntersectionPropertiesStruct.Filter,
+    typeof IntersectionPropertiesStruct.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      IntersectionPropertiesStruct.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
+}
+
 /**
  * A node shape that only allows IRI identifiers.
  */
@@ -24897,46 +25434,44 @@ export namespace IriIdentifierStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     IriIdentifierStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [IriIdentifierStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $iriFromRdfResourceValues<string>(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: IriIdentifierStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        iriIdentifierString: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
+    $sequenceRecord({
+      $identifier: $iriFromRdfResourceValues<string>(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            IriIdentifierStruct.schema.properties.iriIdentifierString,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-      }).chain((properties) => IriIdentifierStruct.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: IriIdentifierStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [IriIdentifierStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      iriIdentifierString: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          IriIdentifierStruct.schema.properties.iriIdentifierString,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+    }).chain((properties) => IriIdentifierStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     IriIdentifierStruct.Identifier,
-    IriIdentifierStruct
+    Omit<IriIdentifierStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -24955,9 +25490,9 @@ export namespace IriIdentifierStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<IriIdentifierStruct> = (
-    _iriIdentifierStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<IriIdentifierStruct, "$identifier">
+  > = (_iriIdentifierStruct) =>
     `IriIdentifierStruct(${JSON.stringify(IriIdentifierStruct.toStringRecord(_iriIdentifierStruct))})`;
 
   export const create: <
@@ -25025,7 +25560,9 @@ export namespace IriIdentifierStruct {
     readonly iriIdentifierString?: string | Maybe<string>;
   }): IriIdentifierStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<IriIdentifierStruct> = (left, right) =>
+  export const equals: $EqualsFunction<
+    Pick<IriIdentifierStruct, "$identifier" | "iriIdentifierString">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -25044,7 +25581,7 @@ export namespace IriIdentifierStruct {
 
   export const filter: $FilterFunction<
     IriIdentifierStruct.Filter,
-    IriIdentifierStruct
+    Pick<IriIdentifierStruct, "$identifier" | "iriIdentifierString">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -25197,7 +25734,7 @@ export namespace IriIdentifierStruct {
 
   export const fromJson: $FromJsonFunction<
     IriIdentifierStruct,
-    IriIdentifierStruct.Json
+    Omit<IriIdentifierStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, NamedNode>(
@@ -25387,23 +25924,23 @@ export namespace IriIdentifierStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    IriIdentifierStruct,
+    Omit<IriIdentifierStruct, "$type">,
     IriIdentifierStruct.Json
   > = (_iriIdentifierStruct) =>
     JSON.parse(
       JSON.stringify({
         "@id": _iriIdentifierStruct.$identifier().value,
         "@type": "http://example.com/IriIdentifierStruct",
-        $type: _iriIdentifierStruct.$type,
+        $type: "IriIdentifierStruct",
         iriIdentifierString: _iriIdentifierStruct.iriIdentifierString
           .map((item) => item)
           .extract(),
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<IriIdentifierStruct> = (
-    _iriIdentifierStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Pick<IriIdentifierStruct, "$identifier" | "iriIdentifierString">
+  > = (_iriIdentifierStruct) =>
     $compactRecord({
       $identifier: _iriIdentifierStruct.$identifier().value,
       $type: "IriIdentifierStruct",
@@ -25413,15 +25950,15 @@ export namespace IriIdentifierStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    IriIdentifierStruct,
-    IriIdentifierStruct.Identifier
+    IriIdentifierStruct.Identifier,
+    Omit<IriIdentifierStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     IriIdentifierStruct.Identifier,
-    IriIdentifierStruct
+    Omit<IriIdentifierStruct, "$type">
   >(IriIdentifierStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    IriIdentifierStruct,
+    Omit<IriIdentifierStruct, "$type">,
     NamedNode
   > = (value, options) => [
     IriIdentifierStruct.toRdfResource(value, {
@@ -25430,9 +25967,9 @@ export namespace IriIdentifierStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<IriIdentifierStruct> = (
-    _iriIdentifierStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<IriIdentifierStruct, "$identifier">
+  > = (_iriIdentifierStruct) =>
     $compactRecord({
       $identifier: _iriIdentifierStruct.$identifier().toString(),
     });
@@ -25490,42 +26027,61 @@ export namespace LangStringStruct {
     resource,
     options,
   ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [LangStringStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: LangStringStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        langString: $shaclPropertyFromRdf<
-          Maybe<Literal>,
-          $MaybeSchema<$LangStringSchema>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: LangStringStruct.schema.properties.langString,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Literal,
-            $LangStringSchema
-          >($langStringFromRdfResourceValues),
-        }),
-        langStringOrString: $shaclPropertyFromRdf<
-          Maybe<Literal | string>,
-          $MaybeSchema<{
+          propertyPath: $rdf_subject,
+          schema: LangStringStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [LangStringStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      langString: $shaclPropertyFromRdf<
+        Maybe<Literal>,
+        $MaybeSchema<$LangStringSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: LangStringStruct.schema.properties.langString,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Literal,
+          $LangStringSchema
+        >($langStringFromRdfResourceValues),
+      }),
+      langStringOrString: $shaclPropertyFromRdf<
+        Maybe<Literal | string>,
+        $MaybeSchema<{
+          kind: "DiscriminatedUnion";
+          members: {
+            readonly object: {
+              discriminantValues: readonly (number | string)[];
+              type: $LangStringSchema;
+            };
+            readonly string: {
+              discriminantValues: readonly (number | string)[];
+              type: $StringSchema<string>;
+            };
+          };
+        }>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: LangStringStruct.schema.properties.langStringOrString,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Literal | string,
+          {
             kind: "DiscriminatedUnion";
             members: {
               readonly object: {
@@ -25537,115 +26093,117 @@ export namespace LangStringStruct {
                 type: $StringSchema<string>;
               };
             };
-          }>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: LangStringStruct.schema.properties.langStringOrString,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Literal | string,
-            {
-              kind: "DiscriminatedUnion";
-              members: {
-                readonly object: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $LangStringSchema;
-                };
-                readonly string: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $StringSchema<string>;
-                };
-              };
+          }
+        >((inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $langStringFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["object"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["string"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              }
             }
-          >((inputValues, options) => {
-            const memberInputValues: Resource.Values[] = Array.from({
-              length: 2,
-            }).map(() =>
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              }),
-            );
-            for (const inputValue of inputValues) {
-              const inputValueAsValues = inputValue.toValues();
-              let memberOutputValuesEither: Either<Error, unknown> | undefined;
-              for (let memberI = 0; memberI < 2; memberI++) {
-                if (memberI === 0) {
-                  memberOutputValuesEither = $langStringFromRdfResourceValues(
-                    inputValueAsValues,
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
+
+          let collectedOutputValues: Resource.Values<Literal | string> =
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$langStringFromRdfResourceValues(
+                    memberInputValues[memberI],
                     {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["object"].type,
                     },
-                  );
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                } else if (memberI === 1) {
-                  memberOutputValuesEither =
-                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
-                    });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                }
-              }
-              if (memberOutputValuesEither!.isLeft()) {
-                return memberOutputValuesEither;
-              }
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
             }
-
-            let collectedOutputValues: Resource.Values<Literal | string> =
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              });
-            for (let memberI = 0; memberI < 2; memberI++) {
-              if (memberInputValues[memberI].length === 0) {
-                continue;
-              }
-              switch (memberI) {
-                case 0:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$langStringFromRdfResourceValues(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["object"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-                case 1:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$stringFromRdfResourceValues<string>(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["string"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-              }
-            }
-            return Right(collectedOutputValues);
-          }),
+          }
+          return Right(collectedOutputValues);
         }),
-        stringOrLangString: $shaclPropertyFromRdf<
-          Maybe<string | Literal>,
-          $MaybeSchema<{
+      }),
+      stringOrLangString: $shaclPropertyFromRdf<
+        Maybe<string | Literal>,
+        $MaybeSchema<{
+          kind: "DiscriminatedUnion";
+          members: {
+            readonly string: {
+              discriminantValues: readonly (number | string)[];
+              type: $StringSchema<string>;
+            };
+            readonly object: {
+              discriminantValues: readonly (number | string)[];
+              type: $LangStringSchema;
+            };
+          };
+        }>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: LangStringStruct.schema.properties.stringOrLangString,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string | Literal,
+          {
             kind: "DiscriminatedUnion";
             members: {
               readonly string: {
@@ -25657,118 +26215,99 @@ export namespace LangStringStruct {
                 type: $LangStringSchema;
               };
             };
-          }>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: LangStringStruct.schema.properties.stringOrLangString,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string | Literal,
-            {
-              kind: "DiscriminatedUnion";
-              members: {
-                readonly string: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $StringSchema<string>;
-                };
-                readonly object: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $LangStringSchema;
-                };
-              };
+          }
+        >((inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["string"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $langStringFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["object"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              }
             }
-          >((inputValues, options) => {
-            const memberInputValues: Resource.Values[] = Array.from({
-              length: 2,
-            }).map(() =>
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              }),
-            );
-            for (const inputValue of inputValues) {
-              const inputValueAsValues = inputValue.toValues();
-              let memberOutputValuesEither: Either<Error, unknown> | undefined;
-              for (let memberI = 0; memberI < 2; memberI++) {
-                if (memberI === 0) {
-                  memberOutputValuesEither =
-                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
+
+          let collectedOutputValues: Resource.Values<string | Literal> =
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
-                    });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                } else if (memberI === 1) {
-                  memberOutputValuesEither = $langStringFromRdfResourceValues(
-                    inputValueAsValues,
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$langStringFromRdfResourceValues(
+                    memberInputValues[memberI],
                     {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["object"].type,
                     },
-                  );
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                }
-              }
-              if (memberOutputValuesEither!.isLeft()) {
-                return memberOutputValuesEither;
-              }
+                  ).unsafeCoerce(),
+                );
+                break;
             }
-
-            let collectedOutputValues: Resource.Values<string | Literal> =
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              });
-            for (let memberI = 0; memberI < 2; memberI++) {
-              if (memberInputValues[memberI].length === 0) {
-                continue;
-              }
-              switch (memberI) {
-                case 0:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$stringFromRdfResourceValues<string>(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["string"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-                case 1:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$langStringFromRdfResourceValues(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["object"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-              }
-            }
-            return Right(collectedOutputValues);
-          }),
+          }
+          return Right(collectedOutputValues);
         }),
-      }).chain((properties) => LangStringStruct.create(properties)),
-    );
+      }),
+    }).chain((properties) => LangStringStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     LangStringStruct.Identifier,
-    LangStringStruct
+    Omit<LangStringStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -25831,9 +26370,9 @@ export namespace LangStringStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<LangStringStruct> = (
-    _langStringStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<LangStringStruct, "$identifier">
+  > = (_langStringStruct) =>
     `LangStringStruct(${JSON.stringify(LangStringStruct.toStringRecord(_langStringStruct))})`;
 
   export const create: <
@@ -25931,7 +26470,10 @@ export namespace LangStringStruct {
     readonly stringOrLangString?: string | Literal | Maybe<string | Literal>;
   }): LangStringStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<LangStringStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<LangStringStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -26011,7 +26553,7 @@ export namespace LangStringStruct {
 
   export const filter: $FilterFunction<
     LangStringStruct.Filter,
-    LangStringStruct
+    Omit<LangStringStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -26441,7 +26983,7 @@ export namespace LangStringStruct {
 
   export const fromJson: $FromJsonFunction<
     LangStringStruct,
-    LangStringStruct.Json
+    Omit<LangStringStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -26791,7 +27333,7 @@ export namespace LangStringStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    LangStringStruct,
+    Omit<LangStringStruct, "$type">,
     LangStringStruct.Json
   > = (_langStringStruct) =>
     JSON.parse(
@@ -26801,7 +27343,7 @@ export namespace LangStringStruct {
             ? `_:${_langStringStruct.$identifier().value}`
             : _langStringStruct.$identifier().value,
         "@type": "http://example.com/LangStringStruct",
-        $type: _langStringStruct.$type,
+        $type: "LangStringStruct",
         langString: _langStringStruct.langString
           .map((item) => ({ "@language": item.language, "@value": item.value }))
           .extract(),
@@ -26852,9 +27394,9 @@ export namespace LangStringStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<LangStringStruct> = (
-    _langStringStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<LangStringStruct, "$type">
+  > = (_langStringStruct) =>
     $compactRecord({
       $identifier: _langStringStruct.$identifier().value,
       $type: "LangStringStruct",
@@ -26892,15 +27434,15 @@ export namespace LangStringStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    LangStringStruct,
-    LangStringStruct.Identifier
+    LangStringStruct.Identifier,
+    Omit<LangStringStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     LangStringStruct.Identifier,
-    LangStringStruct
+    Omit<LangStringStruct, "$type">
   >(LangStringStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    LangStringStruct,
+    Omit<LangStringStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     LangStringStruct.toRdfResource(value, {
@@ -26909,9 +27451,9 @@ export namespace LangStringStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<LangStringStruct> = (
-    _langStringStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<LangStringStruct, "$identifier">
+  > = (_langStringStruct) =>
     $compactRecord({ $identifier: _langStringStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -26990,7 +27532,7 @@ export namespace LanguageInStruct {
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     LanguageInStruct.Identifier,
-    LanguageInStruct
+    Omit<LanguageInStruct, "$type">
   > = (parameters) => {
     parameters.resource.add(
       LanguageInStruct.schema.properties.languageIn.path,
@@ -27000,9 +27542,9 @@ export namespace LanguageInStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<LanguageInStruct> = (
-    _languageInStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<LanguageInStruct, "$identifier">
+  > = (_languageInStruct) =>
     `LanguageInStruct(${JSON.stringify(LanguageInStruct.toStringRecord(_languageInStruct))})`;
 
   export const create: <
@@ -27074,7 +27616,10 @@ export namespace LanguageInStruct {
     readonly languageIn: Literal | readonly Literal[];
   }): LanguageInStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<LanguageInStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<LanguageInStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -27093,7 +27638,7 @@ export namespace LanguageInStruct {
 
   export const filter: $FilterFunction<
     LanguageInStruct.Filter,
-    LanguageInStruct
+    Omit<LanguageInStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -27176,7 +27721,7 @@ export namespace LanguageInStruct {
 
   export const fromJson: $FromJsonFunction<
     LanguageInStruct,
-    LanguageInStruct.Json
+    Omit<LanguageInStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -27367,7 +27912,7 @@ export namespace LanguageInStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    LanguageInStruct,
+    Omit<LanguageInStruct, "$type">,
     LanguageInStruct.Json
   > = (_languageInStruct) =>
     JSON.parse(
@@ -27376,7 +27921,7 @@ export namespace LanguageInStruct {
           _languageInStruct.$identifier().termType === "BlankNode"
             ? `_:${_languageInStruct.$identifier().value}`
             : _languageInStruct.$identifier().value,
-        $type: _languageInStruct.$type,
+        $type: "LanguageInStruct",
         languageIn: _languageInStruct.languageIn.map((item) => ({
           "@language": item.language,
           "@value": item.value,
@@ -27384,9 +27929,9 @@ export namespace LanguageInStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<LanguageInStruct> = (
-    _languageInStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<LanguageInStruct, "$type">
+  > = (_languageInStruct) =>
     $compactRecord({
       $identifier: _languageInStruct.$identifier().value,
       $type: "LanguageInStruct",
@@ -27396,15 +27941,15 @@ export namespace LanguageInStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    LanguageInStruct,
-    LanguageInStruct.Identifier
+    LanguageInStruct.Identifier,
+    Omit<LanguageInStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     LanguageInStruct.Identifier,
-    LanguageInStruct
+    Omit<LanguageInStruct, "$type">
   >(LanguageInStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    LanguageInStruct,
+    Omit<LanguageInStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     LanguageInStruct.toRdfResource(value, {
@@ -27413,9 +27958,9 @@ export namespace LanguageInStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<LanguageInStruct> = (
-    _languageInStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<LanguageInStruct, "$identifier">
+  > = (_languageInStruct) =>
     $compactRecord({ $identifier: _languageInStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -27466,46 +28011,44 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     LazilyResolvedBlankNodeOrIriIdentifierStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [
-            LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
-              .$rdfType.fromRdfType,
-          ],
-          { graph: options.graph },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
-                .$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
+          propertyPath: $rdf_subject,
+          schema:
             LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
-              .lazilyResolved,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-      }).chain((properties) =>
-        LazilyResolvedBlankNodeOrIriIdentifierStruct.create(properties),
-      ),
+              .$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [
+              LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
+                .$rdfType.fromRdfType,
+            ],
+            { graph: options.graph },
+          )
+        : Right(true as const),
+      lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
+            .lazilyResolved,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) =>
+      LazilyResolvedBlankNodeOrIriIdentifierStruct.create(properties),
     );
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
-    LazilyResolvedBlankNodeOrIriIdentifierStruct
+    Omit<LazilyResolvedBlankNodeOrIriIdentifierStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -27525,7 +28068,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
   };
 
   export const $toString: $ToStringFunction<
-    LazilyResolvedBlankNodeOrIriIdentifierStruct
+    Pick<LazilyResolvedBlankNodeOrIriIdentifierStruct, "$identifier">
   > = (_lazilyResolvedBlankNodeOrIriIdentifierStruct) =>
     `LazilyResolvedBlankNodeOrIriIdentifierStruct(${JSON.stringify(
       LazilyResolvedBlankNodeOrIriIdentifierStruct.toStringRecord(
@@ -27596,7 +28139,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
-    LazilyResolvedBlankNodeOrIriIdentifierStruct
+    Pick<
+      LazilyResolvedBlankNodeOrIriIdentifierStruct,
+      "$identifier" | "lazilyResolved"
+    >
   > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
@@ -27612,7 +28158,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
 
   export const filter: $FilterFunction<
     LazilyResolvedBlankNodeOrIriIdentifierStruct.Filter,
-    LazilyResolvedBlankNodeOrIriIdentifierStruct
+    Pick<
+      LazilyResolvedBlankNodeOrIriIdentifierStruct,
+      "$identifier" | "lazilyResolved"
+    >
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -27761,7 +28310,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
 
   export const fromJson: $FromJsonFunction<
     LazilyResolvedBlankNodeOrIriIdentifierStruct,
-    LazilyResolvedBlankNodeOrIriIdentifierStruct.Json
+    Omit<LazilyResolvedBlankNodeOrIriIdentifierStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -27981,7 +28530,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    LazilyResolvedBlankNodeOrIriIdentifierStruct,
+    Omit<LazilyResolvedBlankNodeOrIriIdentifierStruct, "$type">,
     LazilyResolvedBlankNodeOrIriIdentifierStruct.Json
   > = (_lazilyResolvedBlankNodeOrIriIdentifierStruct) =>
     JSON.parse(
@@ -27993,14 +28542,17 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
             : _lazilyResolvedBlankNodeOrIriIdentifierStruct.$identifier().value,
         "@type":
           "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct",
-        $type: _lazilyResolvedBlankNodeOrIriIdentifierStruct.$type,
+        $type: "LazilyResolvedBlankNodeOrIriIdentifierStruct",
         lazilyResolved:
           _lazilyResolvedBlankNodeOrIriIdentifierStruct.lazilyResolved,
       }),
     );
 
   export const toLoggable: $ToLoggableFunction<
-    LazilyResolvedBlankNodeOrIriIdentifierStruct
+    Pick<
+      LazilyResolvedBlankNodeOrIriIdentifierStruct,
+      "$identifier" | "lazilyResolved"
+    >
   > = (_lazilyResolvedBlankNodeOrIriIdentifierStruct) =>
     $compactRecord({
       $identifier:
@@ -28011,15 +28563,15 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    LazilyResolvedBlankNodeOrIriIdentifierStruct,
-    LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier
+    LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+    Omit<LazilyResolvedBlankNodeOrIriIdentifierStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
-    LazilyResolvedBlankNodeOrIriIdentifierStruct
+    Omit<LazilyResolvedBlankNodeOrIriIdentifierStruct, "$type">
   >(LazilyResolvedBlankNodeOrIriIdentifierStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    LazilyResolvedBlankNodeOrIriIdentifierStruct,
+    Omit<LazilyResolvedBlankNodeOrIriIdentifierStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     LazilyResolvedBlankNodeOrIriIdentifierStruct.toRdfResource(value, {
@@ -28029,7 +28581,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    LazilyResolvedBlankNodeOrIriIdentifierStruct
+    Pick<LazilyResolvedBlankNodeOrIriIdentifierStruct, "$identifier">
   > = (_lazilyResolvedBlankNodeOrIriIdentifierStruct) =>
     $compactRecord({
       $identifier: _lazilyResolvedBlankNodeOrIriIdentifierStruct
@@ -28082,46 +28634,44 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     LazilyResolvedDiscriminatedUnionMember1
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [
-            LazilyResolvedDiscriminatedUnionMember1.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-          { graph: options.graph },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              LazilyResolvedDiscriminatedUnionMember1.schema.properties
-                .$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
+          propertyPath: $rdf_subject,
+          schema:
             LazilyResolvedDiscriminatedUnionMember1.schema.properties
-              .lazilyResolved,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-      }).chain((properties) =>
-        LazilyResolvedDiscriminatedUnionMember1.create(properties),
-      ),
+              .$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [
+              LazilyResolvedDiscriminatedUnionMember1.schema.properties.$rdfType
+                .fromRdfType,
+            ],
+            { graph: options.graph },
+          )
+        : Right(true as const),
+      lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          LazilyResolvedDiscriminatedUnionMember1.schema.properties
+            .lazilyResolved,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) =>
+      LazilyResolvedDiscriminatedUnionMember1.create(properties),
     );
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     LazilyResolvedDiscriminatedUnionMember1.Identifier,
-    LazilyResolvedDiscriminatedUnionMember1
+    Omit<LazilyResolvedDiscriminatedUnionMember1, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -28141,7 +28691,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
   };
 
   export const $toString: $ToStringFunction<
-    LazilyResolvedDiscriminatedUnionMember1
+    Pick<LazilyResolvedDiscriminatedUnionMember1, "$identifier">
   > = (_lazilyResolvedDiscriminatedUnionMember1) =>
     `LazilyResolvedDiscriminatedUnionMember1(${JSON.stringify(
       LazilyResolvedDiscriminatedUnionMember1.toStringRecord(
@@ -28212,7 +28762,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
-    LazilyResolvedDiscriminatedUnionMember1
+    Pick<
+      LazilyResolvedDiscriminatedUnionMember1,
+      "$identifier" | "lazilyResolved"
+    >
   > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
@@ -28228,7 +28781,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
 
   export const filter: $FilterFunction<
     LazilyResolvedDiscriminatedUnionMember1.Filter,
-    LazilyResolvedDiscriminatedUnionMember1
+    Pick<
+      LazilyResolvedDiscriminatedUnionMember1,
+      "$identifier" | "lazilyResolved"
+    >
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -28377,7 +28933,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
 
   export const fromJson: $FromJsonFunction<
     LazilyResolvedDiscriminatedUnionMember1,
-    LazilyResolvedDiscriminatedUnionMember1.Json
+    Omit<LazilyResolvedDiscriminatedUnionMember1.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -28587,7 +29143,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
   }
 
   export const toJson: $ToJsonFunction<
-    LazilyResolvedDiscriminatedUnionMember1,
+    Omit<LazilyResolvedDiscriminatedUnionMember1, "$type">,
     LazilyResolvedDiscriminatedUnionMember1.Json
   > = (_lazilyResolvedDiscriminatedUnionMember1) =>
     JSON.parse(
@@ -28598,13 +29154,16 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
             ? `_:${_lazilyResolvedDiscriminatedUnionMember1.$identifier().value}`
             : _lazilyResolvedDiscriminatedUnionMember1.$identifier().value,
         "@type": "http://example.com/LazilyResolvedDiscriminatedUnionMember1",
-        $type: _lazilyResolvedDiscriminatedUnionMember1.$type,
+        $type: "LazilyResolvedDiscriminatedUnionMember1",
         lazilyResolved: _lazilyResolvedDiscriminatedUnionMember1.lazilyResolved,
       }),
     );
 
   export const toLoggable: $ToLoggableFunction<
-    LazilyResolvedDiscriminatedUnionMember1
+    Pick<
+      LazilyResolvedDiscriminatedUnionMember1,
+      "$identifier" | "lazilyResolved"
+    >
   > = (_lazilyResolvedDiscriminatedUnionMember1) =>
     $compactRecord({
       $identifier: _lazilyResolvedDiscriminatedUnionMember1.$identifier().value,
@@ -28613,15 +29172,15 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    LazilyResolvedDiscriminatedUnionMember1,
-    LazilyResolvedDiscriminatedUnionMember1.Identifier
+    LazilyResolvedDiscriminatedUnionMember1.Identifier,
+    Omit<LazilyResolvedDiscriminatedUnionMember1, "$type">
   > = $wrap_ToRdfResourceFunction<
     LazilyResolvedDiscriminatedUnionMember1.Identifier,
-    LazilyResolvedDiscriminatedUnionMember1
+    Omit<LazilyResolvedDiscriminatedUnionMember1, "$type">
   >(LazilyResolvedDiscriminatedUnionMember1._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    LazilyResolvedDiscriminatedUnionMember1,
+    Omit<LazilyResolvedDiscriminatedUnionMember1, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     LazilyResolvedDiscriminatedUnionMember1.toRdfResource(value, {
@@ -28631,7 +29190,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    LazilyResolvedDiscriminatedUnionMember1
+    Pick<LazilyResolvedDiscriminatedUnionMember1, "$identifier">
   > = (_lazilyResolvedDiscriminatedUnionMember1) =>
     $compactRecord({
       $identifier: _lazilyResolvedDiscriminatedUnionMember1
@@ -28684,46 +29243,44 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     LazilyResolvedDiscriminatedUnionMember2
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [
-            LazilyResolvedDiscriminatedUnionMember2.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-          { graph: options.graph },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              LazilyResolvedDiscriminatedUnionMember2.schema.properties
-                .$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
+          propertyPath: $rdf_subject,
+          schema:
             LazilyResolvedDiscriminatedUnionMember2.schema.properties
-              .lazilyResolved,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-      }).chain((properties) =>
-        LazilyResolvedDiscriminatedUnionMember2.create(properties),
-      ),
+              .$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [
+              LazilyResolvedDiscriminatedUnionMember2.schema.properties.$rdfType
+                .fromRdfType,
+            ],
+            { graph: options.graph },
+          )
+        : Right(true as const),
+      lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          LazilyResolvedDiscriminatedUnionMember2.schema.properties
+            .lazilyResolved,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) =>
+      LazilyResolvedDiscriminatedUnionMember2.create(properties),
     );
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     LazilyResolvedDiscriminatedUnionMember2.Identifier,
-    LazilyResolvedDiscriminatedUnionMember2
+    Omit<LazilyResolvedDiscriminatedUnionMember2, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -28743,7 +29300,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
   };
 
   export const $toString: $ToStringFunction<
-    LazilyResolvedDiscriminatedUnionMember2
+    Pick<LazilyResolvedDiscriminatedUnionMember2, "$identifier">
   > = (_lazilyResolvedDiscriminatedUnionMember2) =>
     `LazilyResolvedDiscriminatedUnionMember2(${JSON.stringify(
       LazilyResolvedDiscriminatedUnionMember2.toStringRecord(
@@ -28814,7 +29371,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
-    LazilyResolvedDiscriminatedUnionMember2
+    Pick<
+      LazilyResolvedDiscriminatedUnionMember2,
+      "$identifier" | "lazilyResolved"
+    >
   > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
@@ -28830,7 +29390,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
 
   export const filter: $FilterFunction<
     LazilyResolvedDiscriminatedUnionMember2.Filter,
-    LazilyResolvedDiscriminatedUnionMember2
+    Pick<
+      LazilyResolvedDiscriminatedUnionMember2,
+      "$identifier" | "lazilyResolved"
+    >
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -28979,7 +29542,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
 
   export const fromJson: $FromJsonFunction<
     LazilyResolvedDiscriminatedUnionMember2,
-    LazilyResolvedDiscriminatedUnionMember2.Json
+    Omit<LazilyResolvedDiscriminatedUnionMember2.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -29189,7 +29752,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
   }
 
   export const toJson: $ToJsonFunction<
-    LazilyResolvedDiscriminatedUnionMember2,
+    Omit<LazilyResolvedDiscriminatedUnionMember2, "$type">,
     LazilyResolvedDiscriminatedUnionMember2.Json
   > = (_lazilyResolvedDiscriminatedUnionMember2) =>
     JSON.parse(
@@ -29200,13 +29763,16 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
             ? `_:${_lazilyResolvedDiscriminatedUnionMember2.$identifier().value}`
             : _lazilyResolvedDiscriminatedUnionMember2.$identifier().value,
         "@type": "http://example.com/LazilyResolvedDiscriminatedUnionMember2",
-        $type: _lazilyResolvedDiscriminatedUnionMember2.$type,
+        $type: "LazilyResolvedDiscriminatedUnionMember2",
         lazilyResolved: _lazilyResolvedDiscriminatedUnionMember2.lazilyResolved,
       }),
     );
 
   export const toLoggable: $ToLoggableFunction<
-    LazilyResolvedDiscriminatedUnionMember2
+    Pick<
+      LazilyResolvedDiscriminatedUnionMember2,
+      "$identifier" | "lazilyResolved"
+    >
   > = (_lazilyResolvedDiscriminatedUnionMember2) =>
     $compactRecord({
       $identifier: _lazilyResolvedDiscriminatedUnionMember2.$identifier().value,
@@ -29215,15 +29781,15 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    LazilyResolvedDiscriminatedUnionMember2,
-    LazilyResolvedDiscriminatedUnionMember2.Identifier
+    LazilyResolvedDiscriminatedUnionMember2.Identifier,
+    Omit<LazilyResolvedDiscriminatedUnionMember2, "$type">
   > = $wrap_ToRdfResourceFunction<
     LazilyResolvedDiscriminatedUnionMember2.Identifier,
-    LazilyResolvedDiscriminatedUnionMember2
+    Omit<LazilyResolvedDiscriminatedUnionMember2, "$type">
   >(LazilyResolvedDiscriminatedUnionMember2._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    LazilyResolvedDiscriminatedUnionMember2,
+    Omit<LazilyResolvedDiscriminatedUnionMember2, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     LazilyResolvedDiscriminatedUnionMember2.toRdfResource(value, {
@@ -29233,7 +29799,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    LazilyResolvedDiscriminatedUnionMember2
+    Pick<LazilyResolvedDiscriminatedUnionMember2, "$identifier">
   > = (_lazilyResolvedDiscriminatedUnionMember2) =>
     $compactRecord({
       $identifier: _lazilyResolvedDiscriminatedUnionMember2
@@ -29315,7 +29881,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     LazilyResolvedIriIdentifierStruct.Identifier,
-    LazilyResolvedIriIdentifierStruct
+    Omit<LazilyResolvedIriIdentifierStruct, "$type">
   > = (parameters) => {
     parameters.resource.add(
       LazilyResolvedIriIdentifierStruct.schema.properties.lazilyResolved.path,
@@ -29326,7 +29892,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
   };
 
   export const $toString: $ToStringFunction<
-    LazilyResolvedIriIdentifierStruct
+    Pick<LazilyResolvedIriIdentifierStruct, "$identifier">
   > = (_lazilyResolvedIriIdentifierStruct) =>
     `LazilyResolvedIriIdentifierStruct(${JSON.stringify(
       LazilyResolvedIriIdentifierStruct.toStringRecord(
@@ -29391,10 +29957,9 @@ export namespace LazilyResolvedIriIdentifierStruct {
     readonly lazilyResolved: string;
   }): LazilyResolvedIriIdentifierStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<LazilyResolvedIriIdentifierStruct> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Omit<LazilyResolvedIriIdentifierStruct, "$type">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -29409,7 +29974,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
 
   export const filter: $FilterFunction<
     LazilyResolvedIriIdentifierStruct.Filter,
-    LazilyResolvedIriIdentifierStruct
+    Omit<LazilyResolvedIriIdentifierStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -29487,7 +30052,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
 
   export const fromJson: $FromJsonFunction<
     LazilyResolvedIriIdentifierStruct,
-    LazilyResolvedIriIdentifierStruct.Json
+    Omit<LazilyResolvedIriIdentifierStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, NamedNode>(
@@ -29669,19 +30234,19 @@ export namespace LazilyResolvedIriIdentifierStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    LazilyResolvedIriIdentifierStruct,
+    Omit<LazilyResolvedIriIdentifierStruct, "$type">,
     LazilyResolvedIriIdentifierStruct.Json
   > = (_lazilyResolvedIriIdentifierStruct) =>
     JSON.parse(
       JSON.stringify({
         "@id": _lazilyResolvedIriIdentifierStruct.$identifier().value,
-        $type: _lazilyResolvedIriIdentifierStruct.$type,
+        $type: "LazilyResolvedIriIdentifierStruct",
         lazilyResolved: _lazilyResolvedIriIdentifierStruct.lazilyResolved,
       }),
     );
 
   export const toLoggable: $ToLoggableFunction<
-    LazilyResolvedIriIdentifierStruct
+    Omit<LazilyResolvedIriIdentifierStruct, "$type">
   > = (_lazilyResolvedIriIdentifierStruct) =>
     $compactRecord({
       $identifier: _lazilyResolvedIriIdentifierStruct.$identifier().value,
@@ -29690,15 +30255,15 @@ export namespace LazilyResolvedIriIdentifierStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    LazilyResolvedIriIdentifierStruct,
-    LazilyResolvedIriIdentifierStruct.Identifier
+    LazilyResolvedIriIdentifierStruct.Identifier,
+    Omit<LazilyResolvedIriIdentifierStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     LazilyResolvedIriIdentifierStruct.Identifier,
-    LazilyResolvedIriIdentifierStruct
+    Omit<LazilyResolvedIriIdentifierStruct, "$type">
   >(LazilyResolvedIriIdentifierStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    LazilyResolvedIriIdentifierStruct,
+    Omit<LazilyResolvedIriIdentifierStruct, "$type">,
     NamedNode
   > = (value, options) => [
     LazilyResolvedIriIdentifierStruct.toRdfResource(value, {
@@ -29708,7 +30273,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    LazilyResolvedIriIdentifierStruct
+    Pick<LazilyResolvedIriIdentifierStruct, "$identifier">
   > = (_lazilyResolvedIriIdentifierStruct) =>
     $compactRecord({
       $identifier: _lazilyResolvedIriIdentifierStruct.$identifier().toString(),
@@ -30237,7 +30802,7 @@ export namespace LazyPropertiesStruct {
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     LazyPropertiesStruct.Identifier,
-    LazyPropertiesStruct
+    Omit<LazyPropertiesStruct, "$type">
   > = (parameters) => {
     parameters.resource.add(
       LazyPropertiesStruct.schema.properties
@@ -30421,9 +30986,9 @@ export namespace LazyPropertiesStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<LazyPropertiesStruct> = (
-    _lazyPropertiesStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<LazyPropertiesStruct, "$identifier">
+  > = (_lazyPropertiesStruct) =>
     `LazyPropertiesStruct(${JSON.stringify(LazyPropertiesStruct.toStringRecord(_lazyPropertiesStruct))})`;
 
   export const create: <
@@ -30805,7 +31370,10 @@ export namespace LazyPropertiesStruct {
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
   }): LazyPropertiesStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<LazyPropertiesStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<LazyPropertiesStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -30968,7 +31536,7 @@ export namespace LazyPropertiesStruct {
 
   export const filter: $FilterFunction<
     LazyPropertiesStruct.Filter,
-    LazyPropertiesStruct
+    Omit<LazyPropertiesStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -31553,7 +32121,7 @@ export namespace LazyPropertiesStruct {
 
   export const fromJson: $FromJsonFunction<
     LazyPropertiesStruct,
-    LazyPropertiesStruct.Json
+    Omit<LazyPropertiesStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -32240,7 +32808,7 @@ export namespace LazyPropertiesStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    LazyPropertiesStruct,
+    Omit<LazyPropertiesStruct, "$type">,
     LazyPropertiesStruct.Json
   > = (_lazyPropertiesStruct) =>
     JSON.parse(
@@ -32249,7 +32817,7 @@ export namespace LazyPropertiesStruct {
           _lazyPropertiesStruct.$identifier().termType === "BlankNode"
             ? `_:${_lazyPropertiesStruct.$identifier().value}`
             : _lazyPropertiesStruct.$identifier().value,
-        $type: _lazyPropertiesStruct.$type,
+        $type: "LazyPropertiesStruct",
         optionalLazyToResolvedBlankNodeOrIriIdentifier:
           _lazyPropertiesStruct.optionalLazyToResolvedBlankNodeOrIriIdentifier.partial
             .map((item) => $DefaultPartial.toJson(item))
@@ -32293,9 +32861,9 @@ export namespace LazyPropertiesStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<LazyPropertiesStruct> = (
-    _lazyPropertiesStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<LazyPropertiesStruct, "$type">
+  > = (_lazyPropertiesStruct) =>
     $compactRecord({
       $identifier: _lazyPropertiesStruct.$identifier().value,
       $type: "LazyPropertiesStruct",
@@ -32344,15 +32912,15 @@ export namespace LazyPropertiesStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    LazyPropertiesStruct,
-    LazyPropertiesStruct.Identifier
+    LazyPropertiesStruct.Identifier,
+    Omit<LazyPropertiesStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     LazyPropertiesStruct.Identifier,
-    LazyPropertiesStruct
+    Omit<LazyPropertiesStruct, "$type">
   >(LazyPropertiesStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    LazyPropertiesStruct,
+    Omit<LazyPropertiesStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     LazyPropertiesStruct.toRdfResource(value, {
@@ -32361,9 +32929,9 @@ export namespace LazyPropertiesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<LazyPropertiesStruct> = (
-    _lazyPropertiesStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<LazyPropertiesStruct, "$identifier">
+  > = (_lazyPropertiesStruct) =>
     $compactRecord({
       $identifier: _lazyPropertiesStruct.$identifier().toString(),
     });
@@ -32427,29 +32995,49 @@ export namespace ListSetsStruct {
     resource,
     options,
   ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [ListSetsStruct.schema.properties.$rdfType.fromRdfType],
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
+          ...options,
+          focusResource: resource,
+          propertyPath: $rdf_subject,
+          schema: ListSetsStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [ListSetsStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      listDiscriminatedUnionSet: $shaclPropertyFromRdf<
+        readonly (readonly string[] | string)[],
+        $CollectionSchema<{
+          kind: "DiscriminatedUnion";
+          members: {
+            readonly object: {
+              discriminantValues: readonly (number | string)[];
+              type: $CollectionSchema<$StringSchema<string>>;
+            };
+            readonly string: {
+              discriminantValues: readonly (number | string)[];
+              type: $StringSchema<string>;
+            };
+          };
+        }>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          ListSetsStruct.schema.properties.listDiscriminatedUnionSet,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          readonly string[] | string,
           {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: ListSetsStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        listDiscriminatedUnionSet: $shaclPropertyFromRdf<
-          readonly (readonly string[] | string)[],
-          $CollectionSchema<{
             kind: "DiscriminatedUnion";
             members: {
               readonly object: {
@@ -32461,150 +33049,109 @@ export namespace ListSetsStruct {
                 type: $StringSchema<string>;
               };
             };
-          }>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            ListSetsStruct.schema.properties.listDiscriminatedUnionSet,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            readonly string[] | string,
-            {
-              kind: "DiscriminatedUnion";
-              members: {
-                readonly object: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $CollectionSchema<$StringSchema<string>>;
-                };
-                readonly string: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $StringSchema<string>;
-                };
-              };
+          }
+        >((inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $listFromRdfResourceValues<
+                  string,
+                  $StringSchema<string>
+                >($stringFromRdfResourceValues<string>)(inputValueAsValues, {
+                  ...options,
+                  ignoreRdfType: false,
+                  schema: options.schema.members["object"].type,
+                });
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["string"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              }
             }
-          >((inputValues, options) => {
-            const memberInputValues: Resource.Values[] = Array.from({
-              length: 2,
-            }).map(() =>
-              Resource.Values.empty({
-                focusResource: inputValues.focusResource,
-                propertyPath: inputValues.propertyPath,
-              }),
-            );
-            for (const inputValue of inputValues) {
-              const inputValueAsValues = inputValue.toValues();
-              let memberOutputValuesEither: Either<Error, unknown> | undefined;
-              for (let memberI = 0; memberI < 2; memberI++) {
-                if (memberI === 0) {
-                  memberOutputValuesEither = $listFromRdfResourceValues<
-                    string,
-                    $StringSchema<string>
-                  >($stringFromRdfResourceValues<string>)(inputValueAsValues, {
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
+
+          let collectedOutputValues: Resource.Values<
+            readonly string[] | string
+          > = Resource.Values.empty({
+            focusResource: inputValues.focusResource,
+            propertyPath: inputValues.propertyPath,
+          });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$listFromRdfResourceValues<string, $StringSchema<string>>(
+                    $stringFromRdfResourceValues<string>,
+                  )(memberInputValues[memberI], {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["object"].type,
-                  });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                } else if (memberI === 1) {
-                  memberOutputValuesEither =
-                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
+                  }).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
-                    });
-                  if (memberOutputValuesEither.isRight()) {
-                    memberInputValues[memberI] =
-                      memberInputValues[memberI].concat(inputValue);
-                    break;
-                  }
-                }
-              }
-              if (memberOutputValuesEither!.isLeft()) {
-                return memberOutputValuesEither;
-              }
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
             }
-
-            let collectedOutputValues: Resource.Values<
-              readonly string[] | string
-            > = Resource.Values.empty({
-              focusResource: inputValues.focusResource,
-              propertyPath: inputValues.propertyPath,
-            });
-            for (let memberI = 0; memberI < 2; memberI++) {
-              if (memberInputValues[memberI].length === 0) {
-                continue;
-              }
-              switch (memberI) {
-                case 0:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$listFromRdfResourceValues<
-                      string,
-                      $StringSchema<string>
-                    >($stringFromRdfResourceValues<string>)(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["object"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-                case 1:
-                  collectedOutputValues = collectedOutputValues.concat(
-                    ...$stringFromRdfResourceValues<string>(
-                      memberInputValues[memberI],
-                      {
-                        ...options,
-                        ignoreRdfType: false,
-                        schema: options.schema.members["string"].type,
-                      },
-                    ).unsafeCoerce(),
-                  );
-                  break;
-              }
-            }
-            return Right(collectedOutputValues);
-          }),
+          }
+          return Right(collectedOutputValues);
         }),
-        listListSet: $shaclPropertyFromRdf<
-          readonly (readonly (readonly string[])[])[],
-          $CollectionSchema<
-            $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
-          >
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ListSetsStruct.schema.properties.listListSet,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            readonly (readonly string[])[],
-            $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
-          >(
-            $listFromRdfResourceValues<
-              readonly string[],
-              $CollectionSchema<$StringSchema<string>>
-            >(
-              $listFromRdfResourceValues<string, $StringSchema<string>>(
-                $stringFromRdfResourceValues<string>,
-              ),
-            ),
-          ),
-        }),
-        listSet: $shaclPropertyFromRdf<
+      }),
+      listListSet: $shaclPropertyFromRdf<
+        readonly (readonly (readonly string[])[])[],
+        $CollectionSchema<
+          $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
+        >
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ListSetsStruct.schema.properties.listListSet,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
           readonly (readonly string[])[],
           $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ListSetsStruct.schema.properties.listSet,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
+        >(
+          $listFromRdfResourceValues<
             readonly string[],
             $CollectionSchema<$StringSchema<string>>
           >(
@@ -32612,13 +33159,30 @@ export namespace ListSetsStruct {
               $stringFromRdfResourceValues<string>,
             ),
           ),
-        }),
-      }).chain((properties) => ListSetsStruct.create(properties)),
-    );
+        ),
+      }),
+      listSet: $shaclPropertyFromRdf<
+        readonly (readonly string[])[],
+        $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ListSetsStruct.schema.properties.listSet,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          readonly string[],
+          $CollectionSchema<$StringSchema<string>>
+        >(
+          $listFromRdfResourceValues<string, $StringSchema<string>>(
+            $stringFromRdfResourceValues<string>,
+          ),
+        ),
+      }),
+    }).chain((properties) => ListSetsStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     ListSetsStruct.Identifier,
-    ListSetsStruct
+    Omit<ListSetsStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -32865,9 +33429,9 @@ export namespace ListSetsStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<ListSetsStruct> = (
-    _listSetsStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<ListSetsStruct, "$identifier">
+  > = (_listSetsStruct) =>
     `ListSetsStruct(${JSON.stringify(ListSetsStruct.toStringRecord(_listSetsStruct))})`;
 
   export const create: <
@@ -32977,7 +33541,10 @@ export namespace ListSetsStruct {
     readonly listSet?: readonly (readonly string[])[];
   }): ListSetsStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<ListSetsStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<ListSetsStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -33051,7 +33618,7 @@ export namespace ListSetsStruct {
 
   export const filter: $FilterFunction<
     ListSetsStruct.Filter,
-    ListSetsStruct
+    Omit<ListSetsStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -33423,7 +33990,7 @@ export namespace ListSetsStruct {
 
   export const fromJson: $FromJsonFunction<
     ListSetsStruct,
-    ListSetsStruct.Json
+    Omit<ListSetsStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -33743,9 +34310,10 @@ export namespace ListSetsStruct {
     );
   }
 
-  export const toJson: $ToJsonFunction<ListSetsStruct, ListSetsStruct.Json> = (
-    _listSetsStruct,
-  ) =>
+  export const toJson: $ToJsonFunction<
+    Omit<ListSetsStruct, "$type">,
+    ListSetsStruct.Json
+  > = (_listSetsStruct) =>
     JSON.parse(
       JSON.stringify({
         "@id":
@@ -33753,7 +34321,7 @@ export namespace ListSetsStruct {
             ? `_:${_listSetsStruct.$identifier().value}`
             : _listSetsStruct.$identifier().value,
         "@type": "http://example.com/ListSetsStruct",
-        $type: _listSetsStruct.$type,
+        $type: "ListSetsStruct",
         listDiscriminatedUnionSet:
           _listSetsStruct.listDiscriminatedUnionSet.map((item) =>
             ((value) => {
@@ -33780,9 +34348,9 @@ export namespace ListSetsStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<ListSetsStruct> = (
-    _listSetsStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<ListSetsStruct, "$type">
+  > = (_listSetsStruct) =>
     $compactRecord({
       $identifier: _listSetsStruct.$identifier().value,
       $type: "ListSetsStruct",
@@ -33806,14 +34374,15 @@ export namespace ListSetsStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    ListSetsStruct,
-    ListSetsStruct.Identifier
-  > = $wrap_ToRdfResourceFunction<ListSetsStruct.Identifier, ListSetsStruct>(
-    ListSetsStruct._toRdfResourceFunction,
-  );
+    ListSetsStruct.Identifier,
+    Omit<ListSetsStruct, "$type">
+  > = $wrap_ToRdfResourceFunction<
+    ListSetsStruct.Identifier,
+    Omit<ListSetsStruct, "$type">
+  >(ListSetsStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    ListSetsStruct,
+    Omit<ListSetsStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     ListSetsStruct.toRdfResource(value, {
@@ -33822,9 +34391,9 @@ export namespace ListSetsStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<ListSetsStruct> = (
-    _listSetsStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<ListSetsStruct, "$identifier">
+  > = (_listSetsStruct) =>
     $compactRecord({ $identifier: _listSetsStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -33882,52 +34451,74 @@ export namespace ListsStruct {
     resource,
     options,
   ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [ListsStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: ListsStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        iriList: $shaclPropertyFromRdf<
-          Maybe<readonly NamedNode[]>,
-          $MaybeSchema<$CollectionSchema<$IriSchema<string>>>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ListsStruct.schema.properties.iriList,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            readonly NamedNode[],
-            $CollectionSchema<$IriSchema<string>>
-          >(
-            $listFromRdfResourceValues<NamedNode, $IriSchema<string>>(
-              $iriFromRdfResourceValues<string>,
-            ),
+          propertyPath: $rdf_subject,
+          schema: ListsStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [ListsStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      iriList: $shaclPropertyFromRdf<
+        Maybe<readonly NamedNode[]>,
+        $MaybeSchema<$CollectionSchema<$IriSchema<string>>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ListsStruct.schema.properties.iriList,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          readonly NamedNode[],
+          $CollectionSchema<$IriSchema<string>>
+        >(
+          $listFromRdfResourceValues<NamedNode, $IriSchema<string>>(
+            $iriFromRdfResourceValues<string>,
           ),
-        }),
-        stringList: $shaclPropertyFromRdf<
-          Maybe<readonly string[]>,
-          $MaybeSchema<$CollectionSchema<$StringSchema<string>>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ListsStruct.schema.properties.stringList,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+        ),
+      }),
+      stringList: $shaclPropertyFromRdf<
+        Maybe<readonly string[]>,
+        $MaybeSchema<$CollectionSchema<$StringSchema<string>>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ListsStruct.schema.properties.stringList,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          readonly string[],
+          $CollectionSchema<$StringSchema<string>>
+        >(
+          $listFromRdfResourceValues<string, $StringSchema<string>>(
+            $stringFromRdfResourceValues<string>,
+          ),
+        ),
+      }),
+      stringListList: $shaclPropertyFromRdf<
+        Maybe<readonly (readonly string[])[]>,
+        $MaybeSchema<
+          $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
+        >
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ListsStruct.schema.properties.stringListList,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          readonly (readonly string[])[],
+          $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
+        >(
+          $listFromRdfResourceValues<
             readonly string[],
             $CollectionSchema<$StringSchema<string>>
           >(
@@ -33935,55 +34526,31 @@ export namespace ListsStruct {
               $stringFromRdfResourceValues<string>,
             ),
           ),
-        }),
-        stringListList: $shaclPropertyFromRdf<
-          Maybe<readonly (readonly string[])[]>,
-          $MaybeSchema<
-            $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
-          >
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ListsStruct.schema.properties.stringListList,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            readonly (readonly string[])[],
-            $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
-          >(
-            $listFromRdfResourceValues<
-              readonly string[],
-              $CollectionSchema<$StringSchema<string>>
-            >(
-              $listFromRdfResourceValues<string, $StringSchema<string>>(
-                $stringFromRdfResourceValues<string>,
-              ),
-            ),
-          ),
-        }),
-        structList: $shaclPropertyFromRdf<
-          Maybe<readonly NonClassStruct[]>,
-          $MaybeSchema<$CollectionSchema<typeof NonClassStruct.schema>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ListsStruct.schema.properties.structList,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            readonly NonClassStruct[],
-            $CollectionSchema<typeof NonClassStruct.schema>
-          >(
-            $listFromRdfResourceValues<
-              NonClassStruct,
-              typeof NonClassStruct.schema
-            >(NonClassStruct.fromRdfResourceValues),
-          ),
-        }),
-      }).chain((properties) => ListsStruct.create(properties)),
-    );
+        ),
+      }),
+      structList: $shaclPropertyFromRdf<
+        Maybe<readonly NonClassStruct[]>,
+        $MaybeSchema<$CollectionSchema<typeof NonClassStruct.schema>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ListsStruct.schema.properties.structList,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          readonly NonClassStruct[],
+          $CollectionSchema<typeof NonClassStruct.schema>
+        >(
+          $listFromRdfResourceValues<
+            NonClassStruct,
+            typeof NonClassStruct.schema
+          >(NonClassStruct.fromRdfResourceValues),
+        ),
+      }),
+    }).chain((properties) => ListsStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     ListsStruct.Identifier,
-    ListsStruct
+    Omit<ListsStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -34271,7 +34838,9 @@ export namespace ListsStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<ListsStruct> = (_listsStruct) =>
+  export const $toString: $ToStringFunction<
+    Pick<ListsStruct, "$identifier">
+  > = (_listsStruct) =>
     `ListsStruct(${JSON.stringify(ListsStruct.toStringRecord(_listsStruct))})`;
 
   export const create: <
@@ -34402,7 +34971,10 @@ export namespace ListsStruct {
       | Maybe<readonly NonClassStruct[]>;
   }): ListsStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<ListsStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<ListsStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -34471,10 +35043,10 @@ export namespace ListsStruct {
         ),
       );
 
-  export const filter: $FilterFunction<ListsStruct.Filter, ListsStruct> = (
-    filter,
-    value,
-  ) => {
+  export const filter: $FilterFunction<
+    ListsStruct.Filter,
+    Omit<ListsStruct, "$type">
+  > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier())
@@ -34792,9 +35364,10 @@ export namespace ListsStruct {
     return patterns;
   };
 
-  export const fromJson: $FromJsonFunction<ListsStruct, ListsStruct.Json> = (
-    $json,
-  ) =>
+  export const fromJson: $FromJsonFunction<
+    ListsStruct,
+    Omit<ListsStruct.Json, "$type">
+  > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
         $json["@id"].startsWith("_:")
@@ -35081,9 +35654,10 @@ export namespace ListsStruct {
     );
   }
 
-  export const toJson: $ToJsonFunction<ListsStruct, ListsStruct.Json> = (
-    _listsStruct,
-  ) =>
+  export const toJson: $ToJsonFunction<
+    Omit<ListsStruct, "$type">,
+    ListsStruct.Json
+  > = (_listsStruct) =>
     JSON.parse(
       JSON.stringify({
         "@id":
@@ -35091,7 +35665,7 @@ export namespace ListsStruct {
             ? `_:${_listsStruct.$identifier().value}`
             : _listsStruct.$identifier().value,
         "@type": "http://example.com/ListsStruct",
-        $type: _listsStruct.$type,
+        $type: "ListsStruct",
         iriList: _listsStruct.iriList
           .map((item) => item.map((item) => item.value))
           .extract(),
@@ -35107,7 +35681,9 @@ export namespace ListsStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<ListsStruct> = (_listsStruct) =>
+  export const toLoggable: $ToLoggableFunction<Omit<ListsStruct, "$type">> = (
+    _listsStruct,
+  ) =>
     $compactRecord({
       $identifier: _listsStruct.$identifier().value,
       $type: "ListsStruct",
@@ -35126,14 +35702,15 @@ export namespace ListsStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    ListsStruct,
-    ListsStruct.Identifier
-  > = $wrap_ToRdfResourceFunction<ListsStruct.Identifier, ListsStruct>(
-    ListsStruct._toRdfResourceFunction,
-  );
+    ListsStruct.Identifier,
+    Omit<ListsStruct, "$type">
+  > = $wrap_ToRdfResourceFunction<
+    ListsStruct.Identifier,
+    Omit<ListsStruct, "$type">
+  >(ListsStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    ListsStruct,
+    Omit<ListsStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     ListsStruct.toRdfResource(value, {
@@ -35142,9 +35719,10 @@ export namespace ListsStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<ListsStruct> = (
-    _listsStruct,
-  ) => $compactRecord({ $identifier: _listsStruct.$identifier().toString() });
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<ListsStruct, "$identifier">
+  > = (_listsStruct) =>
+    $compactRecord({ $identifier: _listsStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     ListsStruct.Filter,
@@ -35207,76 +35785,73 @@ export namespace MutablePropertiesStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     MutablePropertiesStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [MutablePropertiesStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: MutablePropertiesStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        mutableList: $shaclPropertyFromRdf<
-          Maybe<string[]>,
-          $MaybeSchema<$CollectionSchema<$StringSchema<string>>>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: MutablePropertiesStruct.schema.properties.mutableList,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string[],
-            $CollectionSchema<$StringSchema<string>>
-          >(
-            $mutableListFromRdfResourceValues<string, $StringSchema<string>>(
-              $stringFromRdfResourceValues<string>,
-            ),
-          ),
-        }),
-        mutableSet: $shaclPropertyFromRdf<
+          propertyPath: $rdf_subject,
+          schema: MutablePropertiesStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [MutablePropertiesStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      mutableList: $shaclPropertyFromRdf<
+        Maybe<string[]>,
+        $MaybeSchema<$CollectionSchema<$StringSchema<string>>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: MutablePropertiesStruct.schema.properties.mutableList,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           string[],
           $CollectionSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: MutablePropertiesStruct.schema.properties.mutableSet,
-          typeFromRdfResourceValues: $mutableSetFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        mutableString: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            MutablePropertiesStruct.schema.properties.mutableString,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-      }).chain((properties) => MutablePropertiesStruct.create(properties)),
-    );
+        >(
+          $mutableListFromRdfResourceValues<string, $StringSchema<string>>(
+            $stringFromRdfResourceValues<string>,
+          ),
+        ),
+      }),
+      mutableSet: $shaclPropertyFromRdf<
+        string[],
+        $CollectionSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: MutablePropertiesStruct.schema.properties.mutableSet,
+        typeFromRdfResourceValues: $mutableSetFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      mutableString: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: MutablePropertiesStruct.schema.properties.mutableString,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+    }).chain((properties) => MutablePropertiesStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     MutablePropertiesStruct.Identifier,
-    MutablePropertiesStruct
+    Omit<MutablePropertiesStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -35357,9 +35932,9 @@ export namespace MutablePropertiesStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<MutablePropertiesStruct> = (
-    _mutablePropertiesStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<MutablePropertiesStruct, "$identifier">
+  > = (_mutablePropertiesStruct) =>
     `MutablePropertiesStruct(${JSON.stringify(MutablePropertiesStruct.toStringRecord(_mutablePropertiesStruct))})`;
 
   export const create: <
@@ -35456,10 +36031,9 @@ export namespace MutablePropertiesStruct {
     readonly mutableString?: string | Maybe<string>;
   }): MutablePropertiesStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<MutablePropertiesStruct> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Omit<MutablePropertiesStruct, "$type">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -35506,7 +36080,7 @@ export namespace MutablePropertiesStruct {
 
   export const filter: $FilterFunction<
     MutablePropertiesStruct.Filter,
-    MutablePropertiesStruct
+    Omit<MutablePropertiesStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -35742,7 +36316,7 @@ export namespace MutablePropertiesStruct {
 
   export const fromJson: $FromJsonFunction<
     MutablePropertiesStruct,
-    MutablePropertiesStruct.Json
+    Omit<MutablePropertiesStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -35995,7 +36569,7 @@ export namespace MutablePropertiesStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    MutablePropertiesStruct,
+    Omit<MutablePropertiesStruct, "$type">,
     MutablePropertiesStruct.Json
   > = (_mutablePropertiesStruct) =>
     JSON.parse(
@@ -36005,7 +36579,7 @@ export namespace MutablePropertiesStruct {
             ? `_:${_mutablePropertiesStruct.$identifier().value}`
             : _mutablePropertiesStruct.$identifier().value,
         "@type": "http://example.com/MutablePropertiesStruct",
-        $type: _mutablePropertiesStruct.$type,
+        $type: "MutablePropertiesStruct",
         mutableList: _mutablePropertiesStruct.mutableList
           .map((item) => item.map((item) => item))
           .extract(),
@@ -36016,9 +36590,9 @@ export namespace MutablePropertiesStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<MutablePropertiesStruct> = (
-    _mutablePropertiesStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<MutablePropertiesStruct, "$type">
+  > = (_mutablePropertiesStruct) =>
     $compactRecord({
       $identifier: _mutablePropertiesStruct.$identifier().value,
       $type: "MutablePropertiesStruct",
@@ -36032,15 +36606,15 @@ export namespace MutablePropertiesStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    MutablePropertiesStruct,
-    MutablePropertiesStruct.Identifier
+    MutablePropertiesStruct.Identifier,
+    Omit<MutablePropertiesStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     MutablePropertiesStruct.Identifier,
-    MutablePropertiesStruct
+    Omit<MutablePropertiesStruct, "$type">
   >(MutablePropertiesStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    MutablePropertiesStruct,
+    Omit<MutablePropertiesStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     MutablePropertiesStruct.toRdfResource(value, {
@@ -36050,7 +36624,7 @@ export namespace MutablePropertiesStruct {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    MutablePropertiesStruct
+    Pick<MutablePropertiesStruct, "$identifier">
   > = (_mutablePropertiesStruct) =>
     $compactRecord({
       $identifier: _mutablePropertiesStruct.$identifier().toString(),
@@ -36115,57 +36689,54 @@ export namespace NamedTypesStruct {
     resource,
     options,
   ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [NamedTypesStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: NamedTypesStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        inIri: $shaclPropertyFromRdf<InIri, $IriSchema<InIri["value"]>>({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NamedTypesStruct.schema.properties.inIri,
-          typeFromRdfResourceValues: $iriFromRdfResourceValues<InIri["value"]>,
-        }),
-        inLiteral: $shaclPropertyFromRdf<InLiteral, $StringSchema<InLiteral>>({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NamedTypesStruct.schema.properties.inLiteral,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<InLiteral>,
-        }),
-        namedDatatype: $shaclPropertyFromRdf<
-          NamedDatatype,
-          $StringSchema<NamedDatatype>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NamedTypesStruct.schema.properties.namedDatatype,
-          typeFromRdfResourceValues:
-            $stringFromRdfResourceValues<NamedDatatype>,
-        }),
-      }).chain((properties) => NamedTypesStruct.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: NamedTypesStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [NamedTypesStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      inIri: $shaclPropertyFromRdf<InIri, $IriSchema<InIri["value"]>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NamedTypesStruct.schema.properties.inIri,
+        typeFromRdfResourceValues: $iriFromRdfResourceValues<InIri["value"]>,
+      }),
+      inLiteral: $shaclPropertyFromRdf<InLiteral, $StringSchema<InLiteral>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NamedTypesStruct.schema.properties.inLiteral,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<InLiteral>,
+      }),
+      namedDatatype: $shaclPropertyFromRdf<
+        NamedDatatype,
+        $StringSchema<NamedDatatype>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NamedTypesStruct.schema.properties.namedDatatype,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<NamedDatatype>,
+      }),
+    }).chain((properties) => NamedTypesStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     NamedTypesStruct.Identifier,
-    NamedTypesStruct
+    Omit<NamedTypesStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -36192,9 +36763,9 @@ export namespace NamedTypesStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<NamedTypesStruct> = (
-    _namedTypesStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<NamedTypesStruct, "$identifier">
+  > = (_namedTypesStruct) =>
     `NamedTypesStruct(${JSON.stringify(NamedTypesStruct.toStringRecord(_namedTypesStruct))})`;
 
   export const create: <
@@ -36271,7 +36842,10 @@ export namespace NamedTypesStruct {
     readonly namedDatatype: NamedDatatype;
   }): NamedTypesStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<NamedTypesStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<NamedTypesStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -36301,7 +36875,7 @@ export namespace NamedTypesStruct {
 
   export const filter: $FilterFunction<
     NamedTypesStruct.Filter,
-    NamedTypesStruct
+    Omit<NamedTypesStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -36499,7 +37073,7 @@ export namespace NamedTypesStruct {
 
   export const fromJson: $FromJsonFunction<
     NamedTypesStruct,
-    NamedTypesStruct.Json
+    Omit<NamedTypesStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -36721,7 +37295,7 @@ export namespace NamedTypesStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    NamedTypesStruct,
+    Omit<NamedTypesStruct, "$type">,
     NamedTypesStruct.Json
   > = (_namedTypesStruct) =>
     JSON.parse(
@@ -36731,16 +37305,16 @@ export namespace NamedTypesStruct {
             ? `_:${_namedTypesStruct.$identifier().value}`
             : _namedTypesStruct.$identifier().value,
         "@type": "http://example.com/NamedTypesStruct",
-        $type: _namedTypesStruct.$type,
+        $type: "NamedTypesStruct",
         inIri: _namedTypesStruct.inIri.value,
         inLiteral: _namedTypesStruct.inLiteral,
         namedDatatype: _namedTypesStruct.namedDatatype,
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<NamedTypesStruct> = (
-    _namedTypesStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<NamedTypesStruct, "$type">
+  > = (_namedTypesStruct) =>
     $compactRecord({
       $identifier: _namedTypesStruct.$identifier().value,
       $type: "NamedTypesStruct",
@@ -36750,15 +37324,15 @@ export namespace NamedTypesStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    NamedTypesStruct,
-    NamedTypesStruct.Identifier
+    NamedTypesStruct.Identifier,
+    Omit<NamedTypesStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     NamedTypesStruct.Identifier,
-    NamedTypesStruct
+    Omit<NamedTypesStruct, "$type">
   >(NamedTypesStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    NamedTypesStruct,
+    Omit<NamedTypesStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     NamedTypesStruct.toRdfResource(value, {
@@ -36767,9 +37341,9 @@ export namespace NamedTypesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<NamedTypesStruct> = (
-    _namedTypesStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<NamedTypesStruct, "$identifier">
+  > = (_namedTypesStruct) =>
     $compactRecord({ $identifier: _namedTypesStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -36821,43 +37395,41 @@ export namespace NewName {
     resource,
     options,
   ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [NewName.schema.properties.$rdfType.fromRdfType],
-          { graph: options.graph },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: NewName.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        newNameString: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NewName.schema.properties.newNameString,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-      }).chain((properties) => NewName.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: NewName.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [NewName.schema.properties.$rdfType.fromRdfType],
+            { graph: options.graph },
+          )
+        : Right(true as const),
+      newNameString: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NewName.schema.properties.newNameString,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+    }).chain((properties) => NewName.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     NewName.Identifier,
-    NewName
+    Omit<NewName, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -36876,8 +37448,9 @@ export namespace NewName {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<NewName> = (_newName) =>
-    `NewName(${JSON.stringify(NewName.toStringRecord(_newName))})`;
+  export const $toString: $ToStringFunction<Pick<NewName, "$identifier">> = (
+    _newName,
+  ) => `NewName(${JSON.stringify(NewName.toStringRecord(_newName))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -36945,7 +37518,9 @@ export namespace NewName {
     readonly newNameString?: string | Maybe<string>;
   }): NewName => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<NewName> = (left, right) =>
+  export const equals: $EqualsFunction<
+    Pick<NewName, "$identifier" | "newNameString">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -36962,10 +37537,10 @@ export namespace NewName {
       ),
     );
 
-  export const filter: $FilterFunction<NewName.Filter, NewName> = (
-    filter,
-    value,
-  ) => {
+  export const filter: $FilterFunction<
+    NewName.Filter,
+    Pick<NewName, "$identifier" | "newNameString">
+  > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier())
@@ -37112,7 +37687,10 @@ export namespace NewName {
     return patterns;
   };
 
-  export const fromJson: $FromJsonFunction<NewName, NewName.Json> = ($json) =>
+  export const fromJson: $FromJsonFunction<
+    NewName,
+    Omit<NewName.Json, "$type">
+  > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
         $json["@id"].startsWith("_:")
@@ -37302,7 +37880,9 @@ export namespace NewName {
     );
   }
 
-  export const toJson: $ToJsonFunction<NewName, NewName.Json> = (_newName) =>
+  export const toJson: $ToJsonFunction<Omit<NewName, "$type">, NewName.Json> = (
+    _newName,
+  ) =>
     JSON.parse(
       JSON.stringify({
         "@id":
@@ -37310,12 +37890,14 @@ export namespace NewName {
             ? `_:${_newName.$identifier().value}`
             : _newName.$identifier().value,
         "@type": "http://example.com/OverrideNameStruct",
-        $type: _newName.$type,
+        $type: "NewName",
         newNameString: _newName.newNameString.map((item) => item).extract(),
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<NewName> = (_newName) =>
+  export const toLoggable: $ToLoggableFunction<
+    Pick<NewName, "$identifier" | "newNameString">
+  > = (_newName) =>
     $compactRecord({
       $identifier: _newName.$identifier().value,
       $type: "NewName",
@@ -37323,14 +37905,14 @@ export namespace NewName {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    NewName,
-    NewName.Identifier
-  > = $wrap_ToRdfResourceFunction<NewName.Identifier, NewName>(
+    NewName.Identifier,
+    Omit<NewName, "$type">
+  > = $wrap_ToRdfResourceFunction<NewName.Identifier, Omit<NewName, "$type">>(
     NewName._toRdfResourceFunction,
   );
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    NewName,
+    Omit<NewName, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     NewName.toRdfResource(value, {
@@ -37339,7 +37921,9 @@ export namespace NewName {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<NewName> = (_newName) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<NewName, "$identifier">
+  > = (_newName) =>
     $compactRecord({ $identifier: _newName.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -37401,90 +37985,87 @@ export namespace NodeKindsStruct {
     resource,
     options,
   ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [NodeKindsStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: NodeKindsStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        blankNodeKind: $shaclPropertyFromRdf<BlankNode, $BlankNodeSchema>({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeKindsStruct.schema.properties.blankNodeKind,
-          typeFromRdfResourceValues: $blankNodeFromRdfResourceValues,
-        }),
-        blankNodeOrIriNodeKind: $shaclPropertyFromRdf<
-          BlankNode | NamedNode,
-          $IdentifierSchema
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            NodeKindsStruct.schema.properties.blankNodeOrIriNodeKind,
-          typeFromRdfResourceValues: $identifierFromRdfResourceValues,
-        }),
-        blankNodeOrLiteralNodeKind: $shaclPropertyFromRdf<
-          BlankNode | Literal,
-          $TermSchema<BlankNode | Literal>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            NodeKindsStruct.schema.properties.blankNodeOrLiteralNodeKind,
-          typeFromRdfResourceValues: $termFromRdfResourceValues<
-            BlankNode | Literal
-          >,
-        }),
-        iriNodeKind: $shaclPropertyFromRdf<NamedNode, $IriSchema<string>>({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeKindsStruct.schema.properties.iriNodeKind,
-          typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
-        }),
-        iriOrLiteralNodeKind: $shaclPropertyFromRdf<
-          NamedNode | Literal,
-          $TermSchema<NamedNode | Literal>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            NodeKindsStruct.schema.properties.iriOrLiteralNodeKind,
-          typeFromRdfResourceValues: $termFromRdfResourceValues<
-            NamedNode | Literal
-          >,
-        }),
-        literalNodeKind: $shaclPropertyFromRdf<Literal, $LiteralSchema>({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeKindsStruct.schema.properties.literalNodeKind,
-          typeFromRdfResourceValues: $literalFromRdfResourceValues,
-        }),
-      }).chain((properties) => NodeKindsStruct.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: NodeKindsStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [NodeKindsStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      blankNodeKind: $shaclPropertyFromRdf<BlankNode, $BlankNodeSchema>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeKindsStruct.schema.properties.blankNodeKind,
+        typeFromRdfResourceValues: $blankNodeFromRdfResourceValues,
+      }),
+      blankNodeOrIriNodeKind: $shaclPropertyFromRdf<
+        BlankNode | NamedNode,
+        $IdentifierSchema
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          NodeKindsStruct.schema.properties.blankNodeOrIriNodeKind,
+        typeFromRdfResourceValues: $identifierFromRdfResourceValues,
+      }),
+      blankNodeOrLiteralNodeKind: $shaclPropertyFromRdf<
+        BlankNode | Literal,
+        $TermSchema<BlankNode | Literal>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          NodeKindsStruct.schema.properties.blankNodeOrLiteralNodeKind,
+        typeFromRdfResourceValues: $termFromRdfResourceValues<
+          BlankNode | Literal
+        >,
+      }),
+      iriNodeKind: $shaclPropertyFromRdf<NamedNode, $IriSchema<string>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeKindsStruct.schema.properties.iriNodeKind,
+        typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
+      }),
+      iriOrLiteralNodeKind: $shaclPropertyFromRdf<
+        NamedNode | Literal,
+        $TermSchema<NamedNode | Literal>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeKindsStruct.schema.properties.iriOrLiteralNodeKind,
+        typeFromRdfResourceValues: $termFromRdfResourceValues<
+          NamedNode | Literal
+        >,
+      }),
+      literalNodeKind: $shaclPropertyFromRdf<Literal, $LiteralSchema>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeKindsStruct.schema.properties.literalNodeKind,
+        typeFromRdfResourceValues: $literalFromRdfResourceValues,
+      }),
+    }).chain((properties) => NodeKindsStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     NodeKindsStruct.Identifier,
-    NodeKindsStruct
+    Omit<NodeKindsStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -37526,9 +38107,9 @@ export namespace NodeKindsStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<NodeKindsStruct> = (
-    _nodeKindsStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<NodeKindsStruct, "$identifier">
+  > = (_nodeKindsStruct) =>
     `NodeKindsStruct(${JSON.stringify(NodeKindsStruct.toStringRecord(_nodeKindsStruct))})`;
 
   export const create: <
@@ -37667,7 +38248,10 @@ export namespace NodeKindsStruct {
       | Literal;
   }): NodeKindsStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<NodeKindsStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<NodeKindsStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -37721,7 +38305,7 @@ export namespace NodeKindsStruct {
 
   export const filter: $FilterFunction<
     NodeKindsStruct.Filter,
-    NodeKindsStruct
+    Omit<NodeKindsStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -38022,7 +38606,7 @@ export namespace NodeKindsStruct {
 
   export const fromJson: $FromJsonFunction<
     NodeKindsStruct,
-    NodeKindsStruct.Json
+    Omit<NodeKindsStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -38361,7 +38945,7 @@ export namespace NodeKindsStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    NodeKindsStruct,
+    Omit<NodeKindsStruct, "$type">,
     NodeKindsStruct.Json
   > = (_nodeKindsStruct) =>
     JSON.parse(
@@ -38371,7 +38955,7 @@ export namespace NodeKindsStruct {
             ? `_:${_nodeKindsStruct.$identifier().value}`
             : _nodeKindsStruct.$identifier().value,
         "@type": "http://example.com/NodeKindsStruct",
-        $type: _nodeKindsStruct.$type,
+        $type: "NodeKindsStruct",
         blankNodeKind: `_:${_nodeKindsStruct.blankNodeKind.value}`,
         blankNodeOrIriNodeKind:
           _nodeKindsStruct.blankNodeOrIriNodeKind.termType === "BlankNode"
@@ -38432,9 +39016,9 @@ export namespace NodeKindsStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<NodeKindsStruct> = (
-    _nodeKindsStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<NodeKindsStruct, "$type">
+  > = (_nodeKindsStruct) =>
     $compactRecord({
       $identifier: _nodeKindsStruct.$identifier().value,
       $type: "NodeKindsStruct",
@@ -38494,14 +39078,15 @@ export namespace NodeKindsStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    NodeKindsStruct,
-    NodeKindsStruct.Identifier
-  > = $wrap_ToRdfResourceFunction<NodeKindsStruct.Identifier, NodeKindsStruct>(
-    NodeKindsStruct._toRdfResourceFunction,
-  );
+    NodeKindsStruct.Identifier,
+    Omit<NodeKindsStruct, "$type">
+  > = $wrap_ToRdfResourceFunction<
+    NodeKindsStruct.Identifier,
+    Omit<NodeKindsStruct, "$type">
+  >(NodeKindsStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    NodeKindsStruct,
+    Omit<NodeKindsStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     NodeKindsStruct.toRdfResource(value, {
@@ -38510,9 +39095,9 @@ export namespace NodeKindsStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<NodeKindsStruct> = (
-    _nodeKindsStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<NodeKindsStruct, "$identifier">
+  > = (_nodeKindsStruct) =>
     $compactRecord({ $identifier: _nodeKindsStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -38585,7 +39170,7 @@ export namespace NonClassStruct {
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     NonClassStruct.Identifier,
-    NonClassStruct
+    Omit<NonClassStruct, "$type">
   > = (parameters) => {
     parameters.resource.add(
       NonClassStruct.schema.properties.nonClassString.path,
@@ -38595,9 +39180,9 @@ export namespace NonClassStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<NonClassStruct> = (
-    _nonClassStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<NonClassStruct, "$identifier">
+  > = (_nonClassStruct) =>
     `NonClassStruct(${JSON.stringify(NonClassStruct.toStringRecord(_nonClassStruct))})`;
 
   export const create: <
@@ -38661,7 +39246,10 @@ export namespace NonClassStruct {
     readonly nonClassString: string;
   }): NonClassStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<NonClassStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<NonClassStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -38676,7 +39264,7 @@ export namespace NonClassStruct {
 
   export const filter: $FilterFunction<
     NonClassStruct.Filter,
-    NonClassStruct
+    Omit<NonClassStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -38750,7 +39338,7 @@ export namespace NonClassStruct {
 
   export const fromJson: $FromJsonFunction<
     NonClassStruct,
-    NonClassStruct.Json
+    Omit<NonClassStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -38923,23 +39511,24 @@ export namespace NonClassStruct {
     );
   }
 
-  export const toJson: $ToJsonFunction<NonClassStruct, NonClassStruct.Json> = (
-    _nonClassStruct,
-  ) =>
+  export const toJson: $ToJsonFunction<
+    Omit<NonClassStruct, "$type">,
+    NonClassStruct.Json
+  > = (_nonClassStruct) =>
     JSON.parse(
       JSON.stringify({
         "@id":
           _nonClassStruct.$identifier().termType === "BlankNode"
             ? `_:${_nonClassStruct.$identifier().value}`
             : _nonClassStruct.$identifier().value,
-        $type: _nonClassStruct.$type,
+        $type: "NonClassStruct",
         nonClassString: _nonClassStruct.nonClassString,
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<NonClassStruct> = (
-    _nonClassStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<NonClassStruct, "$type">
+  > = (_nonClassStruct) =>
     $compactRecord({
       $identifier: _nonClassStruct.$identifier().value,
       $type: "NonClassStruct",
@@ -38947,14 +39536,15 @@ export namespace NonClassStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    NonClassStruct,
-    NonClassStruct.Identifier
-  > = $wrap_ToRdfResourceFunction<NonClassStruct.Identifier, NonClassStruct>(
-    NonClassStruct._toRdfResourceFunction,
-  );
+    NonClassStruct.Identifier,
+    Omit<NonClassStruct, "$type">
+  > = $wrap_ToRdfResourceFunction<
+    NonClassStruct.Identifier,
+    Omit<NonClassStruct, "$type">
+  >(NonClassStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    NonClassStruct,
+    Omit<NonClassStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     NonClassStruct.toRdfResource(value, {
@@ -38963,9 +39553,9 @@ export namespace NonClassStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<NonClassStruct> = (
-    _nonClassStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<NonClassStruct, "$identifier">
+  > = (_nonClassStruct) =>
     $compactRecord({ $identifier: _nonClassStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -39043,7 +39633,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     NoRdfTypeDiscriminatedUnionMember1.Identifier,
-    NoRdfTypeDiscriminatedUnionMember1
+    Omit<NoRdfTypeDiscriminatedUnionMember1, "$type">
   > = (parameters) => {
     parameters.resource.add(
       NoRdfTypeDiscriminatedUnionMember1.schema.properties
@@ -39059,7 +39649,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
   };
 
   export const $toString: $ToStringFunction<
-    NoRdfTypeDiscriminatedUnionMember1
+    Pick<NoRdfTypeDiscriminatedUnionMember1, "$identifier">
   > = (_noRdfTypeDiscriminatedUnionMember1) =>
     `NoRdfTypeDiscriminatedUnionMember1(${JSON.stringify(
       NoRdfTypeDiscriminatedUnionMember1.toStringRecord(
@@ -39130,10 +39720,9 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
     readonly noRdfTypeDiscriminatedUnionMember1String: string;
   }): NoRdfTypeDiscriminatedUnionMember1 => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<NoRdfTypeDiscriminatedUnionMember1> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Omit<NoRdfTypeDiscriminatedUnionMember1, "$type">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -39151,7 +39740,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
 
   export const filter: $FilterFunction<
     NoRdfTypeDiscriminatedUnionMember1.Filter,
-    NoRdfTypeDiscriminatedUnionMember1
+    Omit<NoRdfTypeDiscriminatedUnionMember1, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -39234,7 +39823,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
 
   export const fromJson: $FromJsonFunction<
     NoRdfTypeDiscriminatedUnionMember1,
-    NoRdfTypeDiscriminatedUnionMember1.Json
+    Omit<NoRdfTypeDiscriminatedUnionMember1.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -39430,7 +40019,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
   }
 
   export const toJson: $ToJsonFunction<
-    NoRdfTypeDiscriminatedUnionMember1,
+    Omit<NoRdfTypeDiscriminatedUnionMember1, "$type">,
     NoRdfTypeDiscriminatedUnionMember1.Json
   > = (_noRdfTypeDiscriminatedUnionMember1) =>
     JSON.parse(
@@ -39440,14 +40029,14 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
           "BlankNode"
             ? `_:${_noRdfTypeDiscriminatedUnionMember1.$identifier().value}`
             : _noRdfTypeDiscriminatedUnionMember1.$identifier().value,
-        $type: _noRdfTypeDiscriminatedUnionMember1.$type,
+        $type: "NoRdfTypeDiscriminatedUnionMember1",
         noRdfTypeDiscriminatedUnionMember1String:
           _noRdfTypeDiscriminatedUnionMember1.noRdfTypeDiscriminatedUnionMember1String,
       }),
     );
 
   export const toLoggable: $ToLoggableFunction<
-    NoRdfTypeDiscriminatedUnionMember1
+    Omit<NoRdfTypeDiscriminatedUnionMember1, "$type">
   > = (_noRdfTypeDiscriminatedUnionMember1) =>
     $compactRecord({
       $identifier: _noRdfTypeDiscriminatedUnionMember1.$identifier().value,
@@ -39457,15 +40046,15 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    NoRdfTypeDiscriminatedUnionMember1,
-    NoRdfTypeDiscriminatedUnionMember1.Identifier
+    NoRdfTypeDiscriminatedUnionMember1.Identifier,
+    Omit<NoRdfTypeDiscriminatedUnionMember1, "$type">
   > = $wrap_ToRdfResourceFunction<
     NoRdfTypeDiscriminatedUnionMember1.Identifier,
-    NoRdfTypeDiscriminatedUnionMember1
+    Omit<NoRdfTypeDiscriminatedUnionMember1, "$type">
   >(NoRdfTypeDiscriminatedUnionMember1._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    NoRdfTypeDiscriminatedUnionMember1,
+    Omit<NoRdfTypeDiscriminatedUnionMember1, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     NoRdfTypeDiscriminatedUnionMember1.toRdfResource(value, {
@@ -39475,7 +40064,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    NoRdfTypeDiscriminatedUnionMember1
+    Pick<NoRdfTypeDiscriminatedUnionMember1, "$identifier">
   > = (_noRdfTypeDiscriminatedUnionMember1) =>
     $compactRecord({
       $identifier: _noRdfTypeDiscriminatedUnionMember1.$identifier().toString(),
@@ -39556,7 +40145,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     NoRdfTypeDiscriminatedUnionMember2.Identifier,
-    NoRdfTypeDiscriminatedUnionMember2
+    Omit<NoRdfTypeDiscriminatedUnionMember2, "$type">
   > = (parameters) => {
     parameters.resource.add(
       NoRdfTypeDiscriminatedUnionMember2.schema.properties
@@ -39572,7 +40161,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
   };
 
   export const $toString: $ToStringFunction<
-    NoRdfTypeDiscriminatedUnionMember2
+    Pick<NoRdfTypeDiscriminatedUnionMember2, "$identifier">
   > = (_noRdfTypeDiscriminatedUnionMember2) =>
     `NoRdfTypeDiscriminatedUnionMember2(${JSON.stringify(
       NoRdfTypeDiscriminatedUnionMember2.toStringRecord(
@@ -39643,10 +40232,9 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
     readonly noRdfTypeDiscriminatedUnionMember2String: string;
   }): NoRdfTypeDiscriminatedUnionMember2 => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<NoRdfTypeDiscriminatedUnionMember2> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Omit<NoRdfTypeDiscriminatedUnionMember2, "$type">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -39664,7 +40252,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
 
   export const filter: $FilterFunction<
     NoRdfTypeDiscriminatedUnionMember2.Filter,
-    NoRdfTypeDiscriminatedUnionMember2
+    Omit<NoRdfTypeDiscriminatedUnionMember2, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -39747,7 +40335,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
 
   export const fromJson: $FromJsonFunction<
     NoRdfTypeDiscriminatedUnionMember2,
-    NoRdfTypeDiscriminatedUnionMember2.Json
+    Omit<NoRdfTypeDiscriminatedUnionMember2.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -39943,7 +40531,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
   }
 
   export const toJson: $ToJsonFunction<
-    NoRdfTypeDiscriminatedUnionMember2,
+    Omit<NoRdfTypeDiscriminatedUnionMember2, "$type">,
     NoRdfTypeDiscriminatedUnionMember2.Json
   > = (_noRdfTypeDiscriminatedUnionMember2) =>
     JSON.parse(
@@ -39953,14 +40541,14 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
           "BlankNode"
             ? `_:${_noRdfTypeDiscriminatedUnionMember2.$identifier().value}`
             : _noRdfTypeDiscriminatedUnionMember2.$identifier().value,
-        $type: _noRdfTypeDiscriminatedUnionMember2.$type,
+        $type: "NoRdfTypeDiscriminatedUnionMember2",
         noRdfTypeDiscriminatedUnionMember2String:
           _noRdfTypeDiscriminatedUnionMember2.noRdfTypeDiscriminatedUnionMember2String,
       }),
     );
 
   export const toLoggable: $ToLoggableFunction<
-    NoRdfTypeDiscriminatedUnionMember2
+    Omit<NoRdfTypeDiscriminatedUnionMember2, "$type">
   > = (_noRdfTypeDiscriminatedUnionMember2) =>
     $compactRecord({
       $identifier: _noRdfTypeDiscriminatedUnionMember2.$identifier().value,
@@ -39970,15 +40558,15 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    NoRdfTypeDiscriminatedUnionMember2,
-    NoRdfTypeDiscriminatedUnionMember2.Identifier
+    NoRdfTypeDiscriminatedUnionMember2.Identifier,
+    Omit<NoRdfTypeDiscriminatedUnionMember2, "$type">
   > = $wrap_ToRdfResourceFunction<
     NoRdfTypeDiscriminatedUnionMember2.Identifier,
-    NoRdfTypeDiscriminatedUnionMember2
+    Omit<NoRdfTypeDiscriminatedUnionMember2, "$type">
   >(NoRdfTypeDiscriminatedUnionMember2._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    NoRdfTypeDiscriminatedUnionMember2,
+    Omit<NoRdfTypeDiscriminatedUnionMember2, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     NoRdfTypeDiscriminatedUnionMember2.toRdfResource(value, {
@@ -39988,7 +40576,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    NoRdfTypeDiscriminatedUnionMember2
+    Pick<NoRdfTypeDiscriminatedUnionMember2, "$identifier">
   > = (_noRdfTypeDiscriminatedUnionMember2) =>
     $compactRecord({
       $identifier: _noRdfTypeDiscriminatedUnionMember2.$identifier().toString(),
@@ -40073,244 +40661,240 @@ export namespace NumericsStruct {
     resource,
     options,
   ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [NumericsStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: NumericsStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        byteNumeric: $shaclPropertyFromRdf<
-          Maybe<number>,
-          $MaybeSchema<$NumericSchema<number>>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NumericsStruct.schema.properties.byteNumeric,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            number,
-            $NumericSchema<number>
-          >($intFromRdfResourceValues<number>),
-        }),
-        decimalNumeric: $shaclPropertyFromRdf<
-          Maybe<BigDecimal>,
-          $MaybeSchema<$NumericSchema<BigDecimal>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NumericsStruct.schema.properties.decimalNumeric,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            BigDecimal,
-            $NumericSchema<BigDecimal>
-          >($bigDecimalFromRdfResourceValues),
-        }),
-        doubleNumeric: $shaclPropertyFromRdf<
-          Maybe<number>,
-          $MaybeSchema<$NumericSchema<number>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NumericsStruct.schema.properties.doubleNumeric,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            number,
-            $NumericSchema<number>
-          >($floatFromRdfResourceValues<number>),
-        }),
-        floatNumeric: $shaclPropertyFromRdf<
-          Maybe<number>,
-          $MaybeSchema<$NumericSchema<number>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NumericsStruct.schema.properties.floatNumeric,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            number,
-            $NumericSchema<number>
-          >($floatFromRdfResourceValues<number>),
-        }),
-        integerNumeric: $shaclPropertyFromRdf<
-          Maybe<bigint>,
-          $MaybeSchema<$NumericSchema<bigint>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NumericsStruct.schema.properties.integerNumeric,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            bigint,
-            $NumericSchema<bigint>
-          >($bigIntFromRdfResourceValues<bigint>),
-        }),
-        intNumeric: $shaclPropertyFromRdf<
-          Maybe<number>,
-          $MaybeSchema<$NumericSchema<number>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NumericsStruct.schema.properties.intNumeric,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            number,
-            $NumericSchema<number>
-          >($intFromRdfResourceValues<number>),
-        }),
-        longNumeric: $shaclPropertyFromRdf<
-          Maybe<bigint>,
-          $MaybeSchema<$NumericSchema<bigint>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NumericsStruct.schema.properties.longNumeric,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            bigint,
-            $NumericSchema<bigint>
-          >($bigIntFromRdfResourceValues<bigint>),
-        }),
-        negativeIntegerNumeric: $shaclPropertyFromRdf<
-          Maybe<bigint>,
-          $MaybeSchema<$NumericSchema<bigint>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            NumericsStruct.schema.properties.negativeIntegerNumeric,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            bigint,
-            $NumericSchema<bigint>
-          >($bigIntFromRdfResourceValues<bigint>),
-        }),
-        nonNegativeIntegerNumeric: $shaclPropertyFromRdf<
-          Maybe<bigint>,
-          $MaybeSchema<$NumericSchema<bigint>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            NumericsStruct.schema.properties.nonNegativeIntegerNumeric,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            bigint,
-            $NumericSchema<bigint>
-          >($bigIntFromRdfResourceValues<bigint>),
-        }),
-        nonPositiveIntegerNumeric: $shaclPropertyFromRdf<
-          Maybe<bigint>,
-          $MaybeSchema<$NumericSchema<bigint>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            NumericsStruct.schema.properties.nonPositiveIntegerNumeric,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            bigint,
-            $NumericSchema<bigint>
-          >($bigIntFromRdfResourceValues<bigint>),
-        }),
-        positiveIntegerNumeric: $shaclPropertyFromRdf<
-          Maybe<bigint>,
-          $MaybeSchema<$NumericSchema<bigint>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            NumericsStruct.schema.properties.positiveIntegerNumeric,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            bigint,
-            $NumericSchema<bigint>
-          >($bigIntFromRdfResourceValues<bigint>),
-        }),
-        shortNumeric: $shaclPropertyFromRdf<
-          Maybe<number>,
-          $MaybeSchema<$NumericSchema<number>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NumericsStruct.schema.properties.shortNumeric,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            number,
-            $NumericSchema<number>
-          >($intFromRdfResourceValues<number>),
-        }),
-        unsignedByteNumeric: $shaclPropertyFromRdf<
-          Maybe<number>,
-          $MaybeSchema<$NumericSchema<number>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NumericsStruct.schema.properties.unsignedByteNumeric,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            number,
-            $NumericSchema<number>
-          >($intFromRdfResourceValues<number>),
-        }),
-        unsignedIntNumeric: $shaclPropertyFromRdf<
-          Maybe<number>,
-          $MaybeSchema<$NumericSchema<number>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NumericsStruct.schema.properties.unsignedIntNumeric,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            number,
-            $NumericSchema<number>
-          >($intFromRdfResourceValues<number>),
-        }),
-        unsignedLongNumeric: $shaclPropertyFromRdf<
-          Maybe<bigint>,
-          $MaybeSchema<$NumericSchema<bigint>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NumericsStruct.schema.properties.unsignedLongNumeric,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            bigint,
-            $NumericSchema<bigint>
-          >($bigIntFromRdfResourceValues<bigint>),
-        }),
-        unsignedShortNumeric: $shaclPropertyFromRdf<
-          Maybe<number>,
-          $MaybeSchema<$NumericSchema<number>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NumericsStruct.schema.properties.unsignedShortNumeric,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            number,
-            $NumericSchema<number>
-          >($intFromRdfResourceValues<number>),
-        }),
-      }).chain((properties) => NumericsStruct.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: NumericsStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [NumericsStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      byteNumeric: $shaclPropertyFromRdf<
+        Maybe<number>,
+        $MaybeSchema<$NumericSchema<number>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NumericsStruct.schema.properties.byteNumeric,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          number,
+          $NumericSchema<number>
+        >($intFromRdfResourceValues<number>),
+      }),
+      decimalNumeric: $shaclPropertyFromRdf<
+        Maybe<BigDecimal>,
+        $MaybeSchema<$NumericSchema<BigDecimal>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NumericsStruct.schema.properties.decimalNumeric,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          BigDecimal,
+          $NumericSchema<BigDecimal>
+        >($bigDecimalFromRdfResourceValues),
+      }),
+      doubleNumeric: $shaclPropertyFromRdf<
+        Maybe<number>,
+        $MaybeSchema<$NumericSchema<number>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NumericsStruct.schema.properties.doubleNumeric,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          number,
+          $NumericSchema<number>
+        >($floatFromRdfResourceValues<number>),
+      }),
+      floatNumeric: $shaclPropertyFromRdf<
+        Maybe<number>,
+        $MaybeSchema<$NumericSchema<number>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NumericsStruct.schema.properties.floatNumeric,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          number,
+          $NumericSchema<number>
+        >($floatFromRdfResourceValues<number>),
+      }),
+      integerNumeric: $shaclPropertyFromRdf<
+        Maybe<bigint>,
+        $MaybeSchema<$NumericSchema<bigint>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NumericsStruct.schema.properties.integerNumeric,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          bigint,
+          $NumericSchema<bigint>
+        >($bigIntFromRdfResourceValues<bigint>),
+      }),
+      intNumeric: $shaclPropertyFromRdf<
+        Maybe<number>,
+        $MaybeSchema<$NumericSchema<number>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NumericsStruct.schema.properties.intNumeric,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          number,
+          $NumericSchema<number>
+        >($intFromRdfResourceValues<number>),
+      }),
+      longNumeric: $shaclPropertyFromRdf<
+        Maybe<bigint>,
+        $MaybeSchema<$NumericSchema<bigint>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NumericsStruct.schema.properties.longNumeric,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          bigint,
+          $NumericSchema<bigint>
+        >($bigIntFromRdfResourceValues<bigint>),
+      }),
+      negativeIntegerNumeric: $shaclPropertyFromRdf<
+        Maybe<bigint>,
+        $MaybeSchema<$NumericSchema<bigint>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NumericsStruct.schema.properties.negativeIntegerNumeric,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          bigint,
+          $NumericSchema<bigint>
+        >($bigIntFromRdfResourceValues<bigint>),
+      }),
+      nonNegativeIntegerNumeric: $shaclPropertyFromRdf<
+        Maybe<bigint>,
+        $MaybeSchema<$NumericSchema<bigint>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          NumericsStruct.schema.properties.nonNegativeIntegerNumeric,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          bigint,
+          $NumericSchema<bigint>
+        >($bigIntFromRdfResourceValues<bigint>),
+      }),
+      nonPositiveIntegerNumeric: $shaclPropertyFromRdf<
+        Maybe<bigint>,
+        $MaybeSchema<$NumericSchema<bigint>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          NumericsStruct.schema.properties.nonPositiveIntegerNumeric,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          bigint,
+          $NumericSchema<bigint>
+        >($bigIntFromRdfResourceValues<bigint>),
+      }),
+      positiveIntegerNumeric: $shaclPropertyFromRdf<
+        Maybe<bigint>,
+        $MaybeSchema<$NumericSchema<bigint>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NumericsStruct.schema.properties.positiveIntegerNumeric,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          bigint,
+          $NumericSchema<bigint>
+        >($bigIntFromRdfResourceValues<bigint>),
+      }),
+      shortNumeric: $shaclPropertyFromRdf<
+        Maybe<number>,
+        $MaybeSchema<$NumericSchema<number>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NumericsStruct.schema.properties.shortNumeric,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          number,
+          $NumericSchema<number>
+        >($intFromRdfResourceValues<number>),
+      }),
+      unsignedByteNumeric: $shaclPropertyFromRdf<
+        Maybe<number>,
+        $MaybeSchema<$NumericSchema<number>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NumericsStruct.schema.properties.unsignedByteNumeric,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          number,
+          $NumericSchema<number>
+        >($intFromRdfResourceValues<number>),
+      }),
+      unsignedIntNumeric: $shaclPropertyFromRdf<
+        Maybe<number>,
+        $MaybeSchema<$NumericSchema<number>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NumericsStruct.schema.properties.unsignedIntNumeric,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          number,
+          $NumericSchema<number>
+        >($intFromRdfResourceValues<number>),
+      }),
+      unsignedLongNumeric: $shaclPropertyFromRdf<
+        Maybe<bigint>,
+        $MaybeSchema<$NumericSchema<bigint>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NumericsStruct.schema.properties.unsignedLongNumeric,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          bigint,
+          $NumericSchema<bigint>
+        >($bigIntFromRdfResourceValues<bigint>),
+      }),
+      unsignedShortNumeric: $shaclPropertyFromRdf<
+        Maybe<number>,
+        $MaybeSchema<$NumericSchema<number>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NumericsStruct.schema.properties.unsignedShortNumeric,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          number,
+          $NumericSchema<number>
+        >($intFromRdfResourceValues<number>),
+      }),
+    }).chain((properties) => NumericsStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     NumericsStruct.Identifier,
-    NumericsStruct
+    Omit<NumericsStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -40444,9 +41028,9 @@ export namespace NumericsStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<NumericsStruct> = (
-    _numericsStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<NumericsStruct, "$identifier">
+  > = (_numericsStruct) =>
     `NumericsStruct(${JSON.stringify(NumericsStruct.toStringRecord(_numericsStruct))})`;
 
   export const create: <
@@ -40745,7 +41329,10 @@ export namespace NumericsStruct {
     readonly unsignedShortNumeric?: number | Maybe<number>;
   }): NumericsStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<NumericsStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<NumericsStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -40930,7 +41517,7 @@ export namespace NumericsStruct {
 
   export const filter: $FilterFunction<
     NumericsStruct.Filter,
-    NumericsStruct
+    Omit<NumericsStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -41669,7 +42256,7 @@ export namespace NumericsStruct {
 
   export const fromJson: $FromJsonFunction<
     NumericsStruct,
-    NumericsStruct.Json
+    Omit<NumericsStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -42166,9 +42753,10 @@ export namespace NumericsStruct {
     );
   }
 
-  export const toJson: $ToJsonFunction<NumericsStruct, NumericsStruct.Json> = (
-    _numericsStruct,
-  ) =>
+  export const toJson: $ToJsonFunction<
+    Omit<NumericsStruct, "$type">,
+    NumericsStruct.Json
+  > = (_numericsStruct) =>
     JSON.parse(
       JSON.stringify({
         "@id":
@@ -42176,7 +42764,7 @@ export namespace NumericsStruct {
             ? `_:${_numericsStruct.$identifier().value}`
             : _numericsStruct.$identifier().value,
         "@type": "http://example.com/NumericsStruct",
-        $type: _numericsStruct.$type,
+        $type: "NumericsStruct",
         byteNumeric: _numericsStruct.byteNumeric.map((item) => item).extract(),
         decimalNumeric: _numericsStruct.decimalNumeric
           .map((item) => item.toFixed())
@@ -42224,9 +42812,9 @@ export namespace NumericsStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<NumericsStruct> = (
-    _numericsStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<NumericsStruct, "$type">
+  > = (_numericsStruct) =>
     $compactRecord({
       $identifier: _numericsStruct.$identifier().value,
       $type: "NumericsStruct",
@@ -42271,14 +42859,15 @@ export namespace NumericsStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    NumericsStruct,
-    NumericsStruct.Identifier
-  > = $wrap_ToRdfResourceFunction<NumericsStruct.Identifier, NumericsStruct>(
-    NumericsStruct._toRdfResourceFunction,
-  );
+    NumericsStruct.Identifier,
+    Omit<NumericsStruct, "$type">
+  > = $wrap_ToRdfResourceFunction<
+    NumericsStruct.Identifier,
+    Omit<NumericsStruct, "$type">
+  >(NumericsStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    NumericsStruct,
+    Omit<NumericsStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     NumericsStruct.toRdfResource(value, {
@@ -42287,9 +42876,9 @@ export namespace NumericsStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<NumericsStruct> = (
-    _numericsStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<NumericsStruct, "$identifier">
+  > = (_numericsStruct) =>
     $compactRecord({ $identifier: _numericsStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -42380,7 +42969,7 @@ export namespace OrderedStruct {
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     OrderedStruct.Identifier,
-    OrderedStruct
+    Omit<OrderedStruct, "$type">
   > = (parameters) => {
     parameters.resource.add(
       OrderedStruct.schema.properties.orderedC.path,
@@ -42400,7 +42989,9 @@ export namespace OrderedStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<OrderedStruct> = (_orderedStruct) =>
+  export const $toString: $ToStringFunction<
+    Pick<OrderedStruct, "$identifier">
+  > = (_orderedStruct) =>
     `OrderedStruct(${JSON.stringify(OrderedStruct.toStringRecord(_orderedStruct))})`;
 
   export const create: <
@@ -42471,7 +43062,10 @@ export namespace OrderedStruct {
     readonly orderedA: string;
   }): OrderedStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<OrderedStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<OrderedStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -42499,10 +43093,10 @@ export namespace OrderedStruct {
         ),
       );
 
-  export const filter: $FilterFunction<OrderedStruct.Filter, OrderedStruct> = (
-    filter,
-    value,
-  ) => {
+  export const filter: $FilterFunction<
+    OrderedStruct.Filter,
+    Omit<OrderedStruct, "$type">
+  > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier())
@@ -42635,7 +43229,7 @@ export namespace OrderedStruct {
 
   export const fromJson: $FromJsonFunction<
     OrderedStruct,
-    OrderedStruct.Json
+    Omit<OrderedStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -42834,23 +43428,24 @@ export namespace OrderedStruct {
     );
   }
 
-  export const toJson: $ToJsonFunction<OrderedStruct, OrderedStruct.Json> = (
-    _orderedStruct,
-  ) =>
+  export const toJson: $ToJsonFunction<
+    Omit<OrderedStruct, "$type">,
+    OrderedStruct.Json
+  > = (_orderedStruct) =>
     JSON.parse(
       JSON.stringify({
         "@id":
           _orderedStruct.$identifier().termType === "BlankNode"
             ? `_:${_orderedStruct.$identifier().value}`
             : _orderedStruct.$identifier().value,
-        $type: _orderedStruct.$type,
+        $type: "OrderedStruct",
         orderedC: _orderedStruct.orderedC,
         orderedB: _orderedStruct.orderedB,
         orderedA: _orderedStruct.orderedA,
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<OrderedStruct> = (
+  export const toLoggable: $ToLoggableFunction<Omit<OrderedStruct, "$type">> = (
     _orderedStruct,
   ) =>
     $compactRecord({
@@ -42862,14 +43457,15 @@ export namespace OrderedStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    OrderedStruct,
-    OrderedStruct.Identifier
-  > = $wrap_ToRdfResourceFunction<OrderedStruct.Identifier, OrderedStruct>(
-    OrderedStruct._toRdfResourceFunction,
-  );
+    OrderedStruct.Identifier,
+    Omit<OrderedStruct, "$type">
+  > = $wrap_ToRdfResourceFunction<
+    OrderedStruct.Identifier,
+    Omit<OrderedStruct, "$type">
+  >(OrderedStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    OrderedStruct,
+    Omit<OrderedStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     OrderedStruct.toRdfResource(value, {
@@ -42878,9 +43474,10 @@ export namespace OrderedStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<OrderedStruct> = (
-    _orderedStruct,
-  ) => $compactRecord({ $identifier: _orderedStruct.$identifier().toString() });
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<OrderedStruct, "$identifier">
+  > = (_orderedStruct) =>
+    $compactRecord({ $identifier: _orderedStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     OrderedStruct.Filter,
@@ -42927,47 +43524,44 @@ export namespace PartialDiscriminatedUnionMember1 {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     PartialDiscriminatedUnionMember1
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [
-            PartialDiscriminatedUnionMember1.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              PartialDiscriminatedUnionMember1.schema.properties.$identifier
-                .type,
-          },
-        ).chain((values) => values.head()),
-        lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            PartialDiscriminatedUnionMember1.schema.properties.lazilyResolved,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-      }).chain((properties) =>
-        PartialDiscriminatedUnionMember1.create(properties),
-      ),
+          propertyPath: $rdf_subject,
+          schema:
+            PartialDiscriminatedUnionMember1.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [
+              PartialDiscriminatedUnionMember1.schema.properties.$rdfType
+                .fromRdfType,
+            ],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          PartialDiscriminatedUnionMember1.schema.properties.lazilyResolved,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) =>
+      PartialDiscriminatedUnionMember1.create(properties),
     );
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     PartialDiscriminatedUnionMember1.Identifier,
-    PartialDiscriminatedUnionMember1
+    Omit<PartialDiscriminatedUnionMember1, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -42985,7 +43579,7 @@ export namespace PartialDiscriminatedUnionMember1 {
   };
 
   export const $toString: $ToStringFunction<
-    PartialDiscriminatedUnionMember1
+    Pick<PartialDiscriminatedUnionMember1, "$identifier">
   > = (_partialDiscriminatedUnionMember1) =>
     `PartialDiscriminatedUnionMember1(${JSON.stringify(
       PartialDiscriminatedUnionMember1.toStringRecord(
@@ -43054,10 +43648,9 @@ export namespace PartialDiscriminatedUnionMember1 {
     readonly lazilyResolved: string;
   }): PartialDiscriminatedUnionMember1 => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<PartialDiscriminatedUnionMember1> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Pick<PartialDiscriminatedUnionMember1, "$identifier" | "lazilyResolved">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -43072,7 +43665,7 @@ export namespace PartialDiscriminatedUnionMember1 {
 
   export const filter: $FilterFunction<
     PartialDiscriminatedUnionMember1.Filter,
-    PartialDiscriminatedUnionMember1
+    Pick<PartialDiscriminatedUnionMember1, "$identifier" | "lazilyResolved">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -43218,7 +43811,7 @@ export namespace PartialDiscriminatedUnionMember1 {
 
   export const fromJson: $FromJsonFunction<
     PartialDiscriminatedUnionMember1,
-    PartialDiscriminatedUnionMember1.Json
+    Omit<PartialDiscriminatedUnionMember1.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -43418,7 +44011,7 @@ export namespace PartialDiscriminatedUnionMember1 {
   }
 
   export const toJson: $ToJsonFunction<
-    PartialDiscriminatedUnionMember1,
+    Omit<PartialDiscriminatedUnionMember1, "$type">,
     PartialDiscriminatedUnionMember1.Json
   > = (_partialDiscriminatedUnionMember1) =>
     JSON.parse(
@@ -43429,13 +44022,13 @@ export namespace PartialDiscriminatedUnionMember1 {
             ? `_:${_partialDiscriminatedUnionMember1.$identifier().value}`
             : _partialDiscriminatedUnionMember1.$identifier().value,
         "@type": "http://example.com/StructDiscriminatedUnionMember1",
-        $type: _partialDiscriminatedUnionMember1.$type,
+        $type: "PartialDiscriminatedUnionMember1",
         lazilyResolved: _partialDiscriminatedUnionMember1.lazilyResolved,
       }),
     );
 
   export const toLoggable: $ToLoggableFunction<
-    PartialDiscriminatedUnionMember1
+    Pick<PartialDiscriminatedUnionMember1, "$identifier" | "lazilyResolved">
   > = (_partialDiscriminatedUnionMember1) =>
     $compactRecord({
       $identifier: _partialDiscriminatedUnionMember1.$identifier().value,
@@ -43444,15 +44037,15 @@ export namespace PartialDiscriminatedUnionMember1 {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    PartialDiscriminatedUnionMember1,
-    PartialDiscriminatedUnionMember1.Identifier
+    PartialDiscriminatedUnionMember1.Identifier,
+    Omit<PartialDiscriminatedUnionMember1, "$type">
   > = $wrap_ToRdfResourceFunction<
     PartialDiscriminatedUnionMember1.Identifier,
-    PartialDiscriminatedUnionMember1
+    Omit<PartialDiscriminatedUnionMember1, "$type">
   >(PartialDiscriminatedUnionMember1._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    PartialDiscriminatedUnionMember1,
+    Omit<PartialDiscriminatedUnionMember1, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     PartialDiscriminatedUnionMember1.toRdfResource(value, {
@@ -43462,7 +44055,7 @@ export namespace PartialDiscriminatedUnionMember1 {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    PartialDiscriminatedUnionMember1
+    Pick<PartialDiscriminatedUnionMember1, "$identifier">
   > = (_partialDiscriminatedUnionMember1) =>
     $compactRecord({
       $identifier: _partialDiscriminatedUnionMember1.$identifier().toString(),
@@ -43513,47 +44106,44 @@ export namespace PartialDiscriminatedUnionMember2 {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     PartialDiscriminatedUnionMember2
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [
-            PartialDiscriminatedUnionMember2.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              PartialDiscriminatedUnionMember2.schema.properties.$identifier
-                .type,
-          },
-        ).chain((values) => values.head()),
-        lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            PartialDiscriminatedUnionMember2.schema.properties.lazilyResolved,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-      }).chain((properties) =>
-        PartialDiscriminatedUnionMember2.create(properties),
-      ),
+          propertyPath: $rdf_subject,
+          schema:
+            PartialDiscriminatedUnionMember2.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [
+              PartialDiscriminatedUnionMember2.schema.properties.$rdfType
+                .fromRdfType,
+            ],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          PartialDiscriminatedUnionMember2.schema.properties.lazilyResolved,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) =>
+      PartialDiscriminatedUnionMember2.create(properties),
     );
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     PartialDiscriminatedUnionMember2.Identifier,
-    PartialDiscriminatedUnionMember2
+    Omit<PartialDiscriminatedUnionMember2, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -43571,7 +44161,7 @@ export namespace PartialDiscriminatedUnionMember2 {
   };
 
   export const $toString: $ToStringFunction<
-    PartialDiscriminatedUnionMember2
+    Pick<PartialDiscriminatedUnionMember2, "$identifier">
   > = (_partialDiscriminatedUnionMember2) =>
     `PartialDiscriminatedUnionMember2(${JSON.stringify(
       PartialDiscriminatedUnionMember2.toStringRecord(
@@ -43640,10 +44230,9 @@ export namespace PartialDiscriminatedUnionMember2 {
     readonly lazilyResolved: string;
   }): PartialDiscriminatedUnionMember2 => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<PartialDiscriminatedUnionMember2> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Pick<PartialDiscriminatedUnionMember2, "$identifier" | "lazilyResolved">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -43658,7 +44247,7 @@ export namespace PartialDiscriminatedUnionMember2 {
 
   export const filter: $FilterFunction<
     PartialDiscriminatedUnionMember2.Filter,
-    PartialDiscriminatedUnionMember2
+    Pick<PartialDiscriminatedUnionMember2, "$identifier" | "lazilyResolved">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -43804,7 +44393,7 @@ export namespace PartialDiscriminatedUnionMember2 {
 
   export const fromJson: $FromJsonFunction<
     PartialDiscriminatedUnionMember2,
-    PartialDiscriminatedUnionMember2.Json
+    Omit<PartialDiscriminatedUnionMember2.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -44004,7 +44593,7 @@ export namespace PartialDiscriminatedUnionMember2 {
   }
 
   export const toJson: $ToJsonFunction<
-    PartialDiscriminatedUnionMember2,
+    Omit<PartialDiscriminatedUnionMember2, "$type">,
     PartialDiscriminatedUnionMember2.Json
   > = (_partialDiscriminatedUnionMember2) =>
     JSON.parse(
@@ -44015,13 +44604,13 @@ export namespace PartialDiscriminatedUnionMember2 {
             ? `_:${_partialDiscriminatedUnionMember2.$identifier().value}`
             : _partialDiscriminatedUnionMember2.$identifier().value,
         "@type": "http://example.com/StructDiscriminatedUnionMember2",
-        $type: _partialDiscriminatedUnionMember2.$type,
+        $type: "PartialDiscriminatedUnionMember2",
         lazilyResolved: _partialDiscriminatedUnionMember2.lazilyResolved,
       }),
     );
 
   export const toLoggable: $ToLoggableFunction<
-    PartialDiscriminatedUnionMember2
+    Pick<PartialDiscriminatedUnionMember2, "$identifier" | "lazilyResolved">
   > = (_partialDiscriminatedUnionMember2) =>
     $compactRecord({
       $identifier: _partialDiscriminatedUnionMember2.$identifier().value,
@@ -44030,15 +44619,15 @@ export namespace PartialDiscriminatedUnionMember2 {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    PartialDiscriminatedUnionMember2,
-    PartialDiscriminatedUnionMember2.Identifier
+    PartialDiscriminatedUnionMember2.Identifier,
+    Omit<PartialDiscriminatedUnionMember2, "$type">
   > = $wrap_ToRdfResourceFunction<
     PartialDiscriminatedUnionMember2.Identifier,
-    PartialDiscriminatedUnionMember2
+    Omit<PartialDiscriminatedUnionMember2, "$type">
   >(PartialDiscriminatedUnionMember2._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    PartialDiscriminatedUnionMember2,
+    Omit<PartialDiscriminatedUnionMember2, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     PartialDiscriminatedUnionMember2.toRdfResource(value, {
@@ -44048,7 +44637,7 @@ export namespace PartialDiscriminatedUnionMember2 {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    PartialDiscriminatedUnionMember2
+    Pick<PartialDiscriminatedUnionMember2, "$identifier">
   > = (_partialDiscriminatedUnionMember2) =>
     $compactRecord({
       $identifier: _partialDiscriminatedUnionMember2.$identifier().toString(),
@@ -44124,7 +44713,7 @@ export namespace PartialStruct {
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     PartialStruct.Identifier,
-    PartialStruct
+    Omit<PartialStruct, "$type">
   > = (parameters) => {
     parameters.resource.add(
       PartialStruct.schema.properties.lazilyResolved.path,
@@ -44134,7 +44723,9 @@ export namespace PartialStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<PartialStruct> = (_partialStruct) =>
+  export const $toString: $ToStringFunction<
+    Pick<PartialStruct, "$identifier">
+  > = (_partialStruct) =>
     `PartialStruct(${JSON.stringify(PartialStruct.toStringRecord(_partialStruct))})`;
 
   export const create: <
@@ -44195,7 +44786,10 @@ export namespace PartialStruct {
     readonly lazilyResolved: string;
   }): PartialStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<PartialStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<PartialStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -44208,10 +44802,10 @@ export namespace PartialStruct {
       ),
     );
 
-  export const filter: $FilterFunction<PartialStruct.Filter, PartialStruct> = (
-    filter,
-    value,
-  ) => {
+  export const filter: $FilterFunction<
+    PartialStruct.Filter,
+    Omit<PartialStruct, "$type">
+  > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier())
@@ -44284,7 +44878,7 @@ export namespace PartialStruct {
 
   export const fromJson: $FromJsonFunction<
     PartialStruct,
-    PartialStruct.Json
+    Omit<PartialStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -44457,21 +45051,22 @@ export namespace PartialStruct {
     );
   }
 
-  export const toJson: $ToJsonFunction<PartialStruct, PartialStruct.Json> = (
-    _partialStruct,
-  ) =>
+  export const toJson: $ToJsonFunction<
+    Omit<PartialStruct, "$type">,
+    PartialStruct.Json
+  > = (_partialStruct) =>
     JSON.parse(
       JSON.stringify({
         "@id":
           _partialStruct.$identifier().termType === "BlankNode"
             ? `_:${_partialStruct.$identifier().value}`
             : _partialStruct.$identifier().value,
-        $type: _partialStruct.$type,
+        $type: "PartialStruct",
         lazilyResolved: _partialStruct.lazilyResolved,
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<PartialStruct> = (
+  export const toLoggable: $ToLoggableFunction<Omit<PartialStruct, "$type">> = (
     _partialStruct,
   ) =>
     $compactRecord({
@@ -44481,14 +45076,15 @@ export namespace PartialStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    PartialStruct,
-    PartialStruct.Identifier
-  > = $wrap_ToRdfResourceFunction<PartialStruct.Identifier, PartialStruct>(
-    PartialStruct._toRdfResourceFunction,
-  );
+    PartialStruct.Identifier,
+    Omit<PartialStruct, "$type">
+  > = $wrap_ToRdfResourceFunction<
+    PartialStruct.Identifier,
+    Omit<PartialStruct, "$type">
+  >(PartialStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    PartialStruct,
+    Omit<PartialStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     PartialStruct.toRdfResource(value, {
@@ -44497,9 +45093,10 @@ export namespace PartialStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<PartialStruct> = (
-    _partialStruct,
-  ) => $compactRecord({ $identifier: _partialStruct.$identifier().toString() });
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<PartialStruct, "$identifier">
+  > = (_partialStruct) =>
+    $compactRecord({ $identifier: _partialStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     PartialStruct.Filter,
@@ -44629,7 +45226,7 @@ export namespace PropertyCardinalitiesStruct {
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     PropertyCardinalitiesStruct.Identifier,
-    PropertyCardinalitiesStruct
+    Omit<PropertyCardinalitiesStruct, "$type">
   > = (parameters) => {
     parameters.resource.add(
       PropertyCardinalitiesStruct.schema.properties.emptySet.path,
@@ -44660,9 +45257,9 @@ export namespace PropertyCardinalitiesStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<PropertyCardinalitiesStruct> = (
-    _propertyCardinalitiesStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<PropertyCardinalitiesStruct, "$identifier">
+  > = (_propertyCardinalitiesStruct) =>
     `PropertyCardinalitiesStruct(${JSON.stringify(
       PropertyCardinalitiesStruct.toStringRecord(_propertyCardinalitiesStruct),
     )})`;
@@ -44767,10 +45364,9 @@ export namespace PropertyCardinalitiesStruct {
     readonly required: string;
   }): PropertyCardinalitiesStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<PropertyCardinalitiesStruct> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Omit<PropertyCardinalitiesStruct, "$type">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -44819,7 +45415,7 @@ export namespace PropertyCardinalitiesStruct {
 
   export const filter: $FilterFunction<
     PropertyCardinalitiesStruct.Filter,
-    PropertyCardinalitiesStruct
+    Omit<PropertyCardinalitiesStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -45013,7 +45609,7 @@ export namespace PropertyCardinalitiesStruct {
 
   export const fromJson: $FromJsonFunction<
     PropertyCardinalitiesStruct,
-    PropertyCardinalitiesStruct.Json
+    Omit<PropertyCardinalitiesStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -45260,7 +45856,7 @@ export namespace PropertyCardinalitiesStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    PropertyCardinalitiesStruct,
+    Omit<PropertyCardinalitiesStruct, "$type">,
     PropertyCardinalitiesStruct.Json
   > = (_propertyCardinalitiesStruct) =>
     JSON.parse(
@@ -45269,7 +45865,7 @@ export namespace PropertyCardinalitiesStruct {
           _propertyCardinalitiesStruct.$identifier().termType === "BlankNode"
             ? `_:${_propertyCardinalitiesStruct.$identifier().value}`
             : _propertyCardinalitiesStruct.$identifier().value,
-        $type: _propertyCardinalitiesStruct.$type,
+        $type: "PropertyCardinalitiesStruct",
         emptySet: _propertyCardinalitiesStruct.emptySet.map((item) => item),
         nonEmptySet: _propertyCardinalitiesStruct.nonEmptySet.map(
           (item) => item,
@@ -45281,9 +45877,9 @@ export namespace PropertyCardinalitiesStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<PropertyCardinalitiesStruct> = (
-    _propertyCardinalitiesStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<PropertyCardinalitiesStruct, "$type">
+  > = (_propertyCardinalitiesStruct) =>
     $compactRecord({
       $identifier: _propertyCardinalitiesStruct.$identifier().value,
       $type: "PropertyCardinalitiesStruct",
@@ -45296,15 +45892,15 @@ export namespace PropertyCardinalitiesStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    PropertyCardinalitiesStruct,
-    PropertyCardinalitiesStruct.Identifier
+    PropertyCardinalitiesStruct.Identifier,
+    Omit<PropertyCardinalitiesStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     PropertyCardinalitiesStruct.Identifier,
-    PropertyCardinalitiesStruct
+    Omit<PropertyCardinalitiesStruct, "$type">
   >(PropertyCardinalitiesStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    PropertyCardinalitiesStruct,
+    Omit<PropertyCardinalitiesStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     PropertyCardinalitiesStruct.toRdfResource(value, {
@@ -45314,7 +45910,7 @@ export namespace PropertyCardinalitiesStruct {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    PropertyCardinalitiesStruct
+    Pick<PropertyCardinalitiesStruct, "$identifier">
   > = (_propertyCardinalitiesStruct) =>
     $compactRecord({
       $identifier: _propertyCardinalitiesStruct.$identifier().toString(),
@@ -45391,67 +45987,65 @@ export namespace PropertyNamesStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     PropertyNamesStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [PropertyNamesStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: PropertyNamesStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        actualName1: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyNamesStruct.schema.properties.actualName1,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-        actualName2: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyNamesStruct.schema.properties.actualName2,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-        actualName3: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyNamesStruct.schema.properties.actualName3,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-        actualName4: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyNamesStruct.schema.properties.actualName4,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-        actualName5: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyNamesStruct.schema.properties.actualName5,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-      }).chain((properties) => PropertyNamesStruct.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: PropertyNamesStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [PropertyNamesStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      actualName1: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyNamesStruct.schema.properties.actualName1,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+      actualName2: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyNamesStruct.schema.properties.actualName2,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+      actualName3: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyNamesStruct.schema.properties.actualName3,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+      actualName4: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyNamesStruct.schema.properties.actualName4,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+      actualName5: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyNamesStruct.schema.properties.actualName5,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) => PropertyNamesStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     PropertyNamesStruct.Identifier,
-    PropertyNamesStruct
+    Omit<PropertyNamesStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -45488,9 +46082,9 @@ export namespace PropertyNamesStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<PropertyNamesStruct> = (
-    _propertyNamesStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<PropertyNamesStruct, "$identifier">
+  > = (_propertyNamesStruct) =>
     `PropertyNamesStruct(${JSON.stringify(PropertyNamesStruct.toStringRecord(_propertyNamesStruct))})`;
 
   export const create: <
@@ -45574,7 +46168,10 @@ export namespace PropertyNamesStruct {
     readonly actualName5: string;
   }): PropertyNamesStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<PropertyNamesStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<PropertyNamesStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -45618,7 +46215,7 @@ export namespace PropertyNamesStruct {
 
   export const filter: $FilterFunction<
     PropertyNamesStruct.Filter,
-    PropertyNamesStruct
+    Omit<PropertyNamesStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -45880,7 +46477,7 @@ export namespace PropertyNamesStruct {
 
   export const fromJson: $FromJsonFunction<
     PropertyNamesStruct,
-    PropertyNamesStruct.Json
+    Omit<PropertyNamesStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -46136,7 +46733,7 @@ export namespace PropertyNamesStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    PropertyNamesStruct,
+    Omit<PropertyNamesStruct, "$type">,
     PropertyNamesStruct.Json
   > = (_propertyNamesStruct) =>
     JSON.parse(
@@ -46146,7 +46743,7 @@ export namespace PropertyNamesStruct {
             ? `_:${_propertyNamesStruct.$identifier().value}`
             : _propertyNamesStruct.$identifier().value,
         "@type": "http://example.com/PropertyNamesStruct",
-        $type: _propertyNamesStruct.$type,
+        $type: "PropertyNamesStruct",
         actualName1: _propertyNamesStruct.actualName1,
         actualName2: _propertyNamesStruct.actualName2,
         actualName3: _propertyNamesStruct.actualName3,
@@ -46155,9 +46752,9 @@ export namespace PropertyNamesStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<PropertyNamesStruct> = (
-    _propertyNamesStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<PropertyNamesStruct, "$type">
+  > = (_propertyNamesStruct) =>
     $compactRecord({
       $identifier: _propertyNamesStruct.$identifier().value,
       $type: "PropertyNamesStruct",
@@ -46169,15 +46766,15 @@ export namespace PropertyNamesStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    PropertyNamesStruct,
-    PropertyNamesStruct.Identifier
+    PropertyNamesStruct.Identifier,
+    Omit<PropertyNamesStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     PropertyNamesStruct.Identifier,
-    PropertyNamesStruct
+    Omit<PropertyNamesStruct, "$type">
   >(PropertyNamesStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    PropertyNamesStruct,
+    Omit<PropertyNamesStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     PropertyNamesStruct.toRdfResource(value, {
@@ -46186,9 +46783,9 @@ export namespace PropertyNamesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<PropertyNamesStruct> = (
-    _propertyNamesStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<PropertyNamesStruct, "$identifier">
+  > = (_propertyNamesStruct) =>
     $compactRecord({
       $identifier: _propertyNamesStruct.$identifier().toString(),
     });
@@ -46243,58 +46840,56 @@ export namespace PropertyPathsStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     PropertyPathsStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [PropertyPathsStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: PropertyPathsStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        inversePath: $shaclPropertyFromRdf<
-          Maybe<NamedNode>,
-          $MaybeSchema<$IriSchema<string>>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyPathsStruct.schema.properties.inversePath,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        predicatePath: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyPathsStruct.schema.properties.predicatePath,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-      }).chain((properties) => PropertyPathsStruct.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: PropertyPathsStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [PropertyPathsStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      inversePath: $shaclPropertyFromRdf<
+        Maybe<NamedNode>,
+        $MaybeSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyPathsStruct.schema.properties.inversePath,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      predicatePath: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyPathsStruct.schema.properties.predicatePath,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+    }).chain((properties) => PropertyPathsStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     PropertyPathsStruct.Identifier,
-    PropertyPathsStruct
+    Omit<PropertyPathsStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -46318,9 +46913,9 @@ export namespace PropertyPathsStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<PropertyPathsStruct> = (
-    _propertyPathsStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<PropertyPathsStruct, "$identifier">
+  > = (_propertyPathsStruct) =>
     `PropertyPathsStruct(${JSON.stringify(PropertyPathsStruct.toStringRecord(_propertyPathsStruct))})`;
 
   export const create: <
@@ -46417,7 +47012,10 @@ export namespace PropertyPathsStruct {
     readonly predicatePath?: string | Maybe<string>;
   }): PropertyPathsStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<PropertyPathsStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<PropertyPathsStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -46448,7 +47046,7 @@ export namespace PropertyPathsStruct {
 
   export const filter: $FilterFunction<
     PropertyPathsStruct.Filter,
-    PropertyPathsStruct
+    Omit<PropertyPathsStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -46638,7 +47236,7 @@ export namespace PropertyPathsStruct {
 
   export const fromJson: $FromJsonFunction<
     PropertyPathsStruct,
-    PropertyPathsStruct.Json
+    Omit<PropertyPathsStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -46855,7 +47453,7 @@ export namespace PropertyPathsStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    PropertyPathsStruct,
+    Omit<PropertyPathsStruct, "$type">,
     PropertyPathsStruct.Json
   > = (_propertyPathsStruct) =>
     JSON.parse(
@@ -46865,7 +47463,7 @@ export namespace PropertyPathsStruct {
             ? `_:${_propertyPathsStruct.$identifier().value}`
             : _propertyPathsStruct.$identifier().value,
         "@type": "http://example.com/PropertyPathsStruct",
-        $type: _propertyPathsStruct.$type,
+        $type: "PropertyPathsStruct",
         inversePath: _propertyPathsStruct.inversePath
           .map((item) => item.value)
           .extract(),
@@ -46875,9 +47473,9 @@ export namespace PropertyPathsStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<PropertyPathsStruct> = (
-    _propertyPathsStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<PropertyPathsStruct, "$type">
+  > = (_propertyPathsStruct) =>
     $compactRecord({
       $identifier: _propertyPathsStruct.$identifier().value,
       $type: "PropertyPathsStruct",
@@ -46890,15 +47488,15 @@ export namespace PropertyPathsStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    PropertyPathsStruct,
-    PropertyPathsStruct.Identifier
+    PropertyPathsStruct.Identifier,
+    Omit<PropertyPathsStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     PropertyPathsStruct.Identifier,
-    PropertyPathsStruct
+    Omit<PropertyPathsStruct, "$type">
   >(PropertyPathsStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    PropertyPathsStruct,
+    Omit<PropertyPathsStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     PropertyPathsStruct.toRdfResource(value, {
@@ -46907,9 +47505,9 @@ export namespace PropertyPathsStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<PropertyPathsStruct> = (
-    _propertyPathsStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<PropertyPathsStruct, "$identifier">
+  > = (_propertyPathsStruct) =>
     $compactRecord({
       $identifier: _propertyPathsStruct.$identifier().toString(),
     });
@@ -46959,54 +47557,50 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     RecursiveDiscriminatedUnionMember1
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [
-            RecursiveDiscriminatedUnionMember1.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              RecursiveDiscriminatedUnionMember1.schema.properties.$identifier
-                .type,
-          },
-        ).chain((values) => values.head()),
-        recursiveDiscriminatedUnionMember1Property: $shaclPropertyFromRdf<
-          Maybe<RecursiveDiscriminatedUnion>,
-          $MaybeSchema<typeof RecursiveDiscriminatedUnion.schema>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            RecursiveDiscriminatedUnionMember1.schema.properties
-              .recursiveDiscriminatedUnionMember1Property,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            RecursiveDiscriminatedUnion,
-            typeof RecursiveDiscriminatedUnion.schema
-          >(RecursiveDiscriminatedUnion.fromRdfResourceValues),
-        }),
-      }).chain((properties) =>
-        RecursiveDiscriminatedUnionMember1.create(properties),
-      ),
+          propertyPath: $rdf_subject,
+          schema:
+            RecursiveDiscriminatedUnionMember1.schema.properties.$identifier
+              .type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [
+              RecursiveDiscriminatedUnionMember1.schema.properties.$rdfType
+                .fromRdfType,
+            ],
+            { graph: options.graph },
+          )
+        : Right(true as const),
+      recursiveDiscriminatedUnionMember1Property: $shaclPropertyFromRdf<
+        Maybe<RecursiveDiscriminatedUnion>,
+        $MaybeSchema<typeof RecursiveDiscriminatedUnion.schema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          RecursiveDiscriminatedUnionMember1.schema.properties
+            .recursiveDiscriminatedUnionMember1Property,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          RecursiveDiscriminatedUnion,
+          typeof RecursiveDiscriminatedUnion.schema
+        >(RecursiveDiscriminatedUnion.fromRdfResourceValues),
+      }),
+    }).chain((properties) =>
+      RecursiveDiscriminatedUnionMember1.create(properties),
     );
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     RecursiveDiscriminatedUnionMember1.Identifier,
-    RecursiveDiscriminatedUnionMember1
+    Omit<RecursiveDiscriminatedUnionMember1, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -47038,7 +47632,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   };
 
   export const $toString: $ToStringFunction<
-    RecursiveDiscriminatedUnionMember1
+    Pick<RecursiveDiscriminatedUnionMember1, "$identifier">
   > = (_recursiveDiscriminatedUnionMember1) =>
     `RecursiveDiscriminatedUnionMember1(${JSON.stringify(
       RecursiveDiscriminatedUnionMember1.toStringRecord(
@@ -47126,10 +47720,12 @@ export namespace RecursiveDiscriminatedUnionMember1 {
       | Maybe<RecursiveDiscriminatedUnion>;
   }): RecursiveDiscriminatedUnionMember1 => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<RecursiveDiscriminatedUnionMember1> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Pick<
+      RecursiveDiscriminatedUnionMember1,
+      "$identifier" | "recursiveDiscriminatedUnionMember1Property"
+    >
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -47148,7 +47744,10 @@ export namespace RecursiveDiscriminatedUnionMember1 {
 
   export const filter: $FilterFunction<
     RecursiveDiscriminatedUnionMember1.Filter,
-    RecursiveDiscriminatedUnionMember1
+    Pick<
+      RecursiveDiscriminatedUnionMember1,
+      "$identifier" | "recursiveDiscriminatedUnionMember1Property"
+    >
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -47276,7 +47875,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
 
   export const fromJson: $FromJsonFunction<
     RecursiveDiscriminatedUnionMember1,
-    RecursiveDiscriminatedUnionMember1.Json
+    Omit<RecursiveDiscriminatedUnionMember1.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -47503,7 +48102,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   }
 
   export const toJson: $ToJsonFunction<
-    RecursiveDiscriminatedUnionMember1,
+    Omit<RecursiveDiscriminatedUnionMember1, "$type">,
     RecursiveDiscriminatedUnionMember1.Json
   > = (_recursiveDiscriminatedUnionMember1) =>
     JSON.parse(
@@ -47514,7 +48113,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
             ? `_:${_recursiveDiscriminatedUnionMember1.$identifier().value}`
             : _recursiveDiscriminatedUnionMember1.$identifier().value,
         "@type": "http://example.com/RecursiveDiscriminatedUnionMember1",
-        $type: _recursiveDiscriminatedUnionMember1.$type,
+        $type: "RecursiveDiscriminatedUnionMember1",
         recursiveDiscriminatedUnionMember1Property:
           _recursiveDiscriminatedUnionMember1.recursiveDiscriminatedUnionMember1Property
             .map((item) => RecursiveDiscriminatedUnion.toJson(item))
@@ -47523,7 +48122,10 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     );
 
   export const toLoggable: $ToLoggableFunction<
-    RecursiveDiscriminatedUnionMember1
+    Pick<
+      RecursiveDiscriminatedUnionMember1,
+      "$identifier" | "recursiveDiscriminatedUnionMember1Property"
+    >
   > = (_recursiveDiscriminatedUnionMember1) =>
     $compactRecord({
       $identifier: _recursiveDiscriminatedUnionMember1.$identifier().value,
@@ -47535,15 +48137,15 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    RecursiveDiscriminatedUnionMember1,
-    RecursiveDiscriminatedUnionMember1.Identifier
+    RecursiveDiscriminatedUnionMember1.Identifier,
+    Omit<RecursiveDiscriminatedUnionMember1, "$type">
   > = $wrap_ToRdfResourceFunction<
     RecursiveDiscriminatedUnionMember1.Identifier,
-    RecursiveDiscriminatedUnionMember1
+    Omit<RecursiveDiscriminatedUnionMember1, "$type">
   >(RecursiveDiscriminatedUnionMember1._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    RecursiveDiscriminatedUnionMember1,
+    Omit<RecursiveDiscriminatedUnionMember1, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     RecursiveDiscriminatedUnionMember1.toRdfResource(value, {
@@ -47553,7 +48155,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    RecursiveDiscriminatedUnionMember1
+    Pick<RecursiveDiscriminatedUnionMember1, "$identifier">
   > = (_recursiveDiscriminatedUnionMember1) =>
     $compactRecord({
       $identifier: _recursiveDiscriminatedUnionMember1.$identifier().toString(),
@@ -47604,54 +48206,50 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     RecursiveDiscriminatedUnionMember2
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [
-            RecursiveDiscriminatedUnionMember2.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              RecursiveDiscriminatedUnionMember2.schema.properties.$identifier
-                .type,
-          },
-        ).chain((values) => values.head()),
-        recursiveDiscriminatedUnionMember2Property: $shaclPropertyFromRdf<
-          Maybe<RecursiveDiscriminatedUnion>,
-          $MaybeSchema<typeof RecursiveDiscriminatedUnion.schema>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            RecursiveDiscriminatedUnionMember2.schema.properties
-              .recursiveDiscriminatedUnionMember2Property,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            RecursiveDiscriminatedUnion,
-            typeof RecursiveDiscriminatedUnion.schema
-          >(RecursiveDiscriminatedUnion.fromRdfResourceValues),
-        }),
-      }).chain((properties) =>
-        RecursiveDiscriminatedUnionMember2.create(properties),
-      ),
+          propertyPath: $rdf_subject,
+          schema:
+            RecursiveDiscriminatedUnionMember2.schema.properties.$identifier
+              .type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [
+              RecursiveDiscriminatedUnionMember2.schema.properties.$rdfType
+                .fromRdfType,
+            ],
+            { graph: options.graph },
+          )
+        : Right(true as const),
+      recursiveDiscriminatedUnionMember2Property: $shaclPropertyFromRdf<
+        Maybe<RecursiveDiscriminatedUnion>,
+        $MaybeSchema<typeof RecursiveDiscriminatedUnion.schema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          RecursiveDiscriminatedUnionMember2.schema.properties
+            .recursiveDiscriminatedUnionMember2Property,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          RecursiveDiscriminatedUnion,
+          typeof RecursiveDiscriminatedUnion.schema
+        >(RecursiveDiscriminatedUnion.fromRdfResourceValues),
+      }),
+    }).chain((properties) =>
+      RecursiveDiscriminatedUnionMember2.create(properties),
     );
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     RecursiveDiscriminatedUnionMember2.Identifier,
-    RecursiveDiscriminatedUnionMember2
+    Omit<RecursiveDiscriminatedUnionMember2, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -47683,7 +48281,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   };
 
   export const $toString: $ToStringFunction<
-    RecursiveDiscriminatedUnionMember2
+    Pick<RecursiveDiscriminatedUnionMember2, "$identifier">
   > = (_recursiveDiscriminatedUnionMember2) =>
     `RecursiveDiscriminatedUnionMember2(${JSON.stringify(
       RecursiveDiscriminatedUnionMember2.toStringRecord(
@@ -47771,10 +48369,12 @@ export namespace RecursiveDiscriminatedUnionMember2 {
       | Maybe<RecursiveDiscriminatedUnion>;
   }): RecursiveDiscriminatedUnionMember2 => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<RecursiveDiscriminatedUnionMember2> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Pick<
+      RecursiveDiscriminatedUnionMember2,
+      "$identifier" | "recursiveDiscriminatedUnionMember2Property"
+    >
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -47793,7 +48393,10 @@ export namespace RecursiveDiscriminatedUnionMember2 {
 
   export const filter: $FilterFunction<
     RecursiveDiscriminatedUnionMember2.Filter,
-    RecursiveDiscriminatedUnionMember2
+    Pick<
+      RecursiveDiscriminatedUnionMember2,
+      "$identifier" | "recursiveDiscriminatedUnionMember2Property"
+    >
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -47921,7 +48524,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
 
   export const fromJson: $FromJsonFunction<
     RecursiveDiscriminatedUnionMember2,
-    RecursiveDiscriminatedUnionMember2.Json
+    Omit<RecursiveDiscriminatedUnionMember2.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -48148,7 +48751,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   }
 
   export const toJson: $ToJsonFunction<
-    RecursiveDiscriminatedUnionMember2,
+    Omit<RecursiveDiscriminatedUnionMember2, "$type">,
     RecursiveDiscriminatedUnionMember2.Json
   > = (_recursiveDiscriminatedUnionMember2) =>
     JSON.parse(
@@ -48159,7 +48762,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
             ? `_:${_recursiveDiscriminatedUnionMember2.$identifier().value}`
             : _recursiveDiscriminatedUnionMember2.$identifier().value,
         "@type": "http://example.com/RecursiveDiscriminatedUnionMember2",
-        $type: _recursiveDiscriminatedUnionMember2.$type,
+        $type: "RecursiveDiscriminatedUnionMember2",
         recursiveDiscriminatedUnionMember2Property:
           _recursiveDiscriminatedUnionMember2.recursiveDiscriminatedUnionMember2Property
             .map((item) => RecursiveDiscriminatedUnion.toJson(item))
@@ -48168,7 +48771,10 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     );
 
   export const toLoggable: $ToLoggableFunction<
-    RecursiveDiscriminatedUnionMember2
+    Pick<
+      RecursiveDiscriminatedUnionMember2,
+      "$identifier" | "recursiveDiscriminatedUnionMember2Property"
+    >
   > = (_recursiveDiscriminatedUnionMember2) =>
     $compactRecord({
       $identifier: _recursiveDiscriminatedUnionMember2.$identifier().value,
@@ -48180,15 +48786,15 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    RecursiveDiscriminatedUnionMember2,
-    RecursiveDiscriminatedUnionMember2.Identifier
+    RecursiveDiscriminatedUnionMember2.Identifier,
+    Omit<RecursiveDiscriminatedUnionMember2, "$type">
   > = $wrap_ToRdfResourceFunction<
     RecursiveDiscriminatedUnionMember2.Identifier,
-    RecursiveDiscriminatedUnionMember2
+    Omit<RecursiveDiscriminatedUnionMember2, "$type">
   >(RecursiveDiscriminatedUnionMember2._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    RecursiveDiscriminatedUnionMember2,
+    Omit<RecursiveDiscriminatedUnionMember2, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     RecursiveDiscriminatedUnionMember2.toRdfResource(value, {
@@ -48198,7 +48804,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    RecursiveDiscriminatedUnionMember2
+    Pick<RecursiveDiscriminatedUnionMember2, "$identifier">
   > = (_recursiveDiscriminatedUnionMember2) =>
     $compactRecord({
       $identifier: _recursiveDiscriminatedUnionMember2.$identifier().toString(),
@@ -48251,63 +48857,60 @@ export namespace StructDiscriminatedUnionMember1 {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     StructDiscriminatedUnionMember1
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [
-            StructDiscriminatedUnionMember1.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              StructDiscriminatedUnionMember1.schema.properties.$identifier
-                .type,
-          },
-        ).chain((values) => values.head()),
-        structDiscriminatedUnionMember1Distinct: $shaclPropertyFromRdf<
-          string,
-          $StringSchema<string>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            StructDiscriminatedUnionMember1.schema.properties
-              .structDiscriminatedUnionMember1Distinct,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-        structDiscriminatedUnionMemberCommon: $shaclPropertyFromRdf<
-          string,
-          $StringSchema<string>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            StructDiscriminatedUnionMember1.schema.properties
-              .structDiscriminatedUnionMemberCommon,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-      }).chain((properties) =>
-        StructDiscriminatedUnionMember1.create(properties),
-      ),
+          propertyPath: $rdf_subject,
+          schema:
+            StructDiscriminatedUnionMember1.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [
+              StructDiscriminatedUnionMember1.schema.properties.$rdfType
+                .fromRdfType,
+            ],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      structDiscriminatedUnionMember1Distinct: $shaclPropertyFromRdf<
+        string,
+        $StringSchema<string>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          StructDiscriminatedUnionMember1.schema.properties
+            .structDiscriminatedUnionMember1Distinct,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+      structDiscriminatedUnionMemberCommon: $shaclPropertyFromRdf<
+        string,
+        $StringSchema<string>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          StructDiscriminatedUnionMember1.schema.properties
+            .structDiscriminatedUnionMemberCommon,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) =>
+      StructDiscriminatedUnionMember1.create(properties),
     );
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     StructDiscriminatedUnionMember1.Identifier,
-    StructDiscriminatedUnionMember1
+    Omit<StructDiscriminatedUnionMember1, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -48339,9 +48942,9 @@ export namespace StructDiscriminatedUnionMember1 {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<StructDiscriminatedUnionMember1> = (
-    _structDiscriminatedUnionMember1,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<StructDiscriminatedUnionMember1, "$identifier">
+  > = (_structDiscriminatedUnionMember1) =>
     `StructDiscriminatedUnionMember1(${JSON.stringify(
       StructDiscriminatedUnionMember1.toStringRecord(
         _structDiscriminatedUnionMember1,
@@ -48418,10 +49021,9 @@ export namespace StructDiscriminatedUnionMember1 {
     readonly structDiscriminatedUnionMemberCommon: string;
   }): StructDiscriminatedUnionMember1 => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<StructDiscriminatedUnionMember1> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Omit<StructDiscriminatedUnionMember1, "$type">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -48450,7 +49052,7 @@ export namespace StructDiscriminatedUnionMember1 {
 
   export const filter: $FilterFunction<
     StructDiscriminatedUnionMember1.Filter,
-    StructDiscriminatedUnionMember1
+    Omit<StructDiscriminatedUnionMember1, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -48638,7 +49240,7 @@ export namespace StructDiscriminatedUnionMember1 {
 
   export const fromJson: $FromJsonFunction<
     StructDiscriminatedUnionMember1,
-    StructDiscriminatedUnionMember1.Json
+    Omit<StructDiscriminatedUnionMember1.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -48862,7 +49464,7 @@ export namespace StructDiscriminatedUnionMember1 {
   }
 
   export const toJson: $ToJsonFunction<
-    StructDiscriminatedUnionMember1,
+    Omit<StructDiscriminatedUnionMember1, "$type">,
     StructDiscriminatedUnionMember1.Json
   > = (_structDiscriminatedUnionMember1) =>
     JSON.parse(
@@ -48873,7 +49475,7 @@ export namespace StructDiscriminatedUnionMember1 {
             ? `_:${_structDiscriminatedUnionMember1.$identifier().value}`
             : _structDiscriminatedUnionMember1.$identifier().value,
         "@type": "http://example.com/StructDiscriminatedUnionMember1",
-        $type: _structDiscriminatedUnionMember1.$type,
+        $type: "StructDiscriminatedUnionMember1",
         structDiscriminatedUnionMember1Distinct:
           _structDiscriminatedUnionMember1.structDiscriminatedUnionMember1Distinct,
         structDiscriminatedUnionMemberCommon:
@@ -48882,7 +49484,7 @@ export namespace StructDiscriminatedUnionMember1 {
     );
 
   export const toLoggable: $ToLoggableFunction<
-    StructDiscriminatedUnionMember1
+    Omit<StructDiscriminatedUnionMember1, "$type">
   > = (_structDiscriminatedUnionMember1) =>
     $compactRecord({
       $identifier: _structDiscriminatedUnionMember1.$identifier().value,
@@ -48894,15 +49496,15 @@ export namespace StructDiscriminatedUnionMember1 {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    StructDiscriminatedUnionMember1,
-    StructDiscriminatedUnionMember1.Identifier
+    StructDiscriminatedUnionMember1.Identifier,
+    Omit<StructDiscriminatedUnionMember1, "$type">
   > = $wrap_ToRdfResourceFunction<
     StructDiscriminatedUnionMember1.Identifier,
-    StructDiscriminatedUnionMember1
+    Omit<StructDiscriminatedUnionMember1, "$type">
   >(StructDiscriminatedUnionMember1._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    StructDiscriminatedUnionMember1,
+    Omit<StructDiscriminatedUnionMember1, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     StructDiscriminatedUnionMember1.toRdfResource(value, {
@@ -48912,7 +49514,7 @@ export namespace StructDiscriminatedUnionMember1 {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    StructDiscriminatedUnionMember1
+    Pick<StructDiscriminatedUnionMember1, "$identifier">
   > = (_structDiscriminatedUnionMember1) =>
     $compactRecord({
       $identifier: _structDiscriminatedUnionMember1.$identifier().toString(),
@@ -48965,63 +49567,60 @@ export namespace StructDiscriminatedUnionMember2 {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     StructDiscriminatedUnionMember2
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [
-            StructDiscriminatedUnionMember2.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              StructDiscriminatedUnionMember2.schema.properties.$identifier
-                .type,
-          },
-        ).chain((values) => values.head()),
-        structDiscriminatedUnionMember2Distinct: $shaclPropertyFromRdf<
-          string,
-          $StringSchema<string>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            StructDiscriminatedUnionMember2.schema.properties
-              .structDiscriminatedUnionMember2Distinct,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-        structDiscriminatedUnionMemberCommon: $shaclPropertyFromRdf<
-          string,
-          $StringSchema<string>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            StructDiscriminatedUnionMember1.schema.properties
-              .structDiscriminatedUnionMemberCommon,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-      }).chain((properties) =>
-        StructDiscriminatedUnionMember2.create(properties),
-      ),
+          propertyPath: $rdf_subject,
+          schema:
+            StructDiscriminatedUnionMember2.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [
+              StructDiscriminatedUnionMember2.schema.properties.$rdfType
+                .fromRdfType,
+            ],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      structDiscriminatedUnionMember2Distinct: $shaclPropertyFromRdf<
+        string,
+        $StringSchema<string>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          StructDiscriminatedUnionMember2.schema.properties
+            .structDiscriminatedUnionMember2Distinct,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+      structDiscriminatedUnionMemberCommon: $shaclPropertyFromRdf<
+        string,
+        $StringSchema<string>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          StructDiscriminatedUnionMember1.schema.properties
+            .structDiscriminatedUnionMemberCommon,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) =>
+      StructDiscriminatedUnionMember2.create(properties),
     );
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     StructDiscriminatedUnionMember2.Identifier,
-    StructDiscriminatedUnionMember2
+    Omit<StructDiscriminatedUnionMember2, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -49053,9 +49652,9 @@ export namespace StructDiscriminatedUnionMember2 {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<StructDiscriminatedUnionMember2> = (
-    _structDiscriminatedUnionMember2,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<StructDiscriminatedUnionMember2, "$identifier">
+  > = (_structDiscriminatedUnionMember2) =>
     `StructDiscriminatedUnionMember2(${JSON.stringify(
       StructDiscriminatedUnionMember2.toStringRecord(
         _structDiscriminatedUnionMember2,
@@ -49132,10 +49731,9 @@ export namespace StructDiscriminatedUnionMember2 {
     readonly structDiscriminatedUnionMemberCommon: string;
   }): StructDiscriminatedUnionMember2 => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<StructDiscriminatedUnionMember2> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Omit<StructDiscriminatedUnionMember2, "$type">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -49164,7 +49762,7 @@ export namespace StructDiscriminatedUnionMember2 {
 
   export const filter: $FilterFunction<
     StructDiscriminatedUnionMember2.Filter,
-    StructDiscriminatedUnionMember2
+    Omit<StructDiscriminatedUnionMember2, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -49352,7 +49950,7 @@ export namespace StructDiscriminatedUnionMember2 {
 
   export const fromJson: $FromJsonFunction<
     StructDiscriminatedUnionMember2,
-    StructDiscriminatedUnionMember2.Json
+    Omit<StructDiscriminatedUnionMember2.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -49576,7 +50174,7 @@ export namespace StructDiscriminatedUnionMember2 {
   }
 
   export const toJson: $ToJsonFunction<
-    StructDiscriminatedUnionMember2,
+    Omit<StructDiscriminatedUnionMember2, "$type">,
     StructDiscriminatedUnionMember2.Json
   > = (_structDiscriminatedUnionMember2) =>
     JSON.parse(
@@ -49587,7 +50185,7 @@ export namespace StructDiscriminatedUnionMember2 {
             ? `_:${_structDiscriminatedUnionMember2.$identifier().value}`
             : _structDiscriminatedUnionMember2.$identifier().value,
         "@type": "http://example.com/StructDiscriminatedUnionMember2",
-        $type: _structDiscriminatedUnionMember2.$type,
+        $type: "StructDiscriminatedUnionMember2",
         structDiscriminatedUnionMember2Distinct:
           _structDiscriminatedUnionMember2.structDiscriminatedUnionMember2Distinct,
         structDiscriminatedUnionMemberCommon:
@@ -49596,7 +50194,7 @@ export namespace StructDiscriminatedUnionMember2 {
     );
 
   export const toLoggable: $ToLoggableFunction<
-    StructDiscriminatedUnionMember2
+    Omit<StructDiscriminatedUnionMember2, "$type">
   > = (_structDiscriminatedUnionMember2) =>
     $compactRecord({
       $identifier: _structDiscriminatedUnionMember2.$identifier().value,
@@ -49608,15 +50206,15 @@ export namespace StructDiscriminatedUnionMember2 {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    StructDiscriminatedUnionMember2,
-    StructDiscriminatedUnionMember2.Identifier
+    StructDiscriminatedUnionMember2.Identifier,
+    Omit<StructDiscriminatedUnionMember2, "$type">
   > = $wrap_ToRdfResourceFunction<
     StructDiscriminatedUnionMember2.Identifier,
-    StructDiscriminatedUnionMember2
+    Omit<StructDiscriminatedUnionMember2, "$type">
   >(StructDiscriminatedUnionMember2._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    StructDiscriminatedUnionMember2,
+    Omit<StructDiscriminatedUnionMember2, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     StructDiscriminatedUnionMember2.toRdfResource(value, {
@@ -49626,7 +50224,7 @@ export namespace StructDiscriminatedUnionMember2 {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    StructDiscriminatedUnionMember2
+    Pick<StructDiscriminatedUnionMember2, "$identifier">
   > = (_structDiscriminatedUnionMember2) =>
     $compactRecord({
       $identifier: _structDiscriminatedUnionMember2.$identifier().toString(),
@@ -49670,66 +50268,63 @@ export type StructIntersectionMember1 = {
 
   readonly $type: "StructIntersectionMember1";
 
-  readonly intersectionMember1Distinct: string;
+  readonly structIntersectionMember1Distinct: string;
 
-  readonly intersectionMemberCommon: string;
+  readonly structIntersectionMemberCommon: string;
 };
 
 export namespace StructIntersectionMember1 {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     StructIntersectionMember1
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [StructIntersectionMember1.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              StructIntersectionMember1.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        intersectionMember1Distinct: $shaclPropertyFromRdf<
-          string,
-          $StringSchema<string>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            StructIntersectionMember1.schema.properties
-              .intersectionMember1Distinct,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-        intersectionMemberCommon: $shaclPropertyFromRdf<
-          string,
-          $StringSchema<string>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            StructIntersectionMember1.schema.properties
-              .intersectionMemberCommon,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-      }).chain((properties) => StructIntersectionMember1.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: StructIntersectionMember1.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [StructIntersectionMember1.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      structIntersectionMember1Distinct: $shaclPropertyFromRdf<
+        string,
+        $StringSchema<string>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          StructIntersectionMember1.schema.properties
+            .structIntersectionMember1Distinct,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+      structIntersectionMemberCommon: $shaclPropertyFromRdf<
+        string,
+        $StringSchema<string>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          StructIntersectionMember1.schema.properties
+            .structIntersectionMemberCommon,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) => StructIntersectionMember1.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     StructIntersectionMember1.Identifier,
-    StructIntersectionMember1
+    Omit<StructIntersectionMember1, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -49739,22 +50334,31 @@ export namespace StructIntersectionMember1 {
       );
     }
     parameters.resource.add(
-      StructIntersectionMember1.schema.properties.intersectionMember1Distinct
-        .path,
-      [$literalFactory.string(parameters.object.intersectionMember1Distinct)],
+      StructIntersectionMember1.schema.properties
+        .structIntersectionMember1Distinct.path,
+      [
+        $literalFactory.string(
+          parameters.object.structIntersectionMember1Distinct,
+        ),
+      ],
       parameters.graph,
     );
     parameters.resource.add(
-      StructIntersectionMember1.schema.properties.intersectionMemberCommon.path,
-      [$literalFactory.string(parameters.object.intersectionMemberCommon)],
+      StructIntersectionMember1.schema.properties.structIntersectionMemberCommon
+        .path,
+      [
+        $literalFactory.string(
+          parameters.object.structIntersectionMemberCommon,
+        ),
+      ],
       parameters.graph,
     );
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<StructIntersectionMember1> = (
-    _structIntersectionMember1,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<StructIntersectionMember1, "$identifier">
+  > = (_structIntersectionMember1) =>
     `StructIntersectionMember1(${JSON.stringify(
       StructIntersectionMember1.toStringRecord(_structIntersectionMember1),
     )})`;
@@ -49768,8 +50372,8 @@ export namespace StructIntersectionMember1 {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly intersectionMember1Distinct: string;
-    readonly intersectionMemberCommon: string;
+    readonly structIntersectionMember1Distinct: string;
+    readonly structIntersectionMemberCommon: string;
   }) => Either<Error, StructIntersectionMember1> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
@@ -49779,18 +50383,20 @@ export namespace StructIntersectionMember1 {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly intersectionMember1Distinct: string;
-    readonly intersectionMemberCommon: string;
+    readonly structIntersectionMember1Distinct: string;
+    readonly structIntersectionMemberCommon: string;
   }): Either<Error, StructIntersectionMember1> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
         parameters.$defaultNamespace,
       ),
-      intersectionMember1Distinct: Either.of(
-        parameters.intersectionMember1Distinct,
+      structIntersectionMember1Distinct: Either.of(
+        parameters.structIntersectionMember1Distinct,
       ),
-      intersectionMemberCommon: Either.of(parameters.intersectionMemberCommon),
+      structIntersectionMemberCommon: Either.of(
+        parameters.structIntersectionMemberCommon,
+      ),
     })
       .map((properties) => ({
         ...properties,
@@ -49812,8 +50418,8 @@ export namespace StructIntersectionMember1 {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly intersectionMember1Distinct: string;
-    readonly intersectionMemberCommon: string;
+    readonly structIntersectionMember1Distinct: string;
+    readonly structIntersectionMemberCommon: string;
   }) => StructIntersectionMember1 = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
@@ -49823,14 +50429,13 @@ export namespace StructIntersectionMember1 {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly intersectionMember1Distinct: string;
-    readonly intersectionMemberCommon: string;
+    readonly structIntersectionMember1Distinct: string;
+    readonly structIntersectionMemberCommon: string;
   }): StructIntersectionMember1 => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<StructIntersectionMember1> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Omit<StructIntersectionMember1, "$type">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -49840,23 +50445,26 @@ export namespace StructIntersectionMember1 {
         $propertyEquals(
           {
             equalsFunction: $strictEquals,
-            name: "intersectionMember1Distinct",
+            name: "structIntersectionMember1Distinct",
           },
-          [left, left.intersectionMember1Distinct],
-          [right, right.intersectionMember1Distinct],
+          [left, left.structIntersectionMember1Distinct],
+          [right, right.structIntersectionMember1Distinct],
         ),
       )
       .chain(() =>
         $propertyEquals(
-          { equalsFunction: $strictEquals, name: "intersectionMemberCommon" },
-          [left, left.intersectionMemberCommon],
-          [right, right.intersectionMemberCommon],
+          {
+            equalsFunction: $strictEquals,
+            name: "structIntersectionMemberCommon",
+          },
+          [left, left.structIntersectionMemberCommon],
+          [right, right.structIntersectionMemberCommon],
         ),
       );
 
   export const filter: $FilterFunction<
     StructIntersectionMember1.Filter,
-    StructIntersectionMember1
+    Omit<StructIntersectionMember1, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -49865,19 +50473,19 @@ export namespace StructIntersectionMember1 {
       return false;
     }
     if (
-      filter.intersectionMember1Distinct !== undefined &&
+      filter.structIntersectionMember1Distinct !== undefined &&
       !$filterString(
-        filter.intersectionMember1Distinct,
-        value.intersectionMember1Distinct,
+        filter.structIntersectionMember1Distinct,
+        value.structIntersectionMember1Distinct,
       )
     ) {
       return false;
     }
     if (
-      filter.intersectionMemberCommon !== undefined &&
+      filter.structIntersectionMemberCommon !== undefined &&
       !$filterString(
-        filter.intersectionMemberCommon,
-        value.intersectionMemberCommon,
+        filter.structIntersectionMemberCommon,
+        value.structIntersectionMemberCommon,
       )
     ) {
       return false;
@@ -49887,8 +50495,8 @@ export namespace StructIntersectionMember1 {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly intersectionMember1Distinct?: $StringFilter;
-    readonly intersectionMemberCommon?: $StringFilter;
+    readonly structIntersectionMember1Distinct?: $StringFilter;
+    readonly structIntersectionMemberCommon?: $StringFilter;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -49919,25 +50527,26 @@ export namespace StructIntersectionMember1 {
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.intersectionMember1Distinct,
+        filter: parameters.filter?.structIntersectionMember1Distinct,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "intersectionMember1Distinct",
+        propertyName: "structIntersectionMember1Distinct",
         propertySchema:
           StructIntersectionMember1.schema.properties
-            .intersectionMember1Distinct,
+            .structIntersectionMember1Distinct,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.intersectionMemberCommon,
+        filter: parameters.filter?.structIntersectionMemberCommon,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "intersectionMemberCommon",
+        propertyName: "structIntersectionMemberCommon",
         propertySchema:
-          StructIntersectionMember1.schema.properties.intersectionMemberCommon,
+          StructIntersectionMember1.schema.properties
+            .structIntersectionMemberCommon,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -50011,27 +50620,28 @@ export namespace StructIntersectionMember1 {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.intersectionMember1Distinct,
+        filter: parameters.filter?.structIntersectionMember1Distinct,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "intersectionMember1Distinct",
+        propertyName: "structIntersectionMember1Distinct",
         propertySchema:
           StructIntersectionMember1.schema.properties
-            .intersectionMember1Distinct,
+            .structIntersectionMember1Distinct,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.intersectionMemberCommon,
+        filter: parameters.filter?.structIntersectionMemberCommon,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "intersectionMemberCommon",
+        propertyName: "structIntersectionMemberCommon",
         propertySchema:
-          StructIntersectionMember1.schema.properties.intersectionMemberCommon,
+          StructIntersectionMember1.schema.properties
+            .structIntersectionMemberCommon,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -50041,7 +50651,7 @@ export namespace StructIntersectionMember1 {
 
   export const fromJson: $FromJsonFunction<
     StructIntersectionMember1,
-    StructIntersectionMember1.Json
+    Omit<StructIntersectionMember1.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -50049,11 +50659,11 @@ export namespace StructIntersectionMember1 {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      intersectionMember1Distinct: Either.of<Error, string>(
-        $json["intersectionMember1Distinct"],
+      structIntersectionMember1Distinct: Either.of<Error, string>(
+        $json["structIntersectionMember1Distinct"],
       ),
-      intersectionMemberCommon: Either.of<Error, string>(
-        $json["intersectionMemberCommon"],
+      structIntersectionMemberCommon: Either.of<Error, string>(
+        $json["structIntersectionMemberCommon"],
       ),
     }).chain(StructIntersectionMember1.create);
 
@@ -50084,8 +50694,14 @@ export namespace StructIntersectionMember1 {
     if (_structIntersectionMember1.$type) {
       hasher.update(_structIntersectionMember1.$type);
     }
-    $hashString(hasher, _structIntersectionMember1.intersectionMember1Distinct);
-    $hashString(hasher, _structIntersectionMember1.intersectionMemberCommon);
+    $hashString(
+      hasher,
+      _structIntersectionMember1.structIntersectionMember1Distinct,
+    );
+    $hashString(
+      hasher,
+      _structIntersectionMember1.structIntersectionMemberCommon,
+    );
   };
 
   export type Identifier = BlankNode | NamedNode;
@@ -50102,8 +50718,8 @@ export namespace StructIntersectionMember1 {
     "@id": string;
     "@type": string;
     $type: "StructIntersectionMember1";
-    intersectionMember1Distinct: string;
-    intersectionMemberCommon: string;
+    structIntersectionMember1Distinct: string;
+    structIntersectionMemberCommon: string;
   };
 
   export namespace Json {
@@ -50120,8 +50736,8 @@ export namespace StructIntersectionMember1 {
         "@id": z.string().min(1),
         "@type": z.string(),
         $type: z.literal("StructIntersectionMember1"),
-        intersectionMember1Distinct: z.string(),
-        intersectionMemberCommon: z.string(),
+        structIntersectionMember1Distinct: z.string(),
+        structIntersectionMemberCommon: z.string(),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -50145,11 +50761,11 @@ export namespace StructIntersectionMember1 {
             type: "Control",
           },
           {
-            scope: `${_parameters?.scopePrefix ?? "#"}/properties/intersectionMember1Distinct`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/structIntersectionMember1Distinct`,
             type: "Control",
           },
           {
-            scope: `${_parameters?.scopePrefix ?? "#"}/properties/intersectionMemberCommon`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/structIntersectionMemberCommon`,
             type: "Control",
           },
         ],
@@ -50175,17 +50791,17 @@ export namespace StructIntersectionMember1 {
         ],
       },
       $type: { kind: "Discriminant", value: "StructIntersectionMember1" },
-      intersectionMember1Distinct: {
+      structIntersectionMember1Distinct: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/intersectionMember1Distinct",
+          "http://example.com/structIntersectionMember1Distinct",
         ),
         type: { kind: "String" as const },
       },
-      intersectionMemberCommon: {
+      structIntersectionMemberCommon: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/intersectionMemberCommon",
+          "http://example.com/structIntersectionMemberCommon",
         ),
         type: { kind: "String" as const },
       },
@@ -50255,7 +50871,7 @@ export namespace StructIntersectionMember1 {
   }
 
   export const toJson: $ToJsonFunction<
-    StructIntersectionMember1,
+    Omit<StructIntersectionMember1, "$type">,
     StructIntersectionMember1.Json
   > = (_structIntersectionMember1) =>
     JSON.parse(
@@ -50265,36 +50881,36 @@ export namespace StructIntersectionMember1 {
             ? `_:${_structIntersectionMember1.$identifier().value}`
             : _structIntersectionMember1.$identifier().value,
         "@type": "http://example.com/StructIntersectionMember1",
-        $type: _structIntersectionMember1.$type,
-        intersectionMember1Distinct:
-          _structIntersectionMember1.intersectionMember1Distinct,
-        intersectionMemberCommon:
-          _structIntersectionMember1.intersectionMemberCommon,
+        $type: "StructIntersectionMember1",
+        structIntersectionMember1Distinct:
+          _structIntersectionMember1.structIntersectionMember1Distinct,
+        structIntersectionMemberCommon:
+          _structIntersectionMember1.structIntersectionMemberCommon,
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<StructIntersectionMember1> = (
-    _structIntersectionMember1,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<StructIntersectionMember1, "$type">
+  > = (_structIntersectionMember1) =>
     $compactRecord({
       $identifier: _structIntersectionMember1.$identifier().value,
       $type: "StructIntersectionMember1",
-      intersectionMember1Distinct:
-        _structIntersectionMember1.intersectionMember1Distinct,
-      intersectionMemberCommon:
-        _structIntersectionMember1.intersectionMemberCommon,
+      structIntersectionMember1Distinct:
+        _structIntersectionMember1.structIntersectionMember1Distinct,
+      structIntersectionMemberCommon:
+        _structIntersectionMember1.structIntersectionMemberCommon,
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    StructIntersectionMember1,
-    StructIntersectionMember1.Identifier
+    StructIntersectionMember1.Identifier,
+    Omit<StructIntersectionMember1, "$type">
   > = $wrap_ToRdfResourceFunction<
     StructIntersectionMember1.Identifier,
-    StructIntersectionMember1
+    Omit<StructIntersectionMember1, "$type">
   >(StructIntersectionMember1._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    StructIntersectionMember1,
+    Omit<StructIntersectionMember1, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     StructIntersectionMember1.toRdfResource(value, {
@@ -50304,7 +50920,7 @@ export namespace StructIntersectionMember1 {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    StructIntersectionMember1
+    Pick<StructIntersectionMember1, "$identifier">
   > = (_structIntersectionMember1) =>
     $compactRecord({
       $identifier: _structIntersectionMember1.$identifier().toString(),
@@ -50348,66 +50964,63 @@ export type StructIntersectionMember2 = {
 
   readonly $type: "StructIntersectionMember2";
 
-  readonly intersectionMember2Distinct: string;
+  readonly structIntersectionMember2Distinct: string;
 
-  readonly intersectionMemberCommon: string;
+  readonly structIntersectionMemberCommon: string;
 };
 
 export namespace StructIntersectionMember2 {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     StructIntersectionMember2
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [StructIntersectionMember2.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              StructIntersectionMember2.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        intersectionMember2Distinct: $shaclPropertyFromRdf<
-          string,
-          $StringSchema<string>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            StructIntersectionMember2.schema.properties
-              .intersectionMember2Distinct,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-        intersectionMemberCommon: $shaclPropertyFromRdf<
-          string,
-          $StringSchema<string>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            StructIntersectionMember1.schema.properties
-              .intersectionMemberCommon,
-          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        }),
-      }).chain((properties) => StructIntersectionMember2.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: StructIntersectionMember2.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [StructIntersectionMember2.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      structIntersectionMember2Distinct: $shaclPropertyFromRdf<
+        string,
+        $StringSchema<string>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          StructIntersectionMember2.schema.properties
+            .structIntersectionMember2Distinct,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+      structIntersectionMemberCommon: $shaclPropertyFromRdf<
+        string,
+        $StringSchema<string>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          StructIntersectionMember1.schema.properties
+            .structIntersectionMemberCommon,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) => StructIntersectionMember2.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     StructIntersectionMember2.Identifier,
-    StructIntersectionMember2
+    Omit<StructIntersectionMember2, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -50417,22 +51030,31 @@ export namespace StructIntersectionMember2 {
       );
     }
     parameters.resource.add(
-      StructIntersectionMember2.schema.properties.intersectionMember2Distinct
-        .path,
-      [$literalFactory.string(parameters.object.intersectionMember2Distinct)],
+      StructIntersectionMember2.schema.properties
+        .structIntersectionMember2Distinct.path,
+      [
+        $literalFactory.string(
+          parameters.object.structIntersectionMember2Distinct,
+        ),
+      ],
       parameters.graph,
     );
     parameters.resource.add(
-      StructIntersectionMember1.schema.properties.intersectionMemberCommon.path,
-      [$literalFactory.string(parameters.object.intersectionMemberCommon)],
+      StructIntersectionMember1.schema.properties.structIntersectionMemberCommon
+        .path,
+      [
+        $literalFactory.string(
+          parameters.object.structIntersectionMemberCommon,
+        ),
+      ],
       parameters.graph,
     );
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<StructIntersectionMember2> = (
-    _structIntersectionMember2,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<StructIntersectionMember2, "$identifier">
+  > = (_structIntersectionMember2) =>
     `StructIntersectionMember2(${JSON.stringify(
       StructIntersectionMember2.toStringRecord(_structIntersectionMember2),
     )})`;
@@ -50446,8 +51068,8 @@ export namespace StructIntersectionMember2 {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly intersectionMember2Distinct: string;
-    readonly intersectionMemberCommon: string;
+    readonly structIntersectionMember2Distinct: string;
+    readonly structIntersectionMemberCommon: string;
   }) => Either<Error, StructIntersectionMember2> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
@@ -50457,18 +51079,20 @@ export namespace StructIntersectionMember2 {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly intersectionMember2Distinct: string;
-    readonly intersectionMemberCommon: string;
+    readonly structIntersectionMember2Distinct: string;
+    readonly structIntersectionMemberCommon: string;
   }): Either<Error, StructIntersectionMember2> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
         parameters.$defaultNamespace,
       ),
-      intersectionMember2Distinct: Either.of(
-        parameters.intersectionMember2Distinct,
+      structIntersectionMember2Distinct: Either.of(
+        parameters.structIntersectionMember2Distinct,
       ),
-      intersectionMemberCommon: Either.of(parameters.intersectionMemberCommon),
+      structIntersectionMemberCommon: Either.of(
+        parameters.structIntersectionMemberCommon,
+      ),
     })
       .map((properties) => ({
         ...properties,
@@ -50490,8 +51114,8 @@ export namespace StructIntersectionMember2 {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly intersectionMember2Distinct: string;
-    readonly intersectionMemberCommon: string;
+    readonly structIntersectionMember2Distinct: string;
+    readonly structIntersectionMemberCommon: string;
   }) => StructIntersectionMember2 = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
@@ -50501,14 +51125,13 @@ export namespace StructIntersectionMember2 {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly intersectionMember2Distinct: string;
-    readonly intersectionMemberCommon: string;
+    readonly structIntersectionMember2Distinct: string;
+    readonly structIntersectionMemberCommon: string;
   }): StructIntersectionMember2 => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<StructIntersectionMember2> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Omit<StructIntersectionMember2, "$type">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -50518,23 +51141,26 @@ export namespace StructIntersectionMember2 {
         $propertyEquals(
           {
             equalsFunction: $strictEquals,
-            name: "intersectionMember2Distinct",
+            name: "structIntersectionMember2Distinct",
           },
-          [left, left.intersectionMember2Distinct],
-          [right, right.intersectionMember2Distinct],
+          [left, left.structIntersectionMember2Distinct],
+          [right, right.structIntersectionMember2Distinct],
         ),
       )
       .chain(() =>
         $propertyEquals(
-          { equalsFunction: $strictEquals, name: "intersectionMemberCommon" },
-          [left, left.intersectionMemberCommon],
-          [right, right.intersectionMemberCommon],
+          {
+            equalsFunction: $strictEquals,
+            name: "structIntersectionMemberCommon",
+          },
+          [left, left.structIntersectionMemberCommon],
+          [right, right.structIntersectionMemberCommon],
         ),
       );
 
   export const filter: $FilterFunction<
     StructIntersectionMember2.Filter,
-    StructIntersectionMember2
+    Omit<StructIntersectionMember2, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -50543,19 +51169,19 @@ export namespace StructIntersectionMember2 {
       return false;
     }
     if (
-      filter.intersectionMember2Distinct !== undefined &&
+      filter.structIntersectionMember2Distinct !== undefined &&
       !$filterString(
-        filter.intersectionMember2Distinct,
-        value.intersectionMember2Distinct,
+        filter.structIntersectionMember2Distinct,
+        value.structIntersectionMember2Distinct,
       )
     ) {
       return false;
     }
     if (
-      filter.intersectionMemberCommon !== undefined &&
+      filter.structIntersectionMemberCommon !== undefined &&
       !$filterString(
-        filter.intersectionMemberCommon,
-        value.intersectionMemberCommon,
+        filter.structIntersectionMemberCommon,
+        value.structIntersectionMemberCommon,
       )
     ) {
       return false;
@@ -50565,8 +51191,8 @@ export namespace StructIntersectionMember2 {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly intersectionMember2Distinct?: $StringFilter;
-    readonly intersectionMemberCommon?: $StringFilter;
+    readonly structIntersectionMember2Distinct?: $StringFilter;
+    readonly structIntersectionMemberCommon?: $StringFilter;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -50597,25 +51223,26 @@ export namespace StructIntersectionMember2 {
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.intersectionMember2Distinct,
+        filter: parameters.filter?.structIntersectionMember2Distinct,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "intersectionMember2Distinct",
+        propertyName: "structIntersectionMember2Distinct",
         propertySchema:
           StructIntersectionMember2.schema.properties
-            .intersectionMember2Distinct,
+            .structIntersectionMember2Distinct,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.intersectionMemberCommon,
+        filter: parameters.filter?.structIntersectionMemberCommon,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "intersectionMemberCommon",
+        propertyName: "structIntersectionMemberCommon",
         propertySchema:
-          StructIntersectionMember1.schema.properties.intersectionMemberCommon,
+          StructIntersectionMember1.schema.properties
+            .structIntersectionMemberCommon,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -50689,27 +51316,28 @@ export namespace StructIntersectionMember2 {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.intersectionMember2Distinct,
+        filter: parameters.filter?.structIntersectionMember2Distinct,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "intersectionMember2Distinct",
+        propertyName: "structIntersectionMember2Distinct",
         propertySchema:
           StructIntersectionMember2.schema.properties
-            .intersectionMember2Distinct,
+            .structIntersectionMember2Distinct,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.intersectionMemberCommon,
+        filter: parameters.filter?.structIntersectionMemberCommon,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "intersectionMemberCommon",
+        propertyName: "structIntersectionMemberCommon",
         propertySchema:
-          StructIntersectionMember1.schema.properties.intersectionMemberCommon,
+          StructIntersectionMember1.schema.properties
+            .structIntersectionMemberCommon,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -50719,7 +51347,7 @@ export namespace StructIntersectionMember2 {
 
   export const fromJson: $FromJsonFunction<
     StructIntersectionMember2,
-    StructIntersectionMember2.Json
+    Omit<StructIntersectionMember2.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -50727,11 +51355,11 @@ export namespace StructIntersectionMember2 {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      intersectionMember2Distinct: Either.of<Error, string>(
-        $json["intersectionMember2Distinct"],
+      structIntersectionMember2Distinct: Either.of<Error, string>(
+        $json["structIntersectionMember2Distinct"],
       ),
-      intersectionMemberCommon: Either.of<Error, string>(
-        $json["intersectionMemberCommon"],
+      structIntersectionMemberCommon: Either.of<Error, string>(
+        $json["structIntersectionMemberCommon"],
       ),
     }).chain(StructIntersectionMember2.create);
 
@@ -50762,8 +51390,14 @@ export namespace StructIntersectionMember2 {
     if (_structIntersectionMember2.$type) {
       hasher.update(_structIntersectionMember2.$type);
     }
-    $hashString(hasher, _structIntersectionMember2.intersectionMember2Distinct);
-    $hashString(hasher, _structIntersectionMember2.intersectionMemberCommon);
+    $hashString(
+      hasher,
+      _structIntersectionMember2.structIntersectionMember2Distinct,
+    );
+    $hashString(
+      hasher,
+      _structIntersectionMember2.structIntersectionMemberCommon,
+    );
   };
 
   export type Identifier = BlankNode | NamedNode;
@@ -50780,8 +51414,8 @@ export namespace StructIntersectionMember2 {
     "@id": string;
     "@type": string;
     $type: "StructIntersectionMember2";
-    intersectionMember2Distinct: string;
-    intersectionMemberCommon: string;
+    structIntersectionMember2Distinct: string;
+    structIntersectionMemberCommon: string;
   };
 
   export namespace Json {
@@ -50798,8 +51432,8 @@ export namespace StructIntersectionMember2 {
         "@id": z.string().min(1),
         "@type": z.string(),
         $type: z.literal("StructIntersectionMember2"),
-        intersectionMember2Distinct: z.string(),
-        intersectionMemberCommon: z.string(),
+        structIntersectionMember2Distinct: z.string(),
+        structIntersectionMemberCommon: z.string(),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -50823,11 +51457,11 @@ export namespace StructIntersectionMember2 {
             type: "Control",
           },
           {
-            scope: `${_parameters?.scopePrefix ?? "#"}/properties/intersectionMember2Distinct`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/structIntersectionMember2Distinct`,
             type: "Control",
           },
           {
-            scope: `${_parameters?.scopePrefix ?? "#"}/properties/intersectionMemberCommon`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/structIntersectionMemberCommon`,
             type: "Control",
           },
         ],
@@ -50853,17 +51487,17 @@ export namespace StructIntersectionMember2 {
         ],
       },
       $type: { kind: "Discriminant", value: "StructIntersectionMember2" },
-      intersectionMember2Distinct: {
+      structIntersectionMember2Distinct: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/intersectionMember2Distinct",
+          "http://example.com/structIntersectionMember2Distinct",
         ),
         type: { kind: "String" as const },
       },
-      intersectionMemberCommon: {
+      structIntersectionMemberCommon: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/intersectionMemberCommon",
+          "http://example.com/structIntersectionMemberCommon",
         ),
         type: { kind: "String" as const },
       },
@@ -50933,7 +51567,7 @@ export namespace StructIntersectionMember2 {
   }
 
   export const toJson: $ToJsonFunction<
-    StructIntersectionMember2,
+    Omit<StructIntersectionMember2, "$type">,
     StructIntersectionMember2.Json
   > = (_structIntersectionMember2) =>
     JSON.parse(
@@ -50943,36 +51577,36 @@ export namespace StructIntersectionMember2 {
             ? `_:${_structIntersectionMember2.$identifier().value}`
             : _structIntersectionMember2.$identifier().value,
         "@type": "http://example.com/StructIntersectionMember2",
-        $type: _structIntersectionMember2.$type,
-        intersectionMember2Distinct:
-          _structIntersectionMember2.intersectionMember2Distinct,
-        intersectionMemberCommon:
-          _structIntersectionMember2.intersectionMemberCommon,
+        $type: "StructIntersectionMember2",
+        structIntersectionMember2Distinct:
+          _structIntersectionMember2.structIntersectionMember2Distinct,
+        structIntersectionMemberCommon:
+          _structIntersectionMember2.structIntersectionMemberCommon,
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<StructIntersectionMember2> = (
-    _structIntersectionMember2,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<StructIntersectionMember2, "$type">
+  > = (_structIntersectionMember2) =>
     $compactRecord({
       $identifier: _structIntersectionMember2.$identifier().value,
       $type: "StructIntersectionMember2",
-      intersectionMember2Distinct:
-        _structIntersectionMember2.intersectionMember2Distinct,
-      intersectionMemberCommon:
-        _structIntersectionMember2.intersectionMemberCommon,
+      structIntersectionMember2Distinct:
+        _structIntersectionMember2.structIntersectionMember2Distinct,
+      structIntersectionMemberCommon:
+        _structIntersectionMember2.structIntersectionMemberCommon,
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    StructIntersectionMember2,
-    StructIntersectionMember2.Identifier
+    StructIntersectionMember2.Identifier,
+    Omit<StructIntersectionMember2, "$type">
   > = $wrap_ToRdfResourceFunction<
     StructIntersectionMember2.Identifier,
-    StructIntersectionMember2
+    Omit<StructIntersectionMember2, "$type">
   >(StructIntersectionMember2._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    StructIntersectionMember2,
+    Omit<StructIntersectionMember2, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     StructIntersectionMember2.toRdfResource(value, {
@@ -50982,7 +51616,7 @@ export namespace StructIntersectionMember2 {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    StructIntersectionMember2
+    Pick<StructIntersectionMember2, "$identifier">
   > = (_structIntersectionMember2) =>
     $compactRecord({
       $identifier: _structIntersectionMember2.$identifier().toString(),
@@ -51038,42 +51672,37 @@ export namespace TargetClassStruct {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     TargetClassStruct
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [TargetClassStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: TargetClassStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        targetClassString: $shaclPropertyFromRdf<string, $StringSchema<string>>(
-          {
-            ...options,
-            focusResource: resource,
-            ignoreRdfType: true,
-            propertySchema:
-              TargetClassStruct.schema.properties.targetClassString,
-            typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          },
-        ),
-      }).chain((properties) => TargetClassStruct.create(properties)),
-    );
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
+          ...options,
+          focusResource: resource,
+          propertyPath: $rdf_subject,
+          schema: TargetClassStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [TargetClassStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      targetClassString: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: TargetClassStruct.schema.properties.targetClassString,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) => TargetClassStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     TargetClassStruct.Identifier,
-    TargetClassStruct
+    Omit<TargetClassStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -51090,9 +51719,9 @@ export namespace TargetClassStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<TargetClassStruct> = (
-    _targetClassStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<TargetClassStruct, "$identifier">
+  > = (_targetClassStruct) =>
     `TargetClassStruct(${JSON.stringify(TargetClassStruct.toStringRecord(_targetClassStruct))})`;
 
   export const create: <
@@ -51156,7 +51785,9 @@ export namespace TargetClassStruct {
     readonly targetClassString: string;
   }): TargetClassStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<TargetClassStruct> = (left, right) =>
+  export const equals: $EqualsFunction<
+    Pick<TargetClassStruct, "$identifier" | "targetClassString">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -51171,7 +51802,7 @@ export namespace TargetClassStruct {
 
   export const filter: $FilterFunction<
     TargetClassStruct.Filter,
-    TargetClassStruct
+    Pick<TargetClassStruct, "$identifier" | "targetClassString">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -51312,7 +51943,7 @@ export namespace TargetClassStruct {
 
   export const fromJson: $FromJsonFunction<
     TargetClassStruct,
-    TargetClassStruct.Json
+    Omit<TargetClassStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -51496,7 +52127,7 @@ export namespace TargetClassStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    TargetClassStruct,
+    Omit<TargetClassStruct, "$type">,
     TargetClassStruct.Json
   > = (_targetClassStruct) =>
     JSON.parse(
@@ -51506,14 +52137,14 @@ export namespace TargetClassStruct {
             ? `_:${_targetClassStruct.$identifier().value}`
             : _targetClassStruct.$identifier().value,
         "@type": "http://example.com/RdfType",
-        $type: _targetClassStruct.$type,
+        $type: "TargetClassStruct",
         targetClassString: _targetClassStruct.targetClassString,
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<TargetClassStruct> = (
-    _targetClassStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Pick<TargetClassStruct, "$identifier" | "targetClassString">
+  > = (_targetClassStruct) =>
     $compactRecord({
       $identifier: _targetClassStruct.$identifier().value,
       $type: "TargetClassStruct",
@@ -51521,15 +52152,15 @@ export namespace TargetClassStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    TargetClassStruct,
-    TargetClassStruct.Identifier
+    TargetClassStruct.Identifier,
+    Omit<TargetClassStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     TargetClassStruct.Identifier,
-    TargetClassStruct
+    Omit<TargetClassStruct, "$type">
   >(TargetClassStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    TargetClassStruct,
+    Omit<TargetClassStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     TargetClassStruct.toRdfResource(value, {
@@ -51538,9 +52169,9 @@ export namespace TargetClassStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<TargetClassStruct> = (
-    _targetClassStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<TargetClassStruct, "$identifier">
+  > = (_targetClassStruct) =>
     $compactRecord({
       $identifier: _targetClassStruct.$identifier().toString(),
     });
@@ -51614,174 +52245,170 @@ export namespace TermsStruct {
     resource,
     options,
   ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [TermsStruct.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema: TermsStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        blankNodeTerm: $shaclPropertyFromRdf<
-          Maybe<BlankNode>,
-          $MaybeSchema<$BlankNodeSchema>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: TermsStruct.schema.properties.blankNodeTerm,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            BlankNode,
-            $BlankNodeSchema
-          >($blankNodeFromRdfResourceValues),
-        }),
-        booleanTerm: $shaclPropertyFromRdf<
-          Maybe<boolean>,
-          $MaybeSchema<$BooleanSchema<boolean>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: TermsStruct.schema.properties.booleanTerm,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            boolean,
-            $BooleanSchema<boolean>
-          >($booleanFromRdfResourceValues<boolean>),
-        }),
-        dateTerm: $shaclPropertyFromRdf<Maybe<Date>, $MaybeSchema<$DateSchema>>(
-          {
-            ...options,
-            focusResource: resource,
-            ignoreRdfType: true,
-            propertySchema: TermsStruct.schema.properties.dateTerm,
-            typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-              Date,
-              $DateSchema
-            >($dateFromRdfResourceValues),
-          },
-        ),
-        dateTimeTerm: $shaclPropertyFromRdf<
-          Maybe<Date>,
-          $MaybeSchema<$DateSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: TermsStruct.schema.properties.dateTimeTerm,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Date,
-            $DateSchema
-          >($dateTimeFromRdfResourceValues),
-        }),
-        doubleTerm: $shaclPropertyFromRdf<
-          Maybe<number>,
-          $MaybeSchema<$NumericSchema<number>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: TermsStruct.schema.properties.doubleTerm,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            number,
-            $NumericSchema<number>
-          >($floatFromRdfResourceValues<number>),
-        }),
-        identifierTerm: $shaclPropertyFromRdf<
-          Maybe<BlankNode | NamedNode>,
-          $MaybeSchema<$IdentifierSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: TermsStruct.schema.properties.identifierTerm,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            BlankNode | NamedNode,
-            $IdentifierSchema
-          >($identifierFromRdfResourceValues),
-        }),
-        iriTerm: $shaclPropertyFromRdf<
-          Maybe<NamedNode>,
-          $MaybeSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: TermsStruct.schema.properties.iriTerm,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        langStringTerm: $shaclPropertyFromRdf<
-          Maybe<Literal>,
-          $MaybeSchema<$LangStringSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: TermsStruct.schema.properties.langStringTerm,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Literal,
-            $LangStringSchema
-          >($langStringFromRdfResourceValues),
-        }),
-        literalTerm: $shaclPropertyFromRdf<
-          Maybe<Literal>,
-          $MaybeSchema<$LiteralSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: TermsStruct.schema.properties.literalTerm,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Literal,
-            $LiteralSchema
-          >($literalFromRdfResourceValues),
-        }),
-        stringTerm: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: TermsStruct.schema.properties.stringTerm,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        term: $shaclPropertyFromRdf<
-          Maybe<BlankNode | NamedNode | Literal>,
-          $MaybeSchema<$TermSchema<BlankNode | NamedNode | Literal>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: TermsStruct.schema.properties.term,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            BlankNode | NamedNode | Literal,
-            $TermSchema<BlankNode | NamedNode | Literal>
-          >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
-        }),
-      }).chain((properties) => TermsStruct.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: TermsStruct.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [TermsStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      blankNodeTerm: $shaclPropertyFromRdf<
+        Maybe<BlankNode>,
+        $MaybeSchema<$BlankNodeSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: TermsStruct.schema.properties.blankNodeTerm,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          BlankNode,
+          $BlankNodeSchema
+        >($blankNodeFromRdfResourceValues),
+      }),
+      booleanTerm: $shaclPropertyFromRdf<
+        Maybe<boolean>,
+        $MaybeSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: TermsStruct.schema.properties.booleanTerm,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          boolean,
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+      dateTerm: $shaclPropertyFromRdf<Maybe<Date>, $MaybeSchema<$DateSchema>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: TermsStruct.schema.properties.dateTerm,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Date,
+          $DateSchema
+        >($dateFromRdfResourceValues),
+      }),
+      dateTimeTerm: $shaclPropertyFromRdf<
+        Maybe<Date>,
+        $MaybeSchema<$DateSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: TermsStruct.schema.properties.dateTimeTerm,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Date,
+          $DateSchema
+        >($dateTimeFromRdfResourceValues),
+      }),
+      doubleTerm: $shaclPropertyFromRdf<
+        Maybe<number>,
+        $MaybeSchema<$NumericSchema<number>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: TermsStruct.schema.properties.doubleTerm,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          number,
+          $NumericSchema<number>
+        >($floatFromRdfResourceValues<number>),
+      }),
+      identifierTerm: $shaclPropertyFromRdf<
+        Maybe<BlankNode | NamedNode>,
+        $MaybeSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: TermsStruct.schema.properties.identifierTerm,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          BlankNode | NamedNode,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+      iriTerm: $shaclPropertyFromRdf<
+        Maybe<NamedNode>,
+        $MaybeSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: TermsStruct.schema.properties.iriTerm,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      langStringTerm: $shaclPropertyFromRdf<
+        Maybe<Literal>,
+        $MaybeSchema<$LangStringSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: TermsStruct.schema.properties.langStringTerm,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Literal,
+          $LangStringSchema
+        >($langStringFromRdfResourceValues),
+      }),
+      literalTerm: $shaclPropertyFromRdf<
+        Maybe<Literal>,
+        $MaybeSchema<$LiteralSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: TermsStruct.schema.properties.literalTerm,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Literal,
+          $LiteralSchema
+        >($literalFromRdfResourceValues),
+      }),
+      stringTerm: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: TermsStruct.schema.properties.stringTerm,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      term: $shaclPropertyFromRdf<
+        Maybe<BlankNode | NamedNode | Literal>,
+        $MaybeSchema<$TermSchema<BlankNode | NamedNode | Literal>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: TermsStruct.schema.properties.term,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          BlankNode | NamedNode | Literal,
+          $TermSchema<BlankNode | NamedNode | Literal>
+        >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
+      }),
+    }).chain((properties) => TermsStruct.create(properties));
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     TermsStruct.Identifier,
-    TermsStruct
+    Omit<TermsStruct, "$type">
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -51858,7 +52485,9 @@ export namespace TermsStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<TermsStruct> = (_termsStruct) =>
+  export const $toString: $ToStringFunction<
+    Pick<TermsStruct, "$identifier">
+  > = (_termsStruct) =>
     `TermsStruct(${JSON.stringify(TermsStruct.toStringRecord(_termsStruct))})`;
 
   export const create: <
@@ -52121,7 +52750,10 @@ export namespace TermsStruct {
       | Maybe<BlankNode | NamedNode | Literal>;
   }): TermsStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<TermsStruct> = (left, right) =>
+  export const equals: $EqualsFunction<Omit<TermsStruct, "$type">> = (
+    left,
+    right,
+  ) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -52249,10 +52881,10 @@ export namespace TermsStruct {
         ),
       );
 
-  export const filter: $FilterFunction<TermsStruct.Filter, TermsStruct> = (
-    filter,
-    value,
-  ) => {
+  export const filter: $FilterFunction<
+    TermsStruct.Filter,
+    Omit<TermsStruct, "$type">
+  > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier())
@@ -52788,9 +53420,10 @@ export namespace TermsStruct {
     return patterns;
   };
 
-  export const fromJson: $FromJsonFunction<TermsStruct, TermsStruct.Json> = (
-    $json,
-  ) =>
+  export const fromJson: $FromJsonFunction<
+    TermsStruct,
+    Omit<TermsStruct.Json, "$type">
+  > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
         $json["@id"].startsWith("_:")
@@ -53237,9 +53870,10 @@ export namespace TermsStruct {
     );
   }
 
-  export const toJson: $ToJsonFunction<TermsStruct, TermsStruct.Json> = (
-    _termsStruct,
-  ) =>
+  export const toJson: $ToJsonFunction<
+    Omit<TermsStruct, "$type">,
+    TermsStruct.Json
+  > = (_termsStruct) =>
     JSON.parse(
       JSON.stringify({
         "@id":
@@ -53247,7 +53881,7 @@ export namespace TermsStruct {
             ? `_:${_termsStruct.$identifier().value}`
             : _termsStruct.$identifier().value,
         "@type": "http://example.com/TermsStruct",
-        $type: _termsStruct.$type,
+        $type: "TermsStruct",
         blankNodeTerm: _termsStruct.blankNodeTerm
           .map((item) => `_:${item.value}`)
           .extract(),
@@ -53304,7 +53938,9 @@ export namespace TermsStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<TermsStruct> = (_termsStruct) =>
+  export const toLoggable: $ToLoggableFunction<Omit<TermsStruct, "$type">> = (
+    _termsStruct,
+  ) =>
     $compactRecord({
       $identifier: _termsStruct.$identifier().value,
       $type: "TermsStruct",
@@ -53359,14 +53995,15 @@ export namespace TermsStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    TermsStruct,
-    TermsStruct.Identifier
-  > = $wrap_ToRdfResourceFunction<TermsStruct.Identifier, TermsStruct>(
-    TermsStruct._toRdfResourceFunction,
-  );
+    TermsStruct.Identifier,
+    Omit<TermsStruct, "$type">
+  > = $wrap_ToRdfResourceFunction<
+    TermsStruct.Identifier,
+    Omit<TermsStruct, "$type">
+  >(TermsStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    TermsStruct,
+    Omit<TermsStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     TermsStruct.toRdfResource(value, {
@@ -53375,9 +54012,10 @@ export namespace TermsStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: $ToStringRecordFunction<TermsStruct> = (
-    _termsStruct,
-  ) => $compactRecord({ $identifier: _termsStruct.$identifier().toString() });
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<TermsStruct, "$identifier">
+  > = (_termsStruct) =>
+    $compactRecord({ $identifier: _termsStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     TermsStruct.Filter,
@@ -55433,7 +56071,7 @@ export namespace UnionDiscriminantsStruct {
 
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     UnionDiscriminantsStruct.Identifier,
-    UnionDiscriminantsStruct
+    Omit<UnionDiscriminantsStruct, "$type">
   > = (parameters) => {
     parameters.resource.add(
       UnionDiscriminantsStruct.schema.properties.optionalIriOrString.path,
@@ -55801,9 +56439,9 @@ export namespace UnionDiscriminantsStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<UnionDiscriminantsStruct> = (
-    _unionDiscriminantsStruct,
-  ) =>
+  export const $toString: $ToStringFunction<
+    Pick<UnionDiscriminantsStruct, "$identifier">
+  > = (_unionDiscriminantsStruct) =>
     `UnionDiscriminantsStruct(${JSON.stringify(UnionDiscriminantsStruct.toStringRecord(_unionDiscriminantsStruct))})`;
 
   export const create: <
@@ -56376,10 +57014,9 @@ export namespace UnionDiscriminantsStruct {
       | readonly ((BlankNode | NamedNode) | Literal)[];
   }): UnionDiscriminantsStruct => create(parameters).unsafeCoerce();
 
-  export const equals: $EqualsFunction<UnionDiscriminantsStruct> = (
-    left,
-    right,
-  ) =>
+  export const equals: $EqualsFunction<
+    Omit<UnionDiscriminantsStruct, "$type">
+  > = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
       [left, left.$identifier()],
@@ -56874,7 +57511,7 @@ export namespace UnionDiscriminantsStruct {
 
   export const filter: $FilterFunction<
     UnionDiscriminantsStruct.Filter,
-    UnionDiscriminantsStruct
+    Omit<UnionDiscriminantsStruct, "$type">
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -58670,7 +59307,7 @@ export namespace UnionDiscriminantsStruct {
 
   export const fromJson: $FromJsonFunction<
     UnionDiscriminantsStruct,
-    UnionDiscriminantsStruct.Json
+    Omit<UnionDiscriminantsStruct.Json, "$type">
   > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
@@ -59959,7 +60596,7 @@ export namespace UnionDiscriminantsStruct {
   }
 
   export const toJson: $ToJsonFunction<
-    UnionDiscriminantsStruct,
+    Omit<UnionDiscriminantsStruct, "$type">,
     UnionDiscriminantsStruct.Json
   > = (_unionDiscriminantsStruct) =>
     JSON.parse(
@@ -59968,7 +60605,7 @@ export namespace UnionDiscriminantsStruct {
           _unionDiscriminantsStruct.$identifier().termType === "BlankNode"
             ? `_:${_unionDiscriminantsStruct.$identifier().value}`
             : _unionDiscriminantsStruct.$identifier().value,
-        $type: _unionDiscriminantsStruct.$type,
+        $type: "UnionDiscriminantsStruct",
         optionalIriOrString: _unionDiscriminantsStruct.optionalIriOrString
           .map((item) =>
             ((value) => {
@@ -60239,9 +60876,9 @@ export namespace UnionDiscriminantsStruct {
       }),
     );
 
-  export const toLoggable: $ToLoggableFunction<UnionDiscriminantsStruct> = (
-    _unionDiscriminantsStruct,
-  ) =>
+  export const toLoggable: $ToLoggableFunction<
+    Omit<UnionDiscriminantsStruct, "$type">
+  > = (_unionDiscriminantsStruct) =>
     $compactRecord({
       $identifier: _unionDiscriminantsStruct.$identifier().value,
       $type: "UnionDiscriminantsStruct",
@@ -60462,15 +61099,15 @@ export namespace UnionDiscriminantsStruct {
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
-    UnionDiscriminantsStruct,
-    UnionDiscriminantsStruct.Identifier
+    UnionDiscriminantsStruct.Identifier,
+    Omit<UnionDiscriminantsStruct, "$type">
   > = $wrap_ToRdfResourceFunction<
     UnionDiscriminantsStruct.Identifier,
-    UnionDiscriminantsStruct
+    Omit<UnionDiscriminantsStruct, "$type">
   >(UnionDiscriminantsStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    UnionDiscriminantsStruct,
+    Omit<UnionDiscriminantsStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     UnionDiscriminantsStruct.toRdfResource(value, {
@@ -60480,7 +61117,7 @@ export namespace UnionDiscriminantsStruct {
   ];
 
   export const toStringRecord: $ToStringRecordFunction<
-    UnionDiscriminantsStruct
+    Pick<UnionDiscriminantsStruct, "$identifier">
   > = (_unionDiscriminantsStruct) =>
     $compactRecord({
       $identifier: _unionDiscriminantsStruct.$identifier().toString(),
@@ -61773,6 +62410,7 @@ export namespace FlattenDiscriminatedUnion {
   };
 
   export const toRdfResource: $ToRdfResourceFunction<
+    FlattenDiscriminatedUnion.Identifier,
     FlattenDiscriminatedUnion
   > = (object, options) => {
     if (
@@ -62385,6 +63023,7 @@ export namespace LazilyResolvedDiscriminatedUnion {
   };
 
   export const toRdfResource: $ToRdfResourceFunction<
+    LazilyResolvedDiscriminatedUnion.Identifier,
     LazilyResolvedDiscriminatedUnion
   > = (object, options) => {
     if (
@@ -62977,6 +63616,7 @@ export namespace NoRdfTypeDiscriminatedUnion {
   };
 
   export const toRdfResource: $ToRdfResourceFunction<
+    NoRdfTypeDiscriminatedUnion.Identifier,
     NoRdfTypeDiscriminatedUnion
   > = (object, options) => {
     if (
@@ -63555,6 +64195,7 @@ export namespace PartialDiscriminatedUnion {
   };
 
   export const toRdfResource: $ToRdfResourceFunction<
+    PartialDiscriminatedUnion.Identifier,
     PartialDiscriminatedUnion
   > = (object, options) => {
     if (
@@ -64131,6 +64772,7 @@ export namespace RecursiveDiscriminatedUnion {
   };
 
   export const toRdfResource: $ToRdfResourceFunction<
+    RecursiveDiscriminatedUnion.Identifier,
     RecursiveDiscriminatedUnion
   > = (object, options) => {
     if (
@@ -64709,6 +65351,7 @@ export namespace StructDiscriminatedUnion {
   };
 
   export const toRdfResource: $ToRdfResourceFunction<
+    StructDiscriminatedUnion.Identifier,
     StructDiscriminatedUnion
   > = (object, options) => {
     if (
@@ -64803,6 +65446,202 @@ export namespace StructDiscriminatedUnion {
   };
 }
 
+/**
+ * Node shape that sh:and's other struct node shapes. This will be generated as an intersection type or flattened into a single type.
+ */
+export type StructIntersection = Omit<StructIntersectionMember1, "$type"> &
+  Omit<StructIntersectionMember2, "$type">;
+
+export namespace StructIntersection {
+  export const $toString: $ToStringFunction<StructIntersection> = (value) =>
+    JSON.stringify([
+      StructIntersectionMember1.$toString(value),
+      StructIntersectionMember2.$toString(value),
+    ]);
+
+  export const equals: $EqualsFunction<StructIntersection> = (left, right) =>
+    StructIntersectionMember1.equals(left, right) &&
+    StructIntersectionMember2.equals(left, right);
+
+  export const filter: $FilterFunction<
+    StructIntersection.Filter,
+    StructIntersection
+  > = (filter, value) =>
+    StructIntersectionMember1.filter(filter, value) &&
+    StructIntersectionMember2.filter(filter, value);
+
+  export type Filter = StructIntersectionMember1.Filter &
+    StructIntersectionMember2.Filter;
+
+  export const fromJson: $FromJsonFunction<
+    StructIntersection,
+    StructIntersection.Json
+  > = (value) =>
+    StructIntersectionMember1.fromJson(value).chain((member0) =>
+      StructIntersectionMember2.fromJson(value).map((member1) => ({
+        ...member0,
+        ...member1,
+      })),
+    );
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    StructIntersection,
+    typeof StructIntersection.schema
+  > = (inputValues, options) =>
+    StructIntersectionMember1.fromRdfResourceValues(inputValues, {
+      ...options,
+      ignoreRdfType: true,
+      schema: options.schema.members[0],
+    }).chain((member0Values) =>
+      StructIntersectionMember2.fromRdfResourceValues(inputValues, {
+        ...options,
+        ignoreRdfType: true,
+        schema: options.schema.members[1],
+      }).chain((member1Values) => {
+        const member0ValuesArray = member0Values.toArray();
+        const member1ValuesArray = member1Values.toArray();
+        if (member1ValuesArray.length !== member0Values.length) {
+          return Left(
+            new Error(
+              `StructIntersection member 1 (StructIntersectionMember2) has ${member1Values.length} values, expected ${member0Values.length}`,
+            ),
+          );
+        }
+
+        return Right(
+          member0Values.map((_, valueI) => ({
+            ...member0ValuesArray[valueI],
+            ...member1ValuesArray[valueI],
+          })),
+        );
+      }),
+    );
+
+  export const hash: $HashFunction<StructIntersection> = (hasher, value) => {
+    StructIntersectionMember1.hash(hasher, value);
+    StructIntersectionMember2.hash(hasher, value);
+  };
+
+  export type Json = Omit<StructIntersectionMember1.Json, "$type"> &
+    Omit<StructIntersectionMember2.Json, "$type">;
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.intersection(
+        StructIntersectionMember1.Json.schema().omit({ $type: true }),
+        StructIntersectionMember2.Json.schema().omit({ $type: true }),
+      ) satisfies z.ZodType<Json>;
+    }
+  }
+
+  export const schema = {
+    kind: "ObjectIntersection" as const,
+    members: [
+      StructIntersectionMember1.schema,
+      StructIntersectionMember2.schema,
+    ] as const,
+  };
+
+  export const toJson: $ToJsonFunction<
+    StructIntersection,
+    StructIntersection.Json
+  > = (value) => ({
+    ...StructIntersectionMember1.toJson(value),
+    ...StructIntersectionMember2.toJson(value),
+  });
+
+  export const toLoggable: $ToLoggableFunction<StructIntersection> = (
+    value,
+  ) => [
+    StructIntersectionMember1.toLoggable(value),
+    StructIntersectionMember2.toLoggable(value),
+  ];
+
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    StructIntersection,
+    BlankNode | NamedNode
+  > = (value, _options) => {
+    let rdfResourceValues: (BlankNode | NamedNode)[] = [];
+    rdfResourceValues = rdfResourceValues.concat(
+      StructIntersectionMember1.toRdfResourceValues(value, {
+        graph: _options.graph,
+        propertyPath: _options.propertyPath,
+        resource: _options.resource,
+        resourceSet: _options.resourceSet,
+      }),
+    );
+    rdfResourceValues = rdfResourceValues.concat(
+      StructIntersectionMember2.toRdfResourceValues(value, {
+        graph: _options.graph,
+        propertyPath: _options.propertyPath,
+        resource: _options.resource,
+        resourceSet: _options.resourceSet,
+      }),
+    );
+    return rdfResourceValues;
+  };
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    StructIntersection.Filter,
+    typeof StructIntersection.schema
+  > = ({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      StructIntersectionMember1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter,
+        ignoreRdfType: true,
+        schema: schema.members[0],
+      }),
+    );
+    triples = triples.concat(
+      StructIntersectionMember2.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter,
+        ignoreRdfType: true,
+        schema: schema.members[1],
+      }),
+    );
+
+    return triples;
+  };
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    StructIntersection.Filter,
+    typeof StructIntersection.schema
+  > = ({ filter, schema, ...otherParameters }) => {
+    let intersectionPatterns: $SparqlPattern[] = [];
+
+    intersectionPatterns = intersectionPatterns.concat(
+      StructIntersectionMember1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter,
+        ignoreRdfType: true,
+        schema: schema.members[0],
+      }),
+    );
+    intersectionPatterns = intersectionPatterns.concat(
+      StructIntersectionMember2.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter,
+        ignoreRdfType: true,
+        schema: schema.members[1],
+      }),
+    );
+
+    return intersectionPatterns;
+  };
+}
+
 export type $Object =
   | $DefaultPartial
   | $NamedDefaultPartial
@@ -64825,6 +65664,7 @@ export type $Object =
   | IndirectRecursiveStructHelper
   | InIdentifierStruct
   | InPropertiesStruct
+  | IntersectionPropertiesStruct
   | IriIdentifierStruct
   | LangStringStruct
   | LanguageInStruct
@@ -64955,6 +65795,11 @@ export namespace $Object {
         return InIdentifierStruct.equals(left, right as InIdentifierStruct);
       case "InPropertiesStruct":
         return InPropertiesStruct.equals(left, right as InPropertiesStruct);
+      case "IntersectionPropertiesStruct":
+        return IntersectionPropertiesStruct.equals(
+          left,
+          right as IntersectionPropertiesStruct,
+        );
       case "IriIdentifierStruct":
         return IriIdentifierStruct.equals(left, right as IriIdentifierStruct);
       case "LangStringStruct":
@@ -65145,6 +65990,9 @@ export namespace $Object {
       case "InPropertiesStruct":
         InPropertiesStruct.hash(hasher, object);
         break;
+      case "IntersectionPropertiesStruct":
+        IntersectionPropertiesStruct.hash(hasher, object);
+        break;
       case "IriIdentifierStruct":
         IriIdentifierStruct.hash(hasher, object);
         break;
@@ -65297,6 +66145,8 @@ export namespace $Object {
         return InIdentifierStruct.toJson(object);
       case "InPropertiesStruct":
         return InPropertiesStruct.toJson(object);
+      case "IntersectionPropertiesStruct":
+        return IntersectionPropertiesStruct.toJson(object);
       case "IriIdentifierStruct":
         return IriIdentifierStruct.toJson(object);
       case "LangStringStruct":
@@ -65371,10 +66221,10 @@ export namespace $Object {
     }
   }
 
-  export const toRdfResource: $ToRdfResourceFunction<$Object> = (
-    object,
-    options,
-  ) => {
+  export const toRdfResource: $ToRdfResourceFunction<
+    Resource.Identifier,
+    $Object
+  > = (object, options) => {
     switch (object.$type) {
       case "DefaultPartial":
         return $DefaultPartial.toRdfResource(object, options);
@@ -65418,6 +66268,8 @@ export namespace $Object {
         return InIdentifierStruct.toRdfResource(object, options);
       case "InPropertiesStruct":
         return InPropertiesStruct.toRdfResource(object, options);
+      case "IntersectionPropertiesStruct":
+        return IntersectionPropertiesStruct.toRdfResource(object, options);
       case "IriIdentifierStruct":
         return IriIdentifierStruct.toRdfResource(object, options);
       case "LangStringStruct":
@@ -65557,6 +66409,8 @@ export namespace $Object {
         return InIdentifierStruct.$toString(object);
       case "InPropertiesStruct":
         return InPropertiesStruct.$toString(object);
+      case "IntersectionPropertiesStruct":
+        return IntersectionPropertiesStruct.$toString(object);
       case "IriIdentifierStruct":
         return IriIdentifierStruct.$toString(object);
       case "LangStringStruct":
@@ -66141,6 +66995,35 @@ export interface $ObjectSet {
       InPropertiesStruct.Identifier
     >,
   ): Promise<Either<Error, readonly InPropertiesStruct[]>>;
+
+  intersectionPropertiesStruct(
+    identifier: IntersectionPropertiesStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, IntersectionPropertiesStruct>>;
+
+  intersectionPropertiesStructCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        IntersectionPropertiesStruct.Filter,
+        IntersectionPropertiesStruct.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  intersectionPropertiesStructIdentifiers(
+    query?: $ObjectSet.Query<
+      IntersectionPropertiesStruct.Filter,
+      IntersectionPropertiesStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly IntersectionPropertiesStruct.Identifier[]>>;
+
+  intersectionPropertiesStructs(
+    query?: $ObjectSet.Query<
+      IntersectionPropertiesStruct.Filter,
+      IntersectionPropertiesStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly IntersectionPropertiesStruct[]>>;
 
   iriIdentifierStruct(
     identifier: IriIdentifierStruct.Identifier,
@@ -68926,6 +69809,100 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         fromRdfTypes: [
           InPropertiesStruct.schema.properties.$rdfType.fromRdfType,
         ],
+      },
+      query,
+    );
+  }
+
+  async intersectionPropertiesStruct(
+    identifier: IntersectionPropertiesStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, IntersectionPropertiesStruct>> {
+    return this.intersectionPropertiesStructSync(identifier, options);
+  }
+
+  intersectionPropertiesStructSync(
+    identifier: IntersectionPropertiesStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, IntersectionPropertiesStruct> {
+    return this.intersectionPropertiesStructsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async intersectionPropertiesStructCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        IntersectionPropertiesStruct.Filter,
+        IntersectionPropertiesStruct.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.intersectionPropertiesStructCountSync(query);
+  }
+
+  intersectionPropertiesStructCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        IntersectionPropertiesStruct.Filter,
+        IntersectionPropertiesStruct.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.intersectionPropertiesStructsSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async intersectionPropertiesStructIdentifiers(
+    query?: $ObjectSet.Query<
+      IntersectionPropertiesStruct.Filter,
+      IntersectionPropertiesStruct.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly IntersectionPropertiesStruct.Identifier[]>
+  > {
+    return this.intersectionPropertiesStructIdentifiersSync(query);
+  }
+
+  intersectionPropertiesStructIdentifiersSync(
+    query?: $ObjectSet.Query<
+      IntersectionPropertiesStruct.Filter,
+      IntersectionPropertiesStruct.Identifier
+    >,
+  ): Either<Error, readonly IntersectionPropertiesStruct.Identifier[]> {
+    return this.intersectionPropertiesStructsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async intersectionPropertiesStructs(
+    query?: $ObjectSet.Query<
+      IntersectionPropertiesStruct.Filter,
+      IntersectionPropertiesStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly IntersectionPropertiesStruct[]>> {
+    return this.intersectionPropertiesStructsSync(query);
+  }
+
+  intersectionPropertiesStructsSync(
+    query?: $ObjectSet.Query<
+      IntersectionPropertiesStruct.Filter,
+      IntersectionPropertiesStruct.Identifier
+    >,
+  ): Either<Error, readonly IntersectionPropertiesStruct[]> {
+    return this.#objectsSync<
+      IntersectionPropertiesStruct,
+      IntersectionPropertiesStruct.Filter,
+      IntersectionPropertiesStruct.Identifier
+    >(
+      {
+        filter: IntersectionPropertiesStruct.filter,
+        fromRdfResource: IntersectionPropertiesStruct.fromRdfResource,
+        fromRdfTypes: [],
       },
       query,
     );
@@ -73829,6 +74806,60 @@ export class $SparqlObjectSet implements $ObjectSet {
       InPropertiesStruct.Filter,
       InPropertiesStruct.Identifier
     >(InPropertiesStruct, query);
+  }
+
+  async intersectionPropertiesStruct(
+    identifier: IntersectionPropertiesStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, IntersectionPropertiesStruct>> {
+    return (
+      await this.intersectionPropertiesStructs({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async intersectionPropertiesStructCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        IntersectionPropertiesStruct.Filter,
+        IntersectionPropertiesStruct.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      IntersectionPropertiesStruct.Filter,
+      IntersectionPropertiesStruct.Identifier
+    >(IntersectionPropertiesStruct, query);
+  }
+
+  async intersectionPropertiesStructIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      IntersectionPropertiesStruct.Filter,
+      IntersectionPropertiesStruct.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly IntersectionPropertiesStruct.Identifier[]>
+  > {
+    return this.#objectIdentifiers<
+      IntersectionPropertiesStruct.Filter,
+      IntersectionPropertiesStruct.Identifier
+    >(IntersectionPropertiesStruct, query);
+  }
+
+  async intersectionPropertiesStructs(
+    query?: $SparqlObjectSet.Query<
+      IntersectionPropertiesStruct.Filter,
+      IntersectionPropertiesStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly IntersectionPropertiesStruct[]>> {
+    return this.#objects<
+      IntersectionPropertiesStruct,
+      IntersectionPropertiesStruct.Filter,
+      IntersectionPropertiesStruct.Identifier
+    >(IntersectionPropertiesStruct, query);
   }
 
   async iriIdentifierStruct(
