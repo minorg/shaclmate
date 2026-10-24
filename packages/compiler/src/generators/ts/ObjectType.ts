@@ -19,7 +19,7 @@ import {
   ObjectType_filterFunctionExpression,
   ObjectType_filterFunctionType,
 } from "./_ObjectType/ObjectType_filterFunction.js";
-import { ObjectType_filterTypeExpression } from "./_ObjectType/ObjectType_filterType.js";
+import { ObjectType_filterTypeExpression } from "./_ObjectType/ObjectType_filterTypeExpression.js";
 import { ObjectType_focusSparqlConstructTriplesFunction } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunction.js";
 import { ObjectType_focusSparqlWherePatternsFunction } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunction.js";
 import {

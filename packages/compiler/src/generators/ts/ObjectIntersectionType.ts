@@ -1,4 +1,8 @@
 import { Memoize } from "typescript-memoize";
+import { ObjectIntersectionType_fromJsonFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_fromJsonFunction.js";
+import { ObjectIntersectionType_fromRdfResourceValuesFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_fromRdfResourceValuesFunction.js";
+import { ObjectIntersectionType_jsonType } from "./_ObjectIntersectionType/ObjectIntersectionType_jsonType.js";
+import { ObjectIntersectionType_toJsonFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_toJsonFunction.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
 import { AbstractIntersectionType } from "./AbstractIntersectionType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -8,8 +12,15 @@ import type { ObjectType } from "./ObjectType.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType> {
-  override readonly kind = "ObjectIntersection";
+  protected override fromJsonFunctionExpression =
+    ObjectIntersectionType_fromJsonFunctionExpression;
+  protected override fromRdfResourceValuesFunctionExpression =
+    ObjectIntersectionType_fromRdfResourceValuesFunctionExpression;
+  protected override toJsonFunctionExpression =
+    ObjectIntersectionType_toJsonFunctionExpression;
+
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
+  override readonly kind = "ObjectIntersection";
 
   constructor({
     identifierType,
@@ -19,6 +30,11 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
   } & ConstructorParameters<typeof AbstractIntersectionType<ObjectType>>[0]) {
     super(superParameters);
     this.identifierType = identifierType;
+  }
+
+  @Memoize()
+  get identifierTypeAlias(): Code {
+    return this.name.map((name) => code`${name}.Identifier`).unsafeCoerce();
   }
 
   @Memoize()
@@ -35,91 +51,9 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
     );
   }
 
-  protected fromJsonFunctionExpression(): Code {
-    return code`\
-(value) =>
-    ${joinCode(
-      this.members.map(
-        (member, memberI) => code`
-${member.type.fromJsonExpression({
-  form: "compact",
-  variables: {
-    value: code`value`,
-  },
-})}.${memberI + 1 < this.members.length ? "chain" : "map"}(member${memberI} =>`,
-      ),
-    )} ({ ${joinCode(
-      this.members.map((_, memberI) => code`...member${memberI}`),
-      { on: "," },
-    )} }) ${")".repeat(this.members.length)}`;
-  }
-
-  protected fromRdfResourceValuesFunctionExpression(): Code {
-    return code`\
-(inputValues, options) =>
-    ${joinCode(
-      this.members.map(
-        (member, memberI) => code`\
-      ${member.type.fromRdfResourceValuesFunction.annotatedUsage}(inputValues, { ...options, ignoreRdfType: true, schema: options.schema.members[${literalOf(memberI)}] }).chain(member${memberI}Values =>`,
-      ),
-    )} {
-      ${joinCode(
-        this.members.map(
-          (member, memberI) =>
-            code`\
-const member${memberI}ValuesArray = member${memberI}Values.toArray(); ${
-              memberI > 0
-                ? code`
-if (member${memberI}ValuesArray.length !== member0Values.length) {
-  return ${this.reusables.imports.Left}(new Error(\`${this.name.orDefault("(anonymous intersection)")} member ${memberI} (${member.type.name.orDefault("(anonymous object)")}) has \${member${memberI}Values.length} values, expected \${member0Values.length}\`));
-}`
-                : code``
-            }`,
-        ),
-      )}
-
-      return ${this.reusables.imports.Right}(member0Values.map((_, valueI) => ({ ${joinCode(
-        this.members.map(
-          (_, memberI) => code`...member${memberI}ValuesArray[valueI]`,
-        ),
-        { on: "," },
-      )} })));
-    } ${")".repeat(this.members.length)}`;
-  }
-
   @Memoize()
   override jsonType(): AbstractIntersectionType.JsonType {
-    return this.jsonTypeFactory.createJsonIntersectionType(
-      this.members.map((member) => member.type.jsonType({ form: "compact" })),
-      {
-        memberTypeExpression: (memberType) =>
-          code`Omit<${memberType.expression}, ${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}>`,
-        memberTypeSchema: (memberType) =>
-          code`${memberType.schema}.omit({ ${this.configuration.objectDiscriminantProperty.jsonName}: true })`,
-        name: this.name.map((name) => [name, "Json"]).extract(),
-        recursive: this.recursive,
-      },
-    );
-  }
-
-  protected toJsonFunctionExpression(): Code {
-    return code`\
-(value) => ({
-${joinCode(
-  this.members.map(
-    ({ type }) =>
-      code`...${type.toJsonExpression({
-        form: "compact",
-        variables: { value: code`value` },
-      })}`,
-  ),
-  { on: "," },
-)}})`;
-  }
-
-  @Memoize()
-  get identifierTypeAlias(): Code {
-    return this.name.map((name) => code`${name}.Identifier`).unsafeCoerce();
+    return ObjectIntersectionType_jsonType.call(this);
   }
 
   // @Memoize()
@@ -145,7 +79,6 @@ ${joinCode(
   //   }
   //   return this.name.map((name) => code`${name}.is${name}`);
   // }
-
   protected override staticModuleDeclarations(
     name: string,
   ): Record<string, Code> {
