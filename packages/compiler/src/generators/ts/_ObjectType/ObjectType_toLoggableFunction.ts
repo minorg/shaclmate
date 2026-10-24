@@ -17,9 +17,5 @@ export function ObjectType_toLoggableFunctionExpression(
 }
 
 export function ObjectType_toLoggableFunctionType(this: ObjectType): Code {
-  const variables = {
-    object: this.thisVariable,
-  };
-
-  return code`${this.reusables.snippets.ToLoggableFunction}<${this.propertySubsetExpression((property) => property.toLoggableInitializer({ variables }).isJust())}>`;
+  return code`${this.reusables.snippets.ToLoggableFunction}<${this.propertySubsetExpression((property) => property.kind !== "Discriminant" && property.kind !== "RdfType")}>`;
 }

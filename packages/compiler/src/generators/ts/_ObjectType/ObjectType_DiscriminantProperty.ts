@@ -121,13 +121,9 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
     return Maybe.empty();
   }
 
-  override toJsonInitializer({
-    variables,
-  }: Parameters<
-    ObjectType_AbstractProperty["toJsonInitializer"]
-  >[0]): Maybe<Code> {
+  override toJsonInitializer(): Maybe<Code> {
     return Maybe.of(
-      code`${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}: ${variables.object}.${this.jsonName}`,
+      code`${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}: ${literalOf(this.value)}`,
     );
   }
 

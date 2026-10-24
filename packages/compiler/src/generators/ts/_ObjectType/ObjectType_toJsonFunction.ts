@@ -19,8 +19,5 @@ export function ObjectType_toJsonFunctionExpression(this: ObjectType): Code {
 }
 
 export function ObjectType_toJsonFunctionType(this: ObjectType): Code {
-  const variables = {
-    object: this.thisVariable,
-  };
-  return code`${this.reusables.snippets.ToJsonFunction}<${this.propertySubsetExpression((property) => property.toJsonInitializer({ variables }).isJust())}, ${this.toJsonExpression}>`;
+  return code`${this.reusables.snippets.ToJsonFunction}<${this.propertySubsetExpression((property) => property.kind !== "Discriminant")}, ${this.jsonType({ form: "expanded" }).expression}>`;
 }
