@@ -22,7 +22,10 @@ import {
 import { ObjectType_filterTypeExpression } from "./_ObjectType/ObjectType_filterType.js";
 import { ObjectType_focusSparqlConstructTriplesFunction } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunction.js";
 import { ObjectType_focusSparqlWherePatternsFunction } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunction.js";
-import { ObjectType_fromJsonFunctionExpression } from "./_ObjectType/ObjectType_fromJsonFunction.js";
+import {
+  ObjectType_fromJsonFunctionExpression,
+  ObjectType_fromJsonFunctionType,
+} from "./_ObjectType/ObjectType_fromJsonFunction.js";
 import { ObjectType_fromRdfResourceFunction } from "./_ObjectType/ObjectType_fromRdfResourceFunction.js";
 import { ObjectType_fromRdfResourceValuesFunctionExpression } from "./_ObjectType/ObjectType_fromRdfResourceValuesFunction.js";
 import { ObjectType_graphqlTypeExpression } from "./_ObjectType/ObjectType_graphqlType.js";
@@ -84,6 +87,7 @@ export class ObjectType extends AbstractStructuredType {
   protected override filterTypeExpression = ObjectType_filterTypeExpression;
   protected override fromJsonFunctionExpression =
     ObjectType_fromJsonFunctionExpression;
+  protected override fromJsonFunctionType = ObjectType_fromJsonFunctionType;
   protected override fromRdfResourceValuesFunctionExpression =
     ObjectType_fromRdfResourceValuesFunctionExpression;
   protected override hashFunctionExpression = ObjectType_hashFunctionExpression;
