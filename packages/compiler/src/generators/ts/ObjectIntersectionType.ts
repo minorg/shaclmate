@@ -4,6 +4,8 @@ import { ObjectIntersectionType__fromRdfResourceFunction } from "./_ObjectInters
 import { ObjectIntersectionType__toRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType__toRdfResourceFunction.js";
 import { ObjectIntersectionType_createFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_createFunction.js";
 import { ObjectIntersectionType_createFunctionParameters } from "./_ObjectIntersectionType/ObjectIntersectionType_createFunctionParameters.js";
+import { ObjectIntersectionType_focusSparqlConstructTriplesFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_focusSparqlConstructTriplesFunction.js";
+import { ObjectIntersectionType_focusSparqlWherePatternsFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_focusSparqlWherePatternsFunction.js";
 import { ObjectIntersectionType_fromJsonFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_fromJsonFunction.js";
 import { ObjectIntersectionType_fromRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_fromRdfResourceFunction.js";
 import { ObjectIntersectionType_fromRdfResourceValuesFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_fromRdfResourceValuesFunction.js";
@@ -12,6 +14,8 @@ import { ObjectIntersectionType_toJsonFunctionExpression } from "./_ObjectInters
 import { ObjectIntersectionType_toRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_toRdfResourceFunction.js";
 import { ObjectIntersectionType_toRdfResourceValuesFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_toRdfResourceValuesFunction.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
+import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
+import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { AbstractIntersectionType } from "./AbstractIntersectionType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { Callable } from "./Callable.js";
@@ -62,6 +66,18 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
   @Memoize()
   get createFunctionParameters(): ObjectType.CreateFunctionParameters {
     return ObjectIntersectionType_createFunctionParameters.call(this);
+  }
+
+  @Memoize()
+  get focusSparqlConstructTriplesFunction(): Callable {
+    return ObjectIntersectionType_focusSparqlConstructTriplesFunction.call(
+      this,
+    );
+  }
+
+  @Memoize()
+  get focusSparqlWherePatternsFunction(): Callable {
+    return ObjectIntersectionType_focusSparqlWherePatternsFunction.call(this);
   }
 
   @Memoize()
@@ -128,6 +144,25 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
       addFunctionDeclaration(this.fromRdfResourceFunction);
     }
 
+    if (this.configuration.features.has("Object.SPARQL")) {
+      addFunctionDeclaration(this.focusSparqlConstructTriplesFunction);
+      addFunctionDeclaration(this.focusSparqlWherePatternsFunction);
+      staticModuleDeclarations["sparqlConstructQuery"] =
+        ObjectType_sparqlConstructQueryFunctionDeclaration.call({
+          name,
+          configuration: this.configuration,
+          filterType: this.filterType,
+          reusables: this.reusables,
+        });
+      staticModuleDeclarations["sparqlConstructQueryString"] =
+        ObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
+          name,
+          configuration: this.configuration,
+          filterType: this.filterType,
+          reusables: this.reusables,
+        });
+    }
+
     if (this.configuration.features.has("Object.toRdf")) {
       addFunctionDeclaration(this._toRdfResourceFunction);
       addFunctionDeclaration(this.toRdfResourceFunction);
@@ -143,28 +178,5 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
     //     ...ObjectIntersectionType_graphqlTypeVariableStatement.call(this),
     //     ...ObjectIntersectionType_typeGuardFunctionDeclaration.call(this),
     //     ...ObjectIntersectionType_schemaVariableStatement.call(this),
-    //     ...(this.configuration.features.has("Object.SPARQL")
-    //       ? {
-    //           ...singleEntryRecord(
-    //             "sparqlConstructQuery",
-    //             ObjectType_sparqlConstructQueryFunctionDeclaration.call({
-    //               name,
-    //               configuration: this.configuration,
-    //               filterType: this.filterType,
-    //               reusables: this.reusables,
-    //             }),
-    //           ),
-    //           ...singleEntryRecord(
-    //             "sparqlConstructQueryString",
-    //             ObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
-    //               name,
-    //               configuration: this.configuration,
-    //               filterType: this.filterType,
-    //               reusables: this.reusables,
-    //             }),
-    //           ),
-    //         }
-    //       : {}),
-    //     ...ObjectIntersectionType_toRdfResourceFunctionDeclaration.call(this),
   }
 }

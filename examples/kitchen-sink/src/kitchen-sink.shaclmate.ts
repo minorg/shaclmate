@@ -63486,6 +63486,32 @@ export namespace StructIntersection {
   export type Filter = StructIntersectionMember1.Filter &
     StructIntersectionMember2.Filter;
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    StructIntersection.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      StructIntersectionMember1.focusSparqlConstructTriples(parameters),
+    );
+    triples = triples.concat(
+      StructIntersectionMember2.focusSparqlConstructTriples(parameters),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    StructIntersection.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    patterns = patterns.concat(
+      StructIntersectionMember1.focusSparqlWherePatterns(parameters),
+    );
+    patterns = patterns.concat(
+      StructIntersectionMember2.focusSparqlWherePatterns(parameters),
+    );
+    return patterns;
+  };
+
   export const fromJson: $FromJsonFunction<
     StructIntersection,
     StructIntersection.Json
@@ -63549,6 +63575,62 @@ export namespace StructIntersection {
       StructIntersectionMember2.schema,
     ] as const,
   };
+
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: StructIntersection.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "structIntersection";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        StructIntersection.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          StructIntersection.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof StructIntersection.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      StructIntersection.sparqlConstructQuery(parameters),
+    );
+  }
 
   export const toJson: $ToJsonFunction<
     StructIntersection,
