@@ -1,7 +1,9 @@
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function ObjectType_createFunctionParameters(this: ObjectType) {
+export function ObjectType_createFunctionParameters(
+  this: ObjectType,
+): ObjectType.CreateFunctionParameters {
   let hasQuestionToken: boolean = true;
   const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
   const propertySignatures: Code[] = [

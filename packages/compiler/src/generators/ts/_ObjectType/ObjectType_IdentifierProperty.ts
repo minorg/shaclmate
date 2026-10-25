@@ -44,7 +44,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
 
     return Maybe.of({
       hasQuestionToken,
-      signature: code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeExpressions, { on: "|" })};`,
+      signature: code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeExpressions, { on: " | " })};`,
     });
   }
 

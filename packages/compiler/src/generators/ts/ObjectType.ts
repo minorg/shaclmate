@@ -165,6 +165,16 @@ export class ObjectType extends AbstractStructuredType {
     return ObjectType_conversionFunction.call(this);
   }
 
+  @Memoize()
+  get createFunction(): Callable {
+    return ObjectType_createFunction.call(this);
+  }
+
+  @Memoize()
+  get createFunctionParameters(): ObjectType.CreateFunctionParameters {
+    return ObjectType_createFunctionParameters.call(this);
+  }
+
   override get declaration(): Maybe<Code> {
     return !this.extern ? super.declaration : Maybe.empty();
   }
@@ -277,24 +287,6 @@ export class ObjectType extends AbstractStructuredType {
   @Memoize()
   protected get _toRdfResourceFunction(): Callable {
     return ObjectType__toRdfResourceFunction.call(this);
-  }
-
-  @Memoize()
-  protected get createFunctionParameters(): {
-    hasQuestionToken: boolean;
-    signature: Code;
-    type: {
-      inlineExpression: Code;
-      expression: Code;
-    };
-    variable: Code;
-  } {
-    return ObjectType_createFunctionParameters.call(this);
-  }
-
-  @Memoize()
-  protected get createFunction(): Callable {
-    return ObjectType_createFunction.call(this);
   }
 
   @Memoize()
@@ -533,6 +525,16 @@ export class ObjectType extends AbstractStructuredType {
 }
 
 export namespace ObjectType {
+  export interface CreateFunctionParameters {
+    readonly hasQuestionToken: boolean;
+    readonly signature: Code;
+    readonly type: {
+      readonly inlineExpression: Code;
+      readonly expression: Code;
+    };
+    readonly variable: Code;
+  }
+
   export const IdentifierProperty = ObjectType_IdentifierProperty;
   export type IdentifierProperty = ObjectType_IdentifierProperty;
   export type ObjectSetMethodNames = {

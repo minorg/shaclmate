@@ -63426,6 +63426,34 @@ export namespace StructIntersection {
       StructIntersectionMember2.$toString(value),
     ]);
 
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: StructIntersection.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, StructIntersection> = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: StructIntersection.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, StructIntersection> =>
+    StructIntersectionMember1.create(parameters)
+      .chain((member0) =>
+        StructIntersectionMember2.create(parameters).map((member1) => ({
+          ...member0,
+          ...member1,
+        })),
+      )
+      .map((object) =>
+        $monkeyPatchObject(object, {
+          toJson: StructIntersection.toJson,
+          $toString: StructIntersection.$toString,
+        }),
+      );
+
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = StructIntersectionMember1.CreateParameters<$DefaultNamespaceT> &
+    StructIntersectionMember2.CreateParameters<$DefaultNamespaceT>;
+
   export const equals: $EqualsFunction<StructIntersection> = (left, right) =>
     StructIntersectionMember1.equals(left, right) &&
     StructIntersectionMember2.equals(left, right);

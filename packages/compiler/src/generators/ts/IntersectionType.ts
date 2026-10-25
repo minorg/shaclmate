@@ -11,7 +11,7 @@ export class IntersectionType extends AbstractIntersectionType<Type> {
   protected override get inlineExpression(): Code {
     return joinCode(
       this.members.map((member) => member.type.expression),
-      { on: "&" },
+      { on: " & " },
     );
   }
 
