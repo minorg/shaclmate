@@ -3,6 +3,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
 import type { Callable } from "./Callable.js";
+import type { CodeThunk } from "./CodeThunk.js";
 import { DeclaredCallable } from "./DeclaredCallable.js";
 import { InlineCallable } from "./InlineCallable.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
@@ -13,36 +14,20 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 export abstract class AbstractStructuredType extends AbstractType {
   @Memoize()
   override get equalsFunction(): Callable {
-    const type = () => this.equalsFunctionType();
-    const unannotatedExpression = () => this.equalsFunctionExpression();
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "equals"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return this._function({
+      type: () => this.equalsFunctionType(),
+      unannotatedExpression: () => this.equalsFunctionExpression(),
+      unqualifiedName: "equals",
+    });
   }
 
   @Memoize()
   override get filterFunction(): Callable {
-    const type = () => this.filterFunctionType();
-    const unannotatedExpression = () => this.filterFunctionExpression();
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "filter"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return this._function({
+      type: () => this.filterFunctionType(),
+      unannotatedExpression: this.filterFunctionExpression(),
+      unqualifiedName: "filter",
+    });
   }
 
   @Memoize()
@@ -54,54 +39,30 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   get fromJsonFunction(): Callable {
-    const type = () => this.fromJsonFunctionType();
-    const unannotatedExpression = () => this.fromJsonFunctionExpression();
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "fromJson"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return this._function({
+      type: () => this.fromJsonFunctionType(),
+      unannotatedExpression: () => this.fromJsonFunctionExpression(),
+      unqualifiedName: "fromJson",
+    });
   }
 
   @Memoize()
   override get fromRdfResourceValuesFunction(): Callable {
-    const type = () => this.fromRdfResourceValuesFunctionType();
-    const unannotatedExpression = () =>
-      this.fromRdfResourceValuesFunctionExpression();
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "fromRdfResourceValues"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return this._function({
+      type: () => this.fromRdfResourceValuesFunctionType(),
+      unannotatedExpression: () =>
+        this.fromRdfResourceValuesFunctionExpression(),
+      unqualifiedName: "fromRdfResourceValues",
+    });
   }
 
   @Memoize()
   override get hashFunction(): Callable {
-    const type = () => this.hashFunctionType();
-    const unannotatedExpression = () => this.hashFunctionExpression();
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "hash"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return this._function({
+      type: () => this.hashFunctionType(),
+      unannotatedExpression: () => this.hashFunctionExpression(),
+      unqualifiedName: "hash",
+    });
   }
 
   @Memoize()
@@ -113,110 +74,58 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   get toJsonFunction(): Callable {
-    const type = () => this.toJsonFunctionType();
-    const unannotatedExpression = () => this.toJsonFunctionExpression();
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "toJson"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return this._function({
+      type: () => this.toJsonFunctionType(),
+      unannotatedExpression: () => this.toJsonFunctionExpression(),
+      unqualifiedName: "toJson",
+    });
   }
 
   @Memoize()
   get toLoggableFunction(): Callable {
-    const type = () => this.toLoggableFunctionType();
-    const unannotatedExpression = () => this.toLoggableFunctionExpression();
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "toLoggable"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return this._function({
+      type: () => this.toLoggableFunctionType(),
+      unannotatedExpression: () => this.toLoggableFunctionExpression(),
+      unqualifiedName: "toLoggable",
+    });
   }
 
   @Memoize()
   get toRdfResourceValuesFunction(): Callable {
-    const type = () => this.toRdfResourceValuesFunctionType();
-    const unannotatedExpression = () =>
-      this.toRdfResourceValuesFunctionExpression();
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "toRdfResourceValues"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return this._function({
+      type: () => this.toRdfResourceValuesFunctionType(),
+      unannotatedExpression: () => this.toRdfResourceValuesFunctionExpression(),
+      unqualifiedName: "toRdfResourceValues",
+    });
   }
 
   @Memoize()
   get toStringFunction(): Callable {
-    const type = () => this.toStringFunctionType();
-    const unannotatedExpression = () => this.toStringFunctionExpression();
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [
-              name,
-              `${this.configuration.syntheticNamePrefix}toString`,
-            ],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return this._function({
+      type: () => this.toStringFunctionType(),
+      unannotatedExpression: () => this.toStringFunctionExpression(),
+      unqualifiedName: `${this.configuration.syntheticNamePrefix}toString`,
+    });
   }
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Callable {
-    const type = () => this.valueSparqlConstructTriplesType();
-    const unannotatedExpression = () =>
-      this.valueSparqlConstructTriplesFunctionExpression();
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "valueSparqlConstructTriples"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return this._function({
+      type: () => this.valueSparqlConstructTriplesType(),
+      unannotatedExpression: () =>
+        this.valueSparqlConstructTriplesFunctionExpression(),
+      unqualifiedName: "valueSparqlConstructTriples",
+    });
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Callable {
-    const type = () => this.valueSparqlWherePatternsFunctionType();
-    const unannotatedExpression = () =>
-      this.valueSparqlWherePatternsFunctionExpression();
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "valueSparqlWherePatterns"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return this._function({
+      type: () => this.valueSparqlWherePatternsFunctionType(),
+      unannotatedExpression: () =>
+        this.valueSparqlWherePatternsFunctionExpression(),
+      unqualifiedName: "valueSparqlWherePatterns",
+    });
   }
 
   @Memoize()
@@ -276,6 +185,27 @@ export abstract class AbstractStructuredType extends AbstractType {
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
     return code`${this.toStringFunction.unannotatedUsage}(${variables.value})`;
+  }
+
+  protected _function({
+    type,
+    unannotatedExpression,
+    unqualifiedName,
+  }: {
+    type: CodeThunk;
+    unannotatedExpression: CodeThunk;
+    unqualifiedName: string;
+  }): Callable {
+    return this.name
+      .map<Callable>(
+        (name) =>
+          new DeclaredCallable({
+            qualifiedName: [name, unqualifiedName],
+            type,
+            unannotatedExpression,
+          }),
+      )
+      .orDefault(new InlineCallable(unannotatedExpression, { type }));
   }
 
   protected abstract equalsFunctionExpression(): Code;

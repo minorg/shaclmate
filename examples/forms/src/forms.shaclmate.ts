@@ -408,7 +408,7 @@ export type FormStruct = {
 };
 
 export namespace FormStruct {
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     FormStruct.Identifier,
     Omit<FormStruct, "$type">
   > = (parameters) => {
@@ -1009,7 +1009,7 @@ export namespace FormStruct {
   > = $wrap_ToRdfResourceFunction<
     FormStruct.Identifier,
     Omit<FormStruct, "$type">
-  >(FormStruct._toRdfResourceFunction);
+  >(FormStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<FormStruct, "$type">,

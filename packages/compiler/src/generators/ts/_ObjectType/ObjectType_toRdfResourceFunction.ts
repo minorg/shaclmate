@@ -1,6 +1,4 @@
 import type { Callable } from "../Callable.js";
-import { DeclaredCallable } from "../DeclaredCallable.js";
-import { InlineCallable } from "../InlineCallable.js";
 import type { ObjectType } from "../ObjectType.js";
 import { code } from "../ts-poet-wrapper.js";
 
@@ -11,18 +9,10 @@ export function ObjectType_toRdfResourceFunction(this: ObjectType): Callable {
   const thisTypeExpression = this.propertySubsetExpression(
     (property) => property.kind !== "Discriminant",
   );
-  const type = code`${this.reusables.snippets.ToRdfResourceFunction}<${identifierTypeExpression}, ${thisTypeExpression}>`;
-  const unannotatedExpression = () =>
-    code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${identifierTypeExpression}, ${thisTypeExpression}>(${this._toRdfResourceFunction.annotatedUsage})`;
-
-  return this.name
-    .map<Callable>(
-      (name) =>
-        new DeclaredCallable({
-          qualifiedName: [name, "toRdfResource"],
-          type,
-          unannotatedExpression,
-        }),
-    )
-    .orDefault(new InlineCallable(unannotatedExpression, { type }));
+  return this._function({
+    type: code`${this.reusables.snippets.ToRdfResourceFunction}<${identifierTypeExpression}, ${thisTypeExpression}>`,
+    unannotatedExpression: () =>
+      code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${identifierTypeExpression}, ${thisTypeExpression}>(${this._toRdfResourceFunction.annotatedUsage})`,
+    unqualifiedName: "toRdfResource",
+  });
 }

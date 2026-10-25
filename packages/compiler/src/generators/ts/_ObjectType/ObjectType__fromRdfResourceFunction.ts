@@ -1,7 +1,5 @@
 import { invariant } from "ts-invariant";
 import type { Callable } from "../Callable.js";
-import { DeclaredCallable } from "../DeclaredCallable.js";
-import { InlineCallable } from "../InlineCallable.js";
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
@@ -53,18 +51,10 @@ function ObjectType__fromRdfResourceFunctionExpression(this: ObjectType): Code {
 export function ObjectType__fromRdfResourceFunction(
   this: ObjectType,
 ): Callable {
-  const type = code`${this.reusables.snippets._FromRdfResourceFunction}<${this.expression}>`;
-  const unannotatedExpression = () =>
-    ObjectType__fromRdfResourceFunctionExpression.call(this);
-
-  return this.name
-    .map<Callable>(
-      (name) =>
-        new DeclaredCallable({
-          qualifiedName: [name, "_fromRdfResource"],
-          type,
-          unannotatedExpression,
-        }),
-    )
-    .orDefault(new InlineCallable(unannotatedExpression, { type }));
+  return this._function({
+    type: code`${this.reusables.snippets._FromRdfResourceFunction}<${this.expression}>`,
+    unannotatedExpression: () =>
+      ObjectType__fromRdfResourceFunctionExpression.call(this),
+    unqualifiedName: "_fromRdfResource",
+  });
 }

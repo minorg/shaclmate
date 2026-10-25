@@ -1,6 +1,4 @@
 import type { Callable } from "../Callable.js";
-import { DeclaredCallable } from "../DeclaredCallable.js";
-import { InlineCallable } from "../InlineCallable.js";
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
@@ -49,18 +47,10 @@ ${
 export function ObjectType_focusSparqlConstructTriplesFunction(
   this: ObjectType,
 ): Callable {
-  const type = code`${this.reusables.snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}>`;
-  const unannotatedExpression = () =>
-    ObjectType_focusSparqlConstructTriplesFunctionExpression.call(this);
-
-  return this.name
-    .map<Callable>(
-      (name) =>
-        new DeclaredCallable({
-          qualifiedName: [name, "focusSparqlConstructTriples"],
-          type,
-          unannotatedExpression,
-        }),
-    )
-    .orDefault(new InlineCallable(unannotatedExpression, { type }));
+  return this._function({
+    type: code`${this.reusables.snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}>`,
+    unannotatedExpression: () =>
+      ObjectType_focusSparqlConstructTriplesFunctionExpression.call(this),
+    unqualifiedName: "focusSparqlConstructTriples",
+  });
 }

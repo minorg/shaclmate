@@ -1,7 +1,5 @@
 import { invariant } from "ts-invariant";
 import type { Callable } from "../Callable.js";
-import { DeclaredCallable } from "../DeclaredCallable.js";
-import { InlineCallable } from "../InlineCallable.js";
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
@@ -40,18 +38,9 @@ function ObjectType_createFunctionExpression(this: ObjectType): Code {
 }
 
 export function ObjectType_createFunction(this: ObjectType): Callable {
-  const type = code`<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.createFunctionParameters.signature}) => ${this.reusables.imports.Either}<Error, ${this.expression}>`;
-  const unannotatedExpression = () =>
-    ObjectType_createFunctionExpression.call(this);
-
-  return this.name
-    .map<Callable>(
-      (name) =>
-        new DeclaredCallable({
-          qualifiedName: [name, "create"],
-          type,
-          unannotatedExpression,
-        }),
-    )
-    .orDefault(new InlineCallable(unannotatedExpression, { type }));
+  return this._function({
+    type: code`<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.createFunctionParameters.signature}) => ${this.reusables.imports.Either}<Error, ${this.expression}>`,
+    unannotatedExpression: () => ObjectType_createFunctionExpression.call(this),
+    unqualifiedName: "create",
+  });
 }
