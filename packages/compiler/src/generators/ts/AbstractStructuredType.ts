@@ -25,7 +25,7 @@ export abstract class AbstractStructuredType extends AbstractType {
   override get filterFunction(): Callable {
     return this._function({
       type: () => this.filterFunctionType(),
-      unannotatedExpression: this.filterFunctionExpression(),
+      unannotatedExpression: () => this.filterFunctionExpression(),
       unqualifiedName: "filter",
     });
   }

@@ -3912,7 +3912,7 @@ export namespace $DefaultPartial {
       ).chain((values) => values.head()),
     }).chain((properties) => $DefaultPartial.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     $DefaultPartial.Identifier,
     Pick<$DefaultPartial, "$identifier">
   > = (parameters) => {
@@ -3926,23 +3926,13 @@ export namespace $DefaultPartial {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => $DefaultPartial.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-  }) => Either<Error, $DefaultPartial> = <
+  >(
+    parameters?: $DefaultPartial.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, $DefaultPartial> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => $DefaultPartial.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-  }): Either<Error, $DefaultPartial> =>
+  >(
+    parameters?: $DefaultPartial.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, $DefaultPartial> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -3960,25 +3950,22 @@ export namespace $DefaultPartial {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => $DefaultPartial.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => $DefaultPartial.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-  }) => $DefaultPartial = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => $DefaultPartial.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-  }): $DefaultPartial => create(parameters).unsafeCoerce();
+  >(
+    parameters?: $DefaultPartial.CreateParameters<$DefaultNamespaceT>,
+  ) => $DefaultPartial = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Pick<$DefaultPartial, "$identifier">> = (
     left,
@@ -4221,7 +4208,7 @@ export namespace $DefaultPartial {
   > = $wrap_ToRdfResourceFunction<
     $DefaultPartial.Identifier,
     Pick<$DefaultPartial, "$identifier">
-  >($DefaultPartial._toRdfResourceFunction);
+  >($DefaultPartial._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Pick<$DefaultPartial, "$identifier">,
@@ -4293,7 +4280,7 @@ export namespace $NamedDefaultPartial {
       ).chain((values) => values.head()),
     }).chain((properties) => $NamedDefaultPartial.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     $NamedDefaultPartial.Identifier,
     Pick<$NamedDefaultPartial, "$identifier">
   > = (parameters) => {
@@ -4307,21 +4294,13 @@ export namespace $NamedDefaultPartial {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier:
-      | (() => $NamedDefaultPartial.Identifier)
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode;
-  }) => Either<Error, $NamedDefaultPartial> = <
+  >(
+    parameters: $NamedDefaultPartial.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, $NamedDefaultPartial> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier:
-      | (() => $NamedDefaultPartial.Identifier)
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode;
-  }): Either<Error, $NamedDefaultPartial> =>
+  >(
+    parameters: $NamedDefaultPartial.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, $NamedDefaultPartial> =>
     $sequenceRecord({
       $identifier: $convertToIriIdentifierProperty(
         parameters.$identifier,
@@ -4339,23 +4318,21 @@ export namespace $NamedDefaultPartial {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier:
+      | (() => $NamedDefaultPartial.Identifier)
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier:
-      | (() => $NamedDefaultPartial.Identifier)
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode;
-  }) => $NamedDefaultPartial = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier:
-      | (() => $NamedDefaultPartial.Identifier)
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode;
-  }): $NamedDefaultPartial => create(parameters).unsafeCoerce();
+  >(
+    parameters: $NamedDefaultPartial.CreateParameters<$DefaultNamespaceT>,
+  ) => $NamedDefaultPartial = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<$NamedDefaultPartial, "$identifier">
@@ -4591,7 +4568,7 @@ export namespace $NamedDefaultPartial {
   > = $wrap_ToRdfResourceFunction<
     $NamedDefaultPartial.Identifier,
     Pick<$NamedDefaultPartial, "$identifier">
-  >($NamedDefaultPartial._toRdfResourceFunction);
+  >($NamedDefaultPartial._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Pick<$NamedDefaultPartial, "$identifier">,
@@ -4822,7 +4799,7 @@ export namespace AnonymousTypesStruct {
       }),
     }).chain((properties) => AnonymousTypesStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     AnonymousTypesStruct.Identifier,
     Omit<AnonymousTypesStruct, "$type">
   > = (parameters) => {
@@ -4879,49 +4856,13 @@ export namespace AnonymousTypesStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => AnonymousTypesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly anonymousStruct?:
-      | {
-          readonly $identifier?:
-            | (() => BlankNode | NamedNode)
-            | BlankNode
-            | NamedNode
-            | (keyof $DefaultNamespaceT & string);
-          readonly anonymousStructString: string;
-        }
-      | Maybe<{
-          readonly $identifier: () => BlankNode | NamedNode;
-          readonly anonymousStructString: string;
-        }>;
-  }) => Either<Error, AnonymousTypesStruct> = <
+  >(
+    parameters?: AnonymousTypesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, AnonymousTypesStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => AnonymousTypesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly anonymousStruct?:
-      | {
-          readonly $identifier?:
-            | (() => BlankNode | NamedNode)
-            | BlankNode
-            | NamedNode
-            | (keyof $DefaultNamespaceT & string);
-          readonly anonymousStructString: string;
-        }
-      | Maybe<{
-          readonly $identifier: () => BlankNode | NamedNode;
-          readonly anonymousStructString: string;
-        }>;
-  }): Either<Error, AnonymousTypesStruct> =>
+  >(
+    parameters?: AnonymousTypesStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, AnonymousTypesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -5006,51 +4947,35 @@ export namespace AnonymousTypesStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => AnonymousTypesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly anonymousStruct?:
+      | {
+          readonly $identifier?:
+            | (() => BlankNode | NamedNode)
+            | BlankNode
+            | NamedNode
+            | (keyof $DefaultNamespaceT & string);
+          readonly anonymousStructString: string;
+        }
+      | Maybe<{
+          readonly $identifier: () => BlankNode | NamedNode;
+          readonly anonymousStructString: string;
+        }>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => AnonymousTypesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly anonymousStruct?:
-      | {
-          readonly $identifier?:
-            | (() => BlankNode | NamedNode)
-            | BlankNode
-            | NamedNode
-            | (keyof $DefaultNamespaceT & string);
-          readonly anonymousStructString: string;
-        }
-      | Maybe<{
-          readonly $identifier: () => BlankNode | NamedNode;
-          readonly anonymousStructString: string;
-        }>;
-  }) => AnonymousTypesStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => AnonymousTypesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly anonymousStruct?:
-      | {
-          readonly $identifier?:
-            | (() => BlankNode | NamedNode)
-            | BlankNode
-            | NamedNode
-            | (keyof $DefaultNamespaceT & string);
-          readonly anonymousStructString: string;
-        }
-      | Maybe<{
-          readonly $identifier: () => BlankNode | NamedNode;
-          readonly anonymousStructString: string;
-        }>;
-  }): AnonymousTypesStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters?: AnonymousTypesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => AnonymousTypesStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<AnonymousTypesStruct, "$identifier" | "anonymousStruct">
@@ -5752,7 +5677,7 @@ export namespace AnonymousTypesStruct {
   > = $wrap_ToRdfResourceFunction<
     AnonymousTypesStruct.Identifier,
     Omit<AnonymousTypesStruct, "$type">
-  >(AnonymousTypesStruct._toRdfResourceFunction);
+  >(AnonymousTypesStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<AnonymousTypesStruct, "$type">,
@@ -5843,7 +5768,7 @@ export namespace BlankNodeIdentifierStruct {
       }),
     }).chain((properties) => BlankNodeIdentifierStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     BlankNodeIdentifierStruct.Identifier,
     Omit<BlankNodeIdentifierStruct, "$type">
   > = (parameters) => {
@@ -5874,15 +5799,13 @@ export namespace BlankNodeIdentifierStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly blankNodeIdentifierString?: string | Maybe<string>;
-  }) => Either<Error, BlankNodeIdentifierStruct> = <
+  >(
+    parameters?: BlankNodeIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, BlankNodeIdentifierStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly blankNodeIdentifierString?: string | Maybe<string>;
-  }): Either<Error, BlankNodeIdentifierStruct> =>
+  >(
+    parameters?: BlankNodeIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, BlankNodeIdentifierStruct> =>
     $sequenceRecord({
       blankNodeIdentifierString: $convertToMaybe($identityConversionFunction)(
         parameters?.blankNodeIdentifierString,
@@ -5906,17 +5829,19 @@ export namespace BlankNodeIdentifierStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly blankNodeIdentifierString?: string | Maybe<string>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly blankNodeIdentifierString?: string | Maybe<string>;
-  }) => BlankNodeIdentifierStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly blankNodeIdentifierString?: string | Maybe<string>;
-  }): BlankNodeIdentifierStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters?: BlankNodeIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => BlankNodeIdentifierStruct = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<BlankNodeIdentifierStruct, "blankNodeIdentifierString">
@@ -6285,7 +6210,7 @@ export namespace BlankNodeIdentifierStruct {
   > = $wrap_ToRdfResourceFunction<
     BlankNodeIdentifierStruct.Identifier,
     Omit<BlankNodeIdentifierStruct, "$type">
-  >(BlankNodeIdentifierStruct._toRdfResourceFunction);
+  >(BlankNodeIdentifierStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<BlankNodeIdentifierStruct, "$type">,
@@ -6389,7 +6314,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
       }),
     }).chain((properties) => BlankNodeOrIriIdentifierStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     BlankNodeOrIriIdentifierStruct.Identifier,
     Omit<BlankNodeOrIriIdentifierStruct, "$type">
   > = (parameters) => {
@@ -6422,25 +6347,13 @@ export namespace BlankNodeOrIriIdentifierStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => BlankNodeOrIriIdentifierStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly blankNodeOrIriIdentifierString?: string | Maybe<string>;
-  }) => Either<Error, BlankNodeOrIriIdentifierStruct> = <
+  >(
+    parameters?: BlankNodeOrIriIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, BlankNodeOrIriIdentifierStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => BlankNodeOrIriIdentifierStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly blankNodeOrIriIdentifierString?: string | Maybe<string>;
-  }): Either<Error, BlankNodeOrIriIdentifierStruct> =>
+  >(
+    parameters?: BlankNodeOrIriIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, BlankNodeOrIriIdentifierStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -6470,27 +6383,24 @@ export namespace BlankNodeOrIriIdentifierStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => BlankNodeOrIriIdentifierStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly blankNodeOrIriIdentifierString?: string | Maybe<string>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => BlankNodeOrIriIdentifierStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly blankNodeOrIriIdentifierString?: string | Maybe<string>;
-  }) => BlankNodeOrIriIdentifierStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => BlankNodeOrIriIdentifierStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly blankNodeOrIriIdentifierString?: string | Maybe<string>;
-  }): BlankNodeOrIriIdentifierStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters?: BlankNodeOrIriIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => BlankNodeOrIriIdentifierStruct = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<
@@ -6926,7 +6836,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
   > = $wrap_ToRdfResourceFunction<
     BlankNodeOrIriIdentifierStruct.Identifier,
     Omit<BlankNodeOrIriIdentifierStruct, "$type">
-  >(BlankNodeOrIriIdentifierStruct._toRdfResourceFunction);
+  >(BlankNodeOrIriIdentifierStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<BlankNodeOrIriIdentifierStruct, "$type">,
@@ -7102,7 +7012,7 @@ export namespace ClassConstraintsStruct {
       }),
     }).chain((properties) => ClassConstraintsStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     ClassConstraintsStruct.Identifier,
     Omit<ClassConstraintsStruct, "$type">
   > = (parameters) => {
@@ -7166,55 +7076,13 @@ export namespace ClassConstraintsStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ClassConstraintsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly iriClass?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly multiClass?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-    readonly nodeClass1?: NonClassStruct | Maybe<NonClassStruct>;
-    readonly nodeClass2?: PartialStruct | Maybe<PartialStruct>;
-    readonly singleClass?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-  }) => Either<Error, ClassConstraintsStruct> = <
+  >(
+    parameters?: ClassConstraintsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, ClassConstraintsStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ClassConstraintsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly iriClass?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly multiClass?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-    readonly nodeClass1?: NonClassStruct | Maybe<NonClassStruct>;
-    readonly nodeClass2?: PartialStruct | Maybe<PartialStruct>;
-    readonly singleClass?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-  }): Either<Error, ClassConstraintsStruct> =>
+  >(
+    parameters?: ClassConstraintsStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, ClassConstraintsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -7277,57 +7145,39 @@ export namespace ClassConstraintsStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => ClassConstraintsStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly iriClass?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
+    readonly multiClass?:
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string)
+      | Maybe<BlankNode | NamedNode>;
+    readonly nodeClass1?: NonClassStruct | Maybe<NonClassStruct>;
+    readonly nodeClass2?: PartialStruct | Maybe<PartialStruct>;
+    readonly singleClass?:
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string)
+      | Maybe<BlankNode | NamedNode>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ClassConstraintsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly iriClass?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly multiClass?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-    readonly nodeClass1?: NonClassStruct | Maybe<NonClassStruct>;
-    readonly nodeClass2?: PartialStruct | Maybe<PartialStruct>;
-    readonly singleClass?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-  }) => ClassConstraintsStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ClassConstraintsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly iriClass?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly multiClass?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-    readonly nodeClass1?: NonClassStruct | Maybe<NonClassStruct>;
-    readonly nodeClass2?: PartialStruct | Maybe<PartialStruct>;
-    readonly singleClass?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-  }): ClassConstraintsStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters?: ClassConstraintsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => ClassConstraintsStruct = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Omit<ClassConstraintsStruct, "$type">
@@ -8069,7 +7919,7 @@ export namespace ClassConstraintsStruct {
   > = $wrap_ToRdfResourceFunction<
     ClassConstraintsStruct.Identifier,
     Omit<ClassConstraintsStruct, "$type">
-  >(ClassConstraintsStruct._toRdfResourceFunction);
+  >(ClassConstraintsStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<ClassConstraintsStruct, "$type">,
@@ -8338,7 +8188,7 @@ export namespace ConvertibleTypesStruct {
       }),
     }).chain((properties) => ConvertibleTypesStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     ConvertibleTypesStruct.Identifier,
     Omit<ConvertibleTypesStruct, "$type">
   > = (parameters) => {
@@ -8420,131 +8270,13 @@ export namespace ConvertibleTypesStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ConvertibleTypesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly convertibleIri: (keyof $DefaultNamespaceT & string) | NamedNode;
-    readonly convertibleIriNonEmptySet:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly convertibleIriOption?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly convertibleIriSet?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly convertibleLiteral:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal;
-    readonly convertibleLiteralNonEmptySet:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | readonly (bigint | boolean | number | string | Date | Literal)[];
-    readonly convertibleLiteralOption?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
-    readonly convertibleLiteralSet?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | readonly (bigint | boolean | number | string | Date | Literal)[];
-    readonly convertibleTerm: BlankNode | NamedNode | Literal;
-    readonly convertibleTermNonEmptySet:
-      | (BlankNode | NamedNode | Literal)
-      | readonly (BlankNode | NamedNode | Literal)[];
-    readonly convertibleTermOption?:
-      | (BlankNode | NamedNode | Literal)
-      | Maybe<BlankNode | NamedNode | Literal>;
-    readonly convertibleTermSet?:
-      | (BlankNode | NamedNode | Literal)
-      | readonly (BlankNode | NamedNode | Literal)[];
-  }) => Either<Error, ConvertibleTypesStruct> = <
+  >(
+    parameters: ConvertibleTypesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, ConvertibleTypesStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ConvertibleTypesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly convertibleIri: (keyof $DefaultNamespaceT & string) | NamedNode;
-    readonly convertibleIriNonEmptySet:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly convertibleIriOption?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly convertibleIriSet?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly convertibleLiteral:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal;
-    readonly convertibleLiteralNonEmptySet:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | readonly (bigint | boolean | number | string | Date | Literal)[];
-    readonly convertibleLiteralOption?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
-    readonly convertibleLiteralSet?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | readonly (bigint | boolean | number | string | Date | Literal)[];
-    readonly convertibleTerm: BlankNode | NamedNode | Literal;
-    readonly convertibleTermNonEmptySet:
-      | (BlankNode | NamedNode | Literal)
-      | readonly (BlankNode | NamedNode | Literal)[];
-    readonly convertibleTermOption?:
-      | (BlankNode | NamedNode | Literal)
-      | Maybe<BlankNode | NamedNode | Literal>;
-    readonly convertibleTermSet?:
-      | (BlankNode | NamedNode | Literal)
-      | readonly (BlankNode | NamedNode | Literal)[];
-  }): Either<Error, ConvertibleTypesStruct> =>
+  >(
+    parameters: ConvertibleTypesStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, ConvertibleTypesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -8658,133 +8390,77 @@ export namespace ConvertibleTypesStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => ConvertibleTypesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly convertibleIri: (keyof $DefaultNamespaceT & string) | NamedNode;
+    readonly convertibleIriNonEmptySet:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly convertibleIriOption?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
+    readonly convertibleIriSet?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly convertibleLiteral:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal;
+    readonly convertibleLiteralNonEmptySet:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+      | readonly (bigint | boolean | number | string | Date | Literal)[];
+    readonly convertibleLiteralOption?:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+      | Maybe<Literal>;
+    readonly convertibleLiteralSet?:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+      | readonly (bigint | boolean | number | string | Date | Literal)[];
+    readonly convertibleTerm: BlankNode | NamedNode | Literal;
+    readonly convertibleTermNonEmptySet:
+      | (BlankNode | NamedNode | Literal)
+      | readonly (BlankNode | NamedNode | Literal)[];
+    readonly convertibleTermOption?:
+      | (BlankNode | NamedNode | Literal)
+      | Maybe<BlankNode | NamedNode | Literal>;
+    readonly convertibleTermSet?:
+      | (BlankNode | NamedNode | Literal)
+      | readonly (BlankNode | NamedNode | Literal)[];
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ConvertibleTypesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly convertibleIri: (keyof $DefaultNamespaceT & string) | NamedNode;
-    readonly convertibleIriNonEmptySet:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly convertibleIriOption?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly convertibleIriSet?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly convertibleLiteral:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal;
-    readonly convertibleLiteralNonEmptySet:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | readonly (bigint | boolean | number | string | Date | Literal)[];
-    readonly convertibleLiteralOption?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
-    readonly convertibleLiteralSet?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | readonly (bigint | boolean | number | string | Date | Literal)[];
-    readonly convertibleTerm: BlankNode | NamedNode | Literal;
-    readonly convertibleTermNonEmptySet:
-      | (BlankNode | NamedNode | Literal)
-      | readonly (BlankNode | NamedNode | Literal)[];
-    readonly convertibleTermOption?:
-      | (BlankNode | NamedNode | Literal)
-      | Maybe<BlankNode | NamedNode | Literal>;
-    readonly convertibleTermSet?:
-      | (BlankNode | NamedNode | Literal)
-      | readonly (BlankNode | NamedNode | Literal)[];
-  }) => ConvertibleTypesStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ConvertibleTypesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly convertibleIri: (keyof $DefaultNamespaceT & string) | NamedNode;
-    readonly convertibleIriNonEmptySet:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly convertibleIriOption?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly convertibleIriSet?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly convertibleLiteral:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal;
-    readonly convertibleLiteralNonEmptySet:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | readonly (bigint | boolean | number | string | Date | Literal)[];
-    readonly convertibleLiteralOption?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
-    readonly convertibleLiteralSet?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | readonly (bigint | boolean | number | string | Date | Literal)[];
-    readonly convertibleTerm: BlankNode | NamedNode | Literal;
-    readonly convertibleTermNonEmptySet:
-      | (BlankNode | NamedNode | Literal)
-      | readonly (BlankNode | NamedNode | Literal)[];
-    readonly convertibleTermOption?:
-      | (BlankNode | NamedNode | Literal)
-      | Maybe<BlankNode | NamedNode | Literal>;
-    readonly convertibleTermSet?:
-      | (BlankNode | NamedNode | Literal)
-      | readonly (BlankNode | NamedNode | Literal)[];
-  }): ConvertibleTypesStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: ConvertibleTypesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => ConvertibleTypesStruct = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Omit<ConvertibleTypesStruct, "$type">
@@ -10465,7 +10141,7 @@ export namespace ConvertibleTypesStruct {
   > = $wrap_ToRdfResourceFunction<
     ConvertibleTypesStruct.Identifier,
     Omit<ConvertibleTypesStruct, "$type">
-  >(ConvertibleTypesStruct._toRdfResourceFunction);
+  >(ConvertibleTypesStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<ConvertibleTypesStruct, "$type">,
@@ -11940,7 +11616,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       DatatypeDiscriminatedUnionsStruct.create(properties),
     );
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     DatatypeDiscriminatedUnionsStruct.Identifier,
     Omit<DatatypeDiscriminatedUnionsStruct, "$type">
   > = (parameters) => {
@@ -12246,57 +11922,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DatatypeDiscriminatedUnionsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly dateOrDateTime:
-      | { $type: "date"; value: Date }
-      | { $type: "dateTime"; value: Date };
-    readonly dateOrString: Date | string;
-    readonly dateTimeOrDate:
-      | { $type: "dateTime"; value: Date }
-      | { $type: "date"; value: Date };
-    readonly decimalOrString: BigDecimal | string;
-    readonly integerOrString: bigint | string;
-    readonly jsPrimitive: boolean | number | bigint | string;
-    readonly langStringOrString: Literal | string;
-    readonly namedDatatypeDiscriminatedUnion1: NamedNode | string;
-    readonly namedDatatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
-    readonly stringOrDate: string | Date;
-    readonly stringOrDecimal: string | BigDecimal;
-    readonly stringOrInteger: string | bigint;
-    readonly stringOrLangString: string | Literal;
-  }) => Either<Error, DatatypeDiscriminatedUnionsStruct> = <
+  >(
+    parameters: DatatypeDiscriminatedUnionsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, DatatypeDiscriminatedUnionsStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DatatypeDiscriminatedUnionsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly dateOrDateTime:
-      | { $type: "date"; value: Date }
-      | { $type: "dateTime"; value: Date };
-    readonly dateOrString: Date | string;
-    readonly dateTimeOrDate:
-      | { $type: "dateTime"; value: Date }
-      | { $type: "date"; value: Date };
-    readonly decimalOrString: BigDecimal | string;
-    readonly integerOrString: bigint | string;
-    readonly jsPrimitive: boolean | number | bigint | string;
-    readonly langStringOrString: Literal | string;
-    readonly namedDatatypeDiscriminatedUnion1: NamedNode | string;
-    readonly namedDatatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
-    readonly stringOrDate: string | Date;
-    readonly stringOrDecimal: string | BigDecimal;
-    readonly stringOrInteger: string | bigint;
-    readonly stringOrLangString: string | Literal;
-  }): Either<Error, DatatypeDiscriminatedUnionsStruct> =>
+  >(
+    parameters: DatatypeDiscriminatedUnionsStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, DatatypeDiscriminatedUnionsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -12359,59 +11991,40 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => DatatypeDiscriminatedUnionsStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly dateOrDateTime:
+      | { $type: "date"; value: Date }
+      | { $type: "dateTime"; value: Date };
+    readonly dateOrString: Date | string;
+    readonly dateTimeOrDate:
+      | { $type: "dateTime"; value: Date }
+      | { $type: "date"; value: Date };
+    readonly decimalOrString: BigDecimal | string;
+    readonly integerOrString: bigint | string;
+    readonly jsPrimitive: boolean | number | bigint | string;
+    readonly langStringOrString: Literal | string;
+    readonly namedDatatypeDiscriminatedUnion1: NamedNode | string;
+    readonly namedDatatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
+    readonly stringOrDate: string | Date;
+    readonly stringOrDecimal: string | BigDecimal;
+    readonly stringOrInteger: string | bigint;
+    readonly stringOrLangString: string | Literal;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DatatypeDiscriminatedUnionsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly dateOrDateTime:
-      | { $type: "date"; value: Date }
-      | { $type: "dateTime"; value: Date };
-    readonly dateOrString: Date | string;
-    readonly dateTimeOrDate:
-      | { $type: "dateTime"; value: Date }
-      | { $type: "date"; value: Date };
-    readonly decimalOrString: BigDecimal | string;
-    readonly integerOrString: bigint | string;
-    readonly jsPrimitive: boolean | number | bigint | string;
-    readonly langStringOrString: Literal | string;
-    readonly namedDatatypeDiscriminatedUnion1: NamedNode | string;
-    readonly namedDatatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
-    readonly stringOrDate: string | Date;
-    readonly stringOrDecimal: string | BigDecimal;
-    readonly stringOrInteger: string | bigint;
-    readonly stringOrLangString: string | Literal;
-  }) => DatatypeDiscriminatedUnionsStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DatatypeDiscriminatedUnionsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly dateOrDateTime:
-      | { $type: "date"; value: Date }
-      | { $type: "dateTime"; value: Date };
-    readonly dateOrString: Date | string;
-    readonly dateTimeOrDate:
-      | { $type: "dateTime"; value: Date }
-      | { $type: "date"; value: Date };
-    readonly decimalOrString: BigDecimal | string;
-    readonly integerOrString: bigint | string;
-    readonly jsPrimitive: boolean | number | bigint | string;
-    readonly langStringOrString: Literal | string;
-    readonly namedDatatypeDiscriminatedUnion1: NamedNode | string;
-    readonly namedDatatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
-    readonly stringOrDate: string | Date;
-    readonly stringOrDecimal: string | BigDecimal;
-    readonly stringOrInteger: string | bigint;
-    readonly stringOrLangString: string | Literal;
-  }): DatatypeDiscriminatedUnionsStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: DatatypeDiscriminatedUnionsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => DatatypeDiscriminatedUnionsStruct = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Omit<DatatypeDiscriminatedUnionsStruct, "$type">
@@ -15512,7 +15125,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   > = $wrap_ToRdfResourceFunction<
     DatatypeDiscriminatedUnionsStruct.Identifier,
     Omit<DatatypeDiscriminatedUnionsStruct, "$type">
-  >(DatatypeDiscriminatedUnionsStruct._toRdfResourceFunction);
+  >(DatatypeDiscriminatedUnionsStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<DatatypeDiscriminatedUnionsStruct, "$type">,
@@ -15638,7 +15251,7 @@ export namespace DatesStruct {
       }),
     }).chain((properties) => DatesStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     DatesStruct.Identifier,
     Omit<DatesStruct, "$type">
   > = (parameters) => {
@@ -15680,29 +15293,13 @@ export namespace DatesStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DatesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly date?: Date | Maybe<Date>;
-    readonly dateTime?: Date | Maybe<Date>;
-    readonly dateTimeStamp?: Date | Maybe<Date>;
-  }) => Either<Error, DatesStruct> = <
+  >(
+    parameters?: DatesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, DatesStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DatesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly date?: Date | Maybe<Date>;
-    readonly dateTime?: Date | Maybe<Date>;
-    readonly dateTimeStamp?: Date | Maybe<Date>;
-  }): Either<Error, DatesStruct> =>
+  >(
+    parameters?: DatesStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, DatesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -15744,31 +15341,25 @@ export namespace DatesStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => DatesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly date?: Date | Maybe<Date>;
+    readonly dateTime?: Date | Maybe<Date>;
+    readonly dateTimeStamp?: Date | Maybe<Date>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DatesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly date?: Date | Maybe<Date>;
-    readonly dateTime?: Date | Maybe<Date>;
-    readonly dateTimeStamp?: Date | Maybe<Date>;
-  }) => DatesStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DatesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly date?: Date | Maybe<Date>;
-    readonly dateTime?: Date | Maybe<Date>;
-    readonly dateTimeStamp?: Date | Maybe<Date>;
-  }): DatesStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters?: DatesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => DatesStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<DatesStruct, "$type">> = (
     left,
@@ -16313,7 +15904,7 @@ export namespace DatesStruct {
   > = $wrap_ToRdfResourceFunction<
     DatesStruct.Identifier,
     Omit<DatesStruct, "$type">
-  >(DatesStruct._toRdfResourceFunction);
+  >(DatesStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<DatesStruct, "$type">,
@@ -16492,7 +16083,7 @@ export namespace DefaultValuesStruct {
       }),
     }).chain((properties) => DefaultValuesStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     DefaultValuesStruct.Identifier,
     Omit<DefaultValuesStruct, "$type">
   > = (parameters) => {
@@ -16581,35 +16172,13 @@ export namespace DefaultValuesStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DefaultValuesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly dateDefaultValue?: Date;
-    readonly dateTimeDefaultValue?: Date;
-    readonly falseBooleanDefaultValue?: boolean;
-    readonly numberDefaultValue?: number;
-    readonly stringDefaultValue?: string;
-    readonly trueBooleanDefaultValue?: boolean;
-  }) => Either<Error, DefaultValuesStruct> = <
+  >(
+    parameters?: DefaultValuesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, DefaultValuesStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DefaultValuesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly dateDefaultValue?: Date;
-    readonly dateTimeDefaultValue?: Date;
-    readonly falseBooleanDefaultValue?: boolean;
-    readonly numberDefaultValue?: number;
-    readonly stringDefaultValue?: string;
-    readonly trueBooleanDefaultValue?: boolean;
-  }): Either<Error, DefaultValuesStruct> =>
+  >(
+    parameters?: DefaultValuesStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, DefaultValuesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -16651,37 +16220,28 @@ export namespace DefaultValuesStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => DefaultValuesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly dateDefaultValue?: Date;
+    readonly dateTimeDefaultValue?: Date;
+    readonly falseBooleanDefaultValue?: boolean;
+    readonly numberDefaultValue?: number;
+    readonly stringDefaultValue?: string;
+    readonly trueBooleanDefaultValue?: boolean;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DefaultValuesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly dateDefaultValue?: Date;
-    readonly dateTimeDefaultValue?: Date;
-    readonly falseBooleanDefaultValue?: boolean;
-    readonly numberDefaultValue?: number;
-    readonly stringDefaultValue?: string;
-    readonly trueBooleanDefaultValue?: boolean;
-  }) => DefaultValuesStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DefaultValuesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly dateDefaultValue?: Date;
-    readonly dateTimeDefaultValue?: Date;
-    readonly falseBooleanDefaultValue?: boolean;
-    readonly numberDefaultValue?: number;
-    readonly stringDefaultValue?: string;
-    readonly trueBooleanDefaultValue?: boolean;
-  }): DefaultValuesStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters?: DefaultValuesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => DefaultValuesStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<DefaultValuesStruct, "$type">> = (
     left,
@@ -17402,7 +16962,7 @@ export namespace DefaultValuesStruct {
   > = $wrap_ToRdfResourceFunction<
     DefaultValuesStruct.Identifier,
     Omit<DefaultValuesStruct, "$type">
-  >(DefaultValuesStruct._toRdfResourceFunction);
+  >(DefaultValuesStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<DefaultValuesStruct, "$type">,
@@ -17500,7 +17060,7 @@ export namespace DirectRecursiveStruct {
       }),
     }).chain((properties) => DirectRecursiveStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     DirectRecursiveStruct.Identifier,
     Omit<DirectRecursiveStruct, "$type">
   > = (parameters) => {
@@ -17535,29 +17095,13 @@ export namespace DirectRecursiveStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DirectRecursiveStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly directRecursive?:
-      | DirectRecursiveStruct
-      | Maybe<DirectRecursiveStruct>;
-  }) => Either<Error, DirectRecursiveStruct> = <
+  >(
+    parameters?: DirectRecursiveStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, DirectRecursiveStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DirectRecursiveStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly directRecursive?:
-      | DirectRecursiveStruct
-      | Maybe<DirectRecursiveStruct>;
-  }): Either<Error, DirectRecursiveStruct> =>
+  >(
+    parameters?: DirectRecursiveStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, DirectRecursiveStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -17584,31 +17128,26 @@ export namespace DirectRecursiveStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => DirectRecursiveStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly directRecursive?:
+      | DirectRecursiveStruct
+      | Maybe<DirectRecursiveStruct>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DirectRecursiveStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly directRecursive?:
-      | DirectRecursiveStruct
-      | Maybe<DirectRecursiveStruct>;
-  }) => DirectRecursiveStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DirectRecursiveStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly directRecursive?:
-      | DirectRecursiveStruct
-      | Maybe<DirectRecursiveStruct>;
-  }): DirectRecursiveStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters?: DirectRecursiveStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => DirectRecursiveStruct = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<DirectRecursiveStruct, "$identifier" | "directRecursive">
@@ -17995,7 +17534,7 @@ export namespace DirectRecursiveStruct {
   > = $wrap_ToRdfResourceFunction<
     DirectRecursiveStruct.Identifier,
     Omit<DirectRecursiveStruct, "$type">
-  >(DirectRecursiveStruct._toRdfResourceFunction);
+  >(DirectRecursiveStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<DirectRecursiveStruct, "$type">,
@@ -18126,7 +17665,7 @@ export namespace DisplayStruct {
       }),
     }).chain((properties) => DisplayStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     DisplayStruct.Identifier,
     Omit<DisplayStruct, "$type">
   > = (parameters) => {
@@ -18162,29 +17701,13 @@ export namespace DisplayStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DisplayStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly explicitFalseDisplay: string;
-    readonly explicitTrueDisplay: string;
-    readonly implicitFalseDisplay: string;
-  }) => Either<Error, DisplayStruct> = <
+  >(
+    parameters: DisplayStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, DisplayStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DisplayStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly explicitFalseDisplay: string;
-    readonly explicitTrueDisplay: string;
-    readonly implicitFalseDisplay: string;
-  }): Either<Error, DisplayStruct> =>
+  >(
+    parameters: DisplayStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, DisplayStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -18202,31 +17725,25 @@ export namespace DisplayStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => DisplayStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly explicitFalseDisplay: string;
+    readonly explicitTrueDisplay: string;
+    readonly implicitFalseDisplay: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DisplayStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly explicitFalseDisplay: string;
-    readonly explicitTrueDisplay: string;
-    readonly implicitFalseDisplay: string;
-  }) => DisplayStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => DisplayStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly explicitFalseDisplay: string;
-    readonly explicitTrueDisplay: string;
-    readonly implicitFalseDisplay: string;
-  }): DisplayStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: DisplayStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => DisplayStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<DisplayStruct, "$type">> = (
     left,
@@ -18715,7 +18232,7 @@ export namespace DisplayStruct {
   > = $wrap_ToRdfResourceFunction<
     DisplayStruct.Identifier,
     Omit<DisplayStruct, "$type">
-  >(DisplayStruct._toRdfResourceFunction);
+  >(DisplayStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<DisplayStruct, "$type">,
@@ -18823,7 +18340,7 @@ export namespace ExplicitFromToRdfTypesStruct {
       }),
     }).chain((properties) => ExplicitFromToRdfTypesStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     ExplicitFromToRdfTypesStruct.Identifier,
     Omit<ExplicitFromToRdfTypesStruct, "$type">
   > = (parameters) => {
@@ -18854,25 +18371,13 @@ export namespace ExplicitFromToRdfTypesStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ExplicitFromToRdfTypesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly explicitFromToRdfTypesString: string;
-  }) => Either<Error, ExplicitFromToRdfTypesStruct> = <
+  >(
+    parameters: ExplicitFromToRdfTypesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, ExplicitFromToRdfTypesStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ExplicitFromToRdfTypesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly explicitFromToRdfTypesString: string;
-  }): Either<Error, ExplicitFromToRdfTypesStruct> =>
+  >(
+    parameters: ExplicitFromToRdfTypesStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, ExplicitFromToRdfTypesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -18893,27 +18398,24 @@ export namespace ExplicitFromToRdfTypesStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => ExplicitFromToRdfTypesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly explicitFromToRdfTypesString: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ExplicitFromToRdfTypesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly explicitFromToRdfTypesString: string;
-  }) => ExplicitFromToRdfTypesStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ExplicitFromToRdfTypesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly explicitFromToRdfTypesString: string;
-  }): ExplicitFromToRdfTypesStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: ExplicitFromToRdfTypesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => ExplicitFromToRdfTypesStruct = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<
@@ -19328,7 +18830,7 @@ export namespace ExplicitFromToRdfTypesStruct {
   > = $wrap_ToRdfResourceFunction<
     ExplicitFromToRdfTypesStruct.Identifier,
     Omit<ExplicitFromToRdfTypesStruct, "$type">
-  >(ExplicitFromToRdfTypesStruct._toRdfResourceFunction);
+  >(ExplicitFromToRdfTypesStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<ExplicitFromToRdfTypesStruct, "$type">,
@@ -19429,7 +18931,7 @@ export namespace ExplicitRdfTypeStruct {
       }),
     }).chain((properties) => ExplicitRdfTypeStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     ExplicitRdfTypeStruct.Identifier,
     Omit<ExplicitRdfTypeStruct, "$type">
   > = (parameters) => {
@@ -19455,25 +18957,13 @@ export namespace ExplicitRdfTypeStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ExplicitRdfTypeStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly explicitRdfTypeString: string;
-  }) => Either<Error, ExplicitRdfTypeStruct> = <
+  >(
+    parameters: ExplicitRdfTypeStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, ExplicitRdfTypeStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ExplicitRdfTypeStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly explicitRdfTypeString: string;
-  }): Either<Error, ExplicitRdfTypeStruct> =>
+  >(
+    parameters: ExplicitRdfTypeStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, ExplicitRdfTypeStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -19492,27 +18982,24 @@ export namespace ExplicitRdfTypeStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => ExplicitRdfTypeStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly explicitRdfTypeString: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ExplicitRdfTypeStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly explicitRdfTypeString: string;
-  }) => ExplicitRdfTypeStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ExplicitRdfTypeStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly explicitRdfTypeString: string;
-  }): ExplicitRdfTypeStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: ExplicitRdfTypeStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => ExplicitRdfTypeStruct = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<ExplicitRdfTypeStruct, "$identifier" | "explicitRdfTypeString">
@@ -19894,7 +19381,7 @@ export namespace ExplicitRdfTypeStruct {
   > = $wrap_ToRdfResourceFunction<
     ExplicitRdfTypeStruct.Identifier,
     Omit<ExplicitRdfTypeStruct, "$type">
-  >(ExplicitRdfTypeStruct._toRdfResourceFunction);
+  >(ExplicitRdfTypeStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<ExplicitRdfTypeStruct, "$type">,
@@ -19997,7 +19484,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
       FlattenDiscriminatedUnionMember3.create(properties),
     );
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     FlattenDiscriminatedUnionMember3.Identifier,
     Omit<FlattenDiscriminatedUnionMember3, "$type">
   > = (parameters) => {
@@ -20032,25 +19519,13 @@ export namespace FlattenDiscriminatedUnionMember3 {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => FlattenDiscriminatedUnionMember3.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly flattenDiscriminatedUnionMember3String: string;
-  }) => Either<Error, FlattenDiscriminatedUnionMember3> = <
+  >(
+    parameters: FlattenDiscriminatedUnionMember3.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, FlattenDiscriminatedUnionMember3> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => FlattenDiscriminatedUnionMember3.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly flattenDiscriminatedUnionMember3String: string;
-  }): Either<Error, FlattenDiscriminatedUnionMember3> =>
+  >(
+    parameters: FlattenDiscriminatedUnionMember3.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, FlattenDiscriminatedUnionMember3> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -20071,27 +19546,24 @@ export namespace FlattenDiscriminatedUnionMember3 {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => FlattenDiscriminatedUnionMember3.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly flattenDiscriminatedUnionMember3String: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => FlattenDiscriminatedUnionMember3.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly flattenDiscriminatedUnionMember3String: string;
-  }) => FlattenDiscriminatedUnionMember3 = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => FlattenDiscriminatedUnionMember3.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly flattenDiscriminatedUnionMember3String: string;
-  }): FlattenDiscriminatedUnionMember3 => create(parameters).unsafeCoerce();
+  >(
+    parameters: FlattenDiscriminatedUnionMember3.CreateParameters<$DefaultNamespaceT>,
+  ) => FlattenDiscriminatedUnionMember3 = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<
@@ -20513,7 +19985,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
   > = $wrap_ToRdfResourceFunction<
     FlattenDiscriminatedUnionMember3.Identifier,
     Omit<FlattenDiscriminatedUnionMember3, "$type">
-  >(FlattenDiscriminatedUnionMember3._toRdfResourceFunction);
+  >(FlattenDiscriminatedUnionMember3._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<FlattenDiscriminatedUnionMember3, "$type">,
@@ -20609,7 +20081,7 @@ export namespace HasValuesStruct {
       }),
     }).chain((properties) => HasValuesStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     HasValuesStruct.Identifier,
     Omit<HasValuesStruct, "$type">
   > = (parameters) => {
@@ -20633,27 +20105,13 @@ export namespace HasValuesStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => HasValuesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly hasIriValue: (keyof $DefaultNamespaceT & string) | NamedNode;
-    readonly hasLiteralValue: string;
-  }) => Either<Error, HasValuesStruct> = <
+  >(
+    parameters: HasValuesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, HasValuesStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => HasValuesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly hasIriValue: (keyof $DefaultNamespaceT & string) | NamedNode;
-    readonly hasLiteralValue: string;
-  }): Either<Error, HasValuesStruct> =>
+  >(
+    parameters: HasValuesStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, HasValuesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -20676,29 +20134,24 @@ export namespace HasValuesStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => HasValuesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly hasIriValue: (keyof $DefaultNamespaceT & string) | NamedNode;
+    readonly hasLiteralValue: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => HasValuesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly hasIriValue: (keyof $DefaultNamespaceT & string) | NamedNode;
-    readonly hasLiteralValue: string;
-  }) => HasValuesStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => HasValuesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly hasIriValue: (keyof $DefaultNamespaceT & string) | NamedNode;
-    readonly hasLiteralValue: string;
-  }): HasValuesStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: HasValuesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => HasValuesStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<HasValuesStruct, "$type">> = (
     left,
@@ -21061,7 +20514,7 @@ export namespace HasValuesStruct {
   > = $wrap_ToRdfResourceFunction<
     HasValuesStruct.Identifier,
     Omit<HasValuesStruct, "$type">
-  >(HasValuesStruct._toRdfResourceFunction);
+  >(HasValuesStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<HasValuesStruct, "$type">,
@@ -21185,7 +20638,7 @@ export namespace IgnoredPropertiesStruct {
       }),
     }).chain((properties) => IgnoredPropertiesStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     IgnoredPropertiesStruct.Identifier,
     Omit<IgnoredPropertiesStruct, "$type">
   > = (parameters) => {
@@ -21215,29 +20668,13 @@ export namespace IgnoredPropertiesStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => IgnoredPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly severityDefaultProperty: string;
-    readonly severityViolationProperty: string;
-    readonly shaclmateIgnoreFalseProperty: string;
-  }) => Either<Error, IgnoredPropertiesStruct> = <
+  >(
+    parameters: IgnoredPropertiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, IgnoredPropertiesStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => IgnoredPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly severityDefaultProperty: string;
-    readonly severityViolationProperty: string;
-    readonly shaclmateIgnoreFalseProperty: string;
-  }): Either<Error, IgnoredPropertiesStruct> =>
+  >(
+    parameters: IgnoredPropertiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, IgnoredPropertiesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -21262,31 +20699,26 @@ export namespace IgnoredPropertiesStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => IgnoredPropertiesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly severityDefaultProperty: string;
+    readonly severityViolationProperty: string;
+    readonly shaclmateIgnoreFalseProperty: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => IgnoredPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly severityDefaultProperty: string;
-    readonly severityViolationProperty: string;
-    readonly shaclmateIgnoreFalseProperty: string;
-  }) => IgnoredPropertiesStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => IgnoredPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly severityDefaultProperty: string;
-    readonly severityViolationProperty: string;
-    readonly shaclmateIgnoreFalseProperty: string;
-  }): IgnoredPropertiesStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: IgnoredPropertiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => IgnoredPropertiesStruct = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Omit<IgnoredPropertiesStruct, "$type">
@@ -21741,7 +21173,7 @@ export namespace IgnoredPropertiesStruct {
   > = $wrap_ToRdfResourceFunction<
     IgnoredPropertiesStruct.Identifier,
     Omit<IgnoredPropertiesStruct, "$type">
-  >(IgnoredPropertiesStruct._toRdfResourceFunction);
+  >(IgnoredPropertiesStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<IgnoredPropertiesStruct, "$type">,
@@ -21840,7 +21272,7 @@ export namespace IndirectRecursiveStruct {
       }),
     }).chain((properties) => IndirectRecursiveStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     IndirectRecursiveStruct.Identifier,
     Omit<IndirectRecursiveStruct, "$type">
   > = (parameters) => {
@@ -21876,29 +21308,13 @@ export namespace IndirectRecursiveStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => IndirectRecursiveStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly indirectRecursiveHelper?:
-      | IndirectRecursiveStructHelper
-      | Maybe<IndirectRecursiveStructHelper>;
-  }) => Either<Error, IndirectRecursiveStruct> = <
+  >(
+    parameters?: IndirectRecursiveStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, IndirectRecursiveStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => IndirectRecursiveStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly indirectRecursiveHelper?:
-      | IndirectRecursiveStructHelper
-      | Maybe<IndirectRecursiveStructHelper>;
-  }): Either<Error, IndirectRecursiveStruct> =>
+  >(
+    parameters?: IndirectRecursiveStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, IndirectRecursiveStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -21926,31 +21342,26 @@ export namespace IndirectRecursiveStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => IndirectRecursiveStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly indirectRecursiveHelper?:
+      | IndirectRecursiveStructHelper
+      | Maybe<IndirectRecursiveStructHelper>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => IndirectRecursiveStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly indirectRecursiveHelper?:
-      | IndirectRecursiveStructHelper
-      | Maybe<IndirectRecursiveStructHelper>;
-  }) => IndirectRecursiveStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => IndirectRecursiveStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly indirectRecursiveHelper?:
-      | IndirectRecursiveStructHelper
-      | Maybe<IndirectRecursiveStructHelper>;
-  }): IndirectRecursiveStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters?: IndirectRecursiveStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => IndirectRecursiveStruct = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<IndirectRecursiveStruct, "$identifier" | "indirectRecursiveHelper">
@@ -22350,7 +21761,7 @@ export namespace IndirectRecursiveStruct {
   > = $wrap_ToRdfResourceFunction<
     IndirectRecursiveStruct.Identifier,
     Omit<IndirectRecursiveStruct, "$type">
-  >(IndirectRecursiveStruct._toRdfResourceFunction);
+  >(IndirectRecursiveStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<IndirectRecursiveStruct, "$type">,
@@ -22453,7 +21864,7 @@ export namespace IndirectRecursiveStructHelper {
       }),
     }).chain((properties) => IndirectRecursiveStructHelper.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     IndirectRecursiveStructHelper.Identifier,
     Omit<IndirectRecursiveStructHelper, "$type">
   > = (parameters) => {
@@ -22493,29 +21904,13 @@ export namespace IndirectRecursiveStructHelper {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => IndirectRecursiveStructHelper.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly indirectRecursive?:
-      | IndirectRecursiveStruct
-      | Maybe<IndirectRecursiveStruct>;
-  }) => Either<Error, IndirectRecursiveStructHelper> = <
+  >(
+    parameters?: IndirectRecursiveStructHelper.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, IndirectRecursiveStructHelper> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => IndirectRecursiveStructHelper.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly indirectRecursive?:
-      | IndirectRecursiveStruct
-      | Maybe<IndirectRecursiveStruct>;
-  }): Either<Error, IndirectRecursiveStructHelper> =>
+  >(
+    parameters?: IndirectRecursiveStructHelper.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, IndirectRecursiveStructHelper> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -22543,31 +21938,26 @@ export namespace IndirectRecursiveStructHelper {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => IndirectRecursiveStructHelper.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly indirectRecursive?:
+      | IndirectRecursiveStruct
+      | Maybe<IndirectRecursiveStruct>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => IndirectRecursiveStructHelper.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly indirectRecursive?:
-      | IndirectRecursiveStruct
-      | Maybe<IndirectRecursiveStruct>;
-  }) => IndirectRecursiveStructHelper = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => IndirectRecursiveStructHelper.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly indirectRecursive?:
-      | IndirectRecursiveStruct
-      | Maybe<IndirectRecursiveStruct>;
-  }): IndirectRecursiveStructHelper => create(parameters).unsafeCoerce();
+  >(
+    parameters?: IndirectRecursiveStructHelper.CreateParameters<$DefaultNamespaceT>,
+  ) => IndirectRecursiveStructHelper = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<IndirectRecursiveStructHelper, "$identifier" | "indirectRecursive">
@@ -22962,7 +22352,7 @@ export namespace IndirectRecursiveStructHelper {
   > = $wrap_ToRdfResourceFunction<
     IndirectRecursiveStructHelper.Identifier,
     Omit<IndirectRecursiveStructHelper, "$type">
-  >(IndirectRecursiveStructHelper._toRdfResourceFunction);
+  >(IndirectRecursiveStructHelper._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<IndirectRecursiveStructHelper, "$type">,
@@ -23063,7 +22453,7 @@ export namespace InIdentifierStruct {
       }),
     }).chain((properties) => InIdentifierStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     InIdentifierStruct.Identifier,
     Omit<InIdentifierStruct, "$type">
   > = (parameters) => {
@@ -23091,35 +22481,13 @@ export namespace InIdentifierStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier:
-      | (() => InIdentifierStruct.Identifier)
-      | (
-          | "http://example.com/InIdentifierStructInstance1"
-          | "http://example.com/InIdentifierStructInstance2"
-        )
-      | NamedNode<
-          | "http://example.com/InIdentifierStructInstance1"
-          | "http://example.com/InIdentifierStructInstance2"
-        >;
-    readonly inIdentifierString?: string | Maybe<string>;
-  }) => Either<Error, InIdentifierStruct> = <
+  >(
+    parameters: InIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, InIdentifierStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier:
-      | (() => InIdentifierStruct.Identifier)
-      | (
-          | "http://example.com/InIdentifierStructInstance1"
-          | "http://example.com/InIdentifierStructInstance2"
-        )
-      | NamedNode<
-          | "http://example.com/InIdentifierStructInstance1"
-          | "http://example.com/InIdentifierStructInstance2"
-        >;
-    readonly inIdentifierString?: string | Maybe<string>;
-  }): Either<Error, InIdentifierStruct> =>
+  >(
+    parameters: InIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, InIdentifierStruct> =>
     $sequenceRecord({
       $identifier: $convertToInIriIdentifierProperty<
         | "http://example.com/InIdentifierStructInstance1"
@@ -23146,37 +22514,28 @@ export namespace InIdentifierStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier:
+      | (() => InIdentifierStruct.Identifier)
+      | (
+          | "http://example.com/InIdentifierStructInstance1"
+          | "http://example.com/InIdentifierStructInstance2"
+        )
+      | NamedNode<
+          | "http://example.com/InIdentifierStructInstance1"
+          | "http://example.com/InIdentifierStructInstance2"
+        >;
+    readonly inIdentifierString?: string | Maybe<string>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier:
-      | (() => InIdentifierStruct.Identifier)
-      | (
-          | "http://example.com/InIdentifierStructInstance1"
-          | "http://example.com/InIdentifierStructInstance2"
-        )
-      | NamedNode<
-          | "http://example.com/InIdentifierStructInstance1"
-          | "http://example.com/InIdentifierStructInstance2"
-        >;
-    readonly inIdentifierString?: string | Maybe<string>;
-  }) => InIdentifierStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier:
-      | (() => InIdentifierStruct.Identifier)
-      | (
-          | "http://example.com/InIdentifierStructInstance1"
-          | "http://example.com/InIdentifierStructInstance2"
-        )
-      | NamedNode<
-          | "http://example.com/InIdentifierStructInstance1"
-          | "http://example.com/InIdentifierStructInstance2"
-        >;
-    readonly inIdentifierString?: string | Maybe<string>;
-  }): InIdentifierStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: InIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => InIdentifierStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<InIdentifierStruct, "$identifier" | "inIdentifierString">
@@ -23620,7 +22979,7 @@ export namespace InIdentifierStruct {
   > = $wrap_ToRdfResourceFunction<
     InIdentifierStruct.Identifier,
     Omit<InIdentifierStruct, "$type">
-  >(InIdentifierStruct._toRdfResourceFunction);
+  >(InIdentifierStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<InIdentifierStruct, "$type">,
@@ -23850,7 +23209,7 @@ export namespace InPropertiesStruct {
       }),
     }).chain((properties) => InPropertiesStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     InPropertiesStruct.Identifier,
     Omit<InPropertiesStruct, "$type">
   > = (parameters) => {
@@ -23911,45 +23270,13 @@ export namespace InPropertiesStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => InPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly inBooleans?: true | Maybe<true>;
-    readonly inDateTimes?: Date | Maybe<Date>;
-    readonly inDoubles?: 1 | 2 | Maybe<1 | 2>;
-    readonly inIntegers?: 1n | 2n | Maybe<1n | 2n>;
-    readonly inIris?:
-      | ("http://example.com/InIri1" | "http://example.com/InIri2")
-      | NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
-      | Maybe<
-          NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
-        >;
-    readonly inStrings?: "text" | "html" | Maybe<"text" | "html">;
-  }) => Either<Error, InPropertiesStruct> = <
+  >(
+    parameters?: InPropertiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, InPropertiesStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => InPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly inBooleans?: true | Maybe<true>;
-    readonly inDateTimes?: Date | Maybe<Date>;
-    readonly inDoubles?: 1 | 2 | Maybe<1 | 2>;
-    readonly inIntegers?: 1n | 2n | Maybe<1n | 2n>;
-    readonly inIris?:
-      | ("http://example.com/InIri1" | "http://example.com/InIri2")
-      | NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
-      | Maybe<
-          NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
-        >;
-    readonly inStrings?: "text" | "html" | Maybe<"text" | "html">;
-  }): Either<Error, InPropertiesStruct> =>
+  >(
+    parameters?: InPropertiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, InPropertiesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -24022,47 +23349,33 @@ export namespace InPropertiesStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => InPropertiesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly inBooleans?: true | Maybe<true>;
+    readonly inDateTimes?: Date | Maybe<Date>;
+    readonly inDoubles?: 1 | 2 | Maybe<1 | 2>;
+    readonly inIntegers?: 1n | 2n | Maybe<1n | 2n>;
+    readonly inIris?:
+      | ("http://example.com/InIri1" | "http://example.com/InIri2")
+      | NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
+      | Maybe<
+          NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
+        >;
+    readonly inStrings?: "text" | "html" | Maybe<"text" | "html">;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => InPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly inBooleans?: true | Maybe<true>;
-    readonly inDateTimes?: Date | Maybe<Date>;
-    readonly inDoubles?: 1 | 2 | Maybe<1 | 2>;
-    readonly inIntegers?: 1n | 2n | Maybe<1n | 2n>;
-    readonly inIris?:
-      | ("http://example.com/InIri1" | "http://example.com/InIri2")
-      | NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
-      | Maybe<
-          NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
-        >;
-    readonly inStrings?: "text" | "html" | Maybe<"text" | "html">;
-  }) => InPropertiesStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => InPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly inBooleans?: true | Maybe<true>;
-    readonly inDateTimes?: Date | Maybe<Date>;
-    readonly inDoubles?: 1 | 2 | Maybe<1 | 2>;
-    readonly inIntegers?: 1n | 2n | Maybe<1n | 2n>;
-    readonly inIris?:
-      | ("http://example.com/InIri1" | "http://example.com/InIri2")
-      | NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
-      | Maybe<
-          NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
-        >;
-    readonly inStrings?: "text" | "html" | Maybe<"text" | "html">;
-  }): InPropertiesStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters?: InPropertiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => InPropertiesStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<InPropertiesStruct, "$type">> = (
     left,
@@ -24855,7 +24168,7 @@ export namespace InPropertiesStruct {
   > = $wrap_ToRdfResourceFunction<
     InPropertiesStruct.Identifier,
     Omit<InPropertiesStruct, "$type">
-  >(InPropertiesStruct._toRdfResourceFunction);
+  >(InPropertiesStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<InPropertiesStruct, "$type">,
@@ -24944,7 +24257,7 @@ export namespace IntersectionPropertiesStruct {
       }),
     }).chain((properties) => IntersectionPropertiesStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     IntersectionPropertiesStruct.Identifier,
     Omit<IntersectionPropertiesStruct, "$type">
   > = (parameters) => {
@@ -24979,25 +24292,13 @@ export namespace IntersectionPropertiesStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => IntersectionPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly namedStructIntersection: StructIntersection;
-  }) => Either<Error, IntersectionPropertiesStruct> = <
+  >(
+    parameters: IntersectionPropertiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, IntersectionPropertiesStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => IntersectionPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly namedStructIntersection: StructIntersection;
-  }): Either<Error, IntersectionPropertiesStruct> =>
+  >(
+    parameters: IntersectionPropertiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, IntersectionPropertiesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -25016,27 +24317,24 @@ export namespace IntersectionPropertiesStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => IntersectionPropertiesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly namedStructIntersection: StructIntersection;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => IntersectionPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly namedStructIntersection: StructIntersection;
-  }) => IntersectionPropertiesStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => IntersectionPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly namedStructIntersection: StructIntersection;
-  }): IntersectionPropertiesStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: IntersectionPropertiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => IntersectionPropertiesStruct = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Omit<IntersectionPropertiesStruct, "$type">
@@ -25367,7 +24665,7 @@ export namespace IntersectionPropertiesStruct {
   > = $wrap_ToRdfResourceFunction<
     IntersectionPropertiesStruct.Identifier,
     Omit<IntersectionPropertiesStruct, "$type">
-  >(IntersectionPropertiesStruct._toRdfResourceFunction);
+  >(IntersectionPropertiesStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<IntersectionPropertiesStruct, "$type">,
@@ -25469,7 +24767,7 @@ export namespace IriIdentifierStruct {
       }),
     }).chain((properties) => IriIdentifierStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     IriIdentifierStruct.Identifier,
     Omit<IriIdentifierStruct, "$type">
   > = (parameters) => {
@@ -25497,23 +24795,13 @@ export namespace IriIdentifierStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier:
-      | (() => IriIdentifierStruct.Identifier)
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode;
-    readonly iriIdentifierString?: string | Maybe<string>;
-  }) => Either<Error, IriIdentifierStruct> = <
+  >(
+    parameters: IriIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, IriIdentifierStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier:
-      | (() => IriIdentifierStruct.Identifier)
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode;
-    readonly iriIdentifierString?: string | Maybe<string>;
-  }): Either<Error, IriIdentifierStruct> =>
+  >(
+    parameters: IriIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, IriIdentifierStruct> =>
     $sequenceRecord({
       $identifier: $convertToIriIdentifierProperty(
         parameters.$identifier,
@@ -25540,25 +24828,22 @@ export namespace IriIdentifierStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier:
+      | (() => IriIdentifierStruct.Identifier)
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode;
+    readonly iriIdentifierString?: string | Maybe<string>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier:
-      | (() => IriIdentifierStruct.Identifier)
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode;
-    readonly iriIdentifierString?: string | Maybe<string>;
-  }) => IriIdentifierStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier:
-      | (() => IriIdentifierStruct.Identifier)
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode;
-    readonly iriIdentifierString?: string | Maybe<string>;
-  }): IriIdentifierStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: IriIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => IriIdentifierStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<IriIdentifierStruct, "$identifier" | "iriIdentifierString">
@@ -25955,7 +25240,7 @@ export namespace IriIdentifierStruct {
   > = $wrap_ToRdfResourceFunction<
     IriIdentifierStruct.Identifier,
     Omit<IriIdentifierStruct, "$type">
-  >(IriIdentifierStruct._toRdfResourceFunction);
+  >(IriIdentifierStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<IriIdentifierStruct, "$type">,
@@ -26305,7 +25590,7 @@ export namespace LangStringStruct {
       }),
     }).chain((properties) => LangStringStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     LangStringStruct.Identifier,
     Omit<LangStringStruct, "$type">
   > = (parameters) => {
@@ -26377,29 +25662,13 @@ export namespace LangStringStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LangStringStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly langString?: Literal | Maybe<Literal>;
-    readonly langStringOrString?: Literal | string | Maybe<Literal | string>;
-    readonly stringOrLangString?: string | Literal | Maybe<string | Literal>;
-  }) => Either<Error, LangStringStruct> = <
+  >(
+    parameters?: LangStringStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, LangStringStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LangStringStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly langString?: Literal | Maybe<Literal>;
-    readonly langStringOrString?: Literal | string | Maybe<Literal | string>;
-    readonly stringOrLangString?: string | Literal | Maybe<string | Literal>;
-  }): Either<Error, LangStringStruct> =>
+  >(
+    parameters?: LangStringStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, LangStringStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -26444,31 +25713,25 @@ export namespace LangStringStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => LangStringStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly langString?: Literal | Maybe<Literal>;
+    readonly langStringOrString?: Literal | string | Maybe<Literal | string>;
+    readonly stringOrLangString?: string | Literal | Maybe<string | Literal>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LangStringStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly langString?: Literal | Maybe<Literal>;
-    readonly langStringOrString?: Literal | string | Maybe<Literal | string>;
-    readonly stringOrLangString?: string | Literal | Maybe<string | Literal>;
-  }) => LangStringStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LangStringStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly langString?: Literal | Maybe<Literal>;
-    readonly langStringOrString?: Literal | string | Maybe<Literal | string>;
-    readonly stringOrLangString?: string | Literal | Maybe<string | Literal>;
-  }): LangStringStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters?: LangStringStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => LangStringStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<LangStringStruct, "$type">> = (
     left,
@@ -27439,7 +26702,7 @@ export namespace LangStringStruct {
   > = $wrap_ToRdfResourceFunction<
     LangStringStruct.Identifier,
     Omit<LangStringStruct, "$type">
-  >(LangStringStruct._toRdfResourceFunction);
+  >(LangStringStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<LangStringStruct, "$type">,
@@ -27530,7 +26793,7 @@ export namespace LanguageInStruct {
       }),
     }).chain((properties) => LanguageInStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     LanguageInStruct.Identifier,
     Omit<LanguageInStruct, "$type">
   > = (parameters) => {
@@ -27549,25 +26812,13 @@ export namespace LanguageInStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LanguageInStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly languageIn: Literal | readonly Literal[];
-  }) => Either<Error, LanguageInStruct> = <
+  >(
+    parameters: LanguageInStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, LanguageInStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LanguageInStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly languageIn: Literal | readonly Literal[];
-  }): Either<Error, LanguageInStruct> =>
+  >(
+    parameters: LanguageInStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, LanguageInStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -27594,27 +26845,23 @@ export namespace LanguageInStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => LanguageInStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly languageIn: Literal | readonly Literal[];
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LanguageInStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly languageIn: Literal | readonly Literal[];
-  }) => LanguageInStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LanguageInStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly languageIn: Literal | readonly Literal[];
-  }): LanguageInStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: LanguageInStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => LanguageInStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<LanguageInStruct, "$type">> = (
     left,
@@ -27946,7 +27193,7 @@ export namespace LanguageInStruct {
   > = $wrap_ToRdfResourceFunction<
     LanguageInStruct.Identifier,
     Omit<LanguageInStruct, "$type">
-  >(LanguageInStruct._toRdfResourceFunction);
+  >(LanguageInStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<LanguageInStruct, "$type">,
@@ -28046,7 +27293,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
       LazilyResolvedBlankNodeOrIriIdentifierStruct.create(properties),
     );
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
     Omit<LazilyResolvedBlankNodeOrIriIdentifierStruct, "$type">
   > = (parameters) => {
@@ -28078,25 +27325,13 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }) => Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct> = <
+  >(
+    parameters: LazilyResolvedBlankNodeOrIriIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct> =>
+  >(
+    parameters: LazilyResolvedBlankNodeOrIriIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -28115,27 +27350,23 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly lazilyResolved: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }) => LazilyResolvedBlankNodeOrIriIdentifierStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }): LazilyResolvedBlankNodeOrIriIdentifierStruct =>
+  >(
+    parameters: LazilyResolvedBlankNodeOrIriIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => LazilyResolvedBlankNodeOrIriIdentifierStruct = (parameters) =>
     create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
@@ -28568,7 +27799,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
   > = $wrap_ToRdfResourceFunction<
     LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
     Omit<LazilyResolvedBlankNodeOrIriIdentifierStruct, "$type">
-  >(LazilyResolvedBlankNodeOrIriIdentifierStruct._toRdfResourceFunction);
+  >(LazilyResolvedBlankNodeOrIriIdentifierStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<LazilyResolvedBlankNodeOrIriIdentifierStruct, "$type">,
@@ -28669,7 +27900,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
       LazilyResolvedDiscriminatedUnionMember1.create(properties),
     );
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     LazilyResolvedDiscriminatedUnionMember1.Identifier,
     Omit<LazilyResolvedDiscriminatedUnionMember1, "$type">
   > = (parameters) => {
@@ -28701,25 +27932,13 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LazilyResolvedDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }) => Either<Error, LazilyResolvedDiscriminatedUnionMember1> = <
+  >(
+    parameters: LazilyResolvedDiscriminatedUnionMember1.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, LazilyResolvedDiscriminatedUnionMember1> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LazilyResolvedDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }): Either<Error, LazilyResolvedDiscriminatedUnionMember1> =>
+  >(
+    parameters: LazilyResolvedDiscriminatedUnionMember1.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, LazilyResolvedDiscriminatedUnionMember1> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -28738,27 +27957,23 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => LazilyResolvedDiscriminatedUnionMember1.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly lazilyResolved: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LazilyResolvedDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }) => LazilyResolvedDiscriminatedUnionMember1 = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LazilyResolvedDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }): LazilyResolvedDiscriminatedUnionMember1 =>
+  >(
+    parameters: LazilyResolvedDiscriminatedUnionMember1.CreateParameters<$DefaultNamespaceT>,
+  ) => LazilyResolvedDiscriminatedUnionMember1 = (parameters) =>
     create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
@@ -29177,7 +28392,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
   > = $wrap_ToRdfResourceFunction<
     LazilyResolvedDiscriminatedUnionMember1.Identifier,
     Omit<LazilyResolvedDiscriminatedUnionMember1, "$type">
-  >(LazilyResolvedDiscriminatedUnionMember1._toRdfResourceFunction);
+  >(LazilyResolvedDiscriminatedUnionMember1._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<LazilyResolvedDiscriminatedUnionMember1, "$type">,
@@ -29278,7 +28493,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
       LazilyResolvedDiscriminatedUnionMember2.create(properties),
     );
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     LazilyResolvedDiscriminatedUnionMember2.Identifier,
     Omit<LazilyResolvedDiscriminatedUnionMember2, "$type">
   > = (parameters) => {
@@ -29310,25 +28525,13 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LazilyResolvedDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }) => Either<Error, LazilyResolvedDiscriminatedUnionMember2> = <
+  >(
+    parameters: LazilyResolvedDiscriminatedUnionMember2.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, LazilyResolvedDiscriminatedUnionMember2> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LazilyResolvedDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }): Either<Error, LazilyResolvedDiscriminatedUnionMember2> =>
+  >(
+    parameters: LazilyResolvedDiscriminatedUnionMember2.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, LazilyResolvedDiscriminatedUnionMember2> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -29347,27 +28550,23 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => LazilyResolvedDiscriminatedUnionMember2.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly lazilyResolved: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LazilyResolvedDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }) => LazilyResolvedDiscriminatedUnionMember2 = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LazilyResolvedDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }): LazilyResolvedDiscriminatedUnionMember2 =>
+  >(
+    parameters: LazilyResolvedDiscriminatedUnionMember2.CreateParameters<$DefaultNamespaceT>,
+  ) => LazilyResolvedDiscriminatedUnionMember2 = (parameters) =>
     create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
@@ -29786,7 +28985,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
   > = $wrap_ToRdfResourceFunction<
     LazilyResolvedDiscriminatedUnionMember2.Identifier,
     Omit<LazilyResolvedDiscriminatedUnionMember2, "$type">
-  >(LazilyResolvedDiscriminatedUnionMember2._toRdfResourceFunction);
+  >(LazilyResolvedDiscriminatedUnionMember2._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<LazilyResolvedDiscriminatedUnionMember2, "$type">,
@@ -29879,7 +29078,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
       LazilyResolvedIriIdentifierStruct.create(properties),
     );
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     LazilyResolvedIriIdentifierStruct.Identifier,
     Omit<LazilyResolvedIriIdentifierStruct, "$type">
   > = (parameters) => {
@@ -29902,23 +29101,13 @@ export namespace LazilyResolvedIriIdentifierStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier:
-      | (() => LazilyResolvedIriIdentifierStruct.Identifier)
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode;
-    readonly lazilyResolved: string;
-  }) => Either<Error, LazilyResolvedIriIdentifierStruct> = <
+  >(
+    parameters: LazilyResolvedIriIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, LazilyResolvedIriIdentifierStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier:
-      | (() => LazilyResolvedIriIdentifierStruct.Identifier)
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode;
-    readonly lazilyResolved: string;
-  }): Either<Error, LazilyResolvedIriIdentifierStruct> =>
+  >(
+    parameters: LazilyResolvedIriIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, LazilyResolvedIriIdentifierStruct> =>
     $sequenceRecord({
       $identifier: $convertToIriIdentifierProperty(
         parameters.$identifier,
@@ -29937,25 +29126,23 @@ export namespace LazilyResolvedIriIdentifierStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier:
+      | (() => LazilyResolvedIriIdentifierStruct.Identifier)
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode;
+    readonly lazilyResolved: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier:
-      | (() => LazilyResolvedIriIdentifierStruct.Identifier)
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode;
-    readonly lazilyResolved: string;
-  }) => LazilyResolvedIriIdentifierStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier:
-      | (() => LazilyResolvedIriIdentifierStruct.Identifier)
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode;
-    readonly lazilyResolved: string;
-  }): LazilyResolvedIriIdentifierStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: LazilyResolvedIriIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => LazilyResolvedIriIdentifierStruct = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Omit<LazilyResolvedIriIdentifierStruct, "$type">
@@ -30260,7 +29447,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
   > = $wrap_ToRdfResourceFunction<
     LazilyResolvedIriIdentifierStruct.Identifier,
     Omit<LazilyResolvedIriIdentifierStruct, "$type">
-  >(LazilyResolvedIriIdentifierStruct._toRdfResourceFunction);
+  >(LazilyResolvedIriIdentifierStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<LazilyResolvedIriIdentifierStruct, "$type">,
@@ -30800,7 +29987,7 @@ export namespace LazyPropertiesStruct {
       }),
     }).chain((properties) => LazyPropertiesStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     LazyPropertiesStruct.Identifier,
     Omit<LazyPropertiesStruct, "$type">
   > = (parameters) => {
@@ -30993,141 +30180,13 @@ export namespace LazyPropertiesStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LazyPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly optionalLazyToResolvedBlankNodeOrIriIdentifier?:
-      | $LazyOption<
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >
-      | Maybe<$DefaultPartial>
-      | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | $DefaultPartial
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly optionalLazyToResolvedDiscriminatedUnion?:
-      | $LazyOption<$DefaultPartial, LazilyResolvedDiscriminatedUnion>
-      | Maybe<$DefaultPartial>
-      | Maybe<LazilyResolvedDiscriminatedUnion>
-      | $DefaultPartial
-      | LazilyResolvedDiscriminatedUnion;
-    readonly optionalLazyToResolvedIriIdentifier?:
-      | $LazyOption<$NamedDefaultPartial, LazilyResolvedIriIdentifierStruct>
-      | Maybe<$NamedDefaultPartial>
-      | Maybe<LazilyResolvedIriIdentifierStruct>
-      | $NamedDefaultPartial
-      | LazilyResolvedIriIdentifierStruct;
-    readonly optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion?:
-      | $LazyOption<PartialDiscriminatedUnion, LazilyResolvedDiscriminatedUnion>
-      | Maybe<PartialDiscriminatedUnion>
-      | Maybe<LazilyResolvedDiscriminatedUnion>
-      | PartialDiscriminatedUnion
-      | LazilyResolvedDiscriminatedUnion;
-    readonly optionalPartialToResolvedBlankNodeOrIriIdentifier?:
-      | $LazyOption<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | Maybe<PartialStruct>
-      | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | PartialStruct
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly optionalPartialToResolvedDiscriminatedUnion?:
-      | $LazyOption<PartialStruct, LazilyResolvedDiscriminatedUnion>
-      | Maybe<PartialStruct>
-      | Maybe<LazilyResolvedDiscriminatedUnion>
-      | PartialStruct
-      | LazilyResolvedDiscriminatedUnion;
-    readonly requiredLazyToResolvedBlankNodeOrIriIdentifier:
-      | $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | $DefaultPartial
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly requiredPartialToResolvedBlankNodeOrIriIdentifier:
-      | $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | PartialStruct
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly setLazyToResolvedBlankNodeOrIriIdentifier?:
-      | $LazySet<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | readonly $DefaultPartial[]
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
-      | $DefaultPartial
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly setPartialToResolvedBlankNodeOrIriIdentifier?:
-      | $LazySet<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | readonly PartialStruct[]
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
-      | PartialStruct
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-  }) => Either<Error, LazyPropertiesStruct> = <
+  >(
+    parameters: LazyPropertiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, LazyPropertiesStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LazyPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly optionalLazyToResolvedBlankNodeOrIriIdentifier?:
-      | $LazyOption<
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >
-      | Maybe<$DefaultPartial>
-      | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | $DefaultPartial
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly optionalLazyToResolvedDiscriminatedUnion?:
-      | $LazyOption<$DefaultPartial, LazilyResolvedDiscriminatedUnion>
-      | Maybe<$DefaultPartial>
-      | Maybe<LazilyResolvedDiscriminatedUnion>
-      | $DefaultPartial
-      | LazilyResolvedDiscriminatedUnion;
-    readonly optionalLazyToResolvedIriIdentifier?:
-      | $LazyOption<$NamedDefaultPartial, LazilyResolvedIriIdentifierStruct>
-      | Maybe<$NamedDefaultPartial>
-      | Maybe<LazilyResolvedIriIdentifierStruct>
-      | $NamedDefaultPartial
-      | LazilyResolvedIriIdentifierStruct;
-    readonly optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion?:
-      | $LazyOption<PartialDiscriminatedUnion, LazilyResolvedDiscriminatedUnion>
-      | Maybe<PartialDiscriminatedUnion>
-      | Maybe<LazilyResolvedDiscriminatedUnion>
-      | PartialDiscriminatedUnion
-      | LazilyResolvedDiscriminatedUnion;
-    readonly optionalPartialToResolvedBlankNodeOrIriIdentifier?:
-      | $LazyOption<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | Maybe<PartialStruct>
-      | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | PartialStruct
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly optionalPartialToResolvedDiscriminatedUnion?:
-      | $LazyOption<PartialStruct, LazilyResolvedDiscriminatedUnion>
-      | Maybe<PartialStruct>
-      | Maybe<LazilyResolvedDiscriminatedUnion>
-      | PartialStruct
-      | LazilyResolvedDiscriminatedUnion;
-    readonly requiredLazyToResolvedBlankNodeOrIriIdentifier:
-      | $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | $DefaultPartial
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly requiredPartialToResolvedBlankNodeOrIriIdentifier:
-      | $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | PartialStruct
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly setLazyToResolvedBlankNodeOrIriIdentifier?:
-      | $LazySet<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | readonly $DefaultPartial[]
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
-      | $DefaultPartial
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly setPartialToResolvedBlankNodeOrIriIdentifier?:
-      | $LazySet<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | readonly PartialStruct[]
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
-      | PartialStruct
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-  }): Either<Error, LazyPropertiesStruct> =>
+  >(
+    parameters: LazyPropertiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, LazyPropertiesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -31232,143 +30291,81 @@ export namespace LazyPropertiesStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => LazyPropertiesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly optionalLazyToResolvedBlankNodeOrIriIdentifier?:
+      | $LazyOption<
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifierStruct
+        >
+      | Maybe<$DefaultPartial>
+      | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | $DefaultPartial
+      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
+    readonly optionalLazyToResolvedDiscriminatedUnion?:
+      | $LazyOption<$DefaultPartial, LazilyResolvedDiscriminatedUnion>
+      | Maybe<$DefaultPartial>
+      | Maybe<LazilyResolvedDiscriminatedUnion>
+      | $DefaultPartial
+      | LazilyResolvedDiscriminatedUnion;
+    readonly optionalLazyToResolvedIriIdentifier?:
+      | $LazyOption<$NamedDefaultPartial, LazilyResolvedIriIdentifierStruct>
+      | Maybe<$NamedDefaultPartial>
+      | Maybe<LazilyResolvedIriIdentifierStruct>
+      | $NamedDefaultPartial
+      | LazilyResolvedIriIdentifierStruct;
+    readonly optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion?:
+      | $LazyOption<PartialDiscriminatedUnion, LazilyResolvedDiscriminatedUnion>
+      | Maybe<PartialDiscriminatedUnion>
+      | Maybe<LazilyResolvedDiscriminatedUnion>
+      | PartialDiscriminatedUnion
+      | LazilyResolvedDiscriminatedUnion;
+    readonly optionalPartialToResolvedBlankNodeOrIriIdentifier?:
+      | $LazyOption<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | Maybe<PartialStruct>
+      | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | PartialStruct
+      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
+    readonly optionalPartialToResolvedDiscriminatedUnion?:
+      | $LazyOption<PartialStruct, LazilyResolvedDiscriminatedUnion>
+      | Maybe<PartialStruct>
+      | Maybe<LazilyResolvedDiscriminatedUnion>
+      | PartialStruct
+      | LazilyResolvedDiscriminatedUnion;
+    readonly requiredLazyToResolvedBlankNodeOrIriIdentifier:
+      | $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | $DefaultPartial
+      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
+    readonly requiredPartialToResolvedBlankNodeOrIriIdentifier:
+      | $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | PartialStruct
+      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
+    readonly setLazyToResolvedBlankNodeOrIriIdentifier?:
+      | $LazySet<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | readonly $DefaultPartial[]
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
+      | $DefaultPartial
+      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
+    readonly setPartialToResolvedBlankNodeOrIriIdentifier?:
+      | $LazySet<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | readonly PartialStruct[]
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
+      | PartialStruct
+      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LazyPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly optionalLazyToResolvedBlankNodeOrIriIdentifier?:
-      | $LazyOption<
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >
-      | Maybe<$DefaultPartial>
-      | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | $DefaultPartial
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly optionalLazyToResolvedDiscriminatedUnion?:
-      | $LazyOption<$DefaultPartial, LazilyResolvedDiscriminatedUnion>
-      | Maybe<$DefaultPartial>
-      | Maybe<LazilyResolvedDiscriminatedUnion>
-      | $DefaultPartial
-      | LazilyResolvedDiscriminatedUnion;
-    readonly optionalLazyToResolvedIriIdentifier?:
-      | $LazyOption<$NamedDefaultPartial, LazilyResolvedIriIdentifierStruct>
-      | Maybe<$NamedDefaultPartial>
-      | Maybe<LazilyResolvedIriIdentifierStruct>
-      | $NamedDefaultPartial
-      | LazilyResolvedIriIdentifierStruct;
-    readonly optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion?:
-      | $LazyOption<PartialDiscriminatedUnion, LazilyResolvedDiscriminatedUnion>
-      | Maybe<PartialDiscriminatedUnion>
-      | Maybe<LazilyResolvedDiscriminatedUnion>
-      | PartialDiscriminatedUnion
-      | LazilyResolvedDiscriminatedUnion;
-    readonly optionalPartialToResolvedBlankNodeOrIriIdentifier?:
-      | $LazyOption<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | Maybe<PartialStruct>
-      | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | PartialStruct
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly optionalPartialToResolvedDiscriminatedUnion?:
-      | $LazyOption<PartialStruct, LazilyResolvedDiscriminatedUnion>
-      | Maybe<PartialStruct>
-      | Maybe<LazilyResolvedDiscriminatedUnion>
-      | PartialStruct
-      | LazilyResolvedDiscriminatedUnion;
-    readonly requiredLazyToResolvedBlankNodeOrIriIdentifier:
-      | $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | $DefaultPartial
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly requiredPartialToResolvedBlankNodeOrIriIdentifier:
-      | $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | PartialStruct
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly setLazyToResolvedBlankNodeOrIriIdentifier?:
-      | $LazySet<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | readonly $DefaultPartial[]
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
-      | $DefaultPartial
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly setPartialToResolvedBlankNodeOrIriIdentifier?:
-      | $LazySet<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | readonly PartialStruct[]
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
-      | PartialStruct
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-  }) => LazyPropertiesStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => LazyPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly optionalLazyToResolvedBlankNodeOrIriIdentifier?:
-      | $LazyOption<
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >
-      | Maybe<$DefaultPartial>
-      | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | $DefaultPartial
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly optionalLazyToResolvedDiscriminatedUnion?:
-      | $LazyOption<$DefaultPartial, LazilyResolvedDiscriminatedUnion>
-      | Maybe<$DefaultPartial>
-      | Maybe<LazilyResolvedDiscriminatedUnion>
-      | $DefaultPartial
-      | LazilyResolvedDiscriminatedUnion;
-    readonly optionalLazyToResolvedIriIdentifier?:
-      | $LazyOption<$NamedDefaultPartial, LazilyResolvedIriIdentifierStruct>
-      | Maybe<$NamedDefaultPartial>
-      | Maybe<LazilyResolvedIriIdentifierStruct>
-      | $NamedDefaultPartial
-      | LazilyResolvedIriIdentifierStruct;
-    readonly optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion?:
-      | $LazyOption<PartialDiscriminatedUnion, LazilyResolvedDiscriminatedUnion>
-      | Maybe<PartialDiscriminatedUnion>
-      | Maybe<LazilyResolvedDiscriminatedUnion>
-      | PartialDiscriminatedUnion
-      | LazilyResolvedDiscriminatedUnion;
-    readonly optionalPartialToResolvedBlankNodeOrIriIdentifier?:
-      | $LazyOption<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | Maybe<PartialStruct>
-      | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | PartialStruct
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly optionalPartialToResolvedDiscriminatedUnion?:
-      | $LazyOption<PartialStruct, LazilyResolvedDiscriminatedUnion>
-      | Maybe<PartialStruct>
-      | Maybe<LazilyResolvedDiscriminatedUnion>
-      | PartialStruct
-      | LazilyResolvedDiscriminatedUnion;
-    readonly requiredLazyToResolvedBlankNodeOrIriIdentifier:
-      | $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | $DefaultPartial
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly requiredPartialToResolvedBlankNodeOrIriIdentifier:
-      | $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | PartialStruct
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly setLazyToResolvedBlankNodeOrIriIdentifier?:
-      | $LazySet<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | readonly $DefaultPartial[]
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
-      | $DefaultPartial
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-    readonly setPartialToResolvedBlankNodeOrIriIdentifier?:
-      | $LazySet<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | readonly PartialStruct[]
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
-      | PartialStruct
-      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-  }): LazyPropertiesStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: LazyPropertiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => LazyPropertiesStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<LazyPropertiesStruct, "$type">> = (
     left,
@@ -32917,7 +31914,7 @@ export namespace LazyPropertiesStruct {
   > = $wrap_ToRdfResourceFunction<
     LazyPropertiesStruct.Identifier,
     Omit<LazyPropertiesStruct, "$type">
-  >(LazyPropertiesStruct._toRdfResourceFunction);
+  >(LazyPropertiesStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<LazyPropertiesStruct, "$type">,
@@ -33180,7 +32177,7 @@ export namespace ListSetsStruct {
       }),
     }).chain((properties) => ListSetsStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     ListSetsStruct.Identifier,
     Omit<ListSetsStruct, "$type">
   > = (parameters) => {
@@ -33436,35 +32433,13 @@ export namespace ListSetsStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ListSetsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly listDiscriminatedUnionSet?: readonly (
-      | readonly string[]
-      | string
-    )[];
-    readonly listListSet?: readonly (readonly (readonly string[])[])[];
-    readonly listSet?: readonly (readonly string[])[];
-  }) => Either<Error, ListSetsStruct> = <
+  >(
+    parameters?: ListSetsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, ListSetsStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ListSetsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly listDiscriminatedUnionSet?: readonly (
-      | readonly string[]
-      | string
-    )[];
-    readonly listListSet?: readonly (readonly (readonly string[])[])[];
-    readonly listSet?: readonly (readonly string[])[];
-  }): Either<Error, ListSetsStruct> =>
+  >(
+    parameters?: ListSetsStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, ListSetsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -33509,37 +32484,28 @@ export namespace ListSetsStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => ListSetsStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly listDiscriminatedUnionSet?: readonly (
+      | readonly string[]
+      | string
+    )[];
+    readonly listListSet?: readonly (readonly (readonly string[])[])[];
+    readonly listSet?: readonly (readonly string[])[];
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ListSetsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly listDiscriminatedUnionSet?: readonly (
-      | readonly string[]
-      | string
-    )[];
-    readonly listListSet?: readonly (readonly (readonly string[])[])[];
-    readonly listSet?: readonly (readonly string[])[];
-  }) => ListSetsStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ListSetsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly listDiscriminatedUnionSet?: readonly (
-      | readonly string[]
-      | string
-    )[];
-    readonly listListSet?: readonly (readonly (readonly string[])[])[];
-    readonly listSet?: readonly (readonly string[])[];
-  }): ListSetsStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters?: ListSetsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => ListSetsStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<ListSetsStruct, "$type">> = (
     left,
@@ -34379,7 +33345,7 @@ export namespace ListSetsStruct {
   > = $wrap_ToRdfResourceFunction<
     ListSetsStruct.Identifier,
     Omit<ListSetsStruct, "$type">
-  >(ListSetsStruct._toRdfResourceFunction);
+  >(ListSetsStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<ListSetsStruct, "$type">,
@@ -34548,7 +33514,7 @@ export namespace ListsStruct {
       }),
     }).chain((properties) => ListsStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     ListsStruct.Identifier,
     Omit<ListsStruct, "$type">
   > = (parameters) => {
@@ -34845,43 +33811,13 @@ export namespace ListsStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ListsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly iriList?:
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[]
-      | Maybe<readonly NamedNode[]>;
-    readonly stringList?: readonly string[] | Maybe<readonly string[]>;
-    readonly stringListList?:
-      | readonly (readonly string[])[]
-      | Maybe<readonly (readonly string[])[]>;
-    readonly structList?:
-      | readonly NonClassStruct[]
-      | Maybe<readonly NonClassStruct[]>;
-  }) => Either<Error, ListsStruct> = <
+  >(
+    parameters?: ListsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, ListsStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ListsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly iriList?:
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[]
-      | Maybe<readonly NamedNode[]>;
-    readonly stringList?: readonly string[] | Maybe<readonly string[]>;
-    readonly stringListList?:
-      | readonly (readonly string[])[]
-      | Maybe<readonly (readonly string[])[]>;
-    readonly structList?:
-      | readonly NonClassStruct[]
-      | Maybe<readonly NonClassStruct[]>;
-  }): Either<Error, ListsStruct> =>
+  >(
+    parameters?: ListsStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, ListsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -34931,45 +33867,32 @@ export namespace ListsStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => ListsStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly iriList?:
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[]
+      | Maybe<readonly NamedNode[]>;
+    readonly stringList?: readonly string[] | Maybe<readonly string[]>;
+    readonly stringListList?:
+      | readonly (readonly string[])[]
+      | Maybe<readonly (readonly string[])[]>;
+    readonly structList?:
+      | readonly NonClassStruct[]
+      | Maybe<readonly NonClassStruct[]>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ListsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly iriList?:
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[]
-      | Maybe<readonly NamedNode[]>;
-    readonly stringList?: readonly string[] | Maybe<readonly string[]>;
-    readonly stringListList?:
-      | readonly (readonly string[])[]
-      | Maybe<readonly (readonly string[])[]>;
-    readonly structList?:
-      | readonly NonClassStruct[]
-      | Maybe<readonly NonClassStruct[]>;
-  }) => ListsStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ListsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly iriList?:
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[]
-      | Maybe<readonly NamedNode[]>;
-    readonly stringList?: readonly string[] | Maybe<readonly string[]>;
-    readonly stringListList?:
-      | readonly (readonly string[])[]
-      | Maybe<readonly (readonly string[])[]>;
-    readonly structList?:
-      | readonly NonClassStruct[]
-      | Maybe<readonly NonClassStruct[]>;
-  }): ListsStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters?: ListsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => ListsStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<ListsStruct, "$type">> = (
     left,
@@ -35707,7 +34630,7 @@ export namespace ListsStruct {
   > = $wrap_ToRdfResourceFunction<
     ListsStruct.Identifier,
     Omit<ListsStruct, "$type">
-  >(ListsStruct._toRdfResourceFunction);
+  >(ListsStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<ListsStruct, "$type">,
@@ -35849,7 +34772,7 @@ export namespace MutablePropertiesStruct {
       }),
     }).chain((properties) => MutablePropertiesStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     MutablePropertiesStruct.Identifier,
     Omit<MutablePropertiesStruct, "$type">
   > = (parameters) => {
@@ -35939,29 +34862,13 @@ export namespace MutablePropertiesStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => MutablePropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly mutableList?: readonly string[] | Maybe<string[]>;
-    readonly mutableSet?: string | readonly string[];
-    readonly mutableString?: string | Maybe<string>;
-  }) => Either<Error, MutablePropertiesStruct> = <
+  >(
+    parameters?: MutablePropertiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, MutablePropertiesStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => MutablePropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly mutableList?: readonly string[] | Maybe<string[]>;
-    readonly mutableSet?: string | readonly string[];
-    readonly mutableString?: string | Maybe<string>;
-  }): Either<Error, MutablePropertiesStruct> =>
+  >(
+    parameters?: MutablePropertiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, MutablePropertiesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -36005,31 +34912,26 @@ export namespace MutablePropertiesStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => MutablePropertiesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly mutableList?: readonly string[] | Maybe<string[]>;
+    readonly mutableSet?: string | readonly string[];
+    readonly mutableString?: string | Maybe<string>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => MutablePropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly mutableList?: readonly string[] | Maybe<string[]>;
-    readonly mutableSet?: string | readonly string[];
-    readonly mutableString?: string | Maybe<string>;
-  }) => MutablePropertiesStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => MutablePropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly mutableList?: readonly string[] | Maybe<string[]>;
-    readonly mutableSet?: string | readonly string[];
-    readonly mutableString?: string | Maybe<string>;
-  }): MutablePropertiesStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters?: MutablePropertiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => MutablePropertiesStruct = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Omit<MutablePropertiesStruct, "$type">
@@ -36611,7 +35513,7 @@ export namespace MutablePropertiesStruct {
   > = $wrap_ToRdfResourceFunction<
     MutablePropertiesStruct.Identifier,
     Omit<MutablePropertiesStruct, "$type">
-  >(MutablePropertiesStruct._toRdfResourceFunction);
+  >(MutablePropertiesStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<MutablePropertiesStruct, "$type">,
@@ -36734,7 +35636,7 @@ export namespace NamedTypesStruct {
       }),
     }).chain((properties) => NamedTypesStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     NamedTypesStruct.Identifier,
     Omit<NamedTypesStruct, "$type">
   > = (parameters) => {
@@ -36770,29 +35672,13 @@ export namespace NamedTypesStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NamedTypesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly inIri: InIri["value"] | InIri;
-    readonly inLiteral: InLiteral;
-    readonly namedDatatype: NamedDatatype;
-  }) => Either<Error, NamedTypesStruct> = <
+  >(
+    parameters: NamedTypesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, NamedTypesStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NamedTypesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly inIri: InIri["value"] | InIri;
-    readonly inLiteral: InLiteral;
-    readonly namedDatatype: NamedDatatype;
-  }): Either<Error, NamedTypesStruct> =>
+  >(
+    parameters: NamedTypesStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, NamedTypesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -36816,31 +35702,25 @@ export namespace NamedTypesStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => NamedTypesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly inIri: InIri["value"] | InIri;
+    readonly inLiteral: InLiteral;
+    readonly namedDatatype: NamedDatatype;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NamedTypesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly inIri: InIri["value"] | InIri;
-    readonly inLiteral: InLiteral;
-    readonly namedDatatype: NamedDatatype;
-  }) => NamedTypesStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NamedTypesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly inIri: InIri["value"] | InIri;
-    readonly inLiteral: InLiteral;
-    readonly namedDatatype: NamedDatatype;
-  }): NamedTypesStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: NamedTypesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => NamedTypesStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<NamedTypesStruct, "$type">> = (
     left,
@@ -37329,7 +36209,7 @@ export namespace NamedTypesStruct {
   > = $wrap_ToRdfResourceFunction<
     NamedTypesStruct.Identifier,
     Omit<NamedTypesStruct, "$type">
-  >(NamedTypesStruct._toRdfResourceFunction);
+  >(NamedTypesStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<NamedTypesStruct, "$type">,
@@ -37427,7 +36307,7 @@ export namespace NewName {
       }),
     }).chain((properties) => NewName.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     NewName.Identifier,
     Omit<NewName, "$type">
   > = (parameters) => {
@@ -37454,25 +36334,13 @@ export namespace NewName {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NewName.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly newNameString?: string | Maybe<string>;
-  }) => Either<Error, NewName> = <
+  >(
+    parameters?: NewName.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, NewName> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NewName.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly newNameString?: string | Maybe<string>;
-  }): Either<Error, NewName> =>
+  >(
+    parameters?: NewName.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, NewName> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -37496,27 +36364,23 @@ export namespace NewName {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => NewName.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly newNameString?: string | Maybe<string>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NewName.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly newNameString?: string | Maybe<string>;
-  }) => NewName = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NewName.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly newNameString?: string | Maybe<string>;
-  }): NewName => create(parameters).unsafeCoerce();
+  >(
+    parameters?: NewName.CreateParameters<$DefaultNamespaceT>,
+  ) => NewName = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<NewName, "$identifier" | "newNameString">
@@ -37908,7 +36772,7 @@ export namespace NewName {
     NewName.Identifier,
     Omit<NewName, "$type">
   > = $wrap_ToRdfResourceFunction<NewName.Identifier, Omit<NewName, "$type">>(
-    NewName._toRdfResourceFunction,
+    NewName._toRdfResource,
   );
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
@@ -38063,7 +36927,7 @@ export namespace NodeKindsStruct {
       }),
     }).chain((properties) => NodeKindsStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     NodeKindsStruct.Identifier,
     Omit<NodeKindsStruct, "$type">
   > = (parameters) => {
@@ -38114,53 +36978,13 @@ export namespace NodeKindsStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NodeKindsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly blankNodeKind?: BlankNode;
-    readonly blankNodeOrIriNodeKind?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly blankNodeOrLiteralNodeKind: BlankNode | Literal;
-    readonly iriNodeKind: (keyof $DefaultNamespaceT & string) | NamedNode;
-    readonly iriOrLiteralNodeKind: NamedNode | Literal;
-    readonly literalNodeKind:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal;
-  }) => Either<Error, NodeKindsStruct> = <
+  >(
+    parameters: NodeKindsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, NodeKindsStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NodeKindsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly blankNodeKind?: BlankNode;
-    readonly blankNodeOrIriNodeKind?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly blankNodeOrLiteralNodeKind: BlankNode | Literal;
-    readonly iriNodeKind: (keyof $DefaultNamespaceT & string) | NamedNode;
-    readonly iriOrLiteralNodeKind: NamedNode | Literal;
-    readonly literalNodeKind:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal;
-  }): Either<Error, NodeKindsStruct> =>
+  >(
+    parameters: NodeKindsStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, NodeKindsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -38198,55 +37022,37 @@ export namespace NodeKindsStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => NodeKindsStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly blankNodeKind?: BlankNode;
+    readonly blankNodeOrIriNodeKind?:
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly blankNodeOrLiteralNodeKind: BlankNode | Literal;
+    readonly iriNodeKind: (keyof $DefaultNamespaceT & string) | NamedNode;
+    readonly iriOrLiteralNodeKind: NamedNode | Literal;
+    readonly literalNodeKind:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NodeKindsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly blankNodeKind?: BlankNode;
-    readonly blankNodeOrIriNodeKind?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly blankNodeOrLiteralNodeKind: BlankNode | Literal;
-    readonly iriNodeKind: (keyof $DefaultNamespaceT & string) | NamedNode;
-    readonly iriOrLiteralNodeKind: NamedNode | Literal;
-    readonly literalNodeKind:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal;
-  }) => NodeKindsStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NodeKindsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly blankNodeKind?: BlankNode;
-    readonly blankNodeOrIriNodeKind?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly blankNodeOrLiteralNodeKind: BlankNode | Literal;
-    readonly iriNodeKind: (keyof $DefaultNamespaceT & string) | NamedNode;
-    readonly iriOrLiteralNodeKind: NamedNode | Literal;
-    readonly literalNodeKind:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal;
-  }): NodeKindsStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: NodeKindsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => NodeKindsStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<NodeKindsStruct, "$type">> = (
     left,
@@ -39083,7 +37889,7 @@ export namespace NodeKindsStruct {
   > = $wrap_ToRdfResourceFunction<
     NodeKindsStruct.Identifier,
     Omit<NodeKindsStruct, "$type">
-  >(NodeKindsStruct._toRdfResourceFunction);
+  >(NodeKindsStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<NodeKindsStruct, "$type">,
@@ -39168,7 +37974,7 @@ export namespace NonClassStruct {
       }),
     }).chain((properties) => NonClassStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     NonClassStruct.Identifier,
     Omit<NonClassStruct, "$type">
   > = (parameters) => {
@@ -39187,25 +37993,13 @@ export namespace NonClassStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NonClassStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly nonClassString: string;
-  }) => Either<Error, NonClassStruct> = <
+  >(
+    parameters: NonClassStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, NonClassStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NonClassStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly nonClassString: string;
-  }): Either<Error, NonClassStruct> =>
+  >(
+    parameters: NonClassStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, NonClassStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -39224,27 +38018,23 @@ export namespace NonClassStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => NonClassStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly nonClassString: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NonClassStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly nonClassString: string;
-  }) => NonClassStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NonClassStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly nonClassString: string;
-  }): NonClassStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: NonClassStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => NonClassStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<NonClassStruct, "$type">> = (
     left,
@@ -39541,7 +38331,7 @@ export namespace NonClassStruct {
   > = $wrap_ToRdfResourceFunction<
     NonClassStruct.Identifier,
     Omit<NonClassStruct, "$type">
-  >(NonClassStruct._toRdfResourceFunction);
+  >(NonClassStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<NonClassStruct, "$type">,
@@ -39631,7 +38421,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
       NoRdfTypeDiscriminatedUnionMember1.create(properties),
     );
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     NoRdfTypeDiscriminatedUnionMember1.Identifier,
     Omit<NoRdfTypeDiscriminatedUnionMember1, "$type">
   > = (parameters) => {
@@ -39659,25 +38449,13 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NoRdfTypeDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly noRdfTypeDiscriminatedUnionMember1String: string;
-  }) => Either<Error, NoRdfTypeDiscriminatedUnionMember1> = <
+  >(
+    parameters: NoRdfTypeDiscriminatedUnionMember1.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, NoRdfTypeDiscriminatedUnionMember1> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NoRdfTypeDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly noRdfTypeDiscriminatedUnionMember1String: string;
-  }): Either<Error, NoRdfTypeDiscriminatedUnionMember1> =>
+  >(
+    parameters: NoRdfTypeDiscriminatedUnionMember1.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, NoRdfTypeDiscriminatedUnionMember1> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -39698,27 +38476,24 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => NoRdfTypeDiscriminatedUnionMember1.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly noRdfTypeDiscriminatedUnionMember1String: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NoRdfTypeDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly noRdfTypeDiscriminatedUnionMember1String: string;
-  }) => NoRdfTypeDiscriminatedUnionMember1 = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NoRdfTypeDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly noRdfTypeDiscriminatedUnionMember1String: string;
-  }): NoRdfTypeDiscriminatedUnionMember1 => create(parameters).unsafeCoerce();
+  >(
+    parameters: NoRdfTypeDiscriminatedUnionMember1.CreateParameters<$DefaultNamespaceT>,
+  ) => NoRdfTypeDiscriminatedUnionMember1 = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Omit<NoRdfTypeDiscriminatedUnionMember1, "$type">
@@ -40051,7 +38826,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
   > = $wrap_ToRdfResourceFunction<
     NoRdfTypeDiscriminatedUnionMember1.Identifier,
     Omit<NoRdfTypeDiscriminatedUnionMember1, "$type">
-  >(NoRdfTypeDiscriminatedUnionMember1._toRdfResourceFunction);
+  >(NoRdfTypeDiscriminatedUnionMember1._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<NoRdfTypeDiscriminatedUnionMember1, "$type">,
@@ -40143,7 +38918,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
       NoRdfTypeDiscriminatedUnionMember2.create(properties),
     );
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     NoRdfTypeDiscriminatedUnionMember2.Identifier,
     Omit<NoRdfTypeDiscriminatedUnionMember2, "$type">
   > = (parameters) => {
@@ -40171,25 +38946,13 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NoRdfTypeDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly noRdfTypeDiscriminatedUnionMember2String: string;
-  }) => Either<Error, NoRdfTypeDiscriminatedUnionMember2> = <
+  >(
+    parameters: NoRdfTypeDiscriminatedUnionMember2.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, NoRdfTypeDiscriminatedUnionMember2> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NoRdfTypeDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly noRdfTypeDiscriminatedUnionMember2String: string;
-  }): Either<Error, NoRdfTypeDiscriminatedUnionMember2> =>
+  >(
+    parameters: NoRdfTypeDiscriminatedUnionMember2.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, NoRdfTypeDiscriminatedUnionMember2> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -40210,27 +38973,24 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => NoRdfTypeDiscriminatedUnionMember2.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly noRdfTypeDiscriminatedUnionMember2String: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NoRdfTypeDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly noRdfTypeDiscriminatedUnionMember2String: string;
-  }) => NoRdfTypeDiscriminatedUnionMember2 = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NoRdfTypeDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly noRdfTypeDiscriminatedUnionMember2String: string;
-  }): NoRdfTypeDiscriminatedUnionMember2 => create(parameters).unsafeCoerce();
+  >(
+    parameters: NoRdfTypeDiscriminatedUnionMember2.CreateParameters<$DefaultNamespaceT>,
+  ) => NoRdfTypeDiscriminatedUnionMember2 = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Omit<NoRdfTypeDiscriminatedUnionMember2, "$type">
@@ -40563,7 +39323,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
   > = $wrap_ToRdfResourceFunction<
     NoRdfTypeDiscriminatedUnionMember2.Identifier,
     Omit<NoRdfTypeDiscriminatedUnionMember2, "$type">
-  >(NoRdfTypeDiscriminatedUnionMember2._toRdfResourceFunction);
+  >(NoRdfTypeDiscriminatedUnionMember2._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<NoRdfTypeDiscriminatedUnionMember2, "$type">,
@@ -40892,7 +39652,7 @@ export namespace NumericsStruct {
       }),
     }).chain((properties) => NumericsStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     NumericsStruct.Identifier,
     Omit<NumericsStruct, "$type">
   > = (parameters) => {
@@ -41035,71 +39795,13 @@ export namespace NumericsStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NumericsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly byteNumeric?: number | Maybe<number>;
-    readonly decimalNumeric?: BigDecimal | number | string | Maybe<BigDecimal>;
-    readonly doubleNumeric?: number | Maybe<number>;
-    readonly floatNumeric?: number | Maybe<number>;
-    readonly integerNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly intNumeric?: number | Maybe<number>;
-    readonly longNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly negativeIntegerNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly nonNegativeIntegerNumeric?:
-      | bigint
-      | number
-      | string
-      | Maybe<bigint>;
-    readonly nonPositiveIntegerNumeric?:
-      | bigint
-      | number
-      | string
-      | Maybe<bigint>;
-    readonly positiveIntegerNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly shortNumeric?: number | Maybe<number>;
-    readonly unsignedByteNumeric?: number | Maybe<number>;
-    readonly unsignedIntNumeric?: number | Maybe<number>;
-    readonly unsignedLongNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly unsignedShortNumeric?: number | Maybe<number>;
-  }) => Either<Error, NumericsStruct> = <
+  >(
+    parameters?: NumericsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, NumericsStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NumericsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly byteNumeric?: number | Maybe<number>;
-    readonly decimalNumeric?: BigDecimal | number | string | Maybe<BigDecimal>;
-    readonly doubleNumeric?: number | Maybe<number>;
-    readonly floatNumeric?: number | Maybe<number>;
-    readonly integerNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly intNumeric?: number | Maybe<number>;
-    readonly longNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly negativeIntegerNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly nonNegativeIntegerNumeric?:
-      | bigint
-      | number
-      | string
-      | Maybe<bigint>;
-    readonly nonPositiveIntegerNumeric?:
-      | bigint
-      | number
-      | string
-      | Maybe<bigint>;
-    readonly positiveIntegerNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly shortNumeric?: number | Maybe<number>;
-    readonly unsignedByteNumeric?: number | Maybe<number>;
-    readonly unsignedIntNumeric?: number | Maybe<number>;
-    readonly unsignedLongNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly unsignedShortNumeric?: number | Maybe<number>;
-  }): Either<Error, NumericsStruct> =>
+  >(
+    parameters?: NumericsStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, NumericsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -41261,73 +39963,46 @@ export namespace NumericsStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => NumericsStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly byteNumeric?: number | Maybe<number>;
+    readonly decimalNumeric?: BigDecimal | number | string | Maybe<BigDecimal>;
+    readonly doubleNumeric?: number | Maybe<number>;
+    readonly floatNumeric?: number | Maybe<number>;
+    readonly integerNumeric?: bigint | number | string | Maybe<bigint>;
+    readonly intNumeric?: number | Maybe<number>;
+    readonly longNumeric?: bigint | number | string | Maybe<bigint>;
+    readonly negativeIntegerNumeric?: bigint | number | string | Maybe<bigint>;
+    readonly nonNegativeIntegerNumeric?:
+      | bigint
+      | number
+      | string
+      | Maybe<bigint>;
+    readonly nonPositiveIntegerNumeric?:
+      | bigint
+      | number
+      | string
+      | Maybe<bigint>;
+    readonly positiveIntegerNumeric?: bigint | number | string | Maybe<bigint>;
+    readonly shortNumeric?: number | Maybe<number>;
+    readonly unsignedByteNumeric?: number | Maybe<number>;
+    readonly unsignedIntNumeric?: number | Maybe<number>;
+    readonly unsignedLongNumeric?: bigint | number | string | Maybe<bigint>;
+    readonly unsignedShortNumeric?: number | Maybe<number>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NumericsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly byteNumeric?: number | Maybe<number>;
-    readonly decimalNumeric?: BigDecimal | number | string | Maybe<BigDecimal>;
-    readonly doubleNumeric?: number | Maybe<number>;
-    readonly floatNumeric?: number | Maybe<number>;
-    readonly integerNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly intNumeric?: number | Maybe<number>;
-    readonly longNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly negativeIntegerNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly nonNegativeIntegerNumeric?:
-      | bigint
-      | number
-      | string
-      | Maybe<bigint>;
-    readonly nonPositiveIntegerNumeric?:
-      | bigint
-      | number
-      | string
-      | Maybe<bigint>;
-    readonly positiveIntegerNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly shortNumeric?: number | Maybe<number>;
-    readonly unsignedByteNumeric?: number | Maybe<number>;
-    readonly unsignedIntNumeric?: number | Maybe<number>;
-    readonly unsignedLongNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly unsignedShortNumeric?: number | Maybe<number>;
-  }) => NumericsStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NumericsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly byteNumeric?: number | Maybe<number>;
-    readonly decimalNumeric?: BigDecimal | number | string | Maybe<BigDecimal>;
-    readonly doubleNumeric?: number | Maybe<number>;
-    readonly floatNumeric?: number | Maybe<number>;
-    readonly integerNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly intNumeric?: number | Maybe<number>;
-    readonly longNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly negativeIntegerNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly nonNegativeIntegerNumeric?:
-      | bigint
-      | number
-      | string
-      | Maybe<bigint>;
-    readonly nonPositiveIntegerNumeric?:
-      | bigint
-      | number
-      | string
-      | Maybe<bigint>;
-    readonly positiveIntegerNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly shortNumeric?: number | Maybe<number>;
-    readonly unsignedByteNumeric?: number | Maybe<number>;
-    readonly unsignedIntNumeric?: number | Maybe<number>;
-    readonly unsignedLongNumeric?: bigint | number | string | Maybe<bigint>;
-    readonly unsignedShortNumeric?: number | Maybe<number>;
-  }): NumericsStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters?: NumericsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => NumericsStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<NumericsStruct, "$type">> = (
     left,
@@ -42864,7 +41539,7 @@ export namespace NumericsStruct {
   > = $wrap_ToRdfResourceFunction<
     NumericsStruct.Identifier,
     Omit<NumericsStruct, "$type">
-  >(NumericsStruct._toRdfResourceFunction);
+  >(NumericsStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<NumericsStruct, "$type">,
@@ -42967,7 +41642,7 @@ export namespace OrderedStruct {
       }),
     }).chain((properties) => OrderedStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     OrderedStruct.Identifier,
     Omit<OrderedStruct, "$type">
   > = (parameters) => {
@@ -42996,29 +41671,13 @@ export namespace OrderedStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => OrderedStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly orderedC: string;
-    readonly orderedB: string;
-    readonly orderedA: string;
-  }) => Either<Error, OrderedStruct> = <
+  >(
+    parameters: OrderedStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, OrderedStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => OrderedStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly orderedC: string;
-    readonly orderedB: string;
-    readonly orderedA: string;
-  }): Either<Error, OrderedStruct> =>
+  >(
+    parameters: OrderedStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, OrderedStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -43036,31 +41695,25 @@ export namespace OrderedStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => OrderedStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly orderedC: string;
+    readonly orderedB: string;
+    readonly orderedA: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => OrderedStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly orderedC: string;
-    readonly orderedB: string;
-    readonly orderedA: string;
-  }) => OrderedStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => OrderedStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly orderedC: string;
-    readonly orderedB: string;
-    readonly orderedA: string;
-  }): OrderedStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: OrderedStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => OrderedStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<OrderedStruct, "$type">> = (
     left,
@@ -43462,7 +42115,7 @@ export namespace OrderedStruct {
   > = $wrap_ToRdfResourceFunction<
     OrderedStruct.Identifier,
     Omit<OrderedStruct, "$type">
-  >(OrderedStruct._toRdfResourceFunction);
+  >(OrderedStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<OrderedStruct, "$type">,
@@ -43559,7 +42212,7 @@ export namespace PartialDiscriminatedUnionMember1 {
       PartialDiscriminatedUnionMember1.create(properties),
     );
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     PartialDiscriminatedUnionMember1.Identifier,
     Omit<PartialDiscriminatedUnionMember1, "$type">
   > = (parameters) => {
@@ -43589,25 +42242,13 @@ export namespace PartialDiscriminatedUnionMember1 {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PartialDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }) => Either<Error, PartialDiscriminatedUnionMember1> = <
+  >(
+    parameters: PartialDiscriminatedUnionMember1.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, PartialDiscriminatedUnionMember1> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PartialDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }): Either<Error, PartialDiscriminatedUnionMember1> =>
+  >(
+    parameters: PartialDiscriminatedUnionMember1.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, PartialDiscriminatedUnionMember1> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -43626,27 +42267,24 @@ export namespace PartialDiscriminatedUnionMember1 {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => PartialDiscriminatedUnionMember1.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly lazilyResolved: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PartialDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }) => PartialDiscriminatedUnionMember1 = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PartialDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }): PartialDiscriminatedUnionMember1 => create(parameters).unsafeCoerce();
+  >(
+    parameters: PartialDiscriminatedUnionMember1.CreateParameters<$DefaultNamespaceT>,
+  ) => PartialDiscriminatedUnionMember1 = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<PartialDiscriminatedUnionMember1, "$identifier" | "lazilyResolved">
@@ -44042,7 +42680,7 @@ export namespace PartialDiscriminatedUnionMember1 {
   > = $wrap_ToRdfResourceFunction<
     PartialDiscriminatedUnionMember1.Identifier,
     Omit<PartialDiscriminatedUnionMember1, "$type">
-  >(PartialDiscriminatedUnionMember1._toRdfResourceFunction);
+  >(PartialDiscriminatedUnionMember1._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<PartialDiscriminatedUnionMember1, "$type">,
@@ -44141,7 +42779,7 @@ export namespace PartialDiscriminatedUnionMember2 {
       PartialDiscriminatedUnionMember2.create(properties),
     );
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     PartialDiscriminatedUnionMember2.Identifier,
     Omit<PartialDiscriminatedUnionMember2, "$type">
   > = (parameters) => {
@@ -44171,25 +42809,13 @@ export namespace PartialDiscriminatedUnionMember2 {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PartialDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }) => Either<Error, PartialDiscriminatedUnionMember2> = <
+  >(
+    parameters: PartialDiscriminatedUnionMember2.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, PartialDiscriminatedUnionMember2> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PartialDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }): Either<Error, PartialDiscriminatedUnionMember2> =>
+  >(
+    parameters: PartialDiscriminatedUnionMember2.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, PartialDiscriminatedUnionMember2> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -44208,27 +42834,24 @@ export namespace PartialDiscriminatedUnionMember2 {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => PartialDiscriminatedUnionMember2.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly lazilyResolved: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PartialDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }) => PartialDiscriminatedUnionMember2 = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PartialDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }): PartialDiscriminatedUnionMember2 => create(parameters).unsafeCoerce();
+  >(
+    parameters: PartialDiscriminatedUnionMember2.CreateParameters<$DefaultNamespaceT>,
+  ) => PartialDiscriminatedUnionMember2 = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<PartialDiscriminatedUnionMember2, "$identifier" | "lazilyResolved">
@@ -44624,7 +43247,7 @@ export namespace PartialDiscriminatedUnionMember2 {
   > = $wrap_ToRdfResourceFunction<
     PartialDiscriminatedUnionMember2.Identifier,
     Omit<PartialDiscriminatedUnionMember2, "$type">
-  >(PartialDiscriminatedUnionMember2._toRdfResourceFunction);
+  >(PartialDiscriminatedUnionMember2._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<PartialDiscriminatedUnionMember2, "$type">,
@@ -44711,7 +43334,7 @@ export namespace PartialStruct {
       }),
     }).chain((properties) => PartialStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     PartialStruct.Identifier,
     Omit<PartialStruct, "$type">
   > = (parameters) => {
@@ -44730,25 +43353,13 @@ export namespace PartialStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PartialStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }) => Either<Error, PartialStruct> = <
+  >(
+    parameters: PartialStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, PartialStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PartialStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }): Either<Error, PartialStruct> =>
+  >(
+    parameters: PartialStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, PartialStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -44764,27 +43375,23 @@ export namespace PartialStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => PartialStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly lazilyResolved: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PartialStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }) => PartialStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PartialStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly lazilyResolved: string;
-  }): PartialStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: PartialStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => PartialStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<PartialStruct, "$type">> = (
     left,
@@ -45081,7 +43688,7 @@ export namespace PartialStruct {
   > = $wrap_ToRdfResourceFunction<
     PartialStruct.Identifier,
     Omit<PartialStruct, "$type">
-  >(PartialStruct._toRdfResourceFunction);
+  >(PartialStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<PartialStruct, "$type">,
@@ -45224,7 +43831,7 @@ export namespace PropertyCardinalitiesStruct {
       }),
     }).chain((properties) => PropertyCardinalitiesStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     PropertyCardinalitiesStruct.Identifier,
     Omit<PropertyCardinalitiesStruct, "$type">
   > = (parameters) => {
@@ -45266,31 +43873,13 @@ export namespace PropertyCardinalitiesStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PropertyCardinalitiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly emptySet?: string | readonly string[];
-    readonly nonEmptySet: string | readonly string[];
-    readonly optional?: string | Maybe<string>;
-    readonly required: string;
-  }) => Either<Error, PropertyCardinalitiesStruct> = <
+  >(
+    parameters: PropertyCardinalitiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, PropertyCardinalitiesStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PropertyCardinalitiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly emptySet?: string | readonly string[];
-    readonly nonEmptySet: string | readonly string[];
-    readonly optional?: string | Maybe<string>;
-    readonly required: string;
-  }): Either<Error, PropertyCardinalitiesStruct> =>
+  >(
+    parameters: PropertyCardinalitiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, PropertyCardinalitiesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -45336,33 +43925,27 @@ export namespace PropertyCardinalitiesStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => PropertyCardinalitiesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly emptySet?: string | readonly string[];
+    readonly nonEmptySet: string | readonly string[];
+    readonly optional?: string | Maybe<string>;
+    readonly required: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PropertyCardinalitiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly emptySet?: string | readonly string[];
-    readonly nonEmptySet: string | readonly string[];
-    readonly optional?: string | Maybe<string>;
-    readonly required: string;
-  }) => PropertyCardinalitiesStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PropertyCardinalitiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly emptySet?: string | readonly string[];
-    readonly nonEmptySet: string | readonly string[];
-    readonly optional?: string | Maybe<string>;
-    readonly required: string;
-  }): PropertyCardinalitiesStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: PropertyCardinalitiesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => PropertyCardinalitiesStruct = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Omit<PropertyCardinalitiesStruct, "$type">
@@ -45897,7 +44480,7 @@ export namespace PropertyCardinalitiesStruct {
   > = $wrap_ToRdfResourceFunction<
     PropertyCardinalitiesStruct.Identifier,
     Omit<PropertyCardinalitiesStruct, "$type">
-  >(PropertyCardinalitiesStruct._toRdfResourceFunction);
+  >(PropertyCardinalitiesStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<PropertyCardinalitiesStruct, "$type">,
@@ -46043,7 +44626,7 @@ export namespace PropertyNamesStruct {
       }),
     }).chain((properties) => PropertyNamesStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     PropertyNamesStruct.Identifier,
     Omit<PropertyNamesStruct, "$type">
   > = (parameters) => {
@@ -46089,33 +44672,13 @@ export namespace PropertyNamesStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PropertyNamesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly actualName1: string;
-    readonly actualName2: string;
-    readonly actualName3: string;
-    readonly actualName4: string;
-    readonly actualName5: string;
-  }) => Either<Error, PropertyNamesStruct> = <
+  >(
+    parameters: PropertyNamesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, PropertyNamesStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PropertyNamesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly actualName1: string;
-    readonly actualName2: string;
-    readonly actualName3: string;
-    readonly actualName4: string;
-    readonly actualName5: string;
-  }): Either<Error, PropertyNamesStruct> =>
+  >(
+    parameters: PropertyNamesStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, PropertyNamesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -46138,35 +44701,27 @@ export namespace PropertyNamesStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => PropertyNamesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly actualName1: string;
+    readonly actualName2: string;
+    readonly actualName3: string;
+    readonly actualName4: string;
+    readonly actualName5: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PropertyNamesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly actualName1: string;
-    readonly actualName2: string;
-    readonly actualName3: string;
-    readonly actualName4: string;
-    readonly actualName5: string;
-  }) => PropertyNamesStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PropertyNamesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly actualName1: string;
-    readonly actualName2: string;
-    readonly actualName3: string;
-    readonly actualName4: string;
-    readonly actualName5: string;
-  }): PropertyNamesStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: PropertyNamesStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => PropertyNamesStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<PropertyNamesStruct, "$type">> = (
     left,
@@ -46771,7 +45326,7 @@ export namespace PropertyNamesStruct {
   > = $wrap_ToRdfResourceFunction<
     PropertyNamesStruct.Identifier,
     Omit<PropertyNamesStruct, "$type">
-  >(PropertyNamesStruct._toRdfResourceFunction);
+  >(PropertyNamesStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<PropertyNamesStruct, "$type">,
@@ -46887,7 +45442,7 @@ export namespace PropertyPathsStruct {
       }),
     }).chain((properties) => PropertyPathsStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     PropertyPathsStruct.Identifier,
     Omit<PropertyPathsStruct, "$type">
   > = (parameters) => {
@@ -46920,33 +45475,13 @@ export namespace PropertyPathsStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PropertyPathsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly inversePath?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly predicatePath?: string | Maybe<string>;
-  }) => Either<Error, PropertyPathsStruct> = <
+  >(
+    parameters?: PropertyPathsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, PropertyPathsStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PropertyPathsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly inversePath?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly predicatePath?: string | Maybe<string>;
-  }): Either<Error, PropertyPathsStruct> =>
+  >(
+    parameters?: PropertyPathsStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, PropertyPathsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -46982,35 +45517,27 @@ export namespace PropertyPathsStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => PropertyPathsStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly inversePath?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
+    readonly predicatePath?: string | Maybe<string>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PropertyPathsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly inversePath?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly predicatePath?: string | Maybe<string>;
-  }) => PropertyPathsStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PropertyPathsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly inversePath?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly predicatePath?: string | Maybe<string>;
-  }): PropertyPathsStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters?: PropertyPathsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => PropertyPathsStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<PropertyPathsStruct, "$type">> = (
     left,
@@ -47493,7 +46020,7 @@ export namespace PropertyPathsStruct {
   > = $wrap_ToRdfResourceFunction<
     PropertyPathsStruct.Identifier,
     Omit<PropertyPathsStruct, "$type">
-  >(PropertyPathsStruct._toRdfResourceFunction);
+  >(PropertyPathsStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<PropertyPathsStruct, "$type">,
@@ -47598,7 +46125,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
       RecursiveDiscriminatedUnionMember1.create(properties),
     );
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     RecursiveDiscriminatedUnionMember1.Identifier,
     Omit<RecursiveDiscriminatedUnionMember1, "$type">
   > = (parameters) => {
@@ -47642,29 +46169,13 @@ export namespace RecursiveDiscriminatedUnionMember1 {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => RecursiveDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly recursiveDiscriminatedUnionMember1Property?:
-      | RecursiveDiscriminatedUnion
-      | Maybe<RecursiveDiscriminatedUnion>;
-  }) => Either<Error, RecursiveDiscriminatedUnionMember1> = <
+  >(
+    parameters?: RecursiveDiscriminatedUnionMember1.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, RecursiveDiscriminatedUnionMember1> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => RecursiveDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly recursiveDiscriminatedUnionMember1Property?:
-      | RecursiveDiscriminatedUnion
-      | Maybe<RecursiveDiscriminatedUnion>;
-  }): Either<Error, RecursiveDiscriminatedUnionMember1> =>
+  >(
+    parameters?: RecursiveDiscriminatedUnionMember1.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, RecursiveDiscriminatedUnionMember1> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -47694,31 +46205,26 @@ export namespace RecursiveDiscriminatedUnionMember1 {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => RecursiveDiscriminatedUnionMember1.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly recursiveDiscriminatedUnionMember1Property?:
+      | RecursiveDiscriminatedUnion
+      | Maybe<RecursiveDiscriminatedUnion>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => RecursiveDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly recursiveDiscriminatedUnionMember1Property?:
-      | RecursiveDiscriminatedUnion
-      | Maybe<RecursiveDiscriminatedUnion>;
-  }) => RecursiveDiscriminatedUnionMember1 = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => RecursiveDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly recursiveDiscriminatedUnionMember1Property?:
-      | RecursiveDiscriminatedUnion
-      | Maybe<RecursiveDiscriminatedUnion>;
-  }): RecursiveDiscriminatedUnionMember1 => create(parameters).unsafeCoerce();
+  >(
+    parameters?: RecursiveDiscriminatedUnionMember1.CreateParameters<$DefaultNamespaceT>,
+  ) => RecursiveDiscriminatedUnionMember1 = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<
@@ -48142,7 +46648,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   > = $wrap_ToRdfResourceFunction<
     RecursiveDiscriminatedUnionMember1.Identifier,
     Omit<RecursiveDiscriminatedUnionMember1, "$type">
-  >(RecursiveDiscriminatedUnionMember1._toRdfResourceFunction);
+  >(RecursiveDiscriminatedUnionMember1._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<RecursiveDiscriminatedUnionMember1, "$type">,
@@ -48247,7 +46753,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
       RecursiveDiscriminatedUnionMember2.create(properties),
     );
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     RecursiveDiscriminatedUnionMember2.Identifier,
     Omit<RecursiveDiscriminatedUnionMember2, "$type">
   > = (parameters) => {
@@ -48291,29 +46797,13 @@ export namespace RecursiveDiscriminatedUnionMember2 {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => RecursiveDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly recursiveDiscriminatedUnionMember2Property?:
-      | RecursiveDiscriminatedUnion
-      | Maybe<RecursiveDiscriminatedUnion>;
-  }) => Either<Error, RecursiveDiscriminatedUnionMember2> = <
+  >(
+    parameters?: RecursiveDiscriminatedUnionMember2.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, RecursiveDiscriminatedUnionMember2> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => RecursiveDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly recursiveDiscriminatedUnionMember2Property?:
-      | RecursiveDiscriminatedUnion
-      | Maybe<RecursiveDiscriminatedUnion>;
-  }): Either<Error, RecursiveDiscriminatedUnionMember2> =>
+  >(
+    parameters?: RecursiveDiscriminatedUnionMember2.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, RecursiveDiscriminatedUnionMember2> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -48343,31 +46833,26 @@ export namespace RecursiveDiscriminatedUnionMember2 {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => RecursiveDiscriminatedUnionMember2.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly recursiveDiscriminatedUnionMember2Property?:
+      | RecursiveDiscriminatedUnion
+      | Maybe<RecursiveDiscriminatedUnion>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => RecursiveDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly recursiveDiscriminatedUnionMember2Property?:
-      | RecursiveDiscriminatedUnion
-      | Maybe<RecursiveDiscriminatedUnion>;
-  }) => RecursiveDiscriminatedUnionMember2 = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => RecursiveDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly recursiveDiscriminatedUnionMember2Property?:
-      | RecursiveDiscriminatedUnion
-      | Maybe<RecursiveDiscriminatedUnion>;
-  }): RecursiveDiscriminatedUnionMember2 => create(parameters).unsafeCoerce();
+  >(
+    parameters?: RecursiveDiscriminatedUnionMember2.CreateParameters<$DefaultNamespaceT>,
+  ) => RecursiveDiscriminatedUnionMember2 = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<
@@ -48791,7 +47276,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   > = $wrap_ToRdfResourceFunction<
     RecursiveDiscriminatedUnionMember2.Identifier,
     Omit<RecursiveDiscriminatedUnionMember2, "$type">
-  >(RecursiveDiscriminatedUnionMember2._toRdfResourceFunction);
+  >(RecursiveDiscriminatedUnionMember2._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<RecursiveDiscriminatedUnionMember2, "$type">,
@@ -48908,7 +47393,7 @@ export namespace StructDiscriminatedUnionMember1 {
       StructDiscriminatedUnionMember1.create(properties),
     );
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     StructDiscriminatedUnionMember1.Identifier,
     Omit<StructDiscriminatedUnionMember1, "$type">
   > = (parameters) => {
@@ -48953,27 +47438,13 @@ export namespace StructDiscriminatedUnionMember1 {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => StructDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly structDiscriminatedUnionMember1Distinct: string;
-    readonly structDiscriminatedUnionMemberCommon: string;
-  }) => Either<Error, StructDiscriminatedUnionMember1> = <
+  >(
+    parameters: StructDiscriminatedUnionMember1.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, StructDiscriminatedUnionMember1> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => StructDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly structDiscriminatedUnionMember1Distinct: string;
-    readonly structDiscriminatedUnionMemberCommon: string;
-  }): Either<Error, StructDiscriminatedUnionMember1> =>
+  >(
+    parameters: StructDiscriminatedUnionMember1.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, StructDiscriminatedUnionMember1> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -48997,29 +47468,25 @@ export namespace StructDiscriminatedUnionMember1 {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => StructDiscriminatedUnionMember1.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly structDiscriminatedUnionMember1Distinct: string;
+    readonly structDiscriminatedUnionMemberCommon: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => StructDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly structDiscriminatedUnionMember1Distinct: string;
-    readonly structDiscriminatedUnionMemberCommon: string;
-  }) => StructDiscriminatedUnionMember1 = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => StructDiscriminatedUnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly structDiscriminatedUnionMember1Distinct: string;
-    readonly structDiscriminatedUnionMemberCommon: string;
-  }): StructDiscriminatedUnionMember1 => create(parameters).unsafeCoerce();
+  >(
+    parameters: StructDiscriminatedUnionMember1.CreateParameters<$DefaultNamespaceT>,
+  ) => StructDiscriminatedUnionMember1 = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Omit<StructDiscriminatedUnionMember1, "$type">
@@ -49501,7 +47968,7 @@ export namespace StructDiscriminatedUnionMember1 {
   > = $wrap_ToRdfResourceFunction<
     StructDiscriminatedUnionMember1.Identifier,
     Omit<StructDiscriminatedUnionMember1, "$type">
-  >(StructDiscriminatedUnionMember1._toRdfResourceFunction);
+  >(StructDiscriminatedUnionMember1._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<StructDiscriminatedUnionMember1, "$type">,
@@ -49618,7 +48085,7 @@ export namespace StructDiscriminatedUnionMember2 {
       StructDiscriminatedUnionMember2.create(properties),
     );
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     StructDiscriminatedUnionMember2.Identifier,
     Omit<StructDiscriminatedUnionMember2, "$type">
   > = (parameters) => {
@@ -49663,27 +48130,13 @@ export namespace StructDiscriminatedUnionMember2 {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => StructDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly structDiscriminatedUnionMember2Distinct: string;
-    readonly structDiscriminatedUnionMemberCommon: string;
-  }) => Either<Error, StructDiscriminatedUnionMember2> = <
+  >(
+    parameters: StructDiscriminatedUnionMember2.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, StructDiscriminatedUnionMember2> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => StructDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly structDiscriminatedUnionMember2Distinct: string;
-    readonly structDiscriminatedUnionMemberCommon: string;
-  }): Either<Error, StructDiscriminatedUnionMember2> =>
+  >(
+    parameters: StructDiscriminatedUnionMember2.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, StructDiscriminatedUnionMember2> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -49707,29 +48160,25 @@ export namespace StructDiscriminatedUnionMember2 {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => StructDiscriminatedUnionMember2.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly structDiscriminatedUnionMember2Distinct: string;
+    readonly structDiscriminatedUnionMemberCommon: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => StructDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly structDiscriminatedUnionMember2Distinct: string;
-    readonly structDiscriminatedUnionMemberCommon: string;
-  }) => StructDiscriminatedUnionMember2 = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => StructDiscriminatedUnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly structDiscriminatedUnionMember2Distinct: string;
-    readonly structDiscriminatedUnionMemberCommon: string;
-  }): StructDiscriminatedUnionMember2 => create(parameters).unsafeCoerce();
+  >(
+    parameters: StructDiscriminatedUnionMember2.CreateParameters<$DefaultNamespaceT>,
+  ) => StructDiscriminatedUnionMember2 = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Omit<StructDiscriminatedUnionMember2, "$type">
@@ -50211,7 +48660,7 @@ export namespace StructDiscriminatedUnionMember2 {
   > = $wrap_ToRdfResourceFunction<
     StructDiscriminatedUnionMember2.Identifier,
     Omit<StructDiscriminatedUnionMember2, "$type">
-  >(StructDiscriminatedUnionMember2._toRdfResourceFunction);
+  >(StructDiscriminatedUnionMember2._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<StructDiscriminatedUnionMember2, "$type">,
@@ -50322,7 +48771,7 @@ export namespace StructIntersectionMember1 {
       }),
     }).chain((properties) => StructIntersectionMember1.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     StructIntersectionMember1.Identifier,
     Omit<StructIntersectionMember1, "$type">
   > = (parameters) => {
@@ -50365,27 +48814,13 @@ export namespace StructIntersectionMember1 {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => StructIntersectionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly structIntersectionMember1Distinct: string;
-    readonly structIntersectionMemberCommon: string;
-  }) => Either<Error, StructIntersectionMember1> = <
+  >(
+    parameters: StructIntersectionMember1.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, StructIntersectionMember1> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => StructIntersectionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly structIntersectionMember1Distinct: string;
-    readonly structIntersectionMemberCommon: string;
-  }): Either<Error, StructIntersectionMember1> =>
+  >(
+    parameters: StructIntersectionMember1.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, StructIntersectionMember1> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -50409,29 +48844,25 @@ export namespace StructIntersectionMember1 {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => StructIntersectionMember1.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly structIntersectionMember1Distinct: string;
+    readonly structIntersectionMemberCommon: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => StructIntersectionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly structIntersectionMember1Distinct: string;
-    readonly structIntersectionMemberCommon: string;
-  }) => StructIntersectionMember1 = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => StructIntersectionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly structIntersectionMember1Distinct: string;
-    readonly structIntersectionMemberCommon: string;
-  }): StructIntersectionMember1 => create(parameters).unsafeCoerce();
+  >(
+    parameters: StructIntersectionMember1.CreateParameters<$DefaultNamespaceT>,
+  ) => StructIntersectionMember1 = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Omit<StructIntersectionMember1, "$type">
@@ -50907,7 +49338,7 @@ export namespace StructIntersectionMember1 {
   > = $wrap_ToRdfResourceFunction<
     StructIntersectionMember1.Identifier,
     Omit<StructIntersectionMember1, "$type">
-  >(StructIntersectionMember1._toRdfResourceFunction);
+  >(StructIntersectionMember1._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<StructIntersectionMember1, "$type">,
@@ -51018,7 +49449,7 @@ export namespace StructIntersectionMember2 {
       }),
     }).chain((properties) => StructIntersectionMember2.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     StructIntersectionMember2.Identifier,
     Omit<StructIntersectionMember2, "$type">
   > = (parameters) => {
@@ -51061,27 +49492,13 @@ export namespace StructIntersectionMember2 {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => StructIntersectionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly structIntersectionMember2Distinct: string;
-    readonly structIntersectionMemberCommon: string;
-  }) => Either<Error, StructIntersectionMember2> = <
+  >(
+    parameters: StructIntersectionMember2.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, StructIntersectionMember2> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => StructIntersectionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly structIntersectionMember2Distinct: string;
-    readonly structIntersectionMemberCommon: string;
-  }): Either<Error, StructIntersectionMember2> =>
+  >(
+    parameters: StructIntersectionMember2.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, StructIntersectionMember2> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -51105,29 +49522,25 @@ export namespace StructIntersectionMember2 {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => StructIntersectionMember2.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly structIntersectionMember2Distinct: string;
+    readonly structIntersectionMemberCommon: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => StructIntersectionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly structIntersectionMember2Distinct: string;
-    readonly structIntersectionMemberCommon: string;
-  }) => StructIntersectionMember2 = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => StructIntersectionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly structIntersectionMember2Distinct: string;
-    readonly structIntersectionMemberCommon: string;
-  }): StructIntersectionMember2 => create(parameters).unsafeCoerce();
+  >(
+    parameters: StructIntersectionMember2.CreateParameters<$DefaultNamespaceT>,
+  ) => StructIntersectionMember2 = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Omit<StructIntersectionMember2, "$type">
@@ -51603,7 +50016,7 @@ export namespace StructIntersectionMember2 {
   > = $wrap_ToRdfResourceFunction<
     StructIntersectionMember2.Identifier,
     Omit<StructIntersectionMember2, "$type">
-  >(StructIntersectionMember2._toRdfResourceFunction);
+  >(StructIntersectionMember2._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<StructIntersectionMember2, "$type">,
@@ -51700,7 +50113,7 @@ export namespace TargetClassStruct {
       }),
     }).chain((properties) => TargetClassStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     TargetClassStruct.Identifier,
     Omit<TargetClassStruct, "$type">
   > = (parameters) => {
@@ -51726,25 +50139,13 @@ export namespace TargetClassStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => TargetClassStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly targetClassString: string;
-  }) => Either<Error, TargetClassStruct> = <
+  >(
+    parameters: TargetClassStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, TargetClassStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => TargetClassStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly targetClassString: string;
-  }): Either<Error, TargetClassStruct> =>
+  >(
+    parameters: TargetClassStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, TargetClassStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -51763,27 +50164,23 @@ export namespace TargetClassStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => TargetClassStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly targetClassString: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => TargetClassStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly targetClassString: string;
-  }) => TargetClassStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => TargetClassStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly targetClassString: string;
-  }): TargetClassStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: TargetClassStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => TargetClassStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Pick<TargetClassStruct, "$identifier" | "targetClassString">
@@ -52157,7 +50554,7 @@ export namespace TargetClassStruct {
   > = $wrap_ToRdfResourceFunction<
     TargetClassStruct.Identifier,
     Omit<TargetClassStruct, "$type">
-  >(TargetClassStruct._toRdfResourceFunction);
+  >(TargetClassStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<TargetClassStruct, "$type">,
@@ -52406,7 +50803,7 @@ export namespace TermsStruct {
       }),
     }).chain((properties) => TermsStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     TermsStruct.Identifier,
     Omit<TermsStruct, "$type">
   > = (parameters) => {
@@ -52492,77 +50889,13 @@ export namespace TermsStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => TermsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly blankNodeTerm?: BlankNode | Maybe<BlankNode>;
-    readonly booleanTerm?: boolean | Maybe<boolean>;
-    readonly dateTerm?: Date | Maybe<Date>;
-    readonly dateTimeTerm?: Date | Maybe<Date>;
-    readonly doubleTerm?: number | Maybe<number>;
-    readonly identifierTerm?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-    readonly iriTerm?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly langStringTerm?: Literal | Maybe<Literal>;
-    readonly literalTerm?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
-    readonly stringTerm?: string | Maybe<string>;
-    readonly term?:
-      | (BlankNode | NamedNode | Literal)
-      | Maybe<BlankNode | NamedNode | Literal>;
-  }) => Either<Error, TermsStruct> = <
+  >(
+    parameters?: TermsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, TermsStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => TermsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly blankNodeTerm?: BlankNode | Maybe<BlankNode>;
-    readonly booleanTerm?: boolean | Maybe<boolean>;
-    readonly dateTerm?: Date | Maybe<Date>;
-    readonly dateTimeTerm?: Date | Maybe<Date>;
-    readonly doubleTerm?: number | Maybe<number>;
-    readonly identifierTerm?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-    readonly iriTerm?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly langStringTerm?: Literal | Maybe<Literal>;
-    readonly literalTerm?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
-    readonly stringTerm?: string | Maybe<string>;
-    readonly term?:
-      | (BlankNode | NamedNode | Literal)
-      | Maybe<BlankNode | NamedNode | Literal>;
-  }): Either<Error, TermsStruct> =>
+  >(
+    parameters?: TermsStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, TermsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
@@ -52676,79 +51009,49 @@ export namespace TermsStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => TermsStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly blankNodeTerm?: BlankNode | Maybe<BlankNode>;
+    readonly booleanTerm?: boolean | Maybe<boolean>;
+    readonly dateTerm?: Date | Maybe<Date>;
+    readonly dateTimeTerm?: Date | Maybe<Date>;
+    readonly doubleTerm?: number | Maybe<number>;
+    readonly identifierTerm?:
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string)
+      | Maybe<BlankNode | NamedNode>;
+    readonly iriTerm?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
+    readonly langStringTerm?: Literal | Maybe<Literal>;
+    readonly literalTerm?:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+      | Maybe<Literal>;
+    readonly stringTerm?: string | Maybe<string>;
+    readonly term?:
+      | (BlankNode | NamedNode | Literal)
+      | Maybe<BlankNode | NamedNode | Literal>;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => TermsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly blankNodeTerm?: BlankNode | Maybe<BlankNode>;
-    readonly booleanTerm?: boolean | Maybe<boolean>;
-    readonly dateTerm?: Date | Maybe<Date>;
-    readonly dateTimeTerm?: Date | Maybe<Date>;
-    readonly doubleTerm?: number | Maybe<number>;
-    readonly identifierTerm?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-    readonly iriTerm?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly langStringTerm?: Literal | Maybe<Literal>;
-    readonly literalTerm?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
-    readonly stringTerm?: string | Maybe<string>;
-    readonly term?:
-      | (BlankNode | NamedNode | Literal)
-      | Maybe<BlankNode | NamedNode | Literal>;
-  }) => TermsStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => TermsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly blankNodeTerm?: BlankNode | Maybe<BlankNode>;
-    readonly booleanTerm?: boolean | Maybe<boolean>;
-    readonly dateTerm?: Date | Maybe<Date>;
-    readonly dateTimeTerm?: Date | Maybe<Date>;
-    readonly doubleTerm?: number | Maybe<number>;
-    readonly identifierTerm?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-    readonly iriTerm?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly langStringTerm?: Literal | Maybe<Literal>;
-    readonly literalTerm?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
-    readonly stringTerm?: string | Maybe<string>;
-    readonly term?:
-      | (BlankNode | NamedNode | Literal)
-      | Maybe<BlankNode | NamedNode | Literal>;
-  }): TermsStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters?: TermsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => TermsStruct = (parameters) => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<Omit<TermsStruct, "$type">> = (
     left,
@@ -54000,7 +52303,7 @@ export namespace TermsStruct {
   > = $wrap_ToRdfResourceFunction<
     TermsStruct.Identifier,
     Omit<TermsStruct, "$type">
-  >(TermsStruct._toRdfResourceFunction);
+  >(TermsStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<TermsStruct, "$type">,
@@ -56069,7 +54372,7 @@ export namespace UnionDiscriminantsStruct {
       }),
     }).chain((properties) => UnionDiscriminantsStruct.create(properties));
 
-  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
+  export const _toRdfResource: $_ToRdfResourceFunction<
     UnionDiscriminantsStruct.Identifier,
     Omit<UnionDiscriminantsStruct, "$type">
   > = (parameters) => {
@@ -56446,239 +54749,13 @@ export namespace UnionDiscriminantsStruct {
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => UnionDiscriminantsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly optionalIriOrString?:
-      | NamedNode
-      | string
-      | Maybe<NamedNode | string>;
-    readonly optionalNodeOrLiteral?:
-      | (
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        )
-      | Maybe<
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        >;
-    readonly optionalNodeOrNodeOrString?:
-      | (
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        )
-      | Maybe<
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        >;
-    readonly optionalTerm?:
-      | ((BlankNode | NamedNode) | Literal)
-      | Maybe<(BlankNode | NamedNode) | Literal>;
-    readonly requiredIriOrString: NamedNode | string;
-    readonly requiredNodeOrLiteral:
-      | {
-          termType: "StructDiscriminatedUnionMember1";
-          value: StructDiscriminatedUnionMember1;
-        }
-      | Literal;
-    readonly requiredNodeOrNodeOrString:
-      | {
-          $type: "StructDiscriminatedUnionMember1";
-          value: StructDiscriminatedUnionMember1;
-        }
-      | {
-          $type: "StructDiscriminatedUnionMember2";
-          value: StructDiscriminatedUnionMember2;
-        }
-      | { $type: "string"; value: string };
-    readonly requiredTerm: (BlankNode | NamedNode) | Literal;
-    readonly setIriOrString?:
-      | NamedNode
-      | string
-      | readonly (NamedNode | string)[];
-    readonly setNodeOrLiteral?:
-      | (
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        )
-      | readonly (
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        )[];
-    readonly setNodeOrNodeOrString?:
-      | (
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        )
-      | readonly (
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        )[];
-    readonly setTerm?:
-      | ((BlankNode | NamedNode) | Literal)
-      | readonly ((BlankNode | NamedNode) | Literal)[];
-  }) => Either<Error, UnionDiscriminantsStruct> = <
+  >(
+    parameters: UnionDiscriminantsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, UnionDiscriminantsStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => UnionDiscriminantsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly optionalIriOrString?:
-      | NamedNode
-      | string
-      | Maybe<NamedNode | string>;
-    readonly optionalNodeOrLiteral?:
-      | (
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        )
-      | Maybe<
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        >;
-    readonly optionalNodeOrNodeOrString?:
-      | (
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        )
-      | Maybe<
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        >;
-    readonly optionalTerm?:
-      | ((BlankNode | NamedNode) | Literal)
-      | Maybe<(BlankNode | NamedNode) | Literal>;
-    readonly requiredIriOrString: NamedNode | string;
-    readonly requiredNodeOrLiteral:
-      | {
-          termType: "StructDiscriminatedUnionMember1";
-          value: StructDiscriminatedUnionMember1;
-        }
-      | Literal;
-    readonly requiredNodeOrNodeOrString:
-      | {
-          $type: "StructDiscriminatedUnionMember1";
-          value: StructDiscriminatedUnionMember1;
-        }
-      | {
-          $type: "StructDiscriminatedUnionMember2";
-          value: StructDiscriminatedUnionMember2;
-        }
-      | { $type: "string"; value: string };
-    readonly requiredTerm: (BlankNode | NamedNode) | Literal;
-    readonly setIriOrString?:
-      | NamedNode
-      | string
-      | readonly (NamedNode | string)[];
-    readonly setNodeOrLiteral?:
-      | (
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        )
-      | readonly (
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        )[];
-    readonly setNodeOrNodeOrString?:
-      | (
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        )
-      | readonly (
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        )[];
-    readonly setTerm?:
-      | ((BlankNode | NamedNode) | Literal)
-      | readonly ((BlankNode | NamedNode) | Literal)[];
-  }): Either<Error, UnionDiscriminantsStruct> =>
+  >(
+    parameters: UnionDiscriminantsStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, UnionDiscriminantsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -56778,241 +54855,131 @@ export namespace UnionDiscriminantsStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => UnionDiscriminantsStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly optionalIriOrString?:
+      | NamedNode
+      | string
+      | Maybe<NamedNode | string>;
+    readonly optionalNodeOrLiteral?:
+      | (
+          | {
+              termType: "StructDiscriminatedUnionMember1";
+              value: StructDiscriminatedUnionMember1;
+            }
+          | Literal
+        )
+      | Maybe<
+          | {
+              termType: "StructDiscriminatedUnionMember1";
+              value: StructDiscriminatedUnionMember1;
+            }
+          | Literal
+        >;
+    readonly optionalNodeOrNodeOrString?:
+      | (
+          | {
+              $type: "StructDiscriminatedUnionMember1";
+              value: StructDiscriminatedUnionMember1;
+            }
+          | {
+              $type: "StructDiscriminatedUnionMember2";
+              value: StructDiscriminatedUnionMember2;
+            }
+          | { $type: "string"; value: string }
+        )
+      | Maybe<
+          | {
+              $type: "StructDiscriminatedUnionMember1";
+              value: StructDiscriminatedUnionMember1;
+            }
+          | {
+              $type: "StructDiscriminatedUnionMember2";
+              value: StructDiscriminatedUnionMember2;
+            }
+          | { $type: "string"; value: string }
+        >;
+    readonly optionalTerm?:
+      | ((BlankNode | NamedNode) | Literal)
+      | Maybe<(BlankNode | NamedNode) | Literal>;
+    readonly requiredIriOrString: NamedNode | string;
+    readonly requiredNodeOrLiteral:
+      | {
+          termType: "StructDiscriminatedUnionMember1";
+          value: StructDiscriminatedUnionMember1;
+        }
+      | Literal;
+    readonly requiredNodeOrNodeOrString:
+      | {
+          $type: "StructDiscriminatedUnionMember1";
+          value: StructDiscriminatedUnionMember1;
+        }
+      | {
+          $type: "StructDiscriminatedUnionMember2";
+          value: StructDiscriminatedUnionMember2;
+        }
+      | { $type: "string"; value: string };
+    readonly requiredTerm: (BlankNode | NamedNode) | Literal;
+    readonly setIriOrString?:
+      | NamedNode
+      | string
+      | readonly (NamedNode | string)[];
+    readonly setNodeOrLiteral?:
+      | (
+          | {
+              termType: "StructDiscriminatedUnionMember1";
+              value: StructDiscriminatedUnionMember1;
+            }
+          | Literal
+        )
+      | readonly (
+          | {
+              termType: "StructDiscriminatedUnionMember1";
+              value: StructDiscriminatedUnionMember1;
+            }
+          | Literal
+        )[];
+    readonly setNodeOrNodeOrString?:
+      | (
+          | {
+              $type: "StructDiscriminatedUnionMember1";
+              value: StructDiscriminatedUnionMember1;
+            }
+          | {
+              $type: "StructDiscriminatedUnionMember2";
+              value: StructDiscriminatedUnionMember2;
+            }
+          | { $type: "string"; value: string }
+        )
+      | readonly (
+          | {
+              $type: "StructDiscriminatedUnionMember1";
+              value: StructDiscriminatedUnionMember1;
+            }
+          | {
+              $type: "StructDiscriminatedUnionMember2";
+              value: StructDiscriminatedUnionMember2;
+            }
+          | { $type: "string"; value: string }
+        )[];
+    readonly setTerm?:
+      | ((BlankNode | NamedNode) | Literal)
+      | readonly ((BlankNode | NamedNode) | Literal)[];
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => UnionDiscriminantsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly optionalIriOrString?:
-      | NamedNode
-      | string
-      | Maybe<NamedNode | string>;
-    readonly optionalNodeOrLiteral?:
-      | (
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        )
-      | Maybe<
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        >;
-    readonly optionalNodeOrNodeOrString?:
-      | (
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        )
-      | Maybe<
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        >;
-    readonly optionalTerm?:
-      | ((BlankNode | NamedNode) | Literal)
-      | Maybe<(BlankNode | NamedNode) | Literal>;
-    readonly requiredIriOrString: NamedNode | string;
-    readonly requiredNodeOrLiteral:
-      | {
-          termType: "StructDiscriminatedUnionMember1";
-          value: StructDiscriminatedUnionMember1;
-        }
-      | Literal;
-    readonly requiredNodeOrNodeOrString:
-      | {
-          $type: "StructDiscriminatedUnionMember1";
-          value: StructDiscriminatedUnionMember1;
-        }
-      | {
-          $type: "StructDiscriminatedUnionMember2";
-          value: StructDiscriminatedUnionMember2;
-        }
-      | { $type: "string"; value: string };
-    readonly requiredTerm: (BlankNode | NamedNode) | Literal;
-    readonly setIriOrString?:
-      | NamedNode
-      | string
-      | readonly (NamedNode | string)[];
-    readonly setNodeOrLiteral?:
-      | (
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        )
-      | readonly (
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        )[];
-    readonly setNodeOrNodeOrString?:
-      | (
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        )
-      | readonly (
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        )[];
-    readonly setTerm?:
-      | ((BlankNode | NamedNode) | Literal)
-      | readonly ((BlankNode | NamedNode) | Literal)[];
-  }) => UnionDiscriminantsStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => UnionDiscriminantsStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly optionalIriOrString?:
-      | NamedNode
-      | string
-      | Maybe<NamedNode | string>;
-    readonly optionalNodeOrLiteral?:
-      | (
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        )
-      | Maybe<
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        >;
-    readonly optionalNodeOrNodeOrString?:
-      | (
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        )
-      | Maybe<
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        >;
-    readonly optionalTerm?:
-      | ((BlankNode | NamedNode) | Literal)
-      | Maybe<(BlankNode | NamedNode) | Literal>;
-    readonly requiredIriOrString: NamedNode | string;
-    readonly requiredNodeOrLiteral:
-      | {
-          termType: "StructDiscriminatedUnionMember1";
-          value: StructDiscriminatedUnionMember1;
-        }
-      | Literal;
-    readonly requiredNodeOrNodeOrString:
-      | {
-          $type: "StructDiscriminatedUnionMember1";
-          value: StructDiscriminatedUnionMember1;
-        }
-      | {
-          $type: "StructDiscriminatedUnionMember2";
-          value: StructDiscriminatedUnionMember2;
-        }
-      | { $type: "string"; value: string };
-    readonly requiredTerm: (BlankNode | NamedNode) | Literal;
-    readonly setIriOrString?:
-      | NamedNode
-      | string
-      | readonly (NamedNode | string)[];
-    readonly setNodeOrLiteral?:
-      | (
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        )
-      | readonly (
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        )[];
-    readonly setNodeOrNodeOrString?:
-      | (
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        )
-      | readonly (
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        )[];
-    readonly setTerm?:
-      | ((BlankNode | NamedNode) | Literal)
-      | readonly ((BlankNode | NamedNode) | Literal)[];
-  }): UnionDiscriminantsStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: UnionDiscriminantsStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => UnionDiscriminantsStruct = (parameters) =>
+    create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<
     Omit<UnionDiscriminantsStruct, "$type">
@@ -61104,7 +59071,7 @@ export namespace UnionDiscriminantsStruct {
   > = $wrap_ToRdfResourceFunction<
     UnionDiscriminantsStruct.Identifier,
     Omit<UnionDiscriminantsStruct, "$type">
-  >(UnionDiscriminantsStruct._toRdfResourceFunction);
+  >(UnionDiscriminantsStruct._toRdfResource);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     Omit<UnionDiscriminantsStruct, "$type">,
