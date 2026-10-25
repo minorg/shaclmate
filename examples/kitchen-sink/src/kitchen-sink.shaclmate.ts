@@ -63420,6 +63420,16 @@ export type StructIntersection = Omit<StructIntersectionMember1, "$type"> &
   Omit<StructIntersectionMember2, "$type">;
 
 export namespace StructIntersection {
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    StructIntersection
+  > = (resource, options) =>
+    StructIntersectionMember1.fromRdfResource(resource, options).chain(
+      (member0) =>
+        StructIntersectionMember2.fromRdfResource(resource, options).map(
+          (member1) => ({ ...member0, ...member1 }),
+        ),
+    );
+
   export const $toString: $ToStringFunction<StructIntersection> = (value) =>
     JSON.stringify([
       StructIntersectionMember1.$toString(value),
@@ -63479,37 +63489,19 @@ export namespace StructIntersection {
       })),
     );
 
+  export const fromRdfResource: $FromRdfResourceFunction<StructIntersection> =
+    $wrap_FromRdfResourceFunction(StructIntersection._fromRdfResource);
+
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     StructIntersection,
     typeof StructIntersection.schema
-  > = (inputValues, options) =>
-    StructIntersectionMember1.fromRdfResourceValues(inputValues, {
-      ...options,
-      ignoreRdfType: true,
-      schema: options.schema.members[0],
-    }).chain((member0Values) =>
-      StructIntersectionMember2.fromRdfResourceValues(inputValues, {
-        ...options,
-        ignoreRdfType: true,
-        schema: options.schema.members[1],
-      }).chain((member1Values) => {
-        const member0ValuesArray = member0Values.toArray();
-        const member1ValuesArray = member1Values.toArray();
-        if (member1ValuesArray.length !== member0Values.length) {
-          return Left(
-            new Error(
-              `StructIntersection member 1 (StructIntersectionMember2) has ${member1Values.length} values, expected ${member0Values.length}`,
-            ),
-          );
-        }
-
-        return Right(
-          member0Values.map((_, valueI) => ({
-            ...member0ValuesArray[valueI],
-            ...member1ValuesArray[valueI],
-          })),
-        );
-      }),
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) =>
+          StructIntersection.fromRdfResource(resource, options),
+        ),
     );
 
   export const hash: $HashFunction<StructIntersection> = (hasher, value) => {

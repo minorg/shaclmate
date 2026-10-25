@@ -161,6 +161,16 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
+  get _fromRdfResourceFunction(): Callable {
+    return ObjectType__fromRdfResourceFunction.call(this);
+  }
+
+  @Memoize()
+  get _toRdfResourceFunction(): Callable {
+    return ObjectType__toRdfResourceFunction.call(this);
+  }
+
+  @Memoize()
   override get conversionFunction(): Maybe<AbstractStructuredType.ConversionFunction> {
     return ObjectType_conversionFunction.call(this);
   }
@@ -175,8 +185,28 @@ export class ObjectType extends AbstractStructuredType {
     return ObjectType_createFunctionParameters.call(this);
   }
 
+  @Memoize()
+  get createUnsafeFunction(): Callable {
+    return ObjectType_createUnsafeFunction.call(this);
+  }
+
   override get declaration(): Maybe<Code> {
     return !this.extern ? super.declaration : Maybe.empty();
+  }
+
+  @Memoize()
+  get focusSparqlConstructTriplesFunction(): Callable {
+    return ObjectType_focusSparqlConstructTriplesFunction.call(this);
+  }
+
+  @Memoize()
+  get focusSparqlWherePatternsFunction(): Callable {
+    return ObjectType_focusSparqlWherePatternsFunction.call(this);
+  }
+
+  @Memoize()
+  get fromRdfResourceFunction(): Callable {
+    return ObjectType_fromRdfResourceFunction.call(this);
   }
 
   @Memoize()
@@ -258,6 +288,11 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
+  get toRdfResourceFunction(): Callable {
+    return ObjectType_toRdfResourceFunction.call(this);
+  }
+
+  @Memoize()
   get toRdfResourceValueTypes(): AbstractStructuredType["toRdfResourceValueTypes"] {
     return new Set([...this.identifierType.nodeKinds].map(NodeKind.toTermType));
   }
@@ -279,36 +314,6 @@ export class ObjectType extends AbstractStructuredType {
     );
   }
 
-  @Memoize()
-  protected get _fromRdfResourceFunction(): Callable {
-    return ObjectType__fromRdfResourceFunction.call(this);
-  }
-
-  @Memoize()
-  protected get _toRdfResourceFunction(): Callable {
-    return ObjectType__toRdfResourceFunction.call(this);
-  }
-
-  @Memoize()
-  protected get createUnsafeFunction(): Callable {
-    return ObjectType_createUnsafeFunction.call(this);
-  }
-
-  @Memoize()
-  protected get focusSparqlConstructTriplesFunction(): Callable {
-    return ObjectType_focusSparqlConstructTriplesFunction.call(this);
-  }
-
-  @Memoize()
-  protected get focusSparqlWherePatternsFunction(): Callable {
-    return ObjectType_focusSparqlWherePatternsFunction.call(this);
-  }
-
-  @Memoize()
-  protected get fromRdfResourceFunction(): Callable {
-    return ObjectType_fromRdfResourceFunction.call(this);
-  }
-
   protected override get inlineExpression(): Code {
     return code`{ ${joinCode(
       this.properties.flatMap((property) => property.declaration.toList()),
@@ -321,11 +326,6 @@ export class ObjectType extends AbstractStructuredType {
     return this.name
       .map((name) => code`_${camelCase(name)}`)
       .orDefault(code`_object`);
-  }
-
-  @Memoize()
-  protected get toRdfResourceFunction(): Callable {
-    return ObjectType_toRdfResourceFunction.call(this);
   }
 
   override jsonType(

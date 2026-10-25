@@ -1,8 +1,10 @@
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+import { ObjectIntersectionType__fromRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType__fromRdfResourceFunction.js";
 import { ObjectIntersectionType_createFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_createFunction.js";
 import { ObjectIntersectionType_createFunctionParameters } from "./_ObjectIntersectionType/ObjectIntersectionType_createFunctionParameters.js";
 import { ObjectIntersectionType_fromJsonFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_fromJsonFunction.js";
+import { ObjectIntersectionType_fromRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_fromRdfResourceFunction.js";
 import { ObjectIntersectionType_fromRdfResourceValuesFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_fromRdfResourceValuesFunction.js";
 import { ObjectIntersectionType_jsonType } from "./_ObjectIntersectionType/ObjectIntersectionType_jsonType.js";
 import { ObjectIntersectionType_toJsonFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_toJsonFunction.js";
@@ -38,8 +40,23 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
   }
 
   @Memoize()
+  get _fromRdfResourceFunction(): Callable {
+    return ObjectIntersectionType__fromRdfResourceFunction.call(this);
+  }
+
+  @Memoize()
+  get createFunction(): Callable {
+    return ObjectIntersectionType_createFunction.call(this);
+  }
+
+  @Memoize()
   get createFunctionParameters(): ObjectType.CreateFunctionParameters {
     return ObjectIntersectionType_createFunctionParameters.call(this);
+  }
+
+  @Memoize()
+  get fromRdfResourceFunction(): Callable {
+    return ObjectIntersectionType_fromRdfResourceFunction.call(this);
   }
 
   @Memoize()
@@ -66,16 +83,10 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
     return ObjectIntersectionType_jsonType.call(this);
   }
 
-  @Memoize()
-  protected get createFunction(): Callable {
-    return ObjectIntersectionType_createFunction.call(this);
-  }
-
   // @Memoize()
   // protected get createUnsafeFunction(): Callable {
   //   return ObjectIntersectionType_createUnsafeFunction.call(this);
   // }
-
   protected override staticModuleDeclarations(
     name: string,
   ): Record<string, Code> {
@@ -97,6 +108,11 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
       // addFunctionDeclaration(this.createUnsafeFunction);
     }
 
+    if (this.configuration.features.has("Object.fromRdf")) {
+      addFunctionDeclaration(this._fromRdfResourceFunction);
+      addFunctionDeclaration(this.fromRdfResourceFunction);
+    }
+
     return staticModuleDeclarations;
     //     ...ObjectIntersectionType_focusSparqlConstructTriplesFunctionDeclaration.call(
     //       this,
@@ -104,7 +120,6 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
     //     ...ObjectIntersectionType_focusSparqlWherePatternsFunctionDeclaration.call(
     //       this,
     //     ),
-    //     ...ObjectIntersectionType_fromRdfResourceFunctionDeclaration.call(this),
     //     ...ObjectIntersectionType_graphqlTypeVariableStatement.call(this),
     //     ...ObjectIntersectionType_typeGuardFunctionDeclaration.call(this),
     //     ...ObjectIntersectionType_schemaVariableStatement.call(this),
