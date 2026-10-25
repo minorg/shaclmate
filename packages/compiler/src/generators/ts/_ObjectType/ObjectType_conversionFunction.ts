@@ -12,7 +12,7 @@ export function ObjectType_conversionFunction(
 
   const sourceTypePropertySignatures: Code[] = [];
   for (const property of this.properties) {
-    property.constructorParameter.ifJust((propertyConstructorParameter) => {
+    property.createFunctionParameter.ifJust((propertyConstructorParameter) => {
       sourceTypePropertySignatures.push(propertyConstructorParameter.signature);
     });
   }

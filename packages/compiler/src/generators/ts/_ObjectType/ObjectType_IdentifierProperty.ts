@@ -27,7 +27,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
   }
 
   @Memoize()
-  override get constructorParameter(): Maybe<{
+  override get createFunctionParameter(): Maybe<{
     hasQuestionToken: boolean;
     signature: Code;
   }> {

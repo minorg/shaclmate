@@ -18,7 +18,7 @@ export abstract class ObjectType_AbstractProperty {
   /**
    * Optional parameter to include in the parameters object of constructor function.
    */
-  abstract readonly constructorParameter: Maybe<{
+  abstract readonly createFunctionParameter: Maybe<{
     readonly hasQuestionToken: boolean;
     readonly signature: Code;
   }>;

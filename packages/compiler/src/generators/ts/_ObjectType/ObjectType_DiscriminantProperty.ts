@@ -5,7 +5,7 @@ import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { ObjectType_AbstractProperty } from "./ObjectType_AbstractProperty.js";
 
 export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty {
-  override readonly constructorParameter: ObjectType_AbstractProperty["constructorParameter"] =
+  override readonly createFunctionParameter: ObjectType_AbstractProperty["createFunctionParameter"] =
     Maybe.empty();
   override readonly filterProperty: ObjectType_AbstractProperty["filterProperty"] =
     Maybe.empty();

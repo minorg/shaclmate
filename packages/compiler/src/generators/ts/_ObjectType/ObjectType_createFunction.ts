@@ -6,7 +6,7 @@ import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
 function ObjectType_createFunctionExpression(this: ObjectType): Code {
-  const parametersVariable = code`${this.constructorParameters.variable}${this.constructorParameters.hasQuestionToken ? "?" : ""}`;
+  const parametersVariable = code`${this.createFunctionParameters.variable}${this.createFunctionParameters.hasQuestionToken ? "?" : ""}`;
 
   const propertyInitializers = this.properties.flatMap((property) =>
     property
@@ -36,11 +36,11 @@ function ObjectType_createFunctionExpression(this: ObjectType): Code {
   }
 
   const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-  return code`(<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${parametersVariable}: ${this.constructorParameters.type.expression})${this.name.map((name) => code`: ${this.reusables.imports.Either}<Error, ${name}>`).orDefault(code``)} => ${returnExpression})`;
+  return code`(<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${parametersVariable}: ${this.createFunctionParameters.type.expression})${this.name.map((name) => code`: ${this.reusables.imports.Either}<Error, ${name}>`).orDefault(code``)} => ${returnExpression})`;
 }
 
 export function ObjectType_createFunction(this: ObjectType): Callable {
-  const type = code`<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.constructorParameters.signature}) => ${this.reusables.imports.Either}<Error, ${this.expression}>`;
+  const type = code`<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.createFunctionParameters.signature}) => ${this.reusables.imports.Either}<Error, ${this.expression}>`;
   const unannotatedExpression = () =>
     ObjectType_createFunctionExpression.call(this);
 

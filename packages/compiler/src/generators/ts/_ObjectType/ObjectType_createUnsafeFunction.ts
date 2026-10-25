@@ -6,9 +6,9 @@ import { code } from "../ts-poet-wrapper.js";
 
 export function ObjectType_createUnsafeFunction(this: ObjectType): Callable {
   const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-  const type = code`<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.constructorParameters.signature}) => ${this.expression}`;
+  const type = code`<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.createFunctionParameters.signature}) => ${this.expression}`;
   const unannotatedExpression = () =>
-    code`<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.constructorParameters.signature}): ${this.expression} => create(${this.constructorParameters.variable}).unsafeCoerce()`;
+    code`(${this.createFunctionParameters.variable}) => create(${this.createFunctionParameters.variable}).unsafeCoerce()`;
 
   return this.name
     .map<Callable>(

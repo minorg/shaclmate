@@ -14,7 +14,7 @@ import {
 import { ObjectType_AbstractProperty } from "./ObjectType_AbstractProperty.js";
 
 export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
-  override readonly constructorParameter: ObjectType_AbstractProperty["constructorParameter"] =
+  override readonly createFunctionParameter: ObjectType_AbstractProperty["createFunctionParameter"] =
     Maybe.empty();
   override readonly declaration: ObjectType_AbstractProperty["declaration"] =
     Maybe.empty();

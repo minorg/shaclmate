@@ -57,7 +57,7 @@ export class ObjectType_ShaclProperty<
   }
 
   @Memoize()
-  override get constructorParameter(): Maybe<{
+  override get createFunctionParameter(): Maybe<{
     hasQuestionToken: boolean;
     signature: Code;
   }> {

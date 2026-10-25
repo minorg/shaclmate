@@ -6,9 +6,9 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { ObjectType__fromRdfResourceFunction } from "./_ObjectType/ObjectType__fromRdfResourceFunction.js";
 import { ObjectType__toRdfResourceFunction } from "./_ObjectType/ObjectType__toRdfResourceFunction.js";
-import { ObjectType_constructorParameters } from "./_ObjectType/ObjectType_constructorParameters.js";
 import { ObjectType_conversionFunction } from "./_ObjectType/ObjectType_conversionFunction.js";
 import { ObjectType_createFunction } from "./_ObjectType/ObjectType_createFunction.js";
+import { ObjectType_createFunctionParameters } from "./_ObjectType/ObjectType_createFunctionParameters.js";
 import { ObjectType_createUnsafeFunction } from "./_ObjectType/ObjectType_createUnsafeFunction.js";
 import { ObjectType_DiscriminantProperty } from "./_ObjectType/ObjectType_DiscriminantProperty.js";
 import {
@@ -280,15 +280,16 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
-  protected get constructorParameters(): {
+  protected get createFunctionParameters(): {
     hasQuestionToken: boolean;
     signature: Code;
     type: {
+      inlineExpression: Code;
       expression: Code;
     };
     variable: Code;
   } {
-    return ObjectType_constructorParameters.call(this);
+    return ObjectType_createFunctionParameters.call(this);
   }
 
   @Memoize()
@@ -445,6 +446,8 @@ export class ObjectType extends AbstractStructuredType {
 
     // create
     if (this.configuration.features.has("Object.create")) {
+      staticModuleDeclarations["CreateParameters"] =
+        code`export type CreateParameters<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}> = ${this.createFunctionParameters.type.inlineExpression};`;
       addFunctionDeclaration(this.createFunction);
       addFunctionDeclaration(this.createUnsafeFunction);
     }

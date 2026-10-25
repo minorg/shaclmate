@@ -487,55 +487,19 @@ export namespace FormStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<Omit<FormStruct, "$type">> = (
+  export const $toString: $ToStringFunction<Pick<FormStruct, "$identifier">> = (
     _formStruct,
   ) => `FormStruct(${JSON.stringify(FormStruct.toStringRecord(_formStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => FormStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly emptyStringSetProperty?: string | readonly string[];
-    readonly nestedStructProperty: {
-      readonly $identifier?:
-        | (() => BlankNode | NamedNode)
-        | BlankNode
-        | NamedNode
-        | (keyof $DefaultNamespaceT & string);
-      readonly requiredStringProperty: string;
-    };
-    readonly nonEmptyStringSetProperty: string | readonly string[];
-    readonly optionalStringProperty?: string | Maybe<string>;
-    readonly requiredIntProperty: number;
-    readonly requiredStringProperty: string;
-  }) => Either<Error, FormStruct> = <
+  >(
+    parameters: FormStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, FormStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => FormStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly emptyStringSetProperty?: string | readonly string[];
-    readonly nestedStructProperty: {
-      readonly $identifier?:
-        | (() => BlankNode | NamedNode)
-        | BlankNode
-        | NamedNode
-        | (keyof $DefaultNamespaceT & string);
-      readonly requiredStringProperty: string;
-    };
-    readonly nonEmptyStringSetProperty: string | readonly string[];
-    readonly optionalStringProperty?: string | Maybe<string>;
-    readonly requiredIntProperty: number;
-    readonly requiredStringProperty: string;
-  }): Either<Error, FormStruct> =>
+  >(
+    parameters: FormStruct.CreateParameters<$DefaultNamespaceT>,
+  ): Either<Error, FormStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
@@ -612,11 +576,6 @@ export namespace FormStruct {
                     }))(_object),
                 )) satisfies $ToStringFunction<{
                 readonly $identifier: () => BlankNode | NamedNode;
-
-                /**
-                 * Required string
-                 */
-                readonly requiredStringProperty: string;
               }>,
             }),
           ))({ ...value, $defaultNamespace }))(
@@ -654,55 +613,40 @@ export namespace FormStruct {
         }),
       );
 
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => FormStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly emptyStringSetProperty?: string | readonly string[];
+    readonly nestedStructProperty: {
+      readonly $identifier?:
+        | (() => BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
+        | (keyof $DefaultNamespaceT & string);
+      readonly requiredStringProperty: string;
+    };
+    readonly nonEmptyStringSetProperty: string | readonly string[];
+    readonly optionalStringProperty?: string | Maybe<string>;
+    readonly requiredIntProperty: number;
+    readonly requiredStringProperty: string;
+  };
+
   export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => FormStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly emptyStringSetProperty?: string | readonly string[];
-    readonly nestedStructProperty: {
-      readonly $identifier?:
-        | (() => BlankNode | NamedNode)
-        | BlankNode
-        | NamedNode
-        | (keyof $DefaultNamespaceT & string);
-      readonly requiredStringProperty: string;
-    };
-    readonly nonEmptyStringSetProperty: string | readonly string[];
-    readonly optionalStringProperty?: string | Maybe<string>;
-    readonly requiredIntProperty: number;
-    readonly requiredStringProperty: string;
-  }) => FormStruct = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => FormStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly emptyStringSetProperty?: string | readonly string[];
-    readonly nestedStructProperty: {
-      readonly $identifier?:
-        | (() => BlankNode | NamedNode)
-        | BlankNode
-        | NamedNode
-        | (keyof $DefaultNamespaceT & string);
-      readonly requiredStringProperty: string;
-    };
-    readonly nonEmptyStringSetProperty: string | readonly string[];
-    readonly optionalStringProperty?: string | Maybe<string>;
-    readonly requiredIntProperty: number;
-    readonly requiredStringProperty: string;
-  }): FormStruct => create(parameters).unsafeCoerce();
+  >(
+    parameters: FormStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => FormStruct = (parameters) => create(parameters).unsafeCoerce();
 
-  export const fromJson: $FromJsonFunction<FormStruct, FormStruct.Json> = (
-    $json,
-  ) =>
+  export const fromJson: $FromJsonFunction<
+    FormStruct,
+    Omit<FormStruct.Json, "$type">
+  > = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
         $json["@id"].startsWith("_:")
@@ -773,11 +717,6 @@ export namespace FormStruct {
                     }))(_object),
                 )) satisfies $ToStringFunction<{
                 readonly $identifier: () => BlankNode | NamedNode;
-
-                /**
-                 * Required string
-                 */
-                readonly requiredStringProperty: string;
               }>,
             }),
           )) satisfies <
@@ -1017,16 +956,17 @@ export namespace FormStruct {
 
   export type Schema = typeof schema;
 
-  export const toJson: $ToJsonFunction<FormStruct, FormStruct.Json> = (
-    _formStruct,
-  ) =>
+  export const toJson: $ToJsonFunction<
+    Omit<FormStruct, "$type">,
+    FormStruct.Json
+  > = (_formStruct) =>
     JSON.parse(
       JSON.stringify({
         "@id":
           _formStruct.$identifier().termType === "BlankNode"
             ? `_:${_formStruct.$identifier().value}`
             : _formStruct.$identifier().value,
-        $type: _formStruct.$type,
+        $type: "FormStruct",
         emptyStringSetProperty: _formStruct.emptyStringSetProperty.map(
           (item) => item,
         ),
