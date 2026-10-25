@@ -63430,6 +63430,14 @@ export namespace StructIntersection {
         ),
     );
 
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    StructIntersection.Identifier,
+    StructIntersection
+  > = (parameters) => {
+    StructIntersectionMember1._toRdfResource(parameters);
+    StructIntersectionMember2._toRdfResource(parameters);
+  };
+
   export const $toString: $ToStringFunction<StructIntersection> = (value) =>
     JSON.stringify([
       StructIntersectionMember1.$toString(value),
@@ -63557,29 +63565,23 @@ export namespace StructIntersection {
     StructIntersectionMember2.toLoggable(value),
   ];
 
+  export const toRdfResource: $ToRdfResourceFunction<
+    StructIntersection.Identifier,
+    StructIntersection
+  > = $wrap_ToRdfResourceFunction<
+    StructIntersection.Identifier,
+    StructIntersection
+  >(StructIntersection._toRdfResource);
+
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
     StructIntersection,
     BlankNode | NamedNode
-  > = (value, _options) => {
-    let rdfResourceValues: (BlankNode | NamedNode)[] = [];
-    rdfResourceValues = rdfResourceValues.concat(
-      StructIntersectionMember1.toRdfResourceValues(value, {
-        graph: _options.graph,
-        propertyPath: _options.propertyPath,
-        resource: _options.resource,
-        resourceSet: _options.resourceSet,
-      }),
-    );
-    rdfResourceValues = rdfResourceValues.concat(
-      StructIntersectionMember2.toRdfResourceValues(value, {
-        graph: _options.graph,
-        propertyPath: _options.propertyPath,
-        resource: _options.resource,
-        resourceSet: _options.resourceSet,
-      }),
-    );
-    return rdfResourceValues;
-  };
+  > = (value, options) => [
+    StructIntersection.toRdfResource(value, {
+      graph: options.graph,
+      resourceSet: options.resourceSet,
+    }).identifier,
+  ];
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     StructIntersection.Filter,

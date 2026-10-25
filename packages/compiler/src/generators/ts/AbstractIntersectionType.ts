@@ -5,7 +5,6 @@ import { AbstractIntersectionType_equalsFunctionExpression } from "./_AbstractIn
 import { AbstractIntersectionType_filterFunctionExpression } from "./_AbstractIntersectionType/AbstractIntersectionType_filterFunctionExpression.js";
 import { AbstractIntersectionType_hashFunctionExpression } from "./_AbstractIntersectionType/AbstractIntersectionType_hashFunctionExpression.js";
 import { AbstractIntersectionType_toLoggableFunctionExpression } from "./_AbstractIntersectionType/AbstractIntersectionType_toLoggableFunctionExpression.js";
-import { AbstractIntersectionType_toRdfResourceValuesFunctionExpression } from "./_AbstractIntersectionType/AbstractIntersectionType_toRdfResourceValuesFunctionExpression.js";
 import { AbstractIntersectionType_toStringFunctionExpression } from "./_AbstractIntersectionType/AbstractIntersectionType_toStringFunctionExpression.js";
 import { AbstractIntersectionType_valueSparqlConstructTriplesFunctionExpression } from "./_AbstractIntersectionType/AbstractIntersectionType_valueSparqlConstructTriplesFunctionExpression.js";
 import { AbstractIntersectionType_valueSparqlWherePatternsFunctionExpression } from "./_AbstractIntersectionType/AbstractIntersectionType_valueSparqlWherePatternsFunctionExpression.js";
@@ -28,8 +27,6 @@ export abstract class AbstractIntersectionType<
     AbstractIntersectionType_hashFunctionExpression;
   protected override toLoggableFunctionExpression =
     AbstractIntersectionType_toLoggableFunctionExpression;
-  protected override toRdfResourceValuesFunctionExpression =
-    AbstractIntersectionType_toRdfResourceValuesFunctionExpression;
   protected override toStringFunctionExpression =
     AbstractIntersectionType_toStringFunctionExpression;
   protected override valueSparqlConstructTriplesFunctionExpression =

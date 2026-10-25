@@ -36,4 +36,10 @@ export class IntersectionType extends AbstractIntersectionType<Type> {
       "IntersectionType: not implemented: toJsonFunctionExpression",
     );
   }
+
+  protected toRdfResourceValuesFunctionExpression(): Code {
+    throw new Error(
+      "IntersectionType: not implemented: toRdfResourceValuesFunctionExpression",
+    );
+  }
 }

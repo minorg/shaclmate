@@ -1,6 +1,7 @@
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { ObjectIntersectionType__fromRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType__fromRdfResourceFunction.js";
+import { ObjectIntersectionType__toRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType__toRdfResourceFunction.js";
 import { ObjectIntersectionType_createFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_createFunction.js";
 import { ObjectIntersectionType_createFunctionParameters } from "./_ObjectIntersectionType/ObjectIntersectionType_createFunctionParameters.js";
 import { ObjectIntersectionType_fromJsonFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_fromJsonFunction.js";
@@ -8,6 +9,8 @@ import { ObjectIntersectionType_fromRdfResourceFunction } from "./_ObjectInterse
 import { ObjectIntersectionType_fromRdfResourceValuesFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_fromRdfResourceValuesFunction.js";
 import { ObjectIntersectionType_jsonType } from "./_ObjectIntersectionType/ObjectIntersectionType_jsonType.js";
 import { ObjectIntersectionType_toJsonFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_toJsonFunction.js";
+import { ObjectIntersectionType_toRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_toRdfResourceFunction.js";
+import { ObjectIntersectionType_toRdfResourceValuesFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_toRdfResourceValuesFunction.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
 import { AbstractIntersectionType } from "./AbstractIntersectionType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -25,6 +28,8 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
     ObjectIntersectionType_fromRdfResourceValuesFunctionExpression;
   protected override toJsonFunctionExpression =
     ObjectIntersectionType_toJsonFunctionExpression;
+  protected override toRdfResourceValuesFunctionExpression =
+    ObjectIntersectionType_toRdfResourceValuesFunctionExpression;
 
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
   override readonly kind = "ObjectIntersection";
@@ -45,6 +50,11 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
   }
 
   @Memoize()
+  get _toRdfResourceFunction(): Callable {
+    return ObjectIntersectionType__toRdfResourceFunction.call(this);
+  }
+
+  @Memoize()
   get createFunction(): Callable {
     return ObjectIntersectionType_createFunction.call(this);
   }
@@ -62,6 +72,11 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
   @Memoize()
   get identifierTypeAlias(): Code {
     return this.name.map((name) => code`${name}.Identifier`).unsafeCoerce();
+  }
+
+  @Memoize()
+  get toRdfResourceFunction(): Callable {
+    return ObjectIntersectionType_toRdfResourceFunction.call(this);
   }
 
   @Memoize()
@@ -111,6 +126,11 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
     if (this.configuration.features.has("Object.fromRdf")) {
       addFunctionDeclaration(this._fromRdfResourceFunction);
       addFunctionDeclaration(this.fromRdfResourceFunction);
+    }
+
+    if (this.configuration.features.has("Object.toRdf")) {
+      addFunctionDeclaration(this._toRdfResourceFunction);
+      addFunctionDeclaration(this.toRdfResourceFunction);
     }
 
     return staticModuleDeclarations;
