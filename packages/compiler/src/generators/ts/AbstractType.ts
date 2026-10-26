@@ -252,6 +252,9 @@ ${joinCode(
     return Maybe.of(joinCode(declarations, { on: "\n\n" }));
   }
 
+  /**
+   * Expression of this type. If the type has a name it will be that name (a reference). Otherwise it will be the .inlineExpression.
+   */
   @Memoize()
   get expression(): Code {
     return this.name
