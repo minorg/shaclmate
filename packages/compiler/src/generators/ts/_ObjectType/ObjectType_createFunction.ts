@@ -1,7 +1,7 @@
 import { invariant } from "ts-invariant";
 import type { Callable } from "../Callable.js";
 import type { ObjectType } from "../ObjectType.js";
-import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 function ObjectType_createFunctionExpression(this: ObjectType): Code {
   const parametersVariable = code`${this.createFunctionParameters.variable}${this.createFunctionParameters.hasQuestionToken ? "?" : ""}`;
@@ -29,12 +29,12 @@ function ObjectType_createFunctionExpression(this: ObjectType): Code {
     returnExpression = code`${returnExpression}.map(object => ${this.reusables.snippets.monkeyPatchObject}(object, ${monkeyPatchMethods}))`;
   }
 
-  return code`(<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${parametersVariable}: ${this.createFunctionParameters.type.expression})${this.name.map((name) => code`: ${this.reusables.imports.Either}<Error, ${name}>`).orDefault(code``)} => ${returnExpression})`;
+  return code`(${parametersVariable}) => ${returnExpression}`;
 }
 
 export function ObjectType_createFunction(this: ObjectType): Callable {
   return this._function({
-    type: code`<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.createFunctionParameters.signature}) => ${this.reusables.imports.Either}<Error, ${this.expression}>`,
+    type: code`<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.createFunctionParameters.signature}) => ${this.reusables.imports.Either}<Error, ${this.discriminatedExpression}>`,
     unannotatedExpression: () => ObjectType_createFunctionExpression.call(this),
     unqualifiedName: "create",
   });

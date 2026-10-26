@@ -30,7 +30,7 @@ function ObjectIntersectionType_createFunctionExpression(
     returnExpression = code`${returnExpression}.map(object => ${this.reusables.snippets.monkeyPatchObject}(object, ${monkeyPatchMethods}))`;
   }
 
-  return code`(<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${parametersVariable}: ${this.createFunctionParameters.type.expression})${this.name.map((name) => code`: ${this.reusables.imports.Either}<Error, ${name}>`).orDefault(code``)} => ${returnExpression})`;
+  return code`(${parametersVariable}) => ${returnExpression}`;
 }
 
 export function ObjectIntersectionType_createFunction(

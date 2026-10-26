@@ -6,13 +6,10 @@ export function ObjectType_toRdfResourceFunction(this: ObjectType): Callable {
   const identifierTypeExpression = this.name
     .map(() => this.identifierTypeAlias)
     .orDefault(this.identifierType.expression);
-  const thisTypeExpression = this.propertySubsetExpression(
-    (property) => property.kind !== "Discriminant",
-  );
   return this._function({
-    type: code`${this.reusables.snippets.ToRdfResourceFunction}<${identifierTypeExpression}, ${thisTypeExpression}>`,
+    type: code`${this.reusables.snippets.ToRdfResourceFunction}<${identifierTypeExpression}, ${this.expression}>`,
     unannotatedExpression: () =>
-      code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${identifierTypeExpression}, ${thisTypeExpression}>(${this._toRdfResourceFunction.annotatedUsage})`,
+      code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${identifierTypeExpression}, ${this.expression}>(${this._toRdfResourceFunction.annotatedUsage})`,
     unqualifiedName: "toRdfResource",
   });
 }

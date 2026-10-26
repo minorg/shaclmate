@@ -15,5 +15,5 @@ export function ObjectType_typeGuardFunctionExpression(
   }
 
   return Maybe.of(code`\
-(object: ${this.configuration.syntheticNamePrefix}Object): object is ${this.expression} => object.${discriminantProperty.name} === ${literalOf(discriminantProperty.value)}`);
+(object: ${this.configuration.syntheticNamePrefix}Object): object is ${this.discriminatedExpression} => object.${discriminantProperty.name} === ${literalOf(discriminantProperty.value)}`);
 }

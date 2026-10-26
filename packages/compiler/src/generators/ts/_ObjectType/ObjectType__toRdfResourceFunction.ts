@@ -36,7 +36,7 @@ export function ObjectType__toRdfResourceFunction(this: ObjectType): Callable {
     .orDefault(this.identifierType.expression);
 
   return this._function({
-    type: code`${this.reusables.snippets._ToRdfResourceFunction}<${identifierTypeExpression}, ${this.propertySubsetExpression((property) => property.kind !== "Discriminant")}>`,
+    type: code`${this.reusables.snippets._ToRdfResourceFunction}<${identifierTypeExpression}, ${this.expression}>`,
     unannotatedExpression: () =>
       ObjectType__toRdfResourceFunctionExpression.call(this),
     unqualifiedName: "_toRdfResource",

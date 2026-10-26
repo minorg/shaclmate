@@ -48,7 +48,7 @@ export class UberObjectDiscriminatedUnionType {
 
     if (this.configuration.features.has("Object.type")) {
       declarations.push(
-        code`export type ${def(this.name)} = ${this.members.map((member) => member.name.unsafeCoerce()).join(" | ")};`,
+        code`export type ${def(this.name)} = ${this.members.map((member) => `${member.name.unsafeCoerce()}.Discriminated`).join(" | ")};`,
       );
     }
 

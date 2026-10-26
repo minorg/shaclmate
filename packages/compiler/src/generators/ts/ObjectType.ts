@@ -314,6 +314,16 @@ export class ObjectType extends AbstractStructuredType {
     );
   }
 
+  /**
+   * Expression of this type including the discriminant property, if available.
+   */
+  @Memoize()
+  protected get discriminatedExpression(): Code {
+    return this.name
+      .map((name) => code`${name}.Discriminated`)
+      .orDefault(this.inlineExpression);
+  }
+
   protected override get inlineExpression(): Code {
     return code`{ ${joinCode(
       this.properties.flatMap((property) => property.declaration.toList()),
@@ -468,6 +478,8 @@ export class ObjectType extends AbstractStructuredType {
         ...staticModuleDeclarations,
         ...ObjectType_identifierTypeDeclarations.call(this),
       };
+      staticModuleDeclarations["Discriminated"] =
+        code`export type Discriminated = ${name} & { ${this.configuration.objectDiscriminantProperty.name}: ${literalOf(name)} };`;
     }
 
     // Type guard

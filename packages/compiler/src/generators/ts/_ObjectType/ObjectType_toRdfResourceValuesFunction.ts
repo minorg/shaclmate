@@ -10,5 +10,5 @@ export function ObjectType_toRdfResourceValuesFunctionExpression(
 export function ObjectType_toRdfResourceValuesFunctionType(
   this: ObjectType,
 ): Code {
-  return code`${this.reusables.snippets.ToRdfResourceValuesFunction}<${this.propertySubsetExpression((property) => property.kind !== "Discriminant")}, ${this.toRdfResourceValueTypesExpression}>`;
+  return code`${this.reusables.snippets.ToRdfResourceValuesFunction}<${this.expression}, ${this.toRdfResourceValueTypesExpression}>`;
 }

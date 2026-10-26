@@ -1,6 +1,6 @@
 import { invariant } from "ts-invariant";
 import type { ObjectType } from "../ObjectType.js";
-import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function ObjectType_fromJsonFunctionExpression(this: ObjectType): Code {
   const variables = {
@@ -17,5 +17,5 @@ export function ObjectType_fromJsonFunctionExpression(this: ObjectType): Code {
 }
 
 export function ObjectType_fromJsonFunctionType(this: ObjectType): Code {
-  return code`${this.reusables.snippets.FromJsonFunction}<${this.expression}, Omit<${this.jsonType({ form: "expanded" }).expression}, ${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}>>`;
+  return code`${this.reusables.snippets.FromJsonFunction}<${this.discriminatedExpression}, ${this.jsonType({ form: "expanded" }).expression}>`;
 }
