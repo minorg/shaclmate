@@ -49,10 +49,7 @@ export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticN
 
   ${joinCode(
     [
-      ...[
-        ...this.namedObjectTypes,
-        ...this.namedObjectDiscriminatedUnionTypes,
-      ].flatMap((namedObjectType): readonly Code[] => {
+      ...this.namedObjectTypes.flatMap((namedObjectType): readonly Code[] => {
         const methodSignatures = this.methodSignatures(namedObjectType);
 
         const delegatingMethods: Code[] = [
@@ -126,6 +123,8 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
     )}
   ], query);
 }`);
+          case "ObjectIntersection":
+            return [];
           default:
             namedObjectType satisfies never;
             return [];
@@ -225,7 +224,10 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
           ]
         : []),
 
-      ...(this.namedObjectDiscriminatedUnionTypes.length > 0
+      ...(this.namedObjectTypes.some(
+        (namedObjectType) =>
+          namedObjectType.kind === "ObjectDiscriminatedUnion",
+      )
         ? [
             code`\
 #objectDiscriminatedUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectTypes: readonly ${namedObjectTypeType}[], ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {

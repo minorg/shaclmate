@@ -3,6 +3,7 @@ import type * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { GraphqlSchema } from "./GraphqlSchema.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
+import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import { ObjectSetType } from "./ObjectSetType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { Operation } from "./Operation.js";
@@ -47,9 +48,10 @@ export class TsGenerator implements Generator {
     let declarations: Code[] = [];
 
     const tsNamedTypes: Type[] = [];
-    const tsNamedObjectTypes: ObjectType[] = [];
     const tsNamedObjectDiscriminatedUnionTypes: ObjectDiscriminatedUnionType[] =
       [];
+    const tsNamedObjectIntersectionTypes: ObjectIntersectionType[] = [];
+    const tsNamedObjectTypes: ObjectType[] = [];
     for (const astNamedType of ast_.namedTypes) {
       const tsNamedType = typeFactory.createType(astNamedType);
       tsNamedTypes.push(tsNamedType);
@@ -66,6 +68,9 @@ export class TsGenerator implements Generator {
           break;
         case "ObjectDiscriminatedUnion":
           tsNamedObjectDiscriminatedUnionTypes.push(tsNamedType);
+          break;
+        case "ObjectIntersection":
+          tsNamedObjectIntersectionTypes.push(tsNamedType);
           break;
       }
     }
@@ -117,9 +122,11 @@ export class TsGenerator implements Generator {
     declarations = declarations.concat(
       this.objectSetTypeDeclarations({
         configuration,
-        namedObjectTypes: tsNamedObjectTypes,
-        namedObjectDiscriminatedUnionTypes:
-          tsNamedObjectDiscriminatedUnionTypes,
+        namedObjectTypes: [
+          ...tsNamedObjectDiscriminatedUnionTypes,
+          ...tsNamedObjectIntersectionTypes,
+          ...tsNamedObjectTypes,
+        ],
         reusables,
       }),
     );
@@ -218,12 +225,14 @@ export class TsGenerator implements Generator {
   private objectSetTypeDeclarations({
     configuration,
     namedObjectTypes,
-    namedObjectDiscriminatedUnionTypes,
     reusables,
   }: {
     configuration: TsGenerator.Configuration;
-    namedObjectTypes: readonly ObjectType[];
-    namedObjectDiscriminatedUnionTypes: readonly ObjectDiscriminatedUnionType[];
+    namedObjectTypes: readonly (
+      | ObjectDiscriminatedUnionType
+      | ObjectIntersectionType
+      | ObjectType
+    )[];
     reusables: Reusables;
   }): readonly Code[] {
     const constructorParameters: ConstructorParameters<
@@ -231,13 +240,21 @@ export class TsGenerator implements Generator {
     >[0] = {
       configuration,
       logger: this.logger,
-      namedObjectTypes: namedObjectTypes.filter(
-        (namedObjectType) =>
-          namedObjectType.identifierProperty.isJust() &&
-          !namedObjectType.extern &&
-          !namedObjectType.synthetic,
-      ),
-      namedObjectDiscriminatedUnionTypes,
+      namedObjectTypes: namedObjectTypes.filter((namedObjectType) => {
+        if (namedObjectType.identifierProperty.isNothing()) {
+          return false;
+        }
+        if (namedObjectType.name.isNothing()) {
+          return false;
+        }
+        if (
+          namedObjectType.kind === "Object" &&
+          (namedObjectType.extern || namedObjectType.synthetic)
+        ) {
+          return false;
+        }
+        return true;
+      }),
       reusables,
     };
 

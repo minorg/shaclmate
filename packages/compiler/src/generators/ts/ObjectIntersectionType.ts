@@ -4,6 +4,7 @@ import { ObjectIntersectionType__fromRdfResourceFunction } from "./_ObjectInters
 import { ObjectIntersectionType__toRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType__toRdfResourceFunction.js";
 import { ObjectIntersectionType_createFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_createFunction.js";
 import { ObjectIntersectionType_createFunctionParameters } from "./_ObjectIntersectionType/ObjectIntersectionType_createFunctionParameters.js";
+import { ObjectIntersectionType_createUnsafeFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_createUnsafeFunction.js";
 import { ObjectIntersectionType_focusSparqlConstructTriplesFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_focusSparqlConstructTriplesFunction.js";
 import { ObjectIntersectionType_focusSparqlWherePatternsFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_focusSparqlWherePatternsFunction.js";
 import { ObjectIntersectionType_fromJsonFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_fromJsonFunction.js";
@@ -14,6 +15,7 @@ import { ObjectIntersectionType_toJsonFunctionExpression } from "./_ObjectInters
 import { ObjectIntersectionType_toRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_toRdfResourceFunction.js";
 import { ObjectIntersectionType_toRdfResourceValuesFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_toRdfResourceValuesFunction.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
+import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { AbstractIntersectionType } from "./AbstractIntersectionType.js";
@@ -88,6 +90,14 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
   @Memoize()
   get identifierTypeAlias(): Code {
     return this.name.map((name) => code`${name}.Identifier`).unsafeCoerce();
+  }
+
+  @Memoize()
+  get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
+    return ObjectType_objectSetMethodNames.call({
+      name: this.name.unsafeCoerce(),
+      configuration: this.configuration,
+    });
   }
 
   @Memoize()
