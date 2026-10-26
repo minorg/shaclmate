@@ -27,7 +27,10 @@ import {
   ObjectType_fromJsonFunctionType,
 } from "./_ObjectType/ObjectType_fromJsonFunction.js";
 import { ObjectType_fromRdfResourceFunction } from "./_ObjectType/ObjectType_fromRdfResourceFunction.js";
-import { ObjectType_fromRdfResourceValuesFunctionExpression } from "./_ObjectType/ObjectType_fromRdfResourceValuesFunction.js";
+import {
+  ObjectType_fromRdfResourceValuesFunctionExpression,
+  ObjectType_fromRdfResourceValuesFunctionType,
+} from "./_ObjectType/ObjectType_fromRdfResourceValuesFunction.js";
 import { ObjectType_graphqlTypeExpression } from "./_ObjectType/ObjectType_graphqlType.js";
 import {
   ObjectType_hashFunctionExpression,
@@ -90,6 +93,8 @@ export class ObjectType extends AbstractStructuredType {
   protected override fromJsonFunctionType = ObjectType_fromJsonFunctionType;
   protected override fromRdfResourceValuesFunctionExpression =
     ObjectType_fromRdfResourceValuesFunctionExpression;
+  protected override fromRdfResourceValuesFunctionType =
+    ObjectType_fromRdfResourceValuesFunctionType;
   protected override hashFunctionExpression = ObjectType_hashFunctionExpression;
   protected override hashFunctionType = ObjectType_hashFunctionType;
   protected override schemaTypeExpression = ObjectType_schemaTypeExpression;
@@ -378,29 +383,32 @@ export class ObjectType extends AbstractStructuredType {
   ): Code {
     return this.name
       .map((name) => {
-        const omitProperties: ObjectType.Property[] = [];
-        const pickProperties: ObjectType.Property[] = [];
+        const declaredProperties: ObjectType.Property[] = [];
+        const omitDeclaredProperties: ObjectType.Property[] = [];
+        const pickDeclaredProperties: ObjectType.Property[] = [];
         for (const property of this.properties) {
+          if (property.declaration.isNothing()) {
+            continue;
+          }
+          declaredProperties.push(property);
           if (propertyFilter(property)) {
-            pickProperties.push(property);
+            pickDeclaredProperties.push(property);
           } else {
-            omitProperties.push(property);
+            omitDeclaredProperties.push(property);
           }
         }
 
-        if (pickProperties.length === 0) {
+        if (pickDeclaredProperties.length === 0) {
           return code`object`;
         }
 
-        if (pickProperties.length === this.properties.length) {
+        if (pickDeclaredProperties.length === declaredProperties.length) {
           return this.expression;
         }
 
-        if (pickProperties.length <= this.properties.length / 2) {
-          const pickPropertyNames = pickProperties.flatMap((property) =>
-            property.kind !== "RdfType"
-              ? [code`${literalOf(property.name)}`]
-              : [],
+        if (pickDeclaredProperties.length <= declaredProperties.length / 2) {
+          const pickPropertyNames = pickDeclaredProperties.map(
+            (property) => code`${literalOf(property.name)}`,
           );
           if (pickPropertyNames.length === 0) {
             return code`object`;
@@ -409,10 +417,8 @@ export class ObjectType extends AbstractStructuredType {
             on: " | ",
           })}>`;
         } else {
-          const omitPropertyNames = omitProperties.flatMap((property) =>
-            property.kind !== "RdfType"
-              ? [code`${literalOf(property.name)}`]
-              : [],
+          const omitPropertyNames = omitDeclaredProperties.flatMap(
+            (property) => code`${literalOf(property.name)}`,
           );
           if (omitPropertyNames.length === 0) {
             return this.expression;
@@ -478,8 +484,10 @@ export class ObjectType extends AbstractStructuredType {
         ...staticModuleDeclarations,
         ...ObjectType_identifierTypeDeclarations.call(this),
       };
-      staticModuleDeclarations["Discriminated"] =
-        code`export type Discriminated = ${name} & { ${this.configuration.objectDiscriminantProperty.name}: ${literalOf(name)} };`;
+      this.discriminantProperty.ifJust((discriminantProperty) => {
+        staticModuleDeclarations["Discriminated"] =
+          code`export type Discriminated = ${name} & { readonly ${discriminantProperty.name}: ${literalOf(discriminantProperty.value)} };`;
+      });
     }
 
     // Type guard
