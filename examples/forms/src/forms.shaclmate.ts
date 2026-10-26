@@ -627,7 +627,7 @@ export namespace FormStruct {
   ) => FormStruct.Discriminated = (parameters) =>
     create(parameters).unsafeCoerce();
 
-  export type Discriminated = FormStruct & { $type: "FormStruct" };
+  export type Discriminated = FormStruct & { readonly $type: "FormStruct" };
 
   export const fromJson: $FromJsonFunction<
     FormStruct.Discriminated,
