@@ -1,6 +1,5 @@
-import type { ConditionalOutput } from "ts-poet/build/ConditionalOutput.js";
 import { AbstractCallable } from "./AbstractCallable.js";
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { type Code, type ConditionalOutput, code } from "./ts-poet-wrapper.js";
 
 /**
  * A callable that's a reference to a snippet, an import, or a global function.
