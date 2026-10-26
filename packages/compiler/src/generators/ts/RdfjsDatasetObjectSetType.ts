@@ -1,4 +1,4 @@
-import type { Maybe } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractObjectSetType } from "./AbstractObjectSetType.js";
 import type { Callable } from "./Callable.js";
@@ -124,14 +124,27 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
   ], query);
 }`);
           case "ObjectIntersection":
-            return [];
+            return delegatingMethods.concat(code`\
+${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.expression}[]> {
+  return this.#objectsSync<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType(
+    namedObjectType.filterFunction,
+    {
+      expression: namedObjectType.expression,
+      fromRdfTypeVariable: Maybe.empty(),
+    },
+  )}, query);
+}`);
           default:
             namedObjectType satisfies never;
             return [];
         }
       }),
 
-      ...(this.namedObjectTypes.length > 0
+      ...(this.namedObjectTypes.some(
+        (namedObjectType) =>
+          namedObjectType.kind === "Object" ||
+          namedObjectType.kind === "ObjectIntersection",
+      )
         ? [
             code`\
 #objectsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectType: ${namedObjectTypeType}, ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {

@@ -63472,6 +63472,12 @@ export namespace StructIntersection {
   > = StructIntersectionMember1.CreateParameters<$DefaultNamespaceT> &
     StructIntersectionMember2.CreateParameters<$DefaultNamespaceT>;
 
+  export const createUnsafe: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: StructIntersection.CreateParameters<$DefaultNamespaceT>,
+  ) => StructIntersection = (parameters) => create(parameters).unsafeCoerce();
+
   export const equals: $EqualsFunction<StructIntersection> = (left, right) =>
     StructIntersectionMember1.equals(left, right) &&
     StructIntersectionMember2.equals(left, right);
@@ -64563,6 +64569,211 @@ export namespace $Object {
 }
 
 export interface $ObjectSet {
+  flattenDiscriminatedUnion(
+    identifier: FlattenDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, FlattenDiscriminatedUnion>>;
+
+  flattenDiscriminatedUnionCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        FlattenDiscriminatedUnion.Filter,
+        FlattenDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  flattenDiscriminatedUnionIdentifiers(
+    query?: $ObjectSet.Query<
+      FlattenDiscriminatedUnion.Filter,
+      FlattenDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion.Identifier[]>>;
+
+  flattenDiscriminatedUnions(
+    query?: $ObjectSet.Query<
+      FlattenDiscriminatedUnion.Filter,
+      FlattenDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion[]>>;
+
+  lazilyResolvedDiscriminatedUnion(
+    identifier: LazilyResolvedDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, LazilyResolvedDiscriminatedUnion>>;
+
+  lazilyResolvedDiscriminatedUnionCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        LazilyResolvedDiscriminatedUnion.Filter,
+        LazilyResolvedDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  lazilyResolvedDiscriminatedUnionIdentifiers(
+    query?: $ObjectSet.Query<
+      LazilyResolvedDiscriminatedUnion.Filter,
+      LazilyResolvedDiscriminatedUnion.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly LazilyResolvedDiscriminatedUnion.Identifier[]>
+  >;
+
+  lazilyResolvedDiscriminatedUnions(
+    query?: $ObjectSet.Query<
+      LazilyResolvedDiscriminatedUnion.Filter,
+      LazilyResolvedDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly LazilyResolvedDiscriminatedUnion[]>>;
+
+  noRdfTypeDiscriminatedUnion(
+    identifier: NoRdfTypeDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnion>>;
+
+  noRdfTypeDiscriminatedUnionCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        NoRdfTypeDiscriminatedUnion.Filter,
+        NoRdfTypeDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  noRdfTypeDiscriminatedUnionIdentifiers(
+    query?: $ObjectSet.Query<
+      NoRdfTypeDiscriminatedUnion.Filter,
+      NoRdfTypeDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnion.Identifier[]>>;
+
+  noRdfTypeDiscriminatedUnions(
+    query?: $ObjectSet.Query<
+      NoRdfTypeDiscriminatedUnion.Filter,
+      NoRdfTypeDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnion[]>>;
+
+  partialDiscriminatedUnion(
+    identifier: PartialDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, PartialDiscriminatedUnion>>;
+
+  partialDiscriminatedUnionCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        PartialDiscriminatedUnion.Filter,
+        PartialDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  partialDiscriminatedUnionIdentifiers(
+    query?: $ObjectSet.Query<
+      PartialDiscriminatedUnion.Filter,
+      PartialDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly PartialDiscriminatedUnion.Identifier[]>>;
+
+  partialDiscriminatedUnions(
+    query?: $ObjectSet.Query<
+      PartialDiscriminatedUnion.Filter,
+      PartialDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly PartialDiscriminatedUnion[]>>;
+
+  recursiveDiscriminatedUnion(
+    identifier: RecursiveDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, RecursiveDiscriminatedUnion>>;
+
+  recursiveDiscriminatedUnionCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        RecursiveDiscriminatedUnion.Filter,
+        RecursiveDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  recursiveDiscriminatedUnionIdentifiers(
+    query?: $ObjectSet.Query<
+      RecursiveDiscriminatedUnion.Filter,
+      RecursiveDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnion.Identifier[]>>;
+
+  recursiveDiscriminatedUnions(
+    query?: $ObjectSet.Query<
+      RecursiveDiscriminatedUnion.Filter,
+      RecursiveDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnion[]>>;
+
+  structDiscriminatedUnion(
+    identifier: StructDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructDiscriminatedUnion>>;
+
+  structDiscriminatedUnionCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructDiscriminatedUnion.Filter,
+        StructDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  structDiscriminatedUnionIdentifiers(
+    query?: $ObjectSet.Query<
+      StructDiscriminatedUnion.Filter,
+      StructDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructDiscriminatedUnion.Identifier[]>>;
+
+  structDiscriminatedUnions(
+    query?: $ObjectSet.Query<
+      StructDiscriminatedUnion.Filter,
+      StructDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructDiscriminatedUnion[]>>;
+
+  structIntersection(
+    identifier: StructIntersection.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructIntersection>>;
+
+  structIntersectionCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructIntersection.Filter,
+        StructIntersection.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  structIntersectionIdentifiers(
+    query?: $ObjectSet.Query<
+      StructIntersection.Filter,
+      StructIntersection.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructIntersection.Identifier[]>>;
+
+  structIntersections(
+    query?: $ObjectSet.Query<
+      StructIntersection.Filter,
+      StructIntersection.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructIntersection[]>>;
+
   anonymousTypesStruct(
     identifier: AnonymousTypesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -66028,182 +66239,6 @@ export interface $ObjectSet {
       UnionDiscriminantsStruct.Identifier
     >,
   ): Promise<Either<Error, readonly UnionDiscriminantsStruct[]>>;
-
-  flattenDiscriminatedUnion(
-    identifier: FlattenDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, FlattenDiscriminatedUnion>>;
-
-  flattenDiscriminatedUnionCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        FlattenDiscriminatedUnion.Filter,
-        FlattenDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  flattenDiscriminatedUnionIdentifiers(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion.Identifier[]>>;
-
-  flattenDiscriminatedUnions(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion[]>>;
-
-  lazilyResolvedDiscriminatedUnion(
-    identifier: LazilyResolvedDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazilyResolvedDiscriminatedUnion>>;
-
-  lazilyResolvedDiscriminatedUnionCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        LazilyResolvedDiscriminatedUnion.Filter,
-        LazilyResolvedDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  lazilyResolvedDiscriminatedUnionIdentifiers(
-    query?: $ObjectSet.Query<
-      LazilyResolvedDiscriminatedUnion.Filter,
-      LazilyResolvedDiscriminatedUnion.Identifier
-    >,
-  ): Promise<
-    Either<Error, readonly LazilyResolvedDiscriminatedUnion.Identifier[]>
-  >;
-
-  lazilyResolvedDiscriminatedUnions(
-    query?: $ObjectSet.Query<
-      LazilyResolvedDiscriminatedUnion.Filter,
-      LazilyResolvedDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly LazilyResolvedDiscriminatedUnion[]>>;
-
-  noRdfTypeDiscriminatedUnion(
-    identifier: NoRdfTypeDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnion>>;
-
-  noRdfTypeDiscriminatedUnionCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        NoRdfTypeDiscriminatedUnion.Filter,
-        NoRdfTypeDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  noRdfTypeDiscriminatedUnionIdentifiers(
-    query?: $ObjectSet.Query<
-      NoRdfTypeDiscriminatedUnion.Filter,
-      NoRdfTypeDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnion.Identifier[]>>;
-
-  noRdfTypeDiscriminatedUnions(
-    query?: $ObjectSet.Query<
-      NoRdfTypeDiscriminatedUnion.Filter,
-      NoRdfTypeDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnion[]>>;
-
-  partialDiscriminatedUnion(
-    identifier: PartialDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PartialDiscriminatedUnion>>;
-
-  partialDiscriminatedUnionCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        PartialDiscriminatedUnion.Filter,
-        PartialDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  partialDiscriminatedUnionIdentifiers(
-    query?: $ObjectSet.Query<
-      PartialDiscriminatedUnion.Filter,
-      PartialDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly PartialDiscriminatedUnion.Identifier[]>>;
-
-  partialDiscriminatedUnions(
-    query?: $ObjectSet.Query<
-      PartialDiscriminatedUnion.Filter,
-      PartialDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly PartialDiscriminatedUnion[]>>;
-
-  recursiveDiscriminatedUnion(
-    identifier: RecursiveDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, RecursiveDiscriminatedUnion>>;
-
-  recursiveDiscriminatedUnionCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        RecursiveDiscriminatedUnion.Filter,
-        RecursiveDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  recursiveDiscriminatedUnionIdentifiers(
-    query?: $ObjectSet.Query<
-      RecursiveDiscriminatedUnion.Filter,
-      RecursiveDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnion.Identifier[]>>;
-
-  recursiveDiscriminatedUnions(
-    query?: $ObjectSet.Query<
-      RecursiveDiscriminatedUnion.Filter,
-      RecursiveDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnion[]>>;
-
-  structDiscriminatedUnion(
-    identifier: StructDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructDiscriminatedUnion>>;
-
-  structDiscriminatedUnionCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        StructDiscriminatedUnion.Filter,
-        StructDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  structDiscriminatedUnionIdentifiers(
-    query?: $ObjectSet.Query<
-      StructDiscriminatedUnion.Filter,
-      StructDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly StructDiscriminatedUnion.Identifier[]>>;
-
-  structDiscriminatedUnions(
-    query?: $ObjectSet.Query<
-      StructDiscriminatedUnion.Filter,
-      StructDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly StructDiscriminatedUnion[]>>;
 }
 
 export namespace $ObjectSet {
@@ -66244,6 +66279,732 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       dataFactory: dataFactory,
       dataset: this.$dataset(),
     });
+  }
+
+  async flattenDiscriminatedUnion(
+    identifier: FlattenDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, FlattenDiscriminatedUnion>> {
+    return this.flattenDiscriminatedUnionSync(identifier, options);
+  }
+
+  flattenDiscriminatedUnionSync(
+    identifier: FlattenDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, FlattenDiscriminatedUnion> {
+    return this.flattenDiscriminatedUnionsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async flattenDiscriminatedUnionCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        FlattenDiscriminatedUnion.Filter,
+        FlattenDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.flattenDiscriminatedUnionCountSync(query);
+  }
+
+  flattenDiscriminatedUnionCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        FlattenDiscriminatedUnion.Filter,
+        FlattenDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.flattenDiscriminatedUnionsSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async flattenDiscriminatedUnionIdentifiers(
+    query?: $ObjectSet.Query<
+      FlattenDiscriminatedUnion.Filter,
+      FlattenDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion.Identifier[]>> {
+    return this.flattenDiscriminatedUnionIdentifiersSync(query);
+  }
+
+  flattenDiscriminatedUnionIdentifiersSync(
+    query?: $ObjectSet.Query<
+      FlattenDiscriminatedUnion.Filter,
+      FlattenDiscriminatedUnion.Identifier
+    >,
+  ): Either<Error, readonly FlattenDiscriminatedUnion.Identifier[]> {
+    return this.flattenDiscriminatedUnionsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async flattenDiscriminatedUnions(
+    query?: $ObjectSet.Query<
+      FlattenDiscriminatedUnion.Filter,
+      FlattenDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion[]>> {
+    return this.flattenDiscriminatedUnionsSync(query);
+  }
+
+  flattenDiscriminatedUnionsSync(
+    query?: $ObjectSet.Query<
+      FlattenDiscriminatedUnion.Filter,
+      FlattenDiscriminatedUnion.Identifier
+    >,
+  ): Either<Error, readonly FlattenDiscriminatedUnion[]> {
+    return this.#objectDiscriminatedUnionsSync<
+      FlattenDiscriminatedUnion,
+      FlattenDiscriminatedUnion.Filter,
+      FlattenDiscriminatedUnion.Identifier
+    >(
+      [
+        {
+          filter: FlattenDiscriminatedUnion.filter,
+          fromRdfResource: StructDiscriminatedUnionMember1.fromRdfResource,
+          fromRdfTypes: [
+            StructDiscriminatedUnionMember1.schema.properties.$rdfType
+              .fromRdfType,
+          ],
+        },
+        {
+          filter: FlattenDiscriminatedUnion.filter,
+          fromRdfResource: StructDiscriminatedUnionMember2.fromRdfResource,
+          fromRdfTypes: [
+            StructDiscriminatedUnionMember2.schema.properties.$rdfType
+              .fromRdfType,
+          ],
+        },
+        {
+          filter: FlattenDiscriminatedUnion.filter,
+          fromRdfResource: FlattenDiscriminatedUnionMember3.fromRdfResource,
+          fromRdfTypes: [
+            FlattenDiscriminatedUnionMember3.schema.properties.$rdfType
+              .fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
+  }
+
+  async lazilyResolvedDiscriminatedUnion(
+    identifier: LazilyResolvedDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, LazilyResolvedDiscriminatedUnion>> {
+    return this.lazilyResolvedDiscriminatedUnionSync(identifier, options);
+  }
+
+  lazilyResolvedDiscriminatedUnionSync(
+    identifier: LazilyResolvedDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, LazilyResolvedDiscriminatedUnion> {
+    return this.lazilyResolvedDiscriminatedUnionsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async lazilyResolvedDiscriminatedUnionCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        LazilyResolvedDiscriminatedUnion.Filter,
+        LazilyResolvedDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.lazilyResolvedDiscriminatedUnionCountSync(query);
+  }
+
+  lazilyResolvedDiscriminatedUnionCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        LazilyResolvedDiscriminatedUnion.Filter,
+        LazilyResolvedDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.lazilyResolvedDiscriminatedUnionsSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async lazilyResolvedDiscriminatedUnionIdentifiers(
+    query?: $ObjectSet.Query<
+      LazilyResolvedDiscriminatedUnion.Filter,
+      LazilyResolvedDiscriminatedUnion.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly LazilyResolvedDiscriminatedUnion.Identifier[]>
+  > {
+    return this.lazilyResolvedDiscriminatedUnionIdentifiersSync(query);
+  }
+
+  lazilyResolvedDiscriminatedUnionIdentifiersSync(
+    query?: $ObjectSet.Query<
+      LazilyResolvedDiscriminatedUnion.Filter,
+      LazilyResolvedDiscriminatedUnion.Identifier
+    >,
+  ): Either<Error, readonly LazilyResolvedDiscriminatedUnion.Identifier[]> {
+    return this.lazilyResolvedDiscriminatedUnionsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async lazilyResolvedDiscriminatedUnions(
+    query?: $ObjectSet.Query<
+      LazilyResolvedDiscriminatedUnion.Filter,
+      LazilyResolvedDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly LazilyResolvedDiscriminatedUnion[]>> {
+    return this.lazilyResolvedDiscriminatedUnionsSync(query);
+  }
+
+  lazilyResolvedDiscriminatedUnionsSync(
+    query?: $ObjectSet.Query<
+      LazilyResolvedDiscriminatedUnion.Filter,
+      LazilyResolvedDiscriminatedUnion.Identifier
+    >,
+  ): Either<Error, readonly LazilyResolvedDiscriminatedUnion[]> {
+    return this.#objectDiscriminatedUnionsSync<
+      LazilyResolvedDiscriminatedUnion,
+      LazilyResolvedDiscriminatedUnion.Filter,
+      LazilyResolvedDiscriminatedUnion.Identifier
+    >(
+      [
+        {
+          filter: LazilyResolvedDiscriminatedUnion.filter,
+          fromRdfResource:
+            LazilyResolvedDiscriminatedUnionMember1.fromRdfResource,
+          fromRdfTypes: [
+            LazilyResolvedDiscriminatedUnionMember1.schema.properties.$rdfType
+              .fromRdfType,
+          ],
+        },
+        {
+          filter: LazilyResolvedDiscriminatedUnion.filter,
+          fromRdfResource:
+            LazilyResolvedDiscriminatedUnionMember2.fromRdfResource,
+          fromRdfTypes: [
+            LazilyResolvedDiscriminatedUnionMember2.schema.properties.$rdfType
+              .fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
+  }
+
+  async noRdfTypeDiscriminatedUnion(
+    identifier: NoRdfTypeDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnion>> {
+    return this.noRdfTypeDiscriminatedUnionSync(identifier, options);
+  }
+
+  noRdfTypeDiscriminatedUnionSync(
+    identifier: NoRdfTypeDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, NoRdfTypeDiscriminatedUnion> {
+    return this.noRdfTypeDiscriminatedUnionsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async noRdfTypeDiscriminatedUnionCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        NoRdfTypeDiscriminatedUnion.Filter,
+        NoRdfTypeDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.noRdfTypeDiscriminatedUnionCountSync(query);
+  }
+
+  noRdfTypeDiscriminatedUnionCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        NoRdfTypeDiscriminatedUnion.Filter,
+        NoRdfTypeDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.noRdfTypeDiscriminatedUnionsSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async noRdfTypeDiscriminatedUnionIdentifiers(
+    query?: $ObjectSet.Query<
+      NoRdfTypeDiscriminatedUnion.Filter,
+      NoRdfTypeDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnion.Identifier[]>> {
+    return this.noRdfTypeDiscriminatedUnionIdentifiersSync(query);
+  }
+
+  noRdfTypeDiscriminatedUnionIdentifiersSync(
+    query?: $ObjectSet.Query<
+      NoRdfTypeDiscriminatedUnion.Filter,
+      NoRdfTypeDiscriminatedUnion.Identifier
+    >,
+  ): Either<Error, readonly NoRdfTypeDiscriminatedUnion.Identifier[]> {
+    return this.noRdfTypeDiscriminatedUnionsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async noRdfTypeDiscriminatedUnions(
+    query?: $ObjectSet.Query<
+      NoRdfTypeDiscriminatedUnion.Filter,
+      NoRdfTypeDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnion[]>> {
+    return this.noRdfTypeDiscriminatedUnionsSync(query);
+  }
+
+  noRdfTypeDiscriminatedUnionsSync(
+    query?: $ObjectSet.Query<
+      NoRdfTypeDiscriminatedUnion.Filter,
+      NoRdfTypeDiscriminatedUnion.Identifier
+    >,
+  ): Either<Error, readonly NoRdfTypeDiscriminatedUnion[]> {
+    return this.#objectDiscriminatedUnionsSync<
+      NoRdfTypeDiscriminatedUnion,
+      NoRdfTypeDiscriminatedUnion.Filter,
+      NoRdfTypeDiscriminatedUnion.Identifier
+    >(
+      [
+        {
+          filter: NoRdfTypeDiscriminatedUnion.filter,
+          fromRdfResource: NoRdfTypeDiscriminatedUnionMember1.fromRdfResource,
+          fromRdfTypes: [],
+        },
+        {
+          filter: NoRdfTypeDiscriminatedUnion.filter,
+          fromRdfResource: NoRdfTypeDiscriminatedUnionMember2.fromRdfResource,
+          fromRdfTypes: [],
+        },
+      ],
+      query,
+    );
+  }
+
+  async partialDiscriminatedUnion(
+    identifier: PartialDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, PartialDiscriminatedUnion>> {
+    return this.partialDiscriminatedUnionSync(identifier, options);
+  }
+
+  partialDiscriminatedUnionSync(
+    identifier: PartialDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, PartialDiscriminatedUnion> {
+    return this.partialDiscriminatedUnionsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async partialDiscriminatedUnionCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        PartialDiscriminatedUnion.Filter,
+        PartialDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.partialDiscriminatedUnionCountSync(query);
+  }
+
+  partialDiscriminatedUnionCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        PartialDiscriminatedUnion.Filter,
+        PartialDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.partialDiscriminatedUnionsSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async partialDiscriminatedUnionIdentifiers(
+    query?: $ObjectSet.Query<
+      PartialDiscriminatedUnion.Filter,
+      PartialDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly PartialDiscriminatedUnion.Identifier[]>> {
+    return this.partialDiscriminatedUnionIdentifiersSync(query);
+  }
+
+  partialDiscriminatedUnionIdentifiersSync(
+    query?: $ObjectSet.Query<
+      PartialDiscriminatedUnion.Filter,
+      PartialDiscriminatedUnion.Identifier
+    >,
+  ): Either<Error, readonly PartialDiscriminatedUnion.Identifier[]> {
+    return this.partialDiscriminatedUnionsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async partialDiscriminatedUnions(
+    query?: $ObjectSet.Query<
+      PartialDiscriminatedUnion.Filter,
+      PartialDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly PartialDiscriminatedUnion[]>> {
+    return this.partialDiscriminatedUnionsSync(query);
+  }
+
+  partialDiscriminatedUnionsSync(
+    query?: $ObjectSet.Query<
+      PartialDiscriminatedUnion.Filter,
+      PartialDiscriminatedUnion.Identifier
+    >,
+  ): Either<Error, readonly PartialDiscriminatedUnion[]> {
+    return this.#objectDiscriminatedUnionsSync<
+      PartialDiscriminatedUnion,
+      PartialDiscriminatedUnion.Filter,
+      PartialDiscriminatedUnion.Identifier
+    >(
+      [
+        {
+          filter: PartialDiscriminatedUnion.filter,
+          fromRdfResource: PartialDiscriminatedUnionMember1.fromRdfResource,
+          fromRdfTypes: [
+            PartialDiscriminatedUnionMember1.schema.properties.$rdfType
+              .fromRdfType,
+          ],
+        },
+        {
+          filter: PartialDiscriminatedUnion.filter,
+          fromRdfResource: PartialDiscriminatedUnionMember2.fromRdfResource,
+          fromRdfTypes: [
+            PartialDiscriminatedUnionMember2.schema.properties.$rdfType
+              .fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
+  }
+
+  async recursiveDiscriminatedUnion(
+    identifier: RecursiveDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, RecursiveDiscriminatedUnion>> {
+    return this.recursiveDiscriminatedUnionSync(identifier, options);
+  }
+
+  recursiveDiscriminatedUnionSync(
+    identifier: RecursiveDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, RecursiveDiscriminatedUnion> {
+    return this.recursiveDiscriminatedUnionsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async recursiveDiscriminatedUnionCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        RecursiveDiscriminatedUnion.Filter,
+        RecursiveDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.recursiveDiscriminatedUnionCountSync(query);
+  }
+
+  recursiveDiscriminatedUnionCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        RecursiveDiscriminatedUnion.Filter,
+        RecursiveDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.recursiveDiscriminatedUnionsSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async recursiveDiscriminatedUnionIdentifiers(
+    query?: $ObjectSet.Query<
+      RecursiveDiscriminatedUnion.Filter,
+      RecursiveDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnion.Identifier[]>> {
+    return this.recursiveDiscriminatedUnionIdentifiersSync(query);
+  }
+
+  recursiveDiscriminatedUnionIdentifiersSync(
+    query?: $ObjectSet.Query<
+      RecursiveDiscriminatedUnion.Filter,
+      RecursiveDiscriminatedUnion.Identifier
+    >,
+  ): Either<Error, readonly RecursiveDiscriminatedUnion.Identifier[]> {
+    return this.recursiveDiscriminatedUnionsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async recursiveDiscriminatedUnions(
+    query?: $ObjectSet.Query<
+      RecursiveDiscriminatedUnion.Filter,
+      RecursiveDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnion[]>> {
+    return this.recursiveDiscriminatedUnionsSync(query);
+  }
+
+  recursiveDiscriminatedUnionsSync(
+    query?: $ObjectSet.Query<
+      RecursiveDiscriminatedUnion.Filter,
+      RecursiveDiscriminatedUnion.Identifier
+    >,
+  ): Either<Error, readonly RecursiveDiscriminatedUnion[]> {
+    return this.#objectDiscriminatedUnionsSync<
+      RecursiveDiscriminatedUnion,
+      RecursiveDiscriminatedUnion.Filter,
+      RecursiveDiscriminatedUnion.Identifier
+    >(
+      [
+        {
+          filter: RecursiveDiscriminatedUnion.filter,
+          fromRdfResource: RecursiveDiscriminatedUnionMember1.fromRdfResource,
+          fromRdfTypes: [
+            RecursiveDiscriminatedUnionMember1.schema.properties.$rdfType
+              .fromRdfType,
+          ],
+        },
+        {
+          filter: RecursiveDiscriminatedUnion.filter,
+          fromRdfResource: RecursiveDiscriminatedUnionMember2.fromRdfResource,
+          fromRdfTypes: [
+            RecursiveDiscriminatedUnionMember2.schema.properties.$rdfType
+              .fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
+  }
+
+  async structDiscriminatedUnion(
+    identifier: StructDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructDiscriminatedUnion>> {
+    return this.structDiscriminatedUnionSync(identifier, options);
+  }
+
+  structDiscriminatedUnionSync(
+    identifier: StructDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, StructDiscriminatedUnion> {
+    return this.structDiscriminatedUnionsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async structDiscriminatedUnionCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructDiscriminatedUnion.Filter,
+        StructDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.structDiscriminatedUnionCountSync(query);
+  }
+
+  structDiscriminatedUnionCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructDiscriminatedUnion.Filter,
+        StructDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.structDiscriminatedUnionsSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async structDiscriminatedUnionIdentifiers(
+    query?: $ObjectSet.Query<
+      StructDiscriminatedUnion.Filter,
+      StructDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructDiscriminatedUnion.Identifier[]>> {
+    return this.structDiscriminatedUnionIdentifiersSync(query);
+  }
+
+  structDiscriminatedUnionIdentifiersSync(
+    query?: $ObjectSet.Query<
+      StructDiscriminatedUnion.Filter,
+      StructDiscriminatedUnion.Identifier
+    >,
+  ): Either<Error, readonly StructDiscriminatedUnion.Identifier[]> {
+    return this.structDiscriminatedUnionsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async structDiscriminatedUnions(
+    query?: $ObjectSet.Query<
+      StructDiscriminatedUnion.Filter,
+      StructDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructDiscriminatedUnion[]>> {
+    return this.structDiscriminatedUnionsSync(query);
+  }
+
+  structDiscriminatedUnionsSync(
+    query?: $ObjectSet.Query<
+      StructDiscriminatedUnion.Filter,
+      StructDiscriminatedUnion.Identifier
+    >,
+  ): Either<Error, readonly StructDiscriminatedUnion[]> {
+    return this.#objectDiscriminatedUnionsSync<
+      StructDiscriminatedUnion,
+      StructDiscriminatedUnion.Filter,
+      StructDiscriminatedUnion.Identifier
+    >(
+      [
+        {
+          filter: StructDiscriminatedUnion.filter,
+          fromRdfResource: StructDiscriminatedUnionMember1.fromRdfResource,
+          fromRdfTypes: [
+            StructDiscriminatedUnionMember1.schema.properties.$rdfType
+              .fromRdfType,
+          ],
+        },
+        {
+          filter: StructDiscriminatedUnion.filter,
+          fromRdfResource: StructDiscriminatedUnionMember2.fromRdfResource,
+          fromRdfTypes: [
+            StructDiscriminatedUnionMember2.schema.properties.$rdfType
+              .fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
+  }
+
+  async structIntersection(
+    identifier: StructIntersection.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructIntersection>> {
+    return this.structIntersectionSync(identifier, options);
+  }
+
+  structIntersectionSync(
+    identifier: StructIntersection.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, StructIntersection> {
+    return this.structIntersectionsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async structIntersectionCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructIntersection.Filter,
+        StructIntersection.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.structIntersectionCountSync(query);
+  }
+
+  structIntersectionCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructIntersection.Filter,
+        StructIntersection.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.structIntersectionsSync(query).map((objects) => objects.length);
+  }
+
+  async structIntersectionIdentifiers(
+    query?: $ObjectSet.Query<
+      StructIntersection.Filter,
+      StructIntersection.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructIntersection.Identifier[]>> {
+    return this.structIntersectionIdentifiersSync(query);
+  }
+
+  structIntersectionIdentifiersSync(
+    query?: $ObjectSet.Query<
+      StructIntersection.Filter,
+      StructIntersection.Identifier
+    >,
+  ): Either<Error, readonly StructIntersection.Identifier[]> {
+    return this.structIntersectionsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async structIntersections(
+    query?: $ObjectSet.Query<
+      StructIntersection.Filter,
+      StructIntersection.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructIntersection[]>> {
+    return this.structIntersectionsSync(query);
+  }
+
+  structIntersectionsSync(
+    query?: $ObjectSet.Query<
+      StructIntersection.Filter,
+      StructIntersection.Identifier
+    >,
+  ): Either<Error, readonly StructIntersection[]> {
+    return this.#objectsSync<
+      StructIntersection,
+      StructIntersection.Filter,
+      StructIntersection.Identifier
+    >(
+      {
+        filter: StructIntersection.filter,
+        fromRdfResource: StructIntersection.fromRdfResource,
+        fromRdfTypes: [],
+      },
+      query,
+    );
   }
 
   async anonymousTypesStruct(
@@ -71005,642 +71766,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async flattenDiscriminatedUnion(
-    identifier: FlattenDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, FlattenDiscriminatedUnion>> {
-    return this.flattenDiscriminatedUnionSync(identifier, options);
-  }
-
-  flattenDiscriminatedUnionSync(
-    identifier: FlattenDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, FlattenDiscriminatedUnion> {
-    return this.flattenDiscriminatedUnionsSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async flattenDiscriminatedUnionCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        FlattenDiscriminatedUnion.Filter,
-        FlattenDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.flattenDiscriminatedUnionCountSync(query);
-  }
-
-  flattenDiscriminatedUnionCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        FlattenDiscriminatedUnion.Filter,
-        FlattenDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.flattenDiscriminatedUnionsSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async flattenDiscriminatedUnionIdentifiers(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion.Identifier[]>> {
-    return this.flattenDiscriminatedUnionIdentifiersSync(query);
-  }
-
-  flattenDiscriminatedUnionIdentifiersSync(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >,
-  ): Either<Error, readonly FlattenDiscriminatedUnion.Identifier[]> {
-    return this.flattenDiscriminatedUnionsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async flattenDiscriminatedUnions(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion[]>> {
-    return this.flattenDiscriminatedUnionsSync(query);
-  }
-
-  flattenDiscriminatedUnionsSync(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >,
-  ): Either<Error, readonly FlattenDiscriminatedUnion[]> {
-    return this.#objectDiscriminatedUnionsSync<
-      FlattenDiscriminatedUnion,
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >(
-      [
-        {
-          filter: FlattenDiscriminatedUnion.filter,
-          fromRdfResource: StructDiscriminatedUnionMember1.fromRdfResource,
-          fromRdfTypes: [
-            StructDiscriminatedUnionMember1.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-        },
-        {
-          filter: FlattenDiscriminatedUnion.filter,
-          fromRdfResource: StructDiscriminatedUnionMember2.fromRdfResource,
-          fromRdfTypes: [
-            StructDiscriminatedUnionMember2.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-        },
-        {
-          filter: FlattenDiscriminatedUnion.filter,
-          fromRdfResource: FlattenDiscriminatedUnionMember3.fromRdfResource,
-          fromRdfTypes: [
-            FlattenDiscriminatedUnionMember3.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-        },
-      ],
-      query,
-    );
-  }
-
-  async lazilyResolvedDiscriminatedUnion(
-    identifier: LazilyResolvedDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazilyResolvedDiscriminatedUnion>> {
-    return this.lazilyResolvedDiscriminatedUnionSync(identifier, options);
-  }
-
-  lazilyResolvedDiscriminatedUnionSync(
-    identifier: LazilyResolvedDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, LazilyResolvedDiscriminatedUnion> {
-    return this.lazilyResolvedDiscriminatedUnionsSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async lazilyResolvedDiscriminatedUnionCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        LazilyResolvedDiscriminatedUnion.Filter,
-        LazilyResolvedDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.lazilyResolvedDiscriminatedUnionCountSync(query);
-  }
-
-  lazilyResolvedDiscriminatedUnionCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        LazilyResolvedDiscriminatedUnion.Filter,
-        LazilyResolvedDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.lazilyResolvedDiscriminatedUnionsSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async lazilyResolvedDiscriminatedUnionIdentifiers(
-    query?: $ObjectSet.Query<
-      LazilyResolvedDiscriminatedUnion.Filter,
-      LazilyResolvedDiscriminatedUnion.Identifier
-    >,
-  ): Promise<
-    Either<Error, readonly LazilyResolvedDiscriminatedUnion.Identifier[]>
-  > {
-    return this.lazilyResolvedDiscriminatedUnionIdentifiersSync(query);
-  }
-
-  lazilyResolvedDiscriminatedUnionIdentifiersSync(
-    query?: $ObjectSet.Query<
-      LazilyResolvedDiscriminatedUnion.Filter,
-      LazilyResolvedDiscriminatedUnion.Identifier
-    >,
-  ): Either<Error, readonly LazilyResolvedDiscriminatedUnion.Identifier[]> {
-    return this.lazilyResolvedDiscriminatedUnionsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async lazilyResolvedDiscriminatedUnions(
-    query?: $ObjectSet.Query<
-      LazilyResolvedDiscriminatedUnion.Filter,
-      LazilyResolvedDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly LazilyResolvedDiscriminatedUnion[]>> {
-    return this.lazilyResolvedDiscriminatedUnionsSync(query);
-  }
-
-  lazilyResolvedDiscriminatedUnionsSync(
-    query?: $ObjectSet.Query<
-      LazilyResolvedDiscriminatedUnion.Filter,
-      LazilyResolvedDiscriminatedUnion.Identifier
-    >,
-  ): Either<Error, readonly LazilyResolvedDiscriminatedUnion[]> {
-    return this.#objectDiscriminatedUnionsSync<
-      LazilyResolvedDiscriminatedUnion,
-      LazilyResolvedDiscriminatedUnion.Filter,
-      LazilyResolvedDiscriminatedUnion.Identifier
-    >(
-      [
-        {
-          filter: LazilyResolvedDiscriminatedUnion.filter,
-          fromRdfResource:
-            LazilyResolvedDiscriminatedUnionMember1.fromRdfResource,
-          fromRdfTypes: [
-            LazilyResolvedDiscriminatedUnionMember1.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-        },
-        {
-          filter: LazilyResolvedDiscriminatedUnion.filter,
-          fromRdfResource:
-            LazilyResolvedDiscriminatedUnionMember2.fromRdfResource,
-          fromRdfTypes: [
-            LazilyResolvedDiscriminatedUnionMember2.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-        },
-      ],
-      query,
-    );
-  }
-
-  async noRdfTypeDiscriminatedUnion(
-    identifier: NoRdfTypeDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnion>> {
-    return this.noRdfTypeDiscriminatedUnionSync(identifier, options);
-  }
-
-  noRdfTypeDiscriminatedUnionSync(
-    identifier: NoRdfTypeDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, NoRdfTypeDiscriminatedUnion> {
-    return this.noRdfTypeDiscriminatedUnionsSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async noRdfTypeDiscriminatedUnionCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        NoRdfTypeDiscriminatedUnion.Filter,
-        NoRdfTypeDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.noRdfTypeDiscriminatedUnionCountSync(query);
-  }
-
-  noRdfTypeDiscriminatedUnionCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        NoRdfTypeDiscriminatedUnion.Filter,
-        NoRdfTypeDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.noRdfTypeDiscriminatedUnionsSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async noRdfTypeDiscriminatedUnionIdentifiers(
-    query?: $ObjectSet.Query<
-      NoRdfTypeDiscriminatedUnion.Filter,
-      NoRdfTypeDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnion.Identifier[]>> {
-    return this.noRdfTypeDiscriminatedUnionIdentifiersSync(query);
-  }
-
-  noRdfTypeDiscriminatedUnionIdentifiersSync(
-    query?: $ObjectSet.Query<
-      NoRdfTypeDiscriminatedUnion.Filter,
-      NoRdfTypeDiscriminatedUnion.Identifier
-    >,
-  ): Either<Error, readonly NoRdfTypeDiscriminatedUnion.Identifier[]> {
-    return this.noRdfTypeDiscriminatedUnionsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async noRdfTypeDiscriminatedUnions(
-    query?: $ObjectSet.Query<
-      NoRdfTypeDiscriminatedUnion.Filter,
-      NoRdfTypeDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnion[]>> {
-    return this.noRdfTypeDiscriminatedUnionsSync(query);
-  }
-
-  noRdfTypeDiscriminatedUnionsSync(
-    query?: $ObjectSet.Query<
-      NoRdfTypeDiscriminatedUnion.Filter,
-      NoRdfTypeDiscriminatedUnion.Identifier
-    >,
-  ): Either<Error, readonly NoRdfTypeDiscriminatedUnion[]> {
-    return this.#objectDiscriminatedUnionsSync<
-      NoRdfTypeDiscriminatedUnion,
-      NoRdfTypeDiscriminatedUnion.Filter,
-      NoRdfTypeDiscriminatedUnion.Identifier
-    >(
-      [
-        {
-          filter: NoRdfTypeDiscriminatedUnion.filter,
-          fromRdfResource: NoRdfTypeDiscriminatedUnionMember1.fromRdfResource,
-          fromRdfTypes: [],
-        },
-        {
-          filter: NoRdfTypeDiscriminatedUnion.filter,
-          fromRdfResource: NoRdfTypeDiscriminatedUnionMember2.fromRdfResource,
-          fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
-  }
-
-  async partialDiscriminatedUnion(
-    identifier: PartialDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PartialDiscriminatedUnion>> {
-    return this.partialDiscriminatedUnionSync(identifier, options);
-  }
-
-  partialDiscriminatedUnionSync(
-    identifier: PartialDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, PartialDiscriminatedUnion> {
-    return this.partialDiscriminatedUnionsSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async partialDiscriminatedUnionCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        PartialDiscriminatedUnion.Filter,
-        PartialDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.partialDiscriminatedUnionCountSync(query);
-  }
-
-  partialDiscriminatedUnionCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        PartialDiscriminatedUnion.Filter,
-        PartialDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.partialDiscriminatedUnionsSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async partialDiscriminatedUnionIdentifiers(
-    query?: $ObjectSet.Query<
-      PartialDiscriminatedUnion.Filter,
-      PartialDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly PartialDiscriminatedUnion.Identifier[]>> {
-    return this.partialDiscriminatedUnionIdentifiersSync(query);
-  }
-
-  partialDiscriminatedUnionIdentifiersSync(
-    query?: $ObjectSet.Query<
-      PartialDiscriminatedUnion.Filter,
-      PartialDiscriminatedUnion.Identifier
-    >,
-  ): Either<Error, readonly PartialDiscriminatedUnion.Identifier[]> {
-    return this.partialDiscriminatedUnionsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async partialDiscriminatedUnions(
-    query?: $ObjectSet.Query<
-      PartialDiscriminatedUnion.Filter,
-      PartialDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly PartialDiscriminatedUnion[]>> {
-    return this.partialDiscriminatedUnionsSync(query);
-  }
-
-  partialDiscriminatedUnionsSync(
-    query?: $ObjectSet.Query<
-      PartialDiscriminatedUnion.Filter,
-      PartialDiscriminatedUnion.Identifier
-    >,
-  ): Either<Error, readonly PartialDiscriminatedUnion[]> {
-    return this.#objectDiscriminatedUnionsSync<
-      PartialDiscriminatedUnion,
-      PartialDiscriminatedUnion.Filter,
-      PartialDiscriminatedUnion.Identifier
-    >(
-      [
-        {
-          filter: PartialDiscriminatedUnion.filter,
-          fromRdfResource: PartialDiscriminatedUnionMember1.fromRdfResource,
-          fromRdfTypes: [
-            PartialDiscriminatedUnionMember1.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-        },
-        {
-          filter: PartialDiscriminatedUnion.filter,
-          fromRdfResource: PartialDiscriminatedUnionMember2.fromRdfResource,
-          fromRdfTypes: [
-            PartialDiscriminatedUnionMember2.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-        },
-      ],
-      query,
-    );
-  }
-
-  async recursiveDiscriminatedUnion(
-    identifier: RecursiveDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, RecursiveDiscriminatedUnion>> {
-    return this.recursiveDiscriminatedUnionSync(identifier, options);
-  }
-
-  recursiveDiscriminatedUnionSync(
-    identifier: RecursiveDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, RecursiveDiscriminatedUnion> {
-    return this.recursiveDiscriminatedUnionsSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async recursiveDiscriminatedUnionCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        RecursiveDiscriminatedUnion.Filter,
-        RecursiveDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.recursiveDiscriminatedUnionCountSync(query);
-  }
-
-  recursiveDiscriminatedUnionCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        RecursiveDiscriminatedUnion.Filter,
-        RecursiveDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.recursiveDiscriminatedUnionsSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async recursiveDiscriminatedUnionIdentifiers(
-    query?: $ObjectSet.Query<
-      RecursiveDiscriminatedUnion.Filter,
-      RecursiveDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnion.Identifier[]>> {
-    return this.recursiveDiscriminatedUnionIdentifiersSync(query);
-  }
-
-  recursiveDiscriminatedUnionIdentifiersSync(
-    query?: $ObjectSet.Query<
-      RecursiveDiscriminatedUnion.Filter,
-      RecursiveDiscriminatedUnion.Identifier
-    >,
-  ): Either<Error, readonly RecursiveDiscriminatedUnion.Identifier[]> {
-    return this.recursiveDiscriminatedUnionsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async recursiveDiscriminatedUnions(
-    query?: $ObjectSet.Query<
-      RecursiveDiscriminatedUnion.Filter,
-      RecursiveDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnion[]>> {
-    return this.recursiveDiscriminatedUnionsSync(query);
-  }
-
-  recursiveDiscriminatedUnionsSync(
-    query?: $ObjectSet.Query<
-      RecursiveDiscriminatedUnion.Filter,
-      RecursiveDiscriminatedUnion.Identifier
-    >,
-  ): Either<Error, readonly RecursiveDiscriminatedUnion[]> {
-    return this.#objectDiscriminatedUnionsSync<
-      RecursiveDiscriminatedUnion,
-      RecursiveDiscriminatedUnion.Filter,
-      RecursiveDiscriminatedUnion.Identifier
-    >(
-      [
-        {
-          filter: RecursiveDiscriminatedUnion.filter,
-          fromRdfResource: RecursiveDiscriminatedUnionMember1.fromRdfResource,
-          fromRdfTypes: [
-            RecursiveDiscriminatedUnionMember1.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-        },
-        {
-          filter: RecursiveDiscriminatedUnion.filter,
-          fromRdfResource: RecursiveDiscriminatedUnionMember2.fromRdfResource,
-          fromRdfTypes: [
-            RecursiveDiscriminatedUnionMember2.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-        },
-      ],
-      query,
-    );
-  }
-
-  async structDiscriminatedUnion(
-    identifier: StructDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructDiscriminatedUnion>> {
-    return this.structDiscriminatedUnionSync(identifier, options);
-  }
-
-  structDiscriminatedUnionSync(
-    identifier: StructDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, StructDiscriminatedUnion> {
-    return this.structDiscriminatedUnionsSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async structDiscriminatedUnionCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        StructDiscriminatedUnion.Filter,
-        StructDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.structDiscriminatedUnionCountSync(query);
-  }
-
-  structDiscriminatedUnionCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        StructDiscriminatedUnion.Filter,
-        StructDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.structDiscriminatedUnionsSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async structDiscriminatedUnionIdentifiers(
-    query?: $ObjectSet.Query<
-      StructDiscriminatedUnion.Filter,
-      StructDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly StructDiscriminatedUnion.Identifier[]>> {
-    return this.structDiscriminatedUnionIdentifiersSync(query);
-  }
-
-  structDiscriminatedUnionIdentifiersSync(
-    query?: $ObjectSet.Query<
-      StructDiscriminatedUnion.Filter,
-      StructDiscriminatedUnion.Identifier
-    >,
-  ): Either<Error, readonly StructDiscriminatedUnion.Identifier[]> {
-    return this.structDiscriminatedUnionsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async structDiscriminatedUnions(
-    query?: $ObjectSet.Query<
-      StructDiscriminatedUnion.Filter,
-      StructDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly StructDiscriminatedUnion[]>> {
-    return this.structDiscriminatedUnionsSync(query);
-  }
-
-  structDiscriminatedUnionsSync(
-    query?: $ObjectSet.Query<
-      StructDiscriminatedUnion.Filter,
-      StructDiscriminatedUnion.Identifier
-    >,
-  ): Either<Error, readonly StructDiscriminatedUnion[]> {
-    return this.#objectDiscriminatedUnionsSync<
-      StructDiscriminatedUnion,
-      StructDiscriminatedUnion.Filter,
-      StructDiscriminatedUnion.Identifier
-    >(
-      [
-        {
-          filter: StructDiscriminatedUnion.filter,
-          fromRdfResource: StructDiscriminatedUnionMember1.fromRdfResource,
-          fromRdfTypes: [
-            StructDiscriminatedUnionMember1.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-        },
-        {
-          filter: StructDiscriminatedUnion.filter,
-          fromRdfResource: StructDiscriminatedUnionMember2.fromRdfResource,
-          fromRdfTypes: [
-            StructDiscriminatedUnionMember2.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-        },
-      ],
-      query,
-    );
-  }
-
   #objectsSync<
     ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
     ObjectFilterT,
@@ -71948,6 +72073,372 @@ export class $SparqlObjectSet implements $ObjectSet {
   ) {
     this.#graph = options?.graph;
     this.#sparqlClient = sparqlClient;
+  }
+
+  async flattenDiscriminatedUnion(
+    identifier: FlattenDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, FlattenDiscriminatedUnion>> {
+    return (
+      await this.flattenDiscriminatedUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async flattenDiscriminatedUnionCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        FlattenDiscriminatedUnion.Filter,
+        FlattenDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      FlattenDiscriminatedUnion.Filter,
+      FlattenDiscriminatedUnion.Identifier
+    >(FlattenDiscriminatedUnion, query);
+  }
+
+  async flattenDiscriminatedUnionIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      FlattenDiscriminatedUnion.Filter,
+      FlattenDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion.Identifier[]>> {
+    return this.#objectIdentifiers<
+      FlattenDiscriminatedUnion.Filter,
+      FlattenDiscriminatedUnion.Identifier
+    >(FlattenDiscriminatedUnion, query);
+  }
+
+  async flattenDiscriminatedUnions(
+    query?: $SparqlObjectSet.Query<
+      FlattenDiscriminatedUnion.Filter,
+      FlattenDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion[]>> {
+    return this.#objects<
+      FlattenDiscriminatedUnion,
+      FlattenDiscriminatedUnion.Filter,
+      FlattenDiscriminatedUnion.Identifier
+    >(FlattenDiscriminatedUnion, query);
+  }
+
+  async lazilyResolvedDiscriminatedUnion(
+    identifier: LazilyResolvedDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, LazilyResolvedDiscriminatedUnion>> {
+    return (
+      await this.lazilyResolvedDiscriminatedUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async lazilyResolvedDiscriminatedUnionCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        LazilyResolvedDiscriminatedUnion.Filter,
+        LazilyResolvedDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      LazilyResolvedDiscriminatedUnion.Filter,
+      LazilyResolvedDiscriminatedUnion.Identifier
+    >(LazilyResolvedDiscriminatedUnion, query);
+  }
+
+  async lazilyResolvedDiscriminatedUnionIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      LazilyResolvedDiscriminatedUnion.Filter,
+      LazilyResolvedDiscriminatedUnion.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly LazilyResolvedDiscriminatedUnion.Identifier[]>
+  > {
+    return this.#objectIdentifiers<
+      LazilyResolvedDiscriminatedUnion.Filter,
+      LazilyResolvedDiscriminatedUnion.Identifier
+    >(LazilyResolvedDiscriminatedUnion, query);
+  }
+
+  async lazilyResolvedDiscriminatedUnions(
+    query?: $SparqlObjectSet.Query<
+      LazilyResolvedDiscriminatedUnion.Filter,
+      LazilyResolvedDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly LazilyResolvedDiscriminatedUnion[]>> {
+    return this.#objects<
+      LazilyResolvedDiscriminatedUnion,
+      LazilyResolvedDiscriminatedUnion.Filter,
+      LazilyResolvedDiscriminatedUnion.Identifier
+    >(LazilyResolvedDiscriminatedUnion, query);
+  }
+
+  async noRdfTypeDiscriminatedUnion(
+    identifier: NoRdfTypeDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnion>> {
+    return (
+      await this.noRdfTypeDiscriminatedUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async noRdfTypeDiscriminatedUnionCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        NoRdfTypeDiscriminatedUnion.Filter,
+        NoRdfTypeDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      NoRdfTypeDiscriminatedUnion.Filter,
+      NoRdfTypeDiscriminatedUnion.Identifier
+    >(NoRdfTypeDiscriminatedUnion, query);
+  }
+
+  async noRdfTypeDiscriminatedUnionIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      NoRdfTypeDiscriminatedUnion.Filter,
+      NoRdfTypeDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnion.Identifier[]>> {
+    return this.#objectIdentifiers<
+      NoRdfTypeDiscriminatedUnion.Filter,
+      NoRdfTypeDiscriminatedUnion.Identifier
+    >(NoRdfTypeDiscriminatedUnion, query);
+  }
+
+  async noRdfTypeDiscriminatedUnions(
+    query?: $SparqlObjectSet.Query<
+      NoRdfTypeDiscriminatedUnion.Filter,
+      NoRdfTypeDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnion[]>> {
+    return this.#objects<
+      NoRdfTypeDiscriminatedUnion,
+      NoRdfTypeDiscriminatedUnion.Filter,
+      NoRdfTypeDiscriminatedUnion.Identifier
+    >(NoRdfTypeDiscriminatedUnion, query);
+  }
+
+  async partialDiscriminatedUnion(
+    identifier: PartialDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, PartialDiscriminatedUnion>> {
+    return (
+      await this.partialDiscriminatedUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async partialDiscriminatedUnionCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        PartialDiscriminatedUnion.Filter,
+        PartialDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      PartialDiscriminatedUnion.Filter,
+      PartialDiscriminatedUnion.Identifier
+    >(PartialDiscriminatedUnion, query);
+  }
+
+  async partialDiscriminatedUnionIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      PartialDiscriminatedUnion.Filter,
+      PartialDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly PartialDiscriminatedUnion.Identifier[]>> {
+    return this.#objectIdentifiers<
+      PartialDiscriminatedUnion.Filter,
+      PartialDiscriminatedUnion.Identifier
+    >(PartialDiscriminatedUnion, query);
+  }
+
+  async partialDiscriminatedUnions(
+    query?: $SparqlObjectSet.Query<
+      PartialDiscriminatedUnion.Filter,
+      PartialDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly PartialDiscriminatedUnion[]>> {
+    return this.#objects<
+      PartialDiscriminatedUnion,
+      PartialDiscriminatedUnion.Filter,
+      PartialDiscriminatedUnion.Identifier
+    >(PartialDiscriminatedUnion, query);
+  }
+
+  async recursiveDiscriminatedUnion(
+    identifier: RecursiveDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, RecursiveDiscriminatedUnion>> {
+    return (
+      await this.recursiveDiscriminatedUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async recursiveDiscriminatedUnionCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        RecursiveDiscriminatedUnion.Filter,
+        RecursiveDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      RecursiveDiscriminatedUnion.Filter,
+      RecursiveDiscriminatedUnion.Identifier
+    >(RecursiveDiscriminatedUnion, query);
+  }
+
+  async recursiveDiscriminatedUnionIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      RecursiveDiscriminatedUnion.Filter,
+      RecursiveDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnion.Identifier[]>> {
+    return this.#objectIdentifiers<
+      RecursiveDiscriminatedUnion.Filter,
+      RecursiveDiscriminatedUnion.Identifier
+    >(RecursiveDiscriminatedUnion, query);
+  }
+
+  async recursiveDiscriminatedUnions(
+    query?: $SparqlObjectSet.Query<
+      RecursiveDiscriminatedUnion.Filter,
+      RecursiveDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnion[]>> {
+    return this.#objects<
+      RecursiveDiscriminatedUnion,
+      RecursiveDiscriminatedUnion.Filter,
+      RecursiveDiscriminatedUnion.Identifier
+    >(RecursiveDiscriminatedUnion, query);
+  }
+
+  async structDiscriminatedUnion(
+    identifier: StructDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructDiscriminatedUnion>> {
+    return (
+      await this.structDiscriminatedUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async structDiscriminatedUnionCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        StructDiscriminatedUnion.Filter,
+        StructDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      StructDiscriminatedUnion.Filter,
+      StructDiscriminatedUnion.Identifier
+    >(StructDiscriminatedUnion, query);
+  }
+
+  async structDiscriminatedUnionIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      StructDiscriminatedUnion.Filter,
+      StructDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructDiscriminatedUnion.Identifier[]>> {
+    return this.#objectIdentifiers<
+      StructDiscriminatedUnion.Filter,
+      StructDiscriminatedUnion.Identifier
+    >(StructDiscriminatedUnion, query);
+  }
+
+  async structDiscriminatedUnions(
+    query?: $SparqlObjectSet.Query<
+      StructDiscriminatedUnion.Filter,
+      StructDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructDiscriminatedUnion[]>> {
+    return this.#objects<
+      StructDiscriminatedUnion,
+      StructDiscriminatedUnion.Filter,
+      StructDiscriminatedUnion.Identifier
+    >(StructDiscriminatedUnion, query);
+  }
+
+  async structIntersection(
+    identifier: StructIntersection.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructIntersection>> {
+    return (
+      await this.structIntersections({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async structIntersectionCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        StructIntersection.Filter,
+        StructIntersection.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      StructIntersection.Filter,
+      StructIntersection.Identifier
+    >(StructIntersection, query);
+  }
+
+  async structIntersectionIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      StructIntersection.Filter,
+      StructIntersection.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructIntersection.Identifier[]>> {
+    return this.#objectIdentifiers<
+      StructIntersection.Filter,
+      StructIntersection.Identifier
+    >(StructIntersection, query);
+  }
+
+  async structIntersections(
+    query?: $SparqlObjectSet.Query<
+      StructIntersection.Filter,
+      StructIntersection.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructIntersection[]>> {
+    return this.#objects<
+      StructIntersection,
+      StructIntersection.Filter,
+      StructIntersection.Identifier
+    >(StructIntersection, query);
   }
 
   async anonymousTypesStruct(
@@ -74694,320 +75185,6 @@ export class $SparqlObjectSet implements $ObjectSet {
       UnionDiscriminantsStruct.Filter,
       UnionDiscriminantsStruct.Identifier
     >(UnionDiscriminantsStruct, query);
-  }
-
-  async flattenDiscriminatedUnion(
-    identifier: FlattenDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, FlattenDiscriminatedUnion>> {
-    return (
-      await this.flattenDiscriminatedUnions({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async flattenDiscriminatedUnionCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        FlattenDiscriminatedUnion.Filter,
-        FlattenDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.#objectCount<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >(FlattenDiscriminatedUnion, query);
-  }
-
-  async flattenDiscriminatedUnionIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion.Identifier[]>> {
-    return this.#objectIdentifiers<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >(FlattenDiscriminatedUnion, query);
-  }
-
-  async flattenDiscriminatedUnions(
-    query?: $SparqlObjectSet.Query<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion[]>> {
-    return this.#objects<
-      FlattenDiscriminatedUnion,
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >(FlattenDiscriminatedUnion, query);
-  }
-
-  async lazilyResolvedDiscriminatedUnion(
-    identifier: LazilyResolvedDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazilyResolvedDiscriminatedUnion>> {
-    return (
-      await this.lazilyResolvedDiscriminatedUnions({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async lazilyResolvedDiscriminatedUnionCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        LazilyResolvedDiscriminatedUnion.Filter,
-        LazilyResolvedDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.#objectCount<
-      LazilyResolvedDiscriminatedUnion.Filter,
-      LazilyResolvedDiscriminatedUnion.Identifier
-    >(LazilyResolvedDiscriminatedUnion, query);
-  }
-
-  async lazilyResolvedDiscriminatedUnionIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      LazilyResolvedDiscriminatedUnion.Filter,
-      LazilyResolvedDiscriminatedUnion.Identifier
-    >,
-  ): Promise<
-    Either<Error, readonly LazilyResolvedDiscriminatedUnion.Identifier[]>
-  > {
-    return this.#objectIdentifiers<
-      LazilyResolvedDiscriminatedUnion.Filter,
-      LazilyResolvedDiscriminatedUnion.Identifier
-    >(LazilyResolvedDiscriminatedUnion, query);
-  }
-
-  async lazilyResolvedDiscriminatedUnions(
-    query?: $SparqlObjectSet.Query<
-      LazilyResolvedDiscriminatedUnion.Filter,
-      LazilyResolvedDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly LazilyResolvedDiscriminatedUnion[]>> {
-    return this.#objects<
-      LazilyResolvedDiscriminatedUnion,
-      LazilyResolvedDiscriminatedUnion.Filter,
-      LazilyResolvedDiscriminatedUnion.Identifier
-    >(LazilyResolvedDiscriminatedUnion, query);
-  }
-
-  async noRdfTypeDiscriminatedUnion(
-    identifier: NoRdfTypeDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnion>> {
-    return (
-      await this.noRdfTypeDiscriminatedUnions({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async noRdfTypeDiscriminatedUnionCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        NoRdfTypeDiscriminatedUnion.Filter,
-        NoRdfTypeDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.#objectCount<
-      NoRdfTypeDiscriminatedUnion.Filter,
-      NoRdfTypeDiscriminatedUnion.Identifier
-    >(NoRdfTypeDiscriminatedUnion, query);
-  }
-
-  async noRdfTypeDiscriminatedUnionIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      NoRdfTypeDiscriminatedUnion.Filter,
-      NoRdfTypeDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnion.Identifier[]>> {
-    return this.#objectIdentifiers<
-      NoRdfTypeDiscriminatedUnion.Filter,
-      NoRdfTypeDiscriminatedUnion.Identifier
-    >(NoRdfTypeDiscriminatedUnion, query);
-  }
-
-  async noRdfTypeDiscriminatedUnions(
-    query?: $SparqlObjectSet.Query<
-      NoRdfTypeDiscriminatedUnion.Filter,
-      NoRdfTypeDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnion[]>> {
-    return this.#objects<
-      NoRdfTypeDiscriminatedUnion,
-      NoRdfTypeDiscriminatedUnion.Filter,
-      NoRdfTypeDiscriminatedUnion.Identifier
-    >(NoRdfTypeDiscriminatedUnion, query);
-  }
-
-  async partialDiscriminatedUnion(
-    identifier: PartialDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PartialDiscriminatedUnion>> {
-    return (
-      await this.partialDiscriminatedUnions({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async partialDiscriminatedUnionCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        PartialDiscriminatedUnion.Filter,
-        PartialDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.#objectCount<
-      PartialDiscriminatedUnion.Filter,
-      PartialDiscriminatedUnion.Identifier
-    >(PartialDiscriminatedUnion, query);
-  }
-
-  async partialDiscriminatedUnionIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      PartialDiscriminatedUnion.Filter,
-      PartialDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly PartialDiscriminatedUnion.Identifier[]>> {
-    return this.#objectIdentifiers<
-      PartialDiscriminatedUnion.Filter,
-      PartialDiscriminatedUnion.Identifier
-    >(PartialDiscriminatedUnion, query);
-  }
-
-  async partialDiscriminatedUnions(
-    query?: $SparqlObjectSet.Query<
-      PartialDiscriminatedUnion.Filter,
-      PartialDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly PartialDiscriminatedUnion[]>> {
-    return this.#objects<
-      PartialDiscriminatedUnion,
-      PartialDiscriminatedUnion.Filter,
-      PartialDiscriminatedUnion.Identifier
-    >(PartialDiscriminatedUnion, query);
-  }
-
-  async recursiveDiscriminatedUnion(
-    identifier: RecursiveDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, RecursiveDiscriminatedUnion>> {
-    return (
-      await this.recursiveDiscriminatedUnions({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async recursiveDiscriminatedUnionCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        RecursiveDiscriminatedUnion.Filter,
-        RecursiveDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.#objectCount<
-      RecursiveDiscriminatedUnion.Filter,
-      RecursiveDiscriminatedUnion.Identifier
-    >(RecursiveDiscriminatedUnion, query);
-  }
-
-  async recursiveDiscriminatedUnionIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      RecursiveDiscriminatedUnion.Filter,
-      RecursiveDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnion.Identifier[]>> {
-    return this.#objectIdentifiers<
-      RecursiveDiscriminatedUnion.Filter,
-      RecursiveDiscriminatedUnion.Identifier
-    >(RecursiveDiscriminatedUnion, query);
-  }
-
-  async recursiveDiscriminatedUnions(
-    query?: $SparqlObjectSet.Query<
-      RecursiveDiscriminatedUnion.Filter,
-      RecursiveDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnion[]>> {
-    return this.#objects<
-      RecursiveDiscriminatedUnion,
-      RecursiveDiscriminatedUnion.Filter,
-      RecursiveDiscriminatedUnion.Identifier
-    >(RecursiveDiscriminatedUnion, query);
-  }
-
-  async structDiscriminatedUnion(
-    identifier: StructDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructDiscriminatedUnion>> {
-    return (
-      await this.structDiscriminatedUnions({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async structDiscriminatedUnionCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        StructDiscriminatedUnion.Filter,
-        StructDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.#objectCount<
-      StructDiscriminatedUnion.Filter,
-      StructDiscriminatedUnion.Identifier
-    >(StructDiscriminatedUnion, query);
-  }
-
-  async structDiscriminatedUnionIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      StructDiscriminatedUnion.Filter,
-      StructDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly StructDiscriminatedUnion.Identifier[]>> {
-    return this.#objectIdentifiers<
-      StructDiscriminatedUnion.Filter,
-      StructDiscriminatedUnion.Identifier
-    >(StructDiscriminatedUnion, query);
-  }
-
-  async structDiscriminatedUnions(
-    query?: $SparqlObjectSet.Query<
-      StructDiscriminatedUnion.Filter,
-      StructDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly StructDiscriminatedUnion[]>> {
-    return this.#objects<
-      StructDiscriminatedUnion,
-      StructDiscriminatedUnion.Filter,
-      StructDiscriminatedUnion.Identifier
-    >(StructDiscriminatedUnion, query);
   }
 
   #mapBindingsToCount(
