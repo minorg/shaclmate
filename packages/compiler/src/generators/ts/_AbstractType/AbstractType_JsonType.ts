@@ -7,6 +7,7 @@ import type { TsGenerator } from "../TsGenerator.js";
 import {
   arrayOf,
   type Code,
+  type ConditionalOutput,
   code,
   joinCode,
   literalOf,
@@ -575,6 +576,10 @@ class JsonTypeFactory {
       name: Maybe.fromNullable(parameters?.name),
     });
   }
+
+  createSnippetJsonType(snippet: ConditionalOutput): SnippetJsonType {
+    return new SnippetJsonType(snippet);
+  }
 }
 
 type JsonType =
@@ -584,7 +589,21 @@ type JsonType =
   | JsonIntersectionType
   | JsonNumberType
   | JsonObjectType
-  | JsonStringType;
+  | JsonStringType
+  | SnippetJsonType;
+
+class SnippetJsonType {
+  readonly kind = "SnippetJson";
+  readonly name: Maybe<string>;
+  readonly expression: Code;
+  readonly schema: Code;
+
+  constructor(snippet: ConditionalOutput) {
+    this.expression = code`${snippet}`;
+    this.name = Maybe.of(snippet.usageSiteName);
+    this.schema = code`${snippet}.schema`;
+  }
+}
 
 export type AbstractType_JsonType = JsonType;
 

@@ -67,7 +67,8 @@ import { snippets_errorToProblemDetailsJson } from "./_snippets/snippets_errorTo
 import { snippets_FilterFunction } from "./_snippets/snippets_FilterFunction.js";
 import { snippets_FocusSparqlConstructTriplesFunction } from "./_snippets/snippets_FocusSparqlConstructTriplesFunction.js";
 import { snippets_FocusSparqlWherePatternsFunction } from "./_snippets/snippets_FocusSparqlWherePatternsFunction.js";
-import { snippets_FromJsonFunction } from "./_snippets/snippets_FromJsonFunction.js";
+import { snippets_FromCompactedJsonFunction } from "./_snippets/snippets_FromCompactedJsonFunction.js";
+import { snippets_FromExpandedJsonFunction } from "./_snippets/snippets_FromExpandedJsonFunction.js";
 import { snippets_FromRdfResourceFunction } from "./_snippets/snippets_FromRdfResourceFunction.js";
 import { snippets_FromRdfResourceValuesFunction } from "./_snippets/snippets_FromRdfResourceValuesFunction.js";
 import { snippets_filterArray } from "./_snippets/snippets_filterArray.js";
@@ -94,6 +95,7 @@ import { snippets_hashMaybe } from "./_snippets/snippets_hashMaybe.js";
 import { snippets_hashNumeric } from "./_snippets/snippets_hashNumeric.js";
 import { snippets_hashString } from "./_snippets/snippets_hashString.js";
 import { snippets_hashTerm } from "./_snippets/snippets_hashTerm.js";
+import { snippets_IdentifierExpandedJson } from "./_snippets/snippets_IdentifierExpandedJson.js";
 import { snippets_IdentifierFilter } from "./_snippets/snippets_IdentifierFilter.js";
 import { snippets_IdentifierSchema } from "./_snippets/snippets_IdentifierSchema.js";
 import { snippets_IdentifierSet } from "./_snippets/snippets_IdentifierSet.js";
@@ -110,6 +112,7 @@ import { snippets_LangStringSchema } from "./_snippets/snippets_LangStringSchema
 import { snippets_Lazy } from "./_snippets/snippets_Lazy.js";
 import { snippets_LazyOption } from "./_snippets/snippets_LazyOption.js";
 import { snippets_LazySet } from "./_snippets/snippets_LazySet.js";
+import { snippets_LiteralExpandedJson } from "./_snippets/snippets_LiteralExpandedJson.js";
 import { snippets_LiteralFilter } from "./_snippets/snippets_LiteralFilter.js";
 import { snippets_LiteralSchema } from "./_snippets/snippets_LiteralSchema.js";
 import { snippets_langStringFromRdfResourceValues } from "./_snippets/snippets_langStringFromRdfResourceValues.js";
@@ -172,10 +175,12 @@ import { snippets_ToRdfResourceValuesFunction } from "./_snippets/snippets_ToRdf
 import { snippets_ToStringFunction } from "./_snippets/snippets_ToStringFunction.js";
 import { snippets_ToStringRecordFunction } from "./_snippets/snippets_ToStringRecordFunction.js";
 import { snippets_termFilterSparqlPatterns } from "./_snippets/snippets_termFilterSparqlPatterns.js";
+import { snippets_termFromExpandedJson } from "./_snippets/snippets_termFromExpandedJson.js";
 import { snippets_termFromRdfResourceValues } from "./_snippets/snippets_termFromRdfResourceValues.js";
 import { snippets_termLikeFromRdfResourceValues } from "./_snippets/snippets_termLikeFromRdfResourceValues.js";
 import { snippets_termSchemaSparqlPatterns } from "./_snippets/snippets_termSchemaSparqlPatterns.js";
 import { snippets_termSparqlWherePatterns } from "./_snippets/snippets_termSparqlWherePatterns.js";
+import { snippets_termToExpandedJson } from "./_snippets/snippets_termToExpandedJson.js";
 import { snippets_toIsoDateString } from "./_snippets/snippets_toIsoDateString.js";
 import { snippets_UnwrapR } from "./_snippets/snippets_UnwrapR.js";
 import { snippets_ValidationFunction } from "./_snippets/snippets_ValidationFunction.js";
@@ -298,8 +303,13 @@ export class Snippets {
   }
 
   @Memoize()
-  get FromJsonFunction(): Snippet {
-    return this.snippet(snippets_FromJsonFunction);
+  get FromCompactedJsonFunction(): Snippet {
+    return this.snippet(snippets_FromCompactedJsonFunction);
+  }
+
+  @Memoize()
+  get FromExpandedJsonFunction(): Snippet {
+    return this.snippet(snippets_FromExpandedJsonFunction);
   }
 
   @Memoize()
@@ -320,6 +330,11 @@ export class Snippets {
   @Memoize()
   get Hasher(): Snippet {
     return this.snippet(snippets_Hasher);
+  }
+
+  @Memoize()
+  get IdentifierExpandedJson(): Snippet {
+    return this.snippet(snippets_IdentifierExpandedJson);
   }
 
   @Memoize()
@@ -365,6 +380,11 @@ export class Snippets {
   @Memoize()
   get LazySet(): Snippet {
     return this.snippet(snippets_LazySet);
+  }
+
+  @Memoize()
+  get LiteralExpandedJson(): Snippet {
+    return this.snippet(snippets_LiteralExpandedJson);
   }
 
   @Memoize()
@@ -1104,6 +1124,11 @@ export class Snippets {
   }
 
   @Memoize()
+  get termFromExpandedJson(): Snippet {
+    return this.snippet(snippets_termFromExpandedJson);
+  }
+
+  @Memoize()
   get termFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_termFromRdfResourceValues);
   }
@@ -1121,6 +1146,11 @@ export class Snippets {
   @Memoize()
   get termSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_termSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get termToExpandedJson(): Snippet {
+    return this.snippet(snippets_termToExpandedJson);
   }
 
   @Memoize()

@@ -1,20 +1,15 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { NodeKind } from "@shaclmate/shacl-ast";
-import { xsd } from "@tpluscode/rdf-ns-builders";
+
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractTermType } from "./AbstractTermType.js";
 import type { Callable } from "./Callable.js";
 import { ReferenceCallable } from "./ReferenceCallable.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
-import {
-  arrayOf,
-  type Code,
-  code,
-  joinCode,
-  literalOf,
-} from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class TermType<
   ConstantTermT extends Literal | NamedNode = Literal | NamedNode,
@@ -57,6 +52,17 @@ export class TermType<
   @Memoize()
   override get filterType(): Code {
     return code`${this.reusables.snippets.TermFilter}<${this.expression}>`;
+  }
+
+  get fromCompactJsonFunction(): Callable {
+    return this.fromExpandedJsonFunction;
+  }
+
+  @Memoize()
+  override get fromExpandedJsonFunction(): Callable {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.termFromExpandedJson}<${this.expandedJsonType.expression}, ${this.expression}, ${this.schemaType}>`,
+    );
   }
 
   @Memoize()
@@ -103,45 +109,20 @@ export class TermType<
     );
   }
 
-  override fromJsonExpression({
-    variables,
-  }: Parameters<AbstractTermType["fromJsonExpression"]>[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${[
-      ...this.nodeKinds,
-    ].reduce(
-      (combinedFromJsonExpression, nodeKind) => {
-        let fromJsonExpression: Code;
-        switch (nodeKind) {
-          case "BlankNode":
-            fromJsonExpression = code`${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
-            break;
-          case "IRI":
-            fromJsonExpression = code`${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@id"])`;
-            break;
-          case "Literal":
-            fromJsonExpression = code`${this.reusables.imports.dataFactory}.literal(${variables.value}["@value"], ${variables.value}["@language"] !== undefined ? ${variables.value}["@language"] : (${variables.value}["@type"] !== undefined ? ${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@type"]!) : undefined))`;
-            break;
-          default:
-            throw new RangeError(nodeKind);
-        }
-        return combinedFromJsonExpression == null
-          ? fromJsonExpression
-          : code`((${variables.value}.${this.configuration.objectDiscriminantProperty.jsonName} === "${NodeKind.toTermType(nodeKind)}") ? (${fromJsonExpression}) : (${combinedFromJsonExpression}))`;
-      },
-      null as Code | null,
-    )!})`;
-  }
-
   override graphqlResolveExpression(
     _parameters: Parameters<AbstractTermType["graphqlResolveExpression"]>[0],
   ): Code {
     throw new Error("not implemented");
   }
 
+  get compactedJsonType(): AbstractTermType["compactedJsonType"] {
+    return this.expandedJsonType;
+  }
+
   @Memoize()
-  override jsonType(): AbstractTermType.JsonType {
+  override get expandedJsonType(): AbstractTermType["expandedJsonType"] {
     return this.jsonTypeFactory.createJsonDiscriminatedUnionType(
-      [...this.nodeKinds].map((nodeKind) => {
+      [...this.nodeKinds].flatMap((nodeKind) => {
         const discriminantProperty = singleEntryRecord(
           this.configuration.objectDiscriminantProperty.jsonName,
           {
@@ -184,42 +165,18 @@ export class TermType<
     );
   }
 
-  override toJsonExpression({
-    variables,
-  }: Parameters<AbstractTermType["toJsonExpression"]>[0]): Code {
-    return [...this.nodeKinds].reduce(
-      (combinedToJsonExpression, nodeKind) => {
-        const toJsonExpression: Record<string, Code> = {};
-        toJsonExpression[
-          this.configuration.objectDiscriminantProperty.jsonName
-        ] = code`${literalOf(NodeKind.toTermType(nodeKind))} as const`;
-        switch (nodeKind) {
-          case "BlankNode":
-            toJsonExpression["@id"] = code`\`_:\${${variables.value}.value}\``;
-            break;
-          case "IRI":
-            toJsonExpression["@id"] = code`${variables.value}.value`;
-            break;
-          case "Literal":
-            toJsonExpression["@language"] =
-              code`${variables.value}.language.length > 0 ? ${variables.value}.language : undefined`;
-            toJsonExpression["@type"] =
-              code`${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined`;
-            toJsonExpression["@value"] = code`${variables.value}.value`;
-            break;
-        }
+  override get toCompactJsonFunction(): Callable {
+    return this.toExpandedJsonFunction;
+  }
 
-        return combinedToJsonExpression === null
-          ? code`${toJsonExpression}`
-          : code`(${variables.value}.termType === "${NodeKind.toTermType(nodeKind)}") ? ${toJsonExpression} : ${combinedToJsonExpression}`;
-      },
-      null as Code | null,
-    )!;
+  @Memoize()
+  override get toExpandedJsonFunction(): Callable {
+    return new ReferenceCallable(this.reusables.snippets.termToExpandedJson);
   }
 
   override toLoggableExpression({
     variables,
   }: Parameters<AbstractTermType["toLoggableExpression"]>[0]): Code {
-    return this.toJsonExpression({ form: "expanded", variables });
+    return code`${this.toExpandedJsonFunction.annotatedUsage}(${variables.value})`;
   }
 }

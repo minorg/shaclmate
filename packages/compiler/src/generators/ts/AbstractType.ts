@@ -36,6 +36,13 @@ export abstract class AbstractType extends AbstractConstruct {
   protected readonly jsonTypeFactory: AbstractType.JsonTypeFactory;
 
   /**
+   * JSON-LD 1.1 (https://www.w3.org/TR/json-ld11/#forms-of-json-ld) "compacted" form of this type. It can be any JSON type e.g., string or object.
+   *
+   * Some types (e.g., ObjectType) may only have an "expanded" type, in which case compactedJsonType delegates to expandedJsonType.
+   */
+  abstract readonly compactedJsonType: AbstractType.JsonType;
+
+  /**
    * Function that takes a value of one or more source types to this type and returns Either<Error, ThisType>.
    *
    * The source types should include this type.
@@ -58,6 +65,13 @@ export abstract class AbstractType extends AbstractConstruct {
   abstract readonly equalsFunction: Callable;
 
   /**
+   * JSON-LD 1.1 (https://www.w3.org/TR/json-ld11/#forms-of-json-ld) "expanded" form of the type. It must be a JSON object type.
+   */
+  abstract readonly expandedJsonType: AbstractType.JsonType & {
+    readonly kind: "JsonDiscriminatedUnion" | "JsonObject";
+  };
+
+  /**
    * A function (reference or literal) that takes a filter of filterType (below) and a value of this type
    * and returns true if the value passes the filter.
    */
@@ -67,6 +81,16 @@ export abstract class AbstractType extends AbstractConstruct {
    * Composite type for filtering instances of this type e.g., SomeObject.Filter with filters for each property.
    */
   abstract readonly filterType: Code;
+
+  /**
+   * A function (reference or literal) that converts an instance of compactedJsonType to an Either<Error, ThisType>.
+   */
+  abstract readonly fromCompactJsonFunction: Callable;
+
+  /**
+   * A function (reference or literal) that converts an instance of expandedJsonType to an Either<Error, ThisType>.
+   */
+  abstract readonly fromExpandedJsonFunction: Callable;
 
   /**
    * A FromRdfResourceValuesFunction (reference or literal) that converts a Either<Error, rdfjsResource.Resource.Values> to a
@@ -151,6 +175,16 @@ export abstract class AbstractType extends AbstractConstruct {
    * Identifier of the shape this type was derived from.
    */
   readonly shapeIdentifier: BlankNode | NamedNode;
+
+  /**
+   * A function (reference or literal) that converts an instance of this type to the compactedJsonType.
+   */
+  abstract readonly toCompactJsonFunction: Callable;
+
+  /**
+   * A function (reference or literal) that converts an instance of this type to the expandedJsonType.
+   */
+  abstract readonly toExpandedJsonFunction: Callable;
 
   /**
    * The type(s) of the array elements produced by the toRdfResourceValuesExpression.
@@ -285,21 +319,6 @@ ${joinCode(
   }
 
   /**
-   * An expression that converts this type's JSON type to an Either<Error, ThisType>.
-   *
-   * Parameters:
-   *   form: form of the value. See jsonType() for the semantics of form.
-   *   variables:
-   *     value: instance of jsonType() with the given form.
-   */
-  abstract fromJsonExpression(parameters: {
-    form: AbstractType.JsonForm;
-    variables: {
-      value: Code;
-    };
-  }): Code;
-
-  /**
    * An expression that resolves a value of this type in the GraphQL server.
    */
   abstract graphqlResolveExpression(parameters: {
@@ -308,54 +327,6 @@ ${joinCode(
       value: Code;
     };
   }): Code;
-
-  /**
-   * JSON-compatible version of the type.
-   *
-   * Parameters:
-   *  - form: form of JSON to use, corresponding to JSON-LD forms (https://www.w3.org/TR/json-ld11/#forms-of-json-ld).
-   *
-   * When form is "expanded" this function must return a JSON object type including the given discriminant property.
-   */
-  abstract jsonType(
-    parameters:
-      | {
-          discriminantProperty?: undefined;
-          form: "compact";
-        }
-      | {
-          discriminantProperty?: Record<
-            string,
-            { type: AbstractType.JsonType }
-          >;
-          form: "expanded";
-        },
-  ): AbstractType.JsonType;
-
-  /**
-   * An expression that converts a value of this type to a JSON compatible value.
-   *
-   * Parameters:
-   *   form: form of the value. See jsonType() for the semantics of form.
-   *   variables:
-   *     value: instance of this type.
-   */
-  abstract toJsonExpression(
-    parameters: {
-      variables: {
-        value: Code;
-      };
-    } & (
-      | {
-          discriminantProperty?: undefined;
-          form: "compact";
-        }
-      | {
-          discriminantProperty?: Record<string, Code>;
-          form: "expanded";
-        }
-    ),
-  ): Code;
 
   /**
    * An expression that converts a value of this type to a value that can be logged.
@@ -416,7 +387,6 @@ export namespace AbstractType {
   export type GraphqlType = AbstractType_GraphqlType;
   export type JsType = AbstractType_JsType;
   export const JsType = AbstractType_JsType;
-  export type JsonForm = "compact" | "expanded";
   export type JsonType = AbstractType_JsonType;
   export type JsonTypeFactory = AbstractType_JsonTypeFactory;
 }
