@@ -96,6 +96,11 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
   }
 
   @Memoize()
+  protected get createUnsafeFunction(): Callable {
+    return ObjectIntersectionType_createUnsafeFunction.call(this);
+  }
+
+  @Memoize()
   protected override get inlineExpression(): Code {
     return joinCode(
       this.members.map((member) => {
@@ -114,10 +119,6 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
     return ObjectIntersectionType_jsonType.call(this);
   }
 
-  // @Memoize()
-  // protected get createUnsafeFunction(): Callable {
-  //   return ObjectIntersectionType_createUnsafeFunction.call(this);
-  // }
   protected override staticModuleDeclarations(
     name: string,
   ): Record<string, Code> {
@@ -136,7 +137,7 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
       staticModuleDeclarations["CreateParameters"] =
         code`export type CreateParameters<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}> = ${this.createFunctionParameters.type.inlineExpression};`;
       addFunctionDeclaration(this.createFunction);
-      // addFunctionDeclaration(this.createUnsafeFunction);
+      addFunctionDeclaration(this.createUnsafeFunction);
     }
 
     if (this.configuration.features.has("Object.fromRdf")) {
@@ -169,14 +170,5 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
     }
 
     return staticModuleDeclarations;
-    //     ...ObjectIntersectionType_focusSparqlConstructTriplesFunctionDeclaration.call(
-    //       this,
-    //     ),
-    //     ...ObjectIntersectionType_focusSparqlWherePatternsFunctionDeclaration.call(
-    //       this,
-    //     ),
-    //     ...ObjectIntersectionType_graphqlTypeVariableStatement.call(this),
-    //     ...ObjectIntersectionType_typeGuardFunctionDeclaration.call(this),
-    //     ...ObjectIntersectionType_schemaVariableStatement.call(this),
   }
 }
