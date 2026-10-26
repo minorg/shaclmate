@@ -17,11 +17,11 @@ import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType<ObjectType> {
-  override readonly kind = "ObjectDiscriminatedUnion";
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
+  override readonly kind = "ObjectDiscriminatedUnion";
 
   constructor({
     identifierType,
@@ -62,6 +62,17 @@ export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType
       return Maybe.empty();
     }
     return this.name.map((name) => code`${name}.is${name}`);
+  }
+
+  @Memoize()
+  protected override get inlineExpression() {
+    if (this.discriminant.kind === "Intrinsic") {
+      return code`(${joinCode(
+        this.members.map(({ type }) => type.discriminatedExpression),
+        { on: " | " },
+      )})`;
+    }
+    return super.inlineExpression;
   }
 
   protected override staticModuleDeclarations(

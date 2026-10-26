@@ -199,6 +199,16 @@ export class ObjectType extends AbstractStructuredType {
     return !this.extern ? super.declaration : Maybe.empty();
   }
 
+  /**
+   * Expression of this type including the discriminant property, if available.
+   */
+  @Memoize()
+  get discriminatedExpression(): Code {
+    return this.name
+      .map((name) => code`${name}.Discriminated`)
+      .orDefault(this.inlineExpression);
+  }
+
   @Memoize()
   get focusSparqlConstructTriplesFunction(): Callable {
     return ObjectType_focusSparqlConstructTriplesFunction.call(this);
@@ -317,16 +327,6 @@ export class ObjectType extends AbstractStructuredType {
     return ObjectType_typeGuardFunctionExpression.call(this).map((expression) =>
       this.name.map((name) => code`${name}.is${name}`).orDefault(expression),
     );
-  }
-
-  /**
-   * Expression of this type including the discriminant property, if available.
-   */
-  @Memoize()
-  protected get discriminatedExpression(): Code {
-    return this.name
-      .map((name) => code`${name}.Discriminated`)
-      .orDefault(this.inlineExpression);
   }
 
   protected override get inlineExpression(): Code {
