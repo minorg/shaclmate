@@ -195,10 +195,10 @@ export class ObjectType_ShaclProperty<
       .orDefaultLazy(() => this.type.schema);
   }
 
-  override constructorInitializer({
+  override createInitializer({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty["constructorInitializer"]
+    ObjectType_AbstractProperty["createInitializer"]
   >[0]): Maybe<Code> {
     const parameterVariable = code`${variables.parameters}.${this.name}`;
     const defaultNamespaceVariable = code`${variables.parameters}.${this.configuration.syntheticNamePrefix}defaultNamespace`;

@@ -138,10 +138,10 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
       .orDefaultLazy(() => this.type.schema);
   }
 
-  override constructorInitializer({
+  override createInitializer({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty["constructorInitializer"]
+    ObjectType_AbstractProperty["createInitializer"]
   >[0]): Maybe<Code> {
     const nodeKinds = this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>;
 

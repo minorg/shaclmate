@@ -86,7 +86,7 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
     );
   }
 
-  override constructorInitializer(): Maybe<Code> {
+  override createInitializer(): Maybe<Code> {
     return Maybe.empty();
   }
 

@@ -137,7 +137,7 @@ export abstract class ObjectType_AbstractProperty {
   /**
    * Initializer (name: value) from a constructor parameter.
    */
-  abstract constructorInitializer(parameters: {
+  abstract createInitializer(parameters: {
     variables: { parameters: Code };
   }): Maybe<Code>;
 

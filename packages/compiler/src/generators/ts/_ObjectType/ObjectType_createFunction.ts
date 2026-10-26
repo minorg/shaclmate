@@ -8,7 +8,7 @@ function ObjectType_createFunctionExpression(this: ObjectType): Code {
 
   const propertyInitializers = this.properties.flatMap((property) =>
     property
-      .constructorInitializer({
+      .createInitializer({
         variables: { parameters: parametersVariable },
       })
       .toList(),
@@ -16,10 +16,6 @@ function ObjectType_createFunctionExpression(this: ObjectType): Code {
   invariant(propertyInitializers.length > 0);
 
   let returnExpression = code`${this.reusables.snippets.sequenceRecord}({ ${joinCode(propertyInitializers, { on: "," })} })`;
-
-  this.discriminantProperty.ifJust((discriminantProperty) => {
-    returnExpression = code`${returnExpression}.map(properties => ({ ...properties, ${discriminantProperty.name}: ${literalOf(discriminantProperty.value)} as const }))`;
-  });
 
   const monkeyPatchMethods: Record<string, Code> = {};
   if (this.configuration.features.has("Object.toJson")) {
