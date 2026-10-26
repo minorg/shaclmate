@@ -10,9 +10,8 @@ export const snippets_convertToLazyOption: SnippetFactory = ({
     `${syntheticNamePrefix}convertToLazyOption`,
     code`\
 function ${syntheticNamePrefix}convertToLazyOption<PartialT, ResolvedT>(
-  isPartial: (object: PartialT | ResolvedT) => object is PartialT,
   resolvedToPartial: (resolved: ResolvedT) => PartialT
-): ${snippets.ConversionFunction}<${snippets.LazyOption}<PartialT, ResolvedT> | ${imports.Maybe}<PartialT> | ${imports.Maybe}<ResolvedT> | PartialT | ResolvedT | undefined, ${snippets.LazyOption}<PartialT, ResolvedT>> {
+): ${snippets.ConversionFunction}<${snippets.LazyOption}<PartialT, ResolvedT> | ${imports.Maybe}<ResolvedT> | ResolvedT | undefined, ${snippets.LazyOption}<PartialT, ResolvedT>> {
   return (value) => {
     if (value instanceof ${snippets.LazyOption}) {
       return ${imports.Either}.of(value);
@@ -34,17 +33,7 @@ function ${syntheticNamePrefix}convertToLazyOption<PartialT, ResolvedT>(
       }));
     }
 
-    if (isPartial(extractedValue)) {
-      const partial: PartialT = extractedValue;
-      return ${imports.Either}.of(
-        new ${snippets.LazyOption}({
-          partial: ${imports.Maybe}.of(partial),
-          resolver: async () => ${imports.Left}(new Error("unable to resolve"))
-        })
-      );
-    }
-
-    const resolved: ResolvedT = extractedValue;
+    const resolved = extractedValue as ResolvedT;
     return ${imports.Either}.of(
       new ${snippets.LazyOption}({
         partial: ${imports.Maybe}.of(resolvedToPartial(resolved)),

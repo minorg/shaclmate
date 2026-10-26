@@ -23,6 +23,13 @@ export class ${syntheticNamePrefix}LazySet<PartialT, ResolvedT> {
     this.resolver = resolver;
   }
 
+  static fromPartials<PartialT, ResolvedT>(partials: readonly PartialT[]): ${syntheticNamePrefix}LazySet<PartialT, ResolvedT> {
+    return new ${syntheticNamePrefix}LazySet({
+      partials,
+      resolver: async () => ${imports.Left}(new Error("unable to resolve partials"))
+    });
+  }
+
   get length(): number {
     return this.partials.length;
   }

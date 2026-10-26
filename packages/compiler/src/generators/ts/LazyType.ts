@@ -24,17 +24,12 @@ ${this.reusables.snippets.convertToLazy}<
   ${this.partialType.expression},
   ${this.resolveType.expression}
 >(
-  ${this.partialType.typeGuardFunction.unsafeCoerce()},
   ${this.resolveToPartialFunction({ partialType: this.partialType, resolveType: this.resolveType })}
 )`,
       sourceTypes: [
         {
           expression: this.expression,
           jsType: this.jsTypes[0],
-        },
-        {
-          expression: this.partialType.expression,
-          jsType: this.partialType.jsTypes[0],
         },
         {
           expression: this.resolveType.expression,

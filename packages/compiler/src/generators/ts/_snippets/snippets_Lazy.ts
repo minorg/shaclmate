@@ -23,6 +23,13 @@ export class ${syntheticNamePrefix}Lazy<PartialT, ResolvedT> {
     this.resolver = resolver;
   }
 
+  static fromPartial<PartialT, ResolvedT>(partial: PartialT): ${syntheticNamePrefix}Lazy<PartialT, ResolvedT> {
+    return new ${syntheticNamePrefix}Lazy({
+      partial,
+      resolver: async () => ${imports.Left}(new Error("unable to resolve partial"))
+    });
+  }
+
   resolve(options?: { preferredLanguages?: readonly string[] }): Promise<${imports.Either}<Error, ResolvedT>> {
     return this.resolver(this.partial, options);
   }
