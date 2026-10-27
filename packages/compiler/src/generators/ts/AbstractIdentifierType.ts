@@ -1,5 +1,6 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
+import { Memoize } from "typescript-memoize";
 import { AbstractTermType } from "./AbstractTermType.js";
 import type { Callable } from "./Callable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
@@ -18,75 +19,24 @@ export abstract class AbstractIdentifierType<
   abstract override readonly nodeKinds: ReadonlySet<IdentifierNodeKind>;
   abstract readonly parseFunction: Callable;
 
-  override fromJsonExpression({
-    form,
-    variables,
-  }: Parameters<
-    AbstractTermType<NamedNode, IdentifierT>["fromJsonExpression"]
-  >[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${this.fromCompactedJsonExpression(
-      {
-        variables: {
-          value:
-            form === "compact"
-              ? variables.value
-              : code`${variables.value}["@id"]`,
-        },
-      },
-    )})`;
-  }
-
-  override toJsonExpression({
-    discriminantProperty,
-    form,
-    variables,
-  }: Parameters<
-    AbstractTermType<NamedNode, IdentifierT>["toJsonExpression"]
-  >[0]): Code {
-    const toCompactedJsonExpression = this.toCompactedJsonExpression({
-      variables,
-    });
-    switch (form) {
-      case "compact":
-        return toCompactedJsonExpression;
-      case "expanded":
-        return code`${{ ...discriminantProperty, "@id": toCompactedJsonExpression }}`;
-    }
-  }
-
-  override jsonType({
-    discriminantProperty,
-    form,
-  }: Parameters<
-    AbstractTermType<NamedNode, IdentifierT>["jsonType"]
-  >[0]): AbstractTermType.JsonType {
-    const compactedJsonType = this.jsonTypeFactory.createJsonStringType({
-      in_: this.in_.map((in_) => in_.value),
-      inReference:
-        this.name.isJust() && this.configuration.features.has("Object.schema")
-          ? code`${this.name.extract()!}.schema.in.map(_ => _.value)`
-          : undefined,
+  @Memoize()
+  get compactedJsonType(): AbstractTermType["compactedJsonType"] {
+    return this.jsonTypeFactory.createJsonStringType({
       minLength: 1n,
     });
-
-    switch (form) {
-      case "compact":
-        return compactedJsonType;
-      case "expanded":
-        return this.jsonTypeFactory.createJsonObjectType({
-          ...discriminantProperty,
-          "@id": { type: compactedJsonType },
-        });
-    }
   }
 
-  protected abstract fromCompactedJsonExpression(parameters: {
-    variables: { value: Code };
-  }): Code;
-
-  protected abstract toCompactedJsonExpression(parameters: {
-    variables: { value: Code };
-  }): Code;
+  @Memoize()
+  get expandedJsonType(): AbstractTermType["expandedJsonType"] {
+    return this.jsonTypeFactory.createJsonObjectType(
+      {
+        "@id": { type: this.compactedJsonType },
+      },
+      {
+        snippet: this.reusables.snippets.IdentifierExpandedJson,
+      },
+    );
+  }
 
   override graphqlResolveExpression({
     variables: { value },
