@@ -1,7 +1,7 @@
 import type { Literal } from "@rdfjs/types";
-import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
+
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { ReferenceCallable } from "./ReferenceCallable.js";
 import type { Typeof } from "./Typeof.js";
@@ -13,6 +13,27 @@ export class LiteralType extends AbstractLiteralType {
   protected override readonly inlineExpression =
     code`${this.reusables.imports.Literal}`;
 
+  override readonly expandedJsonType: AbstractLiteralType["expandedJsonType"] =
+    this.jsonTypeFactory.createJsonObjectType(
+      {
+        "@language": {
+          optional: true,
+          type: this.jsonTypeFactory.createJsonStringType(),
+        },
+        "@type": {
+          optional: true,
+          type: this.jsonTypeFactory.createJsonStringType(),
+        },
+        "@value": {
+          type: this.jsonTypeFactory.createJsonStringType(),
+        },
+      },
+      {
+        snippet: this.reusables.snippets.LiteralExpandedJson,
+      },
+    );
+  override readonly compactedJsonType: AbstractLiteralType["compactedJsonType"] =
+    this.expandedJsonType;
   override readonly conversionFunction: Maybe<AbstractLiteralType.ConversionFunction> =
     Maybe.of({
       code: code`${this.reusables.snippets.convertToLiteral}`,
@@ -37,6 +58,10 @@ export class LiteralType extends AbstractLiteralType {
     this.reusables.snippets.filterLiteral,
   );
   override readonly filterType = code`${this.reusables.snippets.LiteralFilter}`;
+  override readonly fromExpandedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.literalFromExpandedJson,
+  );
+  override readonly fromCompactedJsonFunction = this.fromExpandedJsonFunction;
   override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
     this.reusables.snippets.literalFromRdfResourceValues,
   );
@@ -45,6 +70,10 @@ export class LiteralType extends AbstractLiteralType {
   ] as const;
   override readonly kind = "Literal";
   override readonly schemaType = code`${this.reusables.snippets.LiteralSchema}`;
+  override readonly toExpandedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.literalToExpandedJson,
+  );
+  override readonly toCompactedJsonFunction = this.toExpandedJsonFunction;
   override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.literalSparqlWherePatterns,
   );
@@ -73,55 +102,16 @@ export class LiteralType extends AbstractLiteralType {
     return initializers;
   }
 
-  override fromJsonExpression({
-    variables,
-  }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${this.reusables.imports.dataFactory}.literal(${variables.value}["@value"], ${variables.value}["@language"] !== undefined ? ${variables.value}["@language"] : (${variables.value}["@type"] !== undefined ? ${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@type"]!) : undefined)))`;
-  }
-
   override graphqlResolveExpression(
     _parameters: Parameters<AbstractLiteralType["graphqlResolveExpression"]>[0],
   ): Code {
     throw new Error("not implemented");
   }
 
-  override jsonType({
-    discriminantProperty,
-  }: Parameters<
-    AbstractLiteralType["jsonType"]
-  >[0]): AbstractLiteralType.JsonType {
-    return this.jsonTypeFactory.createJsonObjectType({
-      ...discriminantProperty,
-      "@language": {
-        optional: true,
-        type: this.jsonTypeFactory.createJsonStringType(),
-      },
-      "@type": {
-        optional: true,
-        type: this.jsonTypeFactory.createJsonStringType(),
-      },
-      "@value": {
-        type: this.jsonTypeFactory.createJsonStringType(),
-      },
-    });
-  }
-
-  override toJsonExpression({
-    discriminantProperty,
-    variables,
-  }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
-    return code`${{
-      ...discriminantProperty,
-      "@language": code`${variables.value}.language.length > 0 ? ${variables.value}.language : undefined`,
-      "@type": code`${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined`,
-      "@value": code`${variables.value}.value`,
-    }}`;
-  }
-
   override toLoggableExpression({
     variables,
   }: Parameters<AbstractLiteralType["toLoggableExpression"]>[0]): Code {
-    return this.toJsonExpression({ form: "expanded", variables });
+    return code`{ datatype: ${variables.value}.datatype.value, language: ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined, value: ${variables.value}.value }`;
   }
 
   override valueExpression(literal: Literal): Code {

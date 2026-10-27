@@ -15,7 +15,7 @@ interface ${syntheticNamePrefix}LiteralExpandedJson {
 }
   
 namespace LiteralExpandedJson {
-  export const schema = ${imports.z}.object({
+  export const schema = () => ${imports.z}.object({
     "@language": ${imports.z}.string().min(1).optional(),
     "@type": ${imports.z}.string().min(1).optional(),
     "@value": ${imports.z}.string().min(1)
