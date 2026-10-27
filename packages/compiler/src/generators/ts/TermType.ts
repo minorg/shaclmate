@@ -8,7 +8,6 @@ import { Memoize } from "typescript-memoize";
 import { AbstractTermType } from "./AbstractTermType.js";
 import type { Callable } from "./Callable.js";
 import { ReferenceCallable } from "./ReferenceCallable.js";
-import { singleEntryRecord } from "./singleEntryRecord.js";
 import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class TermType<
@@ -28,6 +27,10 @@ export class TermType<
   ] as const;
   override readonly kind = "Term";
   override readonly nodeKinds: ReadonlySet<NodeKind>;
+  override readonly toExpandedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.termToExpandedJson,
+  );
+  override readonly toCompactedJsonFunction = this.toExpandedJsonFunction;
   override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.termSparqlWherePatterns,
   );
@@ -123,19 +126,10 @@ export class TermType<
   override get expandedJsonType(): AbstractTermType["expandedJsonType"] {
     return this.jsonTypeFactory.createJsonDiscriminatedUnionType(
       [...this.nodeKinds].flatMap((nodeKind) => {
-        const discriminantProperty = singleEntryRecord(
-          this.configuration.objectDiscriminantProperty.jsonName,
-          {
-            type: this.jsonTypeFactory.createJsonStringType({
-              in_: [NodeKind.toTermType(nodeKind)],
-            }),
-          },
-        );
         switch (nodeKind) {
           case "BlankNode":
           case "IRI":
             return this.jsonTypeFactory.createJsonObjectType({
-              ...discriminantProperty,
               "@id": {
                 type: this.jsonTypeFactory.createJsonStringType({
                   minLength: 1n,
@@ -144,7 +138,6 @@ export class TermType<
             });
           case "Literal":
             return this.jsonTypeFactory.createJsonObjectType({
-              ...discriminantProperty,
               "@language": {
                 optional: true,
                 type: this.jsonTypeFactory.createJsonStringType(),
@@ -163,15 +156,6 @@ export class TermType<
         }
       }),
     );
-  }
-
-  override get toCompactedJsonFunction(): Callable {
-    return this.toExpandedJsonFunction;
-  }
-
-  @Memoize()
-  override get toExpandedJsonFunction(): Callable {
-    return new ReferenceCallable(this.reusables.snippets.termToExpandedJson);
   }
 
   override toLoggableExpression({

@@ -9,14 +9,16 @@ export const snippets_termToExpandedJson: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}termToExpandedJson`,
     code`\
-function ${syntheticNamePrefix}termToExpandedJson(term: ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}): ${snippets.IdentifierExpandedJson} | ${snippets.LiteralExpandedJson} {
-  switch (term.termType) {
-    case "BlankNode":
-      return { "@id": \`_:\${term.value}\` };
-    case "NamedNode":
-      return { "@id": term.value };
-    case "Literal":
-      return ${snippets.literalToExpandedJson}(term);
+const ${syntheticNamePrefix}termToExpandedJson: ${snippets.ToExpandedJsonFunction}<${snippets.IdentifierExpandedJson} | ${snippets.LiteralExpandedJson}, ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}> =
+  (term) => {
+    switch (term.termType) {
+      case "BlankNode":
+        return ${snippets.blankNodeToExpandedJson}(term);
+      case "NamedNode":
+        return ${snippets.iriToExpandedJson}(term);
+      case "Literal":
+        return ${snippets.literalToExpandedJson}(term);
+    }
   }
 }`,
   );
