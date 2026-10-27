@@ -3,11 +3,11 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import type { Reusables } from "../Reusables.js";
+import type { Snippet } from "../Snippet.js";
 import type { TsGenerator } from "../TsGenerator.js";
 import {
   arrayOf,
   type Code,
-  type ConditionalOutput,
   code,
   joinCode,
   literalOf,
@@ -18,6 +18,7 @@ abstract class AbstractJsonType {
   protected abstract readonly inlineExpression: Code;
   protected readonly reusables: Reusables;
   protected abstract readonly schemaExpression: Code;
+  protected readonly snippet: Maybe<Snippet>;
 
   abstract readonly kind: string;
   readonly name: Maybe<AbstractJsonType.Name>;
@@ -25,15 +26,18 @@ abstract class AbstractJsonType {
   constructor({
     configuration,
     name,
+    snippet,
     reusables,
   }: {
     configuration: TsGenerator.Configuration;
     name: Maybe<AbstractJsonType.Name>;
+    snippet: Maybe<Snippet>;
     reusables: Reusables;
   }) {
     this.configuration = configuration;
     this.name = name;
     this.reusables = reusables;
+    this.snippet = snippet;
   }
 
   protected moduleDeclarations({
@@ -63,7 +67,7 @@ export function parse(json: unknown): ${this.reusables.imports.Either}<Error, ${
 
   @Memoize()
   get declaration(): Maybe<Code> {
-    if (this.name.isNothing()) {
+    if (this.name.isNothing() || this.snippet.isJust()) {
       return Maybe.empty();
     }
 
@@ -93,15 +97,17 @@ export function parse(json: unknown): ${this.reusables.imports.Either}<Error, ${
 
   @Memoize()
   get expression(): Code {
-    return this.name
-      .map((name) => code`${name.join(".")}`)
+    return this.snippet
+      .map((snippet) => code`${snippet}`)
+      .alt(this.name.map((name) => code`${name.join(".")}`))
       .orDefaultLazy(() => this.inlineExpression);
   }
 
   @Memoize()
   get schema(): Code {
-    return this.name
-      .map((name) => code`${name.join(".")}.schema()`)
+    return this.snippet
+      .map((snippet) => code`${snippet}.schema()`)
+      .alt(this.name.map((name) => code`${name.join(".")}.schema()`))
       .orDefaultLazy(() => this.schemaExpression);
   }
 
@@ -323,7 +329,7 @@ class JsonObjectType extends AbstractJsonType {
   }
 
   private get uiSchemaFunctionExpression() {
-    const variables = { scopePrefix: code`(_parameters?.scopePrefix ?? "#")` };
+    const variables = { scopePrefix: code`(_options?.scopePrefix ?? "#")` };
 
     const uiSchema: Record<string, Code | string> = {
       elements: code`${arrayOf(
@@ -338,7 +344,7 @@ class JsonObjectType extends AbstractJsonType {
     });
 
     return code`\
-((_parameters?: { scopePrefix?: string }): any => {
+((_options?: { scopePrefix?: string }): any => {
   return ${uiSchema};
 })`;
   }
@@ -456,6 +462,7 @@ class JsonTypeFactory {
     options?: {
       minCount?: bigint;
       name?: AbstractJsonType.Name;
+      snippet?: Snippet;
     },
   ): JsonArrayType {
     return new JsonArrayType({
@@ -463,19 +470,22 @@ class JsonTypeFactory {
       itemType,
       minCount: options?.minCount ?? 0n,
       name: Maybe.fromNullable(options?.name),
+      snippet: Maybe.fromNullable(options?.snippet),
     });
   }
 
-  createJsonBooleanType(parameters?: {
+  createJsonBooleanType(options?: {
     in_?: readonly boolean[];
     inReference?: Code;
     name?: AbstractJsonType.Name;
+    snippet?: Snippet;
   }): JsonBooleanType {
     return new JsonBooleanType({
       ...this.constructorParameters,
-      in_: parameters?.in_ ?? [],
-      inReference: Maybe.fromNullable(parameters?.inReference),
-      name: Maybe.fromNullable(parameters?.name),
+      in_: options?.in_ ?? [],
+      inReference: Maybe.fromNullable(options?.inReference),
+      name: Maybe.fromNullable(options?.name),
+      snippet: Maybe.fromNullable(options?.snippet),
     });
   }
 
@@ -484,6 +494,7 @@ class JsonTypeFactory {
     options?: {
       name?: AbstractJsonType.Name;
       recursive?: boolean;
+      snippet?: Snippet;
     },
   ): JsonDiscriminatedUnionType {
     return new JsonDiscriminatedUnionType({
@@ -491,6 +502,7 @@ class JsonTypeFactory {
       memberTypes,
       name: Maybe.fromNullable(options?.name),
       recursive: !!options?.recursive,
+      snippet: Maybe.fromNullable(options?.snippet),
     });
   }
 
@@ -499,6 +511,7 @@ class JsonTypeFactory {
     options?: {
       name?: AbstractJsonType.Name;
       recursive?: boolean;
+      snippet?: Snippet;
     },
   ): JsonIntersectionType {
     return new JsonIntersectionType({
@@ -506,19 +519,22 @@ class JsonTypeFactory {
       memberTypes,
       name: Maybe.fromNullable(options?.name),
       recursive: !!options?.recursive,
+      snippet: Maybe.fromNullable(options?.snippet),
     });
   }
 
-  createJsonNumberType(parameters?: {
+  createJsonNumberType(options?: {
     in_?: readonly number[];
     inReference?: Code;
     name?: AbstractJsonType.Name;
+    snippet?: Snippet;
   }): JsonNumberType {
     return new JsonNumberType({
       ...this.constructorParameters,
-      in_: parameters?.in_ ?? [],
-      inReference: Maybe.fromNullable(parameters?.inReference),
-      name: Maybe.fromNullable(parameters?.name),
+      in_: options?.in_ ?? [],
+      inReference: Maybe.fromNullable(options?.inReference),
+      name: Maybe.fromNullable(options?.name),
+      snippet: Maybe.fromNullable(options?.snippet),
     });
   }
 
@@ -528,6 +544,7 @@ class JsonTypeFactory {
       | Record<string, Omit<JsonObjectType.PartialMember, "name">>,
     options?: {
       name?: AbstractJsonType.Name;
+      snippet?: Snippet;
     },
   ): JsonObjectType {
     let partialMembersArray: readonly JsonObjectType.PartialMember[];
@@ -557,28 +574,27 @@ class JsonTypeFactory {
           : Maybe.fromNullable(member.uiSchemaElement),
       })),
       name: Maybe.fromNullable(options?.name),
+      snippet: Maybe.fromNullable(options?.snippet),
     });
   }
 
-  createJsonStringType(parameters?: {
+  createJsonStringType(options?: {
     format?: JsonStringType.Format;
     in_?: readonly string[];
     inReference?: Code;
     minLength?: bigint;
     name?: AbstractJsonType.Name;
+    snippet?: Snippet;
   }): JsonStringType {
     return new JsonStringType({
       ...this.constructorParameters,
-      format: Maybe.fromNullable(parameters?.format),
-      in_: parameters?.in_ ?? [],
-      inReference: Maybe.fromNullable(parameters?.inReference),
-      minLength: Maybe.fromNullable(parameters?.minLength),
-      name: Maybe.fromNullable(parameters?.name),
+      format: Maybe.fromNullable(options?.format),
+      in_: options?.in_ ?? [],
+      inReference: Maybe.fromNullable(options?.inReference),
+      minLength: Maybe.fromNullable(options?.minLength),
+      name: Maybe.fromNullable(options?.name),
+      snippet: Maybe.fromNullable(options?.snippet),
     });
-  }
-
-  createSnippetJsonType(snippet: ConditionalOutput): SnippetJsonType {
-    return new SnippetJsonType(snippet);
   }
 }
 
@@ -589,21 +605,7 @@ type JsonType =
   | JsonIntersectionType
   | JsonNumberType
   | JsonObjectType
-  | JsonStringType
-  | SnippetJsonType;
-
-class SnippetJsonType {
-  readonly kind = "SnippetJson";
-  readonly name: Maybe<string>;
-  readonly expression: Code;
-  readonly schema: Code;
-
-  constructor(snippet: ConditionalOutput) {
-    this.expression = code`${snippet}`;
-    this.name = Maybe.of(snippet.usageSiteName);
-    this.schema = code`${snippet}.schema`;
-  }
-}
+  | JsonStringType;
 
 export type AbstractType_JsonType = JsonType;
 
