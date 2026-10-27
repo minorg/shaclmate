@@ -30,6 +30,60 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   );
 
   @Memoize()
+  override get fromCompactedJsonFunction(): AbstractIdentifierType<NamedNode>["fromCompactedJsonFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.iriFromCompactedJson}<${this.expression}>`,
+    );
+  }
+
+  @Memoize()
+  override get fromExpandedJsonFunction(): AbstractIdentifierType<NamedNode>["fromExpandedJsonFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.iriFromExpandedJson}<${this.expression}>`,
+    );
+  }
+
+  @Memoize()
+  override get toCompactedJsonFunction(): AbstractIdentifierType<NamedNode>["toCompactedJsonFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.iriToCompactedJson}<${this.expression}>`,
+    );
+  }
+
+  @Memoize()
+  override get toExpandedJsonFunction(): AbstractIdentifierType<NamedNode>["toExpandedJsonFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.iriToExpandedJson}<${this.expression}>`,
+    );
+  }
+
+  @Memoize()
+  override get compactedJsonType(): AbstractIdentifierType<NamedNode>["compactedJsonType"] {
+    if (this.in_.length === 0) {
+      return super.compactedJsonType;
+    }
+
+    return this.jsonTypeFactory.createJsonStringType({
+      in_: this.in_.map((in_) => in_.value),
+      inReference:
+        this.name.isJust() && this.configuration.features.has("Object.schema")
+          ? code`${this.name.extract()!}.schema.in.map(_ => _.value)`
+          : undefined,
+    });
+  }
+
+  @Memoize()
+  override get expandedJsonType(): AbstractIdentifierType<NamedNode>["expandedJsonType"] {
+    if (this.in_.length === 0) {
+      return super.expandedJsonType;
+    }
+
+    return this.jsonTypeFactory.createJsonObjectType({
+      "@id": { type: this.compactedJsonType },
+    });
+  }
+
+  @Memoize()
   override get conversionFunction(): Maybe<AbstractIdentifierType.ConversionFunction> {
     invariant(this.jsTypes.length === 1);
     return Maybe.of({
@@ -129,22 +183,6 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
     return this.name
       .map((name) => code`${name}["value"]`)
       .orDefaultLazy(() => this.inlineValueTypeExpression);
-  }
-
-  protected override fromCompactedJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractIdentifierType<NamedNode>["fromCompactedJsonExpression"]
-  >[0]): Code {
-    return code`${this.reusables.imports.dataFactory}.namedNode(${variables.value})`;
-  }
-
-  protected override toCompactedJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractIdentifierType<NamedNode>["toCompactedJsonExpression"]
-  >[0]): Code {
-    return code`${variables.value}.value`;
   }
 }
 

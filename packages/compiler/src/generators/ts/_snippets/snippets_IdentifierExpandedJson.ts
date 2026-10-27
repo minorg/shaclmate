@@ -8,12 +8,12 @@ export const snippets_IdentifierExpandedJson: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}IdentifierExpandedJson`,
     code`\
-interface ${syntheticNamePrefix}IdentifierExpandedJson {
-  readonly "@id": string;
+interface ${syntheticNamePrefix}IdentifierExpandedJson<IdT extends string = string> {
+  readonly "@id": IdT;
 }
   
 namespace IdentifierExpandedJson {
-  export const schema = ${imports.z}.object({
+  export const schema = () => ${imports.z}.object({
     "@id": ${imports.z}.string().min(1)
   });
 }`,

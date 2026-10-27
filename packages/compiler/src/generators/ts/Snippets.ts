@@ -6,27 +6,84 @@ import { rdf, rdfs, xsd } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import { snippets__FromRdfResourceFunction } from "./_snippets/snippets__FromRdfResourceFunction.js";
-import { snippets__ToRdfResourceFunction } from "./_snippets/snippets__ToRdfResourceFunction.js";
-import { snippets_arrayEquals } from "./_snippets/snippets_arrayEquals.js";
-import { snippets_arrayIntersection } from "./_snippets/snippets_arrayIntersection.js";
 import { snippets_BlankNodeFilter } from "./_snippets/snippets_BlankNodeFilter.js";
 import { snippets_BlankNodeSchema } from "./_snippets/snippets_BlankNodeSchema.js";
 import { snippets_BooleanFilter } from "./_snippets/snippets_BooleanFilter.js";
 import { snippets_BooleanSchema } from "./_snippets/snippets_BooleanSchema.js";
+import { snippets_CollectionFilter } from "./_snippets/snippets_CollectionFilter.js";
+import { snippets_CollectionSchema } from "./_snippets/snippets_CollectionSchema.js";
+import { snippets_ConversionFunction } from "./_snippets/snippets_ConversionFunction.js";
+import { snippets_DateFilter } from "./_snippets/snippets_DateFilter.js";
+import { snippets_DateSchema } from "./_snippets/snippets_DateSchema.js";
+import { snippets_DefaultValueSchema } from "./_snippets/snippets_DefaultValueSchema.js";
+import { snippets_EqualsFunction } from "./_snippets/snippets_EqualsFunction.js";
+import { snippets_EqualsResult } from "./_snippets/snippets_EqualsResult.js";
+import { snippets_FilterFunction } from "./_snippets/snippets_FilterFunction.js";
+import { snippets_FocusSparqlConstructTriplesFunction } from "./_snippets/snippets_FocusSparqlConstructTriplesFunction.js";
+import { snippets_FocusSparqlWherePatternsFunction } from "./_snippets/snippets_FocusSparqlWherePatternsFunction.js";
+import { snippets_FromCompactedJsonFunction } from "./_snippets/snippets_FromCompactedJsonFunction.js";
+import { snippets_FromExpandedJsonFunction } from "./_snippets/snippets_FromExpandedJsonFunction.js";
+import { snippets_FromRdfResourceFunction } from "./_snippets/snippets_FromRdfResourceFunction.js";
+import { snippets_FromRdfResourceValuesFunction } from "./_snippets/snippets_FromRdfResourceValuesFunction.js";
+import { snippets_HashFunction } from "./_snippets/snippets_HashFunction.js";
+import { snippets_Hasher } from "./_snippets/snippets_Hasher.js";
+import { snippets_IdentifierExpandedJson } from "./_snippets/snippets_IdentifierExpandedJson.js";
+import { snippets_IdentifierFilter } from "./_snippets/snippets_IdentifierFilter.js";
+import { snippets_IdentifierSchema } from "./_snippets/snippets_IdentifierSchema.js";
+import { snippets_IdentifierSet } from "./_snippets/snippets_IdentifierSet.js";
+import { snippets_IriFilter } from "./_snippets/snippets_IriFilter.js";
+import { snippets_IriSchema } from "./_snippets/snippets_IriSchema.js";
+import { snippets_LangStringSchema } from "./_snippets/snippets_LangStringSchema.js";
+import { snippets_Lazy } from "./_snippets/snippets_Lazy.js";
+import { snippets_LazyOption } from "./_snippets/snippets_LazyOption.js";
+import { snippets_LazySet } from "./_snippets/snippets_LazySet.js";
+import { snippets_LiteralExpandedJson } from "./_snippets/snippets_LiteralExpandedJson.js";
+import { snippets_LiteralFilter } from "./_snippets/snippets_LiteralFilter.js";
+import { snippets_LiteralSchema } from "./_snippets/snippets_LiteralSchema.js";
+import { snippets_MaybeFilter } from "./_snippets/snippets_MaybeFilter.js";
+import { snippets_MaybeSchema } from "./_snippets/snippets_MaybeSchema.js";
+import { snippets_NamespaceBuilder } from "./_snippets/snippets_NamespaceBuilder.js";
+import { snippets_NumericFilter } from "./_snippets/snippets_NumericFilter.js";
+import { snippets_NumericSchema } from "./_snippets/snippets_NumericSchema.js";
+import { snippets_ProblemDetailsJson } from "./_snippets/snippets_ProblemDetailsJson.js";
+import { snippets_PropertyPath } from "./_snippets/snippets_PropertyPath.js";
+import { snippets_ShaclPropertySchema } from "./_snippets/snippets_ShaclPropertySchema.js";
+import { snippets_SparqlFilterPattern } from "./_snippets/snippets_SparqlFilterPattern.js";
+import { snippets_SparqlPattern } from "./_snippets/snippets_SparqlPattern.js";
+import { snippets_SparqlPattern_isSolutionGenerating } from "./_snippets/snippets_SparqlPattern_isSolutionGenerating.js";
+import { snippets_StringFilter } from "./_snippets/snippets_StringFilter.js";
+import { snippets_StringSchema } from "./_snippets/snippets_StringSchema.js";
+import { snippets_TermFilter } from "./_snippets/snippets_TermFilter.js";
+import { snippets_TermSchema } from "./_snippets/snippets_TermSchema.js";
+import { snippets_ToCompactedJsonFunction } from "./_snippets/snippets_ToCompactedJsonFunction.js";
+import { snippets_ToExpandedJsonFunction } from "./_snippets/snippets_ToExpandedJsonFunction.js";
+import { snippets_ToLoggableFunction } from "./_snippets/snippets_ToLoggableFunction.js";
+import { snippets_ToRdfResourceFunction } from "./_snippets/snippets_ToRdfResourceFunction.js";
+import { snippets_ToRdfResourceValuesFunction } from "./_snippets/snippets_ToRdfResourceValuesFunction.js";
+import { snippets_ToStringFunction } from "./_snippets/snippets_ToStringFunction.js";
+import { snippets_ToStringRecordFunction } from "./_snippets/snippets_ToStringRecordFunction.js";
+import { snippets_UnwrapR } from "./_snippets/snippets_UnwrapR.js";
+import { snippets_ValidationFunction } from "./_snippets/snippets_ValidationFunction.js";
+import { snippets_ValueSparqlConstructTriplesFunction } from "./_snippets/snippets_ValueSparqlConstructTriplesFunction.js";
+import { snippets_ValueSparqlWherePatternsFunction } from "./_snippets/snippets_ValueSparqlWherePatternsFunction.js";
+import { snippets__FromRdfResourceFunction } from "./_snippets/snippets__FromRdfResourceFunction.js";
+import { snippets__ToRdfResourceFunction } from "./_snippets/snippets__ToRdfResourceFunction.js";
+import { snippets_arrayEquals } from "./_snippets/snippets_arrayEquals.js";
+import { snippets_arrayIntersection } from "./_snippets/snippets_arrayIntersection.js";
 import { snippets_bigDecimalFromRdfResourceValues } from "./_snippets/snippets_bigDecimalFromRdfResourceValues.js";
 import { snippets_bigDecimalLiteral } from "./_snippets/snippets_bigDecimalLiteral.js";
 import { snippets_bigDecimalSparqlWherePatterns } from "./_snippets/snippets_bigDecimalSparqlWherePatterns.js";
 import { snippets_bigIntFromRdfResourceValues } from "./_snippets/snippets_bigIntFromRdfResourceValues.js";
+import { snippets_blankNodeFromCompactedJson } from "./_snippets/snippets_blankNodeFromCompactedJson.js";
+import { snippets_blankNodeFromExpandedJson } from "./_snippets/snippets_blankNodeFromExpandedJson.js";
 import { snippets_blankNodeFromRdfResourceValues } from "./_snippets/snippets_blankNodeFromRdfResourceValues.js";
 import { snippets_blankNodeSparqlWherePatterns } from "./_snippets/snippets_blankNodeSparqlWherePatterns.js";
+import { snippets_blankNodeToCompactedJson } from "./_snippets/snippets_blankNodeToCompactedJson.js";
+import { snippets_blankNodeToExpandedJson } from "./_snippets/snippets_blankNodeToExpandedJson.js";
 import { snippets_booleanEquals } from "./_snippets/snippets_booleanEquals.js";
 import { snippets_booleanFromRdfResourceValues } from "./_snippets/snippets_booleanFromRdfResourceValues.js";
 import { snippets_booleanSparqlWherePatterns } from "./_snippets/snippets_booleanSparqlWherePatterns.js";
 import { snippets_booleanToExpandedJson } from "./_snippets/snippets_booleanToExpandedJson.js";
-import { snippets_CollectionFilter } from "./_snippets/snippets_CollectionFilter.js";
-import { snippets_CollectionSchema } from "./_snippets/snippets_CollectionSchema.js";
-import { snippets_ConversionFunction } from "./_snippets/snippets_ConversionFunction.js";
 import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
 import { snippets_convertToArraySet } from "./_snippets/snippets_convertToArraySet.js";
 import { snippets_convertToBigDecimal } from "./_snippets/snippets_convertToBigDecimal.js";
@@ -51,9 +108,6 @@ import { snippets_convertToMutableList } from "./_snippets/snippets_convertToMut
 import { snippets_convertToMutableScalarSet } from "./_snippets/snippets_convertToMutableScalarSet.js";
 import { snippets_convertToScalarSet } from "./_snippets/snippets_convertToScalarSet.js";
 import { snippets_convertWithDefaultValue } from "./_snippets/snippets_convertWithDefaultValue.js";
-import { snippets_DateFilter } from "./_snippets/snippets_DateFilter.js";
-import { snippets_DateSchema } from "./_snippets/snippets_DateSchema.js";
-import { snippets_DefaultValueSchema } from "./_snippets/snippets_DefaultValueSchema.js";
 import { snippets_dateEquals } from "./_snippets/snippets_dateEquals.js";
 import { snippets_dateFromRdfResourceValues } from "./_snippets/snippets_dateFromRdfResourceValues.js";
 import { snippets_dateSparqlWherePatterns } from "./_snippets/snippets_dateSparqlWherePatterns.js";
@@ -61,17 +115,8 @@ import { snippets_dateTimeFromRdfResourceValues } from "./_snippets/snippets_dat
 import { snippets_deduplicateSparqlPatterns } from "./_snippets/snippets_deduplicateSparqlPatterns.js";
 import { snippets_defaultValueFromRdfResourceValues } from "./_snippets/snippets_defaultValueFromRdfResourceValues.js";
 import { snippets_defaultValueSparqlWherePatterns } from "./_snippets/snippets_defaultValueSparqlWherePatterns.js";
-import { snippets_EqualsFunction } from "./_snippets/snippets_EqualsFunction.js";
-import { snippets_EqualsResult } from "./_snippets/snippets_EqualsResult.js";
 import { snippets_ensureRdfResourceType } from "./_snippets/snippets_ensureRdfResourceType.js";
 import { snippets_errorToProblemDetailsJson } from "./_snippets/snippets_errorToProblemDetailsJson.js";
-import { snippets_FilterFunction } from "./_snippets/snippets_FilterFunction.js";
-import { snippets_FocusSparqlConstructTriplesFunction } from "./_snippets/snippets_FocusSparqlConstructTriplesFunction.js";
-import { snippets_FocusSparqlWherePatternsFunction } from "./_snippets/snippets_FocusSparqlWherePatternsFunction.js";
-import { snippets_FromCompactedJsonFunction } from "./_snippets/snippets_FromCompactedJsonFunction.js";
-import { snippets_FromExpandedJsonFunction } from "./_snippets/snippets_FromExpandedJsonFunction.js";
-import { snippets_FromRdfResourceFunction } from "./_snippets/snippets_FromRdfResourceFunction.js";
-import { snippets_FromRdfResourceValuesFunction } from "./_snippets/snippets_FromRdfResourceValuesFunction.js";
 import { snippets_filterArray } from "./_snippets/snippets_filterArray.js";
 import { snippets_filterBigDecimal } from "./_snippets/snippets_filterBigDecimal.js";
 import { snippets_filterBlankNode } from "./_snippets/snippets_filterBlankNode.js";
@@ -85,8 +130,6 @@ import { snippets_filterNumeric } from "./_snippets/snippets_filterNumeric.js";
 import { snippets_filterString } from "./_snippets/snippets_filterString.js";
 import { snippets_filterTerm } from "./_snippets/snippets_filterTerm.js";
 import { snippets_floatFromRdfResourceValues } from "./_snippets/snippets_floatFromRdfResourceValues.js";
-import { snippets_Hasher } from "./_snippets/snippets_Hasher.js";
-import { snippets_HashFunction } from "./_snippets/snippets_HashFunction.js";
 import { snippets_hashArray } from "./_snippets/snippets_hashArray.js";
 import { snippets_hashBigDecimal } from "./_snippets/snippets_hashBigDecimal.js";
 import { snippets_hashBoolean } from "./_snippets/snippets_hashBoolean.js";
@@ -96,26 +139,17 @@ import { snippets_hashMaybe } from "./_snippets/snippets_hashMaybe.js";
 import { snippets_hashNumeric } from "./_snippets/snippets_hashNumeric.js";
 import { snippets_hashString } from "./_snippets/snippets_hashString.js";
 import { snippets_hashTerm } from "./_snippets/snippets_hashTerm.js";
-import { snippets_IdentifierExpandedJson } from "./_snippets/snippets_IdentifierExpandedJson.js";
-import { snippets_IdentifierFilter } from "./_snippets/snippets_IdentifierFilter.js";
-import { snippets_IdentifierSchema } from "./_snippets/snippets_IdentifierSchema.js";
-import { snippets_IdentifierSet } from "./_snippets/snippets_IdentifierSet.js";
-import { snippets_IriFilter } from "./_snippets/snippets_IriFilter.js";
-import { snippets_IriSchema } from "./_snippets/snippets_IriSchema.js";
 import { snippets_identifierFromRdfResourceValues } from "./_snippets/snippets_identifierFromRdfResourceValues.js";
 import { snippets_identifierSparqlWherePatterns } from "./_snippets/snippets_identifierSparqlWherePatterns.js";
 import { snippets_identityConversionFunction } from "./_snippets/snippets_identityConversionFunction.js";
 import { snippets_identityValidationFunction } from "./_snippets/snippets_identityValidationFunction.js";
 import { snippets_intFromRdfResourceValues } from "./_snippets/snippets_intFromRdfResourceValues.js";
+import { snippets_iriFromCompactedJson } from "./_snippets/snippets_iriFromCompactedJson.js";
+import { snippets_iriFromExpandedJson } from "./_snippets/snippets_iriFromExpandedJson.js";
 import { snippets_iriFromRdfResourceValues } from "./_snippets/snippets_iriFromRdfResourceValues.js";
 import { snippets_iriSparqlWherePatterns } from "./_snippets/snippets_iriSparqlWherePatterns.js";
-import { snippets_LangStringSchema } from "./_snippets/snippets_LangStringSchema.js";
-import { snippets_Lazy } from "./_snippets/snippets_Lazy.js";
-import { snippets_LazyOption } from "./_snippets/snippets_LazyOption.js";
-import { snippets_LazySet } from "./_snippets/snippets_LazySet.js";
-import { snippets_LiteralExpandedJson } from "./_snippets/snippets_LiteralExpandedJson.js";
-import { snippets_LiteralFilter } from "./_snippets/snippets_LiteralFilter.js";
-import { snippets_LiteralSchema } from "./_snippets/snippets_LiteralSchema.js";
+import { snippets_iriToCompactedJson } from "./_snippets/snippets_iriToCompactedJson.js";
+import { snippets_iriToExpandedJson } from "./_snippets/snippets_iriToExpandedJson.js";
 import { snippets_langStringFromRdfResourceValues } from "./_snippets/snippets_langStringFromRdfResourceValues.js";
 import { snippets_langStringSparqlWherePatterns } from "./_snippets/snippets_langStringSparqlWherePatterns.js";
 import { snippets_liftSparqlPatterns } from "./_snippets/snippets_liftSparqlPatterns.js";
@@ -123,12 +157,11 @@ import { snippets_listFromRdfResourceValues } from "./_snippets/snippets_listFro
 import { snippets_listSparqlConstructTriples } from "./_snippets/snippets_listSparqlConstructTriples.js";
 import { snippets_listSparqlWherePatterns } from "./_snippets/snippets_listSparqlWherePatterns.js";
 import { snippets_literalFactory } from "./_snippets/snippets_literalFactory.js";
+import { snippets_literalFromExpandedJson } from "./_snippets/snippets_literalFromExpandedJson.js";
 import { snippets_literalFromRdfResourceValues } from "./_snippets/snippets_literalFromRdfResourceValues.js";
 import { snippets_literalSchemaSparqlPatterns } from "./_snippets/snippets_literalSchemaSparqlPatterns.js";
 import { snippets_literalSparqlWherePatterns } from "./_snippets/snippets_literalSparqlWherePatterns.js";
 import { snippets_literalToExpandedJson } from "./_snippets/snippets_literalToExpandedJson.js";
-import { snippets_MaybeFilter } from "./_snippets/snippets_MaybeFilter.js";
-import { snippets_MaybeSchema } from "./_snippets/snippets_MaybeSchema.js";
 import { snippets_maybeEquals } from "./_snippets/snippets_maybeEquals.js";
 import { snippets_maybeFromRdfResourceValues } from "./_snippets/snippets_maybeFromRdfResourceValues.js";
 import { snippets_maybeSparqlConstructTriples } from "./_snippets/snippets_maybeSparqlConstructTriples.js";
@@ -136,25 +169,14 @@ import { snippets_maybeSparqlWherePatterns } from "./_snippets/snippets_maybeSpa
 import { snippets_monkeyPatchObject } from "./_snippets/snippets_monkeyPatchObject.js";
 import { snippets_mutableListFromRdfResourceValues } from "./_snippets/snippets_mutableListFromRdfResourceValues.js";
 import { snippets_mutableSetFromRdfResourceValues } from "./_snippets/snippets_mutableSetFromRdfResourceValues.js";
-import { snippets_NamespaceBuilder } from "./_snippets/snippets_NamespaceBuilder.js";
-import { snippets_NumericFilter } from "./_snippets/snippets_NumericFilter.js";
-import { snippets_NumericSchema } from "./_snippets/snippets_NumericSchema.js";
 import { snippets_normalizeSparqlWherePatterns } from "./_snippets/snippets_normalizeSparqlWherePatterns.js";
 import { snippets_numericSparqlWherePatterns } from "./_snippets/snippets_numericSparqlWherePatterns.js";
-import { snippets_ProblemDetailsJson } from "./_snippets/snippets_ProblemDetailsJson.js";
-import { snippets_PropertyPath } from "./_snippets/snippets_PropertyPath.js";
 import { snippets_parseBlankNode } from "./_snippets/snippets_parseBlankNode.js";
 import { snippets_parseIdentifier } from "./_snippets/snippets_parseIdentifier.js";
 import { snippets_parseIri } from "./_snippets/snippets_parseIri.js";
 import { snippets_primitiveToCompactedJson } from "./_snippets/snippets_primitiveToCompactedJson.js";
 import { snippets_propertyEquals } from "./_snippets/snippets_propertyEquals.js";
 import { snippets_rdfResourceIdentifierValues } from "./_snippets/snippets_rdfResourceIdentifierValues.js";
-import { snippets_ShaclPropertySchema } from "./_snippets/snippets_ShaclPropertySchema.js";
-import { snippets_SparqlFilterPattern } from "./_snippets/snippets_SparqlFilterPattern.js";
-import { snippets_SparqlPattern } from "./_snippets/snippets_SparqlPattern.js";
-import { snippets_SparqlPattern_isSolutionGenerating } from "./_snippets/snippets_SparqlPattern_isSolutionGenerating.js";
-import { snippets_StringFilter } from "./_snippets/snippets_StringFilter.js";
-import { snippets_StringSchema } from "./_snippets/snippets_StringSchema.js";
 import { snippets_sequenceRecord } from "./_snippets/snippets_sequenceRecord.js";
 import { snippets_setFromRdfResourceValues } from "./_snippets/snippets_setFromRdfResourceValues.js";
 import { snippets_setSparqlConstructTriples } from "./_snippets/snippets_setSparqlConstructTriples.js";
@@ -170,15 +192,6 @@ import { snippets_strictEquals } from "./_snippets/snippets_strictEquals.js";
 import { snippets_stringFromRdfResourceValues } from "./_snippets/snippets_stringFromRdfResourceValues.js";
 import { snippets_stringSparqlWherePatterns } from "./_snippets/snippets_stringSparqlWherePatterns.js";
 import { snippets_stringToExpandedJson } from "./_snippets/snippets_stringToExpandedJson.js";
-import { snippets_TermFilter } from "./_snippets/snippets_TermFilter.js";
-import { snippets_TermSchema } from "./_snippets/snippets_TermSchema.js";
-import { snippets_ToCompactedJsonFunction } from "./_snippets/snippets_ToCompactedJsonFunction.js";
-import { snippets_ToExpandedJsonFunction } from "./_snippets/snippets_ToExpandedJsonFunction.js";
-import { snippets_ToLoggableFunction } from "./_snippets/snippets_ToLoggableFunction.js";
-import { snippets_ToRdfResourceFunction } from "./_snippets/snippets_ToRdfResourceFunction.js";
-import { snippets_ToRdfResourceValuesFunction } from "./_snippets/snippets_ToRdfResourceValuesFunction.js";
-import { snippets_ToStringFunction } from "./_snippets/snippets_ToStringFunction.js";
-import { snippets_ToStringRecordFunction } from "./_snippets/snippets_ToStringRecordFunction.js";
 import { snippets_termFilterSparqlPatterns } from "./_snippets/snippets_termFilterSparqlPatterns.js";
 import { snippets_termFromExpandedJson } from "./_snippets/snippets_termFromExpandedJson.js";
 import { snippets_termFromRdfResourceValues } from "./_snippets/snippets_termFromRdfResourceValues.js";
@@ -187,10 +200,6 @@ import { snippets_termSchemaSparqlPatterns } from "./_snippets/snippets_termSche
 import { snippets_termSparqlWherePatterns } from "./_snippets/snippets_termSparqlWherePatterns.js";
 import { snippets_termToExpandedJson } from "./_snippets/snippets_termToExpandedJson.js";
 import { snippets_toIsoDateString } from "./_snippets/snippets_toIsoDateString.js";
-import { snippets_UnwrapR } from "./_snippets/snippets_UnwrapR.js";
-import { snippets_ValidationFunction } from "./_snippets/snippets_ValidationFunction.js";
-import { snippets_ValueSparqlConstructTriplesFunction } from "./_snippets/snippets_ValueSparqlConstructTriplesFunction.js";
-import { snippets_ValueSparqlWherePatternsFunction } from "./_snippets/snippets_ValueSparqlWherePatternsFunction.js";
 import { snippets_validateArray } from "./_snippets/snippets_validateArray.js";
 import { snippets_validateMaybe } from "./_snippets/snippets_validateMaybe.js";
 import { snippets_validateMutableArray } from "./_snippets/snippets_validateMutableArray.js";
@@ -573,6 +582,16 @@ export class Snippets {
   }
 
   @Memoize()
+  get blankNodeFromCompactedJson(): Snippet {
+    return this.snippet(snippets_blankNodeFromCompactedJson);
+  }
+
+  @Memoize()
+  get blankNodeFromExpandedJson(): Snippet {
+    return this.snippet(snippets_blankNodeFromExpandedJson);
+  }
+
+  @Memoize()
   get blankNodeFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_blankNodeFromRdfResourceValues);
   }
@@ -580,6 +599,16 @@ export class Snippets {
   @Memoize()
   get blankNodeSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_blankNodeSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get blankNodeToCompactedJson(): Snippet {
+    return this.snippet(snippets_blankNodeToCompactedJson);
+  }
+
+  @Memoize()
+  get blankNodeToExpandedJson(): Snippet {
+    return this.snippet(snippets_blankNodeToExpandedJson);
   }
 
   @Memoize()
@@ -903,6 +932,16 @@ export class Snippets {
   }
 
   @Memoize()
+  get iriFromCompactedJson(): Snippet {
+    return this.snippet(snippets_iriFromCompactedJson);
+  }
+
+  @Memoize()
+  get iriFromExpandedJson(): Snippet {
+    return this.snippet(snippets_iriFromExpandedJson);
+  }
+
+  @Memoize()
   get iriFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_iriFromRdfResourceValues);
   }
@@ -910,6 +949,16 @@ export class Snippets {
   @Memoize()
   get iriSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_iriSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get iriToCompactedJson(): Snippet {
+    return this.snippet(snippets_iriToCompactedJson);
+  }
+
+  @Memoize()
+  get iriToExpandedJson(): Snippet {
+    return this.snippet(snippets_iriToExpandedJson);
   }
 
   @Memoize()
@@ -945,6 +994,11 @@ export class Snippets {
   @Memoize()
   get literalFactory(): Snippet {
     return this.snippet(snippets_literalFactory);
+  }
+
+  @Memoize()
+  get literalFromExpandedJson(): Snippet {
+    return this.snippet(snippets_literalFromExpandedJson);
   }
 
   @Memoize()

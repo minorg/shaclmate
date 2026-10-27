@@ -4,7 +4,7 @@ import { Maybe } from "purify-ts";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { ReferenceCallable } from "./ReferenceCallable.js";
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { code } from "./ts-poet-wrapper.js";
 
 export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   protected override readonly inlineExpression =
@@ -29,6 +29,12 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   );
   override readonly filterType =
     code`${this.reusables.snippets.BlankNodeFilter}`;
+  override readonly fromCompactedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.blankNodeFromCompactedJson,
+  );
+  override readonly fromExpandedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.blankNodeFromExpandedJson,
+  );
   override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
     this.reusables.snippets.blankNodeFromRdfResourceValues,
   );
@@ -39,6 +45,12 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   );
   override readonly schemaType =
     code`${this.reusables.snippets.BlankNodeSchema}`;
+  override readonly toCompactedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.blankNodeToCompactedJson,
+  );
+  override readonly toExpandedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.blankNodeToExpandedJson,
+  );
   override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.blankNodeSparqlWherePatterns,
   );
@@ -54,22 +66,6 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
       hasValues: [],
       in_: [],
     });
-  }
-
-  protected override fromCompactedJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractIdentifierType<BlankNode>["fromCompactedJsonExpression"]
-  >[0]): Code {
-    return code`${this.reusables.imports.dataFactory}.blankNode(${variables.value}.substring(2))`;
-  }
-
-  protected override toCompactedJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractIdentifierType<BlankNode>["toCompactedJsonExpression"]
-  >[0]): Code {
-    return code`\`_:\${${variables.value}.value}\``;
   }
 }
 
