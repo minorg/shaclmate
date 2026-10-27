@@ -4,7 +4,7 @@ import { Maybe } from "purify-ts";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
-import type { Code } from "./ts-poet-wrapper.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class of all types that are typed literals in RDF. In RDF every literal is either
@@ -14,8 +14,6 @@ import type { Code } from "./ts-poet-wrapper.js";
 export abstract class AbstractTypedLiteralType<
   ValueT,
 > extends AbstractLiteralType {
-  protected abstract readonly compactedJsonType: AbstractLiteralType.JsonType;
-
   readonly datatype: NamedNode;
 
   constructor({
@@ -36,6 +34,12 @@ export abstract class AbstractTypedLiteralType<
     variables,
   }: Parameters<AbstractLiteralType["graphqlResolveExpression"]>[0]): Code {
     return variables.value;
+  }
+
+  protected override get schemaInitializers(): readonly Code[] {
+    return super.schemaInitializers.concat(
+      code`datatype: ${this.rdfjsTermExpression(this.datatype)}`,
+    );
   }
 
   abstract override valueExpression(literal: Literal | ValueT): Code;
