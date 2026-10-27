@@ -9,7 +9,6 @@ export const snippets_blankNodeFromRdfResourceValues: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}blankNodeFromRdfResourceValues`,
     code`\
-function ${syntheticNamePrefix}blankNodeFromRdfResourceValues(values: ${imports.Resource}.Values, _options: Parameters<${snippets.FromRdfResourceValuesFunction}<${imports.BlankNode}, ${snippets.BlankNodeSchema}>>[1]): ${imports.Either}<Error, ${imports.Resource}.Values<${imports.BlankNode}>> {
-  return values.chainMap(value => value.toBlankNode());
-}`,
+const ${syntheticNamePrefix}blankNodeFromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${imports.BlankNode}, ${snippets.BlankNodeSchema}> =
+  (values) => values.chainMap(value => value.toBlankNode());`,
   );
