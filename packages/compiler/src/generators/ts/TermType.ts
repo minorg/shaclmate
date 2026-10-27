@@ -64,7 +64,7 @@ export class TermType<
   @Memoize()
   override get fromExpandedJsonFunction(): Callable {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.termFromExpandedJson}<${this.expandedJsonType.expression}, ${this.expression}, ${this.schemaType}>`,
+      code`${this.reusables.snippets.termFromExpandedJson}<${this.expandedJsonType.expression}, ${this.expression}>`,
     );
   }
 
