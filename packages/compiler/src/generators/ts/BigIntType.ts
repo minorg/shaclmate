@@ -13,7 +13,7 @@ export class BigIntType extends AbstractNumericType<bigint> {
   protected override readonly decodedIn = this.in_.map((in_) =>
     LiteralDecoder.decodeBigIntLiteral(in_).unsafeCoerce(),
   );
-  protected override readonly compactJsonType: AbstractNumericType.JsonType =
+  protected override readonly compactedJsonType: AbstractNumericType.JsonType =
     this.jsonTypeFactory.createJsonStringType({
       in_: this.decodedIn.map((in_) => in_.toString()),
     });
@@ -56,28 +56,28 @@ export class BigIntType extends AbstractNumericType<bigint> {
     return code`${typeof literal === "bigint" ? literal : LiteralDecoder.decodeBigIntLiteral(literal).unsafeCoerce()}n`;
   }
 
-  protected override fromCompactJsonExpression({
+  protected override fromCompactedJsonExpression({
     variables,
   }: Parameters<AbstractNumericType<bigint>["fromJsonExpression"]>[0]): Code {
-    let fromCompactJsonExpression = code`BigInt(${variables.value})`;
+    let fromCompactedJsonExpression = code`BigInt(${variables.value})`;
     if (this.in_.length > 0) {
-      fromCompactJsonExpression = code`(${fromCompactJsonExpression} as ${this.expression})`;
+      fromCompactedJsonExpression = code`(${fromCompactedJsonExpression} as ${this.expression})`;
     }
-    return fromCompactJsonExpression;
+    return fromCompactedJsonExpression;
   }
 
-  protected override toCompactJsonExpression({
+  protected override toCompactedJsonExpression({
     variables,
   }: Parameters<
-    AbstractNumericType<bigint>["toCompactJsonExpression"]
+    AbstractNumericType<bigint>["toCompactedJsonExpression"]
   >[0]): Code {
-    let toCompactJsonExpression = code`${variables.value}.toString()`;
+    let toCompactedJsonExpression = code`${variables.value}.toString()`;
     if (this.in_.length > 0) {
-      toCompactJsonExpression = code`(${toCompactJsonExpression} as ${joinCode(
+      toCompactedJsonExpression = code`(${toCompactedJsonExpression} as ${joinCode(
         this.decodedIn.map((in_) => code`${literalOf(in_.toString())}`),
         { on: " | " },
       )})`;
     }
-    return toCompactJsonExpression;
+    return toCompactedJsonExpression;
   }
 }

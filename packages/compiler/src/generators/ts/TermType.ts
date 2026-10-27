@@ -54,7 +54,7 @@ export class TermType<
     return code`${this.reusables.snippets.TermFilter}<${this.expression}>`;
   }
 
-  get fromCompactJsonFunction(): Callable {
+  get fromCompactedJsonFunction(): Callable {
     return this.fromExpandedJsonFunction;
   }
 
@@ -165,7 +165,7 @@ export class TermType<
     );
   }
 
-  override get toCompactJsonFunction(): Callable {
+  override get toCompactedJsonFunction(): Callable {
     return this.toExpandedJsonFunction;
   }
 

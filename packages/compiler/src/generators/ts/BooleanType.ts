@@ -13,8 +13,12 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   protected override readonly decodedIn = this.in_.map((in_) =>
     LiteralDecoder.decodeBooleanLiteral(in_).unsafeCoerce(),
   );
-  override readonly compactJsonType: AbstractPrimitiveType.JsonType =
+  override readonly compactedJsonType: AbstractPrimitiveType.JsonType =
     this.jsonTypeFactory.createJsonBooleanType({ in_: this.decodedIn });
+  override readonly expandedJsonType =
+    this.jsonTypeFactory.createSnippetJsonType(
+      this.reusables.snippets.LiteralExpandedJson,
+    );
   override readonly conversionFunction: Maybe<AbstractPrimitiveType.ConversionFunction> =
     Maybe.empty();
   override readonly filterFunction = new ReferenceCallable(
@@ -32,6 +36,12 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   override readonly kind = "Boolean";
   override readonly schemaType =
     code`${this.reusables.snippets.BooleanSchema}<${this.expression}>`;
+  override readonly toCompactedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.primitiveToCompactedJson,
+  );
+  override readonly toExpandedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.booleanToExpandedJson,
+  );
   override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.booleanSparqlWherePatterns,
   );

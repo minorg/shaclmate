@@ -24,7 +24,7 @@ export abstract class AbstractIdentifierType<
   }: Parameters<
     AbstractTermType<NamedNode, IdentifierT>["fromJsonExpression"]
   >[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${this.fromCompactJsonExpression(
+    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${this.fromCompactedJsonExpression(
       {
         variables: {
           value:
@@ -43,12 +43,14 @@ export abstract class AbstractIdentifierType<
   }: Parameters<
     AbstractTermType<NamedNode, IdentifierT>["toJsonExpression"]
   >[0]): Code {
-    const toCompactJsonExpression = this.toCompactJsonExpression({ variables });
+    const toCompactedJsonExpression = this.toCompactedJsonExpression({
+      variables,
+    });
     switch (form) {
       case "compact":
-        return toCompactJsonExpression;
+        return toCompactedJsonExpression;
       case "expanded":
-        return code`${{ ...discriminantProperty, "@id": toCompactJsonExpression }}`;
+        return code`${{ ...discriminantProperty, "@id": toCompactedJsonExpression }}`;
     }
   }
 
@@ -58,7 +60,7 @@ export abstract class AbstractIdentifierType<
   }: Parameters<
     AbstractTermType<NamedNode, IdentifierT>["jsonType"]
   >[0]): AbstractTermType.JsonType {
-    const compactJsonType = this.jsonTypeFactory.createJsonStringType({
+    const compactedJsonType = this.jsonTypeFactory.createJsonStringType({
       in_: this.in_.map((in_) => in_.value),
       inReference:
         this.name.isJust() && this.configuration.features.has("Object.schema")
@@ -69,20 +71,20 @@ export abstract class AbstractIdentifierType<
 
     switch (form) {
       case "compact":
-        return compactJsonType;
+        return compactedJsonType;
       case "expanded":
         return this.jsonTypeFactory.createJsonObjectType({
           ...discriminantProperty,
-          "@id": { type: compactJsonType },
+          "@id": { type: compactedJsonType },
         });
     }
   }
 
-  protected abstract fromCompactJsonExpression(parameters: {
+  protected abstract fromCompactedJsonExpression(parameters: {
     variables: { value: Code };
   }): Code;
 
-  protected abstract toCompactJsonExpression(parameters: {
+  protected abstract toCompactedJsonExpression(parameters: {
     variables: { value: Code };
   }): Code;
 

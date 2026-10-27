@@ -131,18 +131,18 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
       .orDefaultLazy(() => this.inlineValueTypeExpression);
   }
 
-  protected override fromCompactJsonExpression({
+  protected override fromCompactedJsonExpression({
     variables,
   }: Parameters<
-    AbstractIdentifierType<NamedNode>["fromCompactJsonExpression"]
+    AbstractIdentifierType<NamedNode>["fromCompactedJsonExpression"]
   >[0]): Code {
     return code`${this.reusables.imports.dataFactory}.namedNode(${variables.value})`;
   }
 
-  protected override toCompactJsonExpression({
+  protected override toCompactedJsonExpression({
     variables,
   }: Parameters<
-    AbstractIdentifierType<NamedNode>["toCompactJsonExpression"]
+    AbstractIdentifierType<NamedNode>["toCompactedJsonExpression"]
   >[0]): Code {
     return code`${variables.value}.value`;
   }

@@ -33,7 +33,7 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
   );
 
   @Memoize()
-  protected override get compactJsonType(): AbstractTypedLiteralType.JsonType {
+  protected override get compactedJsonType(): AbstractTypedLiteralType.JsonType {
     return this.jsonTypeFactory.createJsonStringType({
       format: this.jsonStringFormat,
     });
@@ -55,7 +55,7 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
     return code`[${this.reusables.snippets.literalFactory}.date(${variables.value}, ${this.rdfjsTermExpression(this.datatype)})]`;
   }
 
-  protected override fromCompactJsonExpression({
+  protected override fromCompactedJsonExpression({
     variables,
   }: Parameters<
     AbstractTypedLiteralType<Date>["fromJsonExpression"]
@@ -63,10 +63,10 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
     return code`new Date(${variables.value})`;
   }
 
-  protected override toCompactJsonExpression({
+  protected override toCompactedJsonExpression({
     variables,
   }: Parameters<
-    AbstractTypedLiteralType<Date>["toCompactJsonExpression"]
+    AbstractTypedLiteralType<Date>["toCompactedJsonExpression"]
   >[0]): Code {
     return this.jsonStringFormat === "datetime"
       ? code`${variables.value}.toISOString()`

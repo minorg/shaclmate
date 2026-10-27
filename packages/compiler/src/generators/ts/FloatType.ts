@@ -11,7 +11,7 @@ export class FloatType extends AbstractNumericType<number> {
   protected override readonly decodedIn = this.in_.map((in_) =>
     LiteralDecoder.decodeFloatLiteral(in_).unsafeCoerce(),
   );
-  override readonly compactJsonType: AbstractNumericType.JsonType =
+  override readonly compactedJsonType: AbstractNumericType.JsonType =
     this.jsonTypeFactory.createJsonNumberType({ in_: this.decodedIn });
   override readonly conversionFunction: Maybe<AbstractNumericType.ConversionFunction> =
     Maybe.empty();

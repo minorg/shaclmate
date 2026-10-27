@@ -56,18 +56,18 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     });
   }
 
-  protected override fromCompactJsonExpression({
+  protected override fromCompactedJsonExpression({
     variables,
   }: Parameters<
-    AbstractIdentifierType<BlankNode>["fromCompactJsonExpression"]
+    AbstractIdentifierType<BlankNode>["fromCompactedJsonExpression"]
   >[0]): Code {
     return code`${this.reusables.imports.dataFactory}.blankNode(${variables.value}.substring(2))`;
   }
 
-  protected override toCompactJsonExpression({
+  protected override toCompactedJsonExpression({
     variables,
   }: Parameters<
-    AbstractIdentifierType<BlankNode>["toCompactJsonExpression"]
+    AbstractIdentifierType<BlankNode>["toCompactedJsonExpression"]
   >[0]): Code {
     return code`\`_:\${${variables.value}.value}\``;
   }

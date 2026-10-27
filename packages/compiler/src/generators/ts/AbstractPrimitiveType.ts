@@ -42,22 +42,22 @@ export abstract class AbstractPrimitiveType<
     return variables.value;
   }
 
-  protected override fromCompactJsonExpression({
+  protected override fromCompactedJsonExpression({
     variables,
   }: Parameters<
     AbstractTypedLiteralType<Date>["fromJsonExpression"]
   >[0]): Code {
-    let fromCompactJsonExpression = variables.value;
+    let fromCompactedJsonExpression = variables.value;
     if (this.in_.length > 0) {
-      fromCompactJsonExpression = code`(${fromCompactJsonExpression} as ${this.expression})`;
+      fromCompactedJsonExpression = code`(${fromCompactedJsonExpression} as ${this.expression})`;
     }
-    return fromCompactJsonExpression;
+    return fromCompactedJsonExpression;
   }
 
-  protected override toCompactJsonExpression({
+  protected override toCompactedJsonExpression({
     variables,
   }: Parameters<
-    AbstractTypedLiteralType<Date>["toCompactJsonExpression"]
+    AbstractTypedLiteralType<Date>["toCompactedJsonExpression"]
   >[0]): Code {
     return variables.value;
   }

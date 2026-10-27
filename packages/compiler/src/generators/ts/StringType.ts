@@ -59,7 +59,7 @@ export class StringType extends AbstractPrimitiveType<string> {
   }
 
   @Memoize()
-  protected override get compactJsonType(): AbstractPrimitiveType.JsonType {
+  protected override get compactedJsonType(): AbstractPrimitiveType.JsonType {
     return this.jsonTypeFactory.createJsonStringType({
       in_: this.decodedIn,
       inReference:

@@ -127,16 +127,16 @@ export class ListType<
   }: Parameters<
     AbstractCollectionType<ItemTypeT>["jsonType"]
   >[0]): AbstractCollectionType.JsonType {
-    const compactJsonType = this.jsonTypeFactory.createJsonArrayType(
+    const compactedJsonType = this.jsonTypeFactory.createJsonArrayType(
       this.itemType.jsonType({ form: "compact" }),
     );
     switch (form) {
       case "compact":
-        return compactJsonType;
+        return compactedJsonType;
       case "expanded":
         return this.jsonTypeFactory.createJsonObjectType({
           ...discriminantProperty,
-          "@list": { type: compactJsonType },
+          "@list": { type: compactedJsonType },
         });
     }
   }
@@ -148,12 +148,12 @@ export class ListType<
   }: Parameters<
     AbstractCollectionType<ItemTypeT>["toJsonExpression"]
   >[0]): Code {
-    const toCompactJsonExpression = code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ form: "compact", variables: { value: code`item` } })}))`;
+    const toCompactedJsonExpression = code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ form: "compact", variables: { value: code`item` } })}))`;
     switch (form) {
       case "compact":
-        return toCompactJsonExpression;
+        return toCompactedJsonExpression;
       case "expanded":
-        return code`${{ ...discriminantProperty, "@list": toCompactJsonExpression }}`;
+        return code`${{ ...discriminantProperty, "@list": toCompactedJsonExpression }}`;
     }
   }
 

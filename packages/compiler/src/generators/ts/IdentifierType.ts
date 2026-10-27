@@ -71,18 +71,18 @@ export class IdentifierType extends AbstractIdentifierType<
     });
   }
 
-  protected override fromCompactJsonExpression({
+  protected override fromCompactedJsonExpression({
     variables,
   }: Parameters<
-    AbstractIdentifierType<BlankNode | NamedNode>["fromCompactJsonExpression"]
+    AbstractIdentifierType<BlankNode | NamedNode>["fromCompactedJsonExpression"]
   >[0]): Code {
     return code`(${variables.value}.startsWith("_:") ? ${this.reusables.imports.dataFactory}.blankNode(${variables.value}.substring(2)) : ${this.reusables.imports.dataFactory}.namedNode(${variables.value}))`;
   }
 
-  protected override toCompactJsonExpression({
+  protected override toCompactedJsonExpression({
     variables,
   }: Parameters<
-    AbstractIdentifierType<BlankNode | NamedNode>["toCompactJsonExpression"]
+    AbstractIdentifierType<BlankNode | NamedNode>["toCompactedJsonExpression"]
   >[0]): Code {
     return code`(${variables.value}.termType === "BlankNode" ? \`_:\${${variables.value}.value}\` : ${variables.value}.value)`;
   }

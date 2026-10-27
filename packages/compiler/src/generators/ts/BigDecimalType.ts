@@ -8,7 +8,7 @@ import { ReferenceCallable } from "./ReferenceCallable.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
-  protected override readonly compactJsonType: AbstractTypedLiteralType.JsonType =
+  protected override readonly compactedJsonType: AbstractTypedLiteralType.JsonType =
     this.jsonTypeFactory.createJsonStringType();
   protected override readonly inlineExpression =
     code`${this.reusables.imports.BigDecimal}`;
@@ -88,18 +88,18 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
     return code`new ${this.reusables.imports.BigDecimal}(${literalOf(literal.value)})`;
   }
 
-  protected override fromCompactJsonExpression({
+  protected override fromCompactedJsonExpression({
     variables,
   }: Parameters<
-    AbstractTypedLiteralType<Decimal>["fromCompactJsonExpression"]
+    AbstractTypedLiteralType<Decimal>["fromCompactedJsonExpression"]
   >[0]): Code {
     return code`new ${this.expression}(${variables.value})`;
   }
 
-  protected override toCompactJsonExpression({
+  protected override toCompactedJsonExpression({
     variables,
   }: Parameters<
-    AbstractTypedLiteralType<Decimal>["toCompactJsonExpression"]
+    AbstractTypedLiteralType<Decimal>["toCompactedJsonExpression"]
   >[0]): Code {
     return code`${variables.value}.toFixed()`;
   }

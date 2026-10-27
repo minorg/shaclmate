@@ -68,7 +68,7 @@ export abstract class AbstractType extends AbstractConstruct {
    * JSON-LD 1.1 (https://www.w3.org/TR/json-ld11/#forms-of-json-ld) "expanded" form of the type. It must be a JSON object type.
    */
   abstract readonly expandedJsonType: AbstractType.JsonType & {
-    readonly kind: "JsonDiscriminatedUnion" | "JsonObject";
+    readonly kind: "JsonDiscriminatedUnion" | "JsonObject" | "SnippetJson";
   };
 
   /**
@@ -85,7 +85,7 @@ export abstract class AbstractType extends AbstractConstruct {
   /**
    * A function (reference or literal) that converts an instance of compactedJsonType to an Either<Error, ThisType>.
    */
-  abstract readonly fromCompactJsonFunction: Callable;
+  abstract readonly fromCompactedJsonFunction: Callable;
 
   /**
    * A function (reference or literal) that converts an instance of expandedJsonType to an Either<Error, ThisType>.
@@ -179,7 +179,7 @@ export abstract class AbstractType extends AbstractConstruct {
   /**
    * A function (reference or literal) that converts an instance of this type to the compactedJsonType.
    */
-  abstract readonly toCompactJsonFunction: Callable;
+  abstract readonly toCompactedJsonFunction: Callable;
 
   /**
    * A function (reference or literal) that converts an instance of this type to the expandedJsonType.
