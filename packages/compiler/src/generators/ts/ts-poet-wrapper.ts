@@ -6,8 +6,6 @@ export * from "ts-poet";
 
 import { Code } from "ts-poet";
 
-export type { ConditionalOutput } from "ts-poet/build/ConditionalOutput.js";
-
 const originalCodeToString = Code.prototype.toString;
 
 Code.prototype.toString = function (
