@@ -8,10 +8,10 @@ export const snippets_LiteralExpandedJson: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}LiteralExpandedJson`,
     code`\
-interface ${syntheticNamePrefix}LiteralExpandedJson {
+interface ${syntheticNamePrefix}LiteralExpandedJson<ValueT extends string = string> {
   readonly "@language"?: string;
   readonly "@type"?: string;
-  readonly "@value": string;
+  readonly "@value": ValueT;
 }
   
 namespace LiteralExpandedJson {

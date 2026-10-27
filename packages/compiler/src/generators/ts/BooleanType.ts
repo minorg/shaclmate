@@ -15,10 +15,6 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   );
   override readonly compactedJsonType: AbstractPrimitiveType.JsonType =
     this.jsonTypeFactory.createJsonBooleanType({ in_: this.decodedIn });
-  override readonly expandedJsonType =
-    this.jsonTypeFactory.createSnippetJsonType(
-      this.reusables.snippets.LiteralExpandedJson,
-    );
   override readonly conversionFunction: Maybe<AbstractPrimitiveType.ConversionFunction> =
     Maybe.empty();
   override readonly filterFunction = new ReferenceCallable(

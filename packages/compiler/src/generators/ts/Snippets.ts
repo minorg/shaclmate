@@ -70,9 +70,13 @@ import { snippets__FromRdfResourceFunction } from "./_snippets/snippets__FromRdf
 import { snippets__ToRdfResourceFunction } from "./_snippets/snippets__ToRdfResourceFunction.js";
 import { snippets_arrayEquals } from "./_snippets/snippets_arrayEquals.js";
 import { snippets_arrayIntersection } from "./_snippets/snippets_arrayIntersection.js";
+import { snippets_bigDecimalFromCompactedJson } from "./_snippets/snippets_bigDecimalFromCompactedJson.js";
+import { snippets_bigDecimalFromExpandedJson } from "./_snippets/snippets_bigDecimalFromExpandedJson.js";
 import { snippets_bigDecimalFromRdfResourceValues } from "./_snippets/snippets_bigDecimalFromRdfResourceValues.js";
 import { snippets_bigDecimalLiteral } from "./_snippets/snippets_bigDecimalLiteral.js";
 import { snippets_bigDecimalSparqlWherePatterns } from "./_snippets/snippets_bigDecimalSparqlWherePatterns.js";
+import { snippets_bigDecimalToCompactedJson } from "./_snippets/snippets_bigDecimalToCompactedJson.js";
+import { snippets_bigDecimalToExpandedJson } from "./_snippets/snippets_bigDecimalToExpandedJson.js";
 import { snippets_bigIntFromRdfResourceValues } from "./_snippets/snippets_bigIntFromRdfResourceValues.js";
 import { snippets_blankNodeFromCompactedJson } from "./_snippets/snippets_blankNodeFromCompactedJson.js";
 import { snippets_blankNodeFromExpandedJson } from "./_snippets/snippets_blankNodeFromExpandedJson.js";
@@ -562,6 +566,16 @@ export class Snippets {
   }
 
   @Memoize()
+  get bigDecimalFromCompactedJson(): Snippet {
+    return this.snippet(snippets_bigDecimalFromCompactedJson);
+  }
+
+  @Memoize()
+  get bigDecimalFromExpandedJson(): Snippet {
+    return this.snippet(snippets_bigDecimalFromExpandedJson);
+  }
+
+  @Memoize()
   get bigDecimalFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_bigDecimalFromRdfResourceValues);
   }
@@ -574,6 +588,16 @@ export class Snippets {
   @Memoize()
   get bigDecimalSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_bigDecimalSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get bigDecimalToCompactedJson(): Snippet {
+    return this.snippet(snippets_bigDecimalToCompactedJson);
+  }
+
+  @Memoize()
+  get bigDecimalToExpandedJson(): Snippet {
+    return this.snippet(snippets_bigDecimalToExpandedJson);
   }
 
   @Memoize()

@@ -13,25 +13,6 @@ export class LiteralType extends AbstractLiteralType {
   protected override readonly inlineExpression =
     code`${this.reusables.imports.Literal}`;
 
-  override readonly expandedJsonType: AbstractLiteralType["expandedJsonType"] =
-    this.jsonTypeFactory.createJsonObjectType(
-      {
-        "@language": {
-          optional: true,
-          type: this.jsonTypeFactory.createJsonStringType(),
-        },
-        "@type": {
-          optional: true,
-          type: this.jsonTypeFactory.createJsonStringType(),
-        },
-        "@value": {
-          type: this.jsonTypeFactory.createJsonStringType(),
-        },
-      },
-      {
-        snippet: this.reusables.snippets.LiteralExpandedJson,
-      },
-    );
   override readonly compactedJsonType: AbstractLiteralType["compactedJsonType"] =
     this.expandedJsonType;
   override readonly conversionFunction: Maybe<AbstractLiteralType.ConversionFunction> =
