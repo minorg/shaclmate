@@ -9,5 +9,5 @@ export const snippets_booleanToExpandedJson: SnippetFactory = ({
     `${syntheticNamePrefix}booleanToExpandedJson`,
     code`\
 const ${syntheticNamePrefix}booleanToExpandedJson: ${snippets.ToExpandedJsonFunction}<boolean, ${snippets.LiteralExpandedJson}> =
-  (value) => ${snippets.literalToExpandedJson}(${snippets.literalFactory}.boolean(value));`,
+  (value, { schema }) => ${snippets.literalToExpandedJson}(${snippets.literalFactory}.boolean(value, schema.datatype));`,
   );

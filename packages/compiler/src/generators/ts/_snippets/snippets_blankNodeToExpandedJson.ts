@@ -10,5 +10,5 @@ export const snippets_blankNodeToExpandedJson: SnippetFactory = ({
     `${syntheticNamePrefix}blankNodeToExpandedJson`,
     code`\
 const ${syntheticNamePrefix}blankNodeToExpandedJson: ${snippets.ToExpandedJsonFunction}<${imports.BlankNode}, ${snippets.IdentifierExpandedJson}> =
-  (blankNode) => { "@id": ${snippets.blankNodeToCompactedJson}(blankNode) };`,
+  (blankNode) => ({ "@id": ${snippets.blankNodeToCompactedJson}(blankNode) });`,
   );

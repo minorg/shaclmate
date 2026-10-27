@@ -9,5 +9,5 @@ export const snippets_stringToExpandedJson: SnippetFactory = ({
     `${syntheticNamePrefix}stringToExpandedJson`,
     code`\
 const ${syntheticNamePrefix}stringToExpandedJson: ${snippets.ToExpandedJsonFunction}<string, ${snippets.LiteralExpandedJson}> =
-  (value) => ${snippets.literalToExpandedJson}(${snippets.literalFactory}.string(value));`,
+  (value, { schema }) => ${snippets.literalToExpandedJson}(${snippets.literalFactory}.string(value), schema.datatype);`,
   );
