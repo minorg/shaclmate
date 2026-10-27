@@ -15,19 +15,19 @@ function ${syntheticNamePrefix}termFromExpandedJson<TermT extends ${imports.Blan
   for (const termType of schema.types) {
     switch "BlankNode": {
       if ("@id" in expandedJson && expandedJson["@id"].startsWith("_:")) {
-        return ${snippets.blankNodeFromExpandedJson}(expandedJson);
+        return ${snippets.blankNodeFromExpandedJson}(expandedJson) as ${imports.Either}<Error, TermT>;
       }
       break;
     }
     case "Literal": {
       if ("@value" in expandedJson) {
-        return ${snippets.literalFromExpandedJson}(expandedJson);
+        return ${snippets.literalFromExpandedJson}(expandedJson) as ${imports.Either}<Error, TermT>;
       }
       break;
     }
     case "NamedNode": {
       if ("@id" in expandedJson && !expandedJson["@id"].startsWith("_:")) {
-        return ${snippets.iriFromExpandedJson}(expandedJson);
+        return ${snippets.iriFromExpandedJson}(expandedJson) as ${imports.Either}<Error, TermT>;
       }
       break;
     }
