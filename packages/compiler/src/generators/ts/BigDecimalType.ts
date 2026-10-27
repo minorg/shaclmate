@@ -8,11 +8,11 @@ import { ReferenceCallable } from "./ReferenceCallable.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
-  protected override readonly compactedJsonType: AbstractTypedLiteralType.JsonType =
-    this.jsonTypeFactory.createJsonStringType();
   protected override readonly inlineExpression =
     code`${this.reusables.imports.BigDecimal}`;
 
+  override readonly compactedJsonType: AbstractTypedLiteralType.JsonType =
+    this.jsonTypeFactory.createJsonStringType();
   override readonly jsTypes = [
     {
       className: code`${this.reusables.imports.BigDecimal}`,
@@ -43,6 +43,12 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
   );
   override readonly filterType =
     code`${this.reusables.snippets.NumericFilter}<${this.reusables.imports.BigDecimal}>`;
+  override readonly fromCompactedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.bigDecimalFromCompactedJson,
+  );
+  override readonly fromExpandedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.bigDecimalFromExpandedJson,
+  );
   override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
     this.reusables.snippets.bigDecimalFromRdfResourceValues,
   );
@@ -56,6 +62,12 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
   override readonly kind = "BigDecimal";
   override readonly schemaType =
     code`${this.reusables.snippets.NumericSchema}<${this.reusables.imports.BigDecimal}>`;
+  override readonly toCompactedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.bigDecimalToCompactedJson,
+  );
+  override readonly toExpandedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.bigDecimalToExpandedJson,
+  );
   override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.bigDecimalSparqlWherePatterns,
   );
@@ -86,21 +98,5 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
 
   override valueExpression(literal: Literal): Code {
     return code`new ${this.reusables.imports.BigDecimal}(${literalOf(literal.value)})`;
-  }
-
-  protected override fromCompactedJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractTypedLiteralType<Decimal>["fromCompactedJsonExpression"]
-  >[0]): Code {
-    return code`new ${this.expression}(${variables.value})`;
-  }
-
-  protected override toCompactedJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractTypedLiteralType<Decimal>["toCompactedJsonExpression"]
-  >[0]): Code {
-    return code`${variables.value}.toFixed()`;
   }
 }
