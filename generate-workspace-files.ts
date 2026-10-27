@@ -697,6 +697,7 @@ fs.writeFileSync(
       ],
       include: [
         "generate-workspace-files.ts",
+        "packages/compiler/generate-Snippets-ts.ts",
         "test-shapes-graphs/index.ts",
       ].concat(
         Object.entries(workspaces).flatMap(

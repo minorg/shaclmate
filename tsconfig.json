@@ -16,6 +16,7 @@
   ],
   "include": [
     "generate-workspace-files.ts",
+    "packages/compiler/generate-Snippets-ts.ts",
     "test-shapes-graphs/index.ts",
     "apps/cli/src/**/*.ts*",
     "examples/api/src/**/*.ts*",
