@@ -2,13 +2,15 @@ import { invariant } from "ts-invariant";
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function ObjectType_fromJsonFunctionExpression(this: ObjectType): Code {
+export function ObjectType_fromExpandedJsonFunctionExpression(
+  this: ObjectType,
+): Code {
   const variables = {
     jsonObject: code`${this.configuration.syntheticNamePrefix}json`,
   };
 
   const propertyInitializers = this.properties.flatMap((property) =>
-    property.fromJsonInitializer({ variables }).toList(),
+    property.fromExpandedJsonInitializer({ variables }).toList(),
   );
   invariant(propertyInitializers.length > 0);
 
@@ -16,6 +18,8 @@ export function ObjectType_fromJsonFunctionExpression(this: ObjectType): Code {
 (${variables.jsonObject}) => ${this.reusables.snippets.sequenceRecord}({ ${joinCode(propertyInitializers, { on: "," })} }).chain(${this.createFunction.annotatedUsage})`;
 }
 
-export function ObjectType_fromJsonFunctionType(this: ObjectType): Code {
-  return code`${this.reusables.snippets.FromJsonFunction}<${this.discriminatedExpression}, ${this.jsonType({ form: "expanded" }).expression}>`;
+export function ObjectType_fromExpandedJsonFunctionType(
+  this: ObjectType,
+): Code {
+  return code`${this.reusables.snippets.FromExpandedJsonFunction}<${this.discriminatedExpression}, ${this.jsonType({ form: "expanded" }).expression}>`;
 }

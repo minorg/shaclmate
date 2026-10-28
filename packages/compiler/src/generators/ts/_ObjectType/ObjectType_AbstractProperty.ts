@@ -166,7 +166,7 @@ export abstract class ObjectType_AbstractProperty {
   /**
    * Initializer (name: value) from a JSON object.
    */
-  abstract fromJsonInitializer(parameters: {
+  abstract fromExpandedJsonInitializer(parameters: {
     variables: {
       jsonObject: Code;
     };

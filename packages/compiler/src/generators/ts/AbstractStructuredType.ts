@@ -37,12 +37,16 @@ export abstract class AbstractStructuredType extends AbstractType {
       .orDefaultLazy(() => this.filterTypeExpression());
   }
 
+  override get fromCompactedJsonFunction(): AbstractType["fromCompactedJsonFunction"] {
+    return this.fromExpandedJsonFunction;
+  }
+
   @Memoize()
-  get fromJsonFunction(): Callable {
+  get fromExpandedJsonFunction(): Callable {
     return this._function({
-      type: () => this.fromJsonFunctionType(),
-      unannotatedExpression: () => this.fromJsonFunctionExpression(),
-      unqualifiedName: "fromJson",
+      type: () => this.fromExpandedJsonFunctionType(),
+      unannotatedExpression: () => this.fromExpandedJsonFunctionExpression(),
+      unqualifiedName: "fromExpandedJson",
     });
   }
 
@@ -72,11 +76,15 @@ export abstract class AbstractStructuredType extends AbstractType {
       .orDefaultLazy(() => this.schemaTypeExpression());
   }
 
+  override get toCompactedJsonFunction(): AbstractType["toCompactedJsonFunction"] {
+    return this.toExpandedJsonFunction;
+  }
+
   @Memoize()
-  get toJsonFunction(): Callable {
+  get toExpandedJsonFunction(): Callable {
     return this._function({
-      type: () => this.toJsonFunctionType(),
-      unannotatedExpression: () => this.toJsonFunctionExpression(),
+      type: () => this.toExpandedJsonFunctionType(),
+      unannotatedExpression: () => this.toExpandedJsonFunctionExpression(),
       unqualifiedName: "toJson",
     });
   }
@@ -148,24 +156,12 @@ export abstract class AbstractStructuredType extends AbstractType {
     );
   }
 
-  override fromJsonExpression({
-    variables,
-  }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
-    return code`${this.fromJsonFunction.unannotatedUsage}(${variables.value})`;
-  }
-
   override graphqlResolveExpression({
     variables,
   }: {
     variables: { value: Code };
   }): Code {
     return variables.value;
-  }
-
-  override toJsonExpression({
-    variables,
-  }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
-    return code`${this.toJsonFunction.unannotatedUsage}(${variables.value})`;
   }
 
   override toLoggableExpression({
@@ -222,10 +218,10 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   protected abstract filterTypeExpression(): Code;
 
-  protected abstract fromJsonFunctionExpression(): Code;
+  protected abstract fromExpandedJsonFunctionExpression(): Code;
 
-  protected fromJsonFunctionType(): Code {
-    return code`${this.reusables.snippets.FromJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`;
+  protected fromExpandedJsonFunctionType(): Code {
+    return code`${this.reusables.snippets.FromExpandedJsonFunction}<${this.expression}, ${this.expandedJsonType.expression}>`;
   }
 
   protected abstract fromRdfResourceValuesFunctionExpression(): Code;
@@ -271,15 +267,13 @@ export abstract class AbstractStructuredType extends AbstractType {
     }
 
     if (this.configuration.features.has("Object.JSON.type")) {
-      this.jsonType({ form: "expanded" }).declaration.ifJust(
-        (jsonTypeDeclaration) => {
-          staticModuleDeclarations["JSON"] = jsonTypeDeclaration;
-        },
-      );
+      this.expandedJsonType.declaration.ifJust((jsonTypeDeclaration) => {
+        staticModuleDeclarations["JSON"] = jsonTypeDeclaration;
+      });
     }
 
     if (this.configuration.features.has("Object.fromJson")) {
-      addFunctionDeclaration(this.fromJsonFunction);
+      addFunctionDeclaration(this.fromExpandedJsonFunction);
     }
 
     if (this.configuration.features.has("Object.fromRdf")) {
@@ -292,7 +286,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     }
 
     if (this.configuration.features.has("Object.toJson")) {
-      addFunctionDeclaration(this.toJsonFunction);
+      addFunctionDeclaration(this.toExpandedJsonFunction);
     }
 
     if (this.configuration.features.has("Object.toLoggable")) {
@@ -310,10 +304,10 @@ export abstract class AbstractStructuredType extends AbstractType {
     return staticModuleDeclarations;
   }
 
-  protected abstract toJsonFunctionExpression(): Code;
+  protected abstract toExpandedJsonFunctionExpression(): Code;
 
-  protected toJsonFunctionType(): Code {
-    return code`${this.reusables.snippets.ToJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`;
+  protected toExpandedJsonFunctionType(): Code {
+    return code`${this.reusables.snippets.ToExpandedJsonFunction}<${this.expression}, ${this.expandedJsonType.expression}>`;
   }
 
   protected abstract toLoggableFunctionExpression(): Code;

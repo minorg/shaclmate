@@ -1,7 +1,9 @@
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function ObjectType_toJsonFunctionExpression(this: ObjectType): Code {
+export function ObjectType_toExpandedJsonFunctionExpression(
+  this: ObjectType,
+): Code {
   const variables = {
     object: this.thisVariable,
   };
@@ -18,6 +20,6 @@ export function ObjectType_toJsonFunctionExpression(this: ObjectType): Code {
   )} }))`;
 }
 
-export function ObjectType_toJsonFunctionType(this: ObjectType): Code {
-  return code`${this.reusables.snippets.ToJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`;
+export function ObjectType_toExpandedJsonFunctionType(this: ObjectType): Code {
+  return code`${this.reusables.snippets.ToExpandedJsonFunction}<${this.expression}, ${this.expandedJsonType.expression}>`;
 }

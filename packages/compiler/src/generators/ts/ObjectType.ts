@@ -23,9 +23,9 @@ import { ObjectType_filterTypeExpression } from "./_ObjectType/ObjectType_filter
 import { ObjectType_focusSparqlConstructTriplesFunction } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunction.js";
 import { ObjectType_focusSparqlWherePatternsFunction } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunction.js";
 import {
-  ObjectType_fromJsonFunctionExpression,
-  ObjectType_fromJsonFunctionType,
-} from "./_ObjectType/ObjectType_fromJsonFunction.js";
+  ObjectType_fromExpandedJsonFunctionExpression,
+  ObjectType_fromExpandedJsonFunctionType,
+} from "./_ObjectType/ObjectType_fromExpandedJsonFunction.js";
 import { ObjectType_fromRdfResourceFunction } from "./_ObjectType/ObjectType_fromRdfResourceFunction.js";
 import {
   ObjectType_fromRdfResourceValuesFunctionExpression,
@@ -38,7 +38,6 @@ import {
 } from "./_ObjectType/ObjectType_hashFunction.js";
 import { ObjectType_IdentifierProperty } from "./_ObjectType/ObjectType_IdentifierProperty.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
-import { ObjectType_jsonType } from "./_ObjectType/ObjectType_jsonType.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import type { ObjectType_Property } from "./_ObjectType/ObjectType_Property.js";
 import { ObjectType_RdfTypeProperty } from "./_ObjectType/ObjectType_RdfTypeProperty.js";
@@ -48,9 +47,9 @@ import { ObjectType_schemaTypeExpression } from "./_ObjectType/ObjectType_schema
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import {
-  ObjectType_toJsonFunctionExpression,
-  ObjectType_toJsonFunctionType,
-} from "./_ObjectType/ObjectType_toJsonFunction.js";
+  ObjectType_toExpandedJsonFunctionExpression,
+  ObjectType_toExpandedJsonFunctionType,
+} from "./_ObjectType/ObjectType_toExpandedJsonFunction.js";
 import {
   ObjectType_toLoggableFunctionExpression,
   ObjectType_toLoggableFunctionType,
@@ -71,7 +70,6 @@ import { ObjectType_valueSparqlWherePatternsFunctionExpression } from "./_Object
 import { AbstractStructuredType } from "./AbstractStructuredType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { Callable } from "./Callable.js";
-import { codeEquals } from "./codeEquals.js";
 import { DeclaredCallable } from "./DeclaredCallable.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
@@ -88,9 +86,10 @@ export class ObjectType extends AbstractStructuredType {
     ObjectType_filterFunctionExpression;
   protected override filterFunctionType = ObjectType_filterFunctionType;
   protected override filterTypeExpression = ObjectType_filterTypeExpression;
-  protected override fromJsonFunctionExpression =
-    ObjectType_fromJsonFunctionExpression;
-  protected override fromJsonFunctionType = ObjectType_fromJsonFunctionType;
+  protected override fromExpandedJsonFunctionExpression =
+    ObjectType_fromExpandedJsonFunctionExpression;
+  protected override fromExpandedJsonFunctionType =
+    ObjectType_fromExpandedJsonFunctionType;
   protected override fromRdfResourceValuesFunctionExpression =
     ObjectType_fromRdfResourceValuesFunctionExpression;
   protected override fromRdfResourceValuesFunctionType =
@@ -98,9 +97,10 @@ export class ObjectType extends AbstractStructuredType {
   protected override hashFunctionExpression = ObjectType_hashFunctionExpression;
   protected override hashFunctionType = ObjectType_hashFunctionType;
   protected override schemaTypeExpression = ObjectType_schemaTypeExpression;
-  protected override toJsonFunctionExpression =
-    ObjectType_toJsonFunctionExpression;
-  protected override toJsonFunctionType = ObjectType_toJsonFunctionType;
+  protected override toExpandedJsonFunctionExpression =
+    ObjectType_toExpandedJsonFunctionExpression;
+  protected override toExpandedJsonFunctionType =
+    ObjectType_toExpandedJsonFunctionType;
   protected override toLoggableFunctionExpression =
     ObjectType_toLoggableFunctionExpression;
   protected override toLoggableFunctionType = ObjectType_toLoggableFunctionType;
@@ -175,6 +175,10 @@ export class ObjectType extends AbstractStructuredType {
     return ObjectType__toRdfResourceFunction.call(this);
   }
 
+  get compactedJsonType(): AbstractStructuredType["expandedJsonType"] {
+    return this.expandedJsonType;
+  }
+
   @Memoize()
   override get conversionFunction(): Maybe<AbstractStructuredType.ConversionFunction> {
     return ObjectType_conversionFunction.call(this);
@@ -207,6 +211,16 @@ export class ObjectType extends AbstractStructuredType {
     return this.name
       .map((name) => code`${name}.Discriminated`)
       .orDefault(this.inlineExpression);
+  }
+
+  @Memoize()
+  override get expandedJsonType(): AbstractStructuredType["expandedJsonType"] {
+    return this.jsonTypeFactory.createJsonObjectType(
+      this.properties.flatMap((property) => property.jsonObjectMember.toList()),
+      {
+        name: this.name.map((name) => [name, "Json"]).extract(),
+      },
+    );
   }
 
   @Memoize()
@@ -341,41 +355,6 @@ export class ObjectType extends AbstractStructuredType {
     return this.name
       .map((name) => code`_${camelCase(name)}`)
       .orDefault(code`_object`);
-  }
-
-  override jsonType(
-    parameters: Parameters<AbstractStructuredType["jsonType"]>[0],
-  ): AbstractStructuredType.JsonType {
-    return ObjectType_jsonType.call(this, parameters);
-  }
-
-  override toJsonExpression({
-    discriminantProperty,
-    variables,
-  }: Parameters<AbstractStructuredType["toJsonExpression"]>[0]): Code {
-    if (discriminantProperty) {
-      const discriminantPropertyName = Object.keys(discriminantProperty)[0];
-      invariant(discriminantPropertyName);
-      const thisDiscriminantProperty = this.discriminantProperty.extract();
-      const discriminantPropertyValue =
-        discriminantProperty[discriminantPropertyName];
-      invariant(discriminantPropertyValue);
-      if (thisDiscriminantProperty) {
-        if (
-          discriminantPropertyName !== thisDiscriminantProperty.name ||
-          !codeEquals(
-            discriminantPropertyValue,
-            code`${literalOf(thisDiscriminantProperty.value)}`,
-          )
-        ) {
-          throw new Error(
-            `${this.shapeIdentifier}: overriding the discriminant property is unsupported`,
-          );
-        }
-      }
-    }
-
-    return code`${this.toJsonFunction.annotatedUsage}(${variables.value})`;
   }
 
   protected propertySubsetExpression(

@@ -242,10 +242,10 @@ export class ObjectType_ShaclProperty<
     );
   }
 
-  override fromJsonInitializer({
+  override fromExpandedJsonInitializer({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty["fromJsonInitializer"]
+    ObjectType_AbstractProperty["fromExpandedJsonInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.name}: ${this.type.fromJsonExpression({

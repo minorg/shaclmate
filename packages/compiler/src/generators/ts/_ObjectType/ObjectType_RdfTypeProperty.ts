@@ -100,7 +100,7 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
     return Maybe.empty();
   }
 
-  override fromJsonInitializer(): Maybe<Code> {
+  override fromExpandedJsonInitializer(): Maybe<Code> {
     return Maybe.empty();
   }
 
