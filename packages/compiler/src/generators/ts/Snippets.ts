@@ -45,6 +45,7 @@ import { snippets_MaybeSchema } from "./_snippets/snippets_MaybeSchema.js";
 import { snippets_NamespaceBuilder } from "./_snippets/snippets_NamespaceBuilder.js";
 import { snippets_NumericFilter } from "./_snippets/snippets_NumericFilter.js";
 import { snippets_NumericSchema } from "./_snippets/snippets_NumericSchema.js";
+import { snippets_Primitive } from "./_snippets/snippets_Primitive.js";
 import { snippets_ProblemDetailsJson } from "./_snippets/snippets_ProblemDetailsJson.js";
 import { snippets_PropertyPath } from "./_snippets/snippets_PropertyPath.js";
 import { snippets_ShaclPropertySchema } from "./_snippets/snippets_ShaclPropertySchema.js";
@@ -77,7 +78,11 @@ import { snippets_bigDecimalLiteral } from "./_snippets/snippets_bigDecimalLiter
 import { snippets_bigDecimalSparqlWherePatterns } from "./_snippets/snippets_bigDecimalSparqlWherePatterns.js";
 import { snippets_bigDecimalToCompactedJson } from "./_snippets/snippets_bigDecimalToCompactedJson.js";
 import { snippets_bigDecimalToExpandedJson } from "./_snippets/snippets_bigDecimalToExpandedJson.js";
+import { snippets_bigIntFromCompactedJson } from "./_snippets/snippets_bigIntFromCompactedJson.js";
+import { snippets_bigIntFromExpandedJson } from "./_snippets/snippets_bigIntFromExpandedJson.js";
 import { snippets_bigIntFromRdfResourceValues } from "./_snippets/snippets_bigIntFromRdfResourceValues.js";
+import { snippets_bigIntToCompactedJson } from "./_snippets/snippets_bigIntToCompactedJson.js";
+import { snippets_bigIntToExpandedJson } from "./_snippets/snippets_bigIntToExpandedJson.js";
 import { snippets_blankNodeFromCompactedJson } from "./_snippets/snippets_blankNodeFromCompactedJson.js";
 import { snippets_blankNodeFromExpandedJson } from "./_snippets/snippets_blankNodeFromExpandedJson.js";
 import { snippets_blankNodeFromRdfResourceValues } from "./_snippets/snippets_blankNodeFromRdfResourceValues.js";
@@ -85,10 +90,11 @@ import { snippets_blankNodeSparqlWherePatterns } from "./_snippets/snippets_blan
 import { snippets_blankNodeToCompactedJson } from "./_snippets/snippets_blankNodeToCompactedJson.js";
 import { snippets_blankNodeToExpandedJson } from "./_snippets/snippets_blankNodeToExpandedJson.js";
 import { snippets_booleanEquals } from "./_snippets/snippets_booleanEquals.js";
+import { snippets_booleanFromExpandedJson } from "./_snippets/snippets_booleanFromExpandedJson.js";
 import { snippets_booleanFromRdfResourceValues } from "./_snippets/snippets_booleanFromRdfResourceValues.js";
 import { snippets_booleanSparqlWherePatterns } from "./_snippets/snippets_booleanSparqlWherePatterns.js";
-import { snippets_booleanToExpandedJson } from "./_snippets/snippets_booleanToExpandedJson.js";
 import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
+import { snippets_constrainPrimitive } from "./_snippets/snippets_constrainPrimitive.js";
 import { snippets_convertToArraySet } from "./_snippets/snippets_convertToArraySet.js";
 import { snippets_convertToBigDecimal } from "./_snippets/snippets_convertToBigDecimal.js";
 import { snippets_convertToBigInt } from "./_snippets/snippets_convertToBigInt.js";
@@ -178,7 +184,9 @@ import { snippets_numericSparqlWherePatterns } from "./_snippets/snippets_numeri
 import { snippets_parseBlankNode } from "./_snippets/snippets_parseBlankNode.js";
 import { snippets_parseIdentifier } from "./_snippets/snippets_parseIdentifier.js";
 import { snippets_parseIri } from "./_snippets/snippets_parseIri.js";
+import { snippets_primitiveFromCompactedJson } from "./_snippets/snippets_primitiveFromCompactedJson.js";
 import { snippets_primitiveToCompactedJson } from "./_snippets/snippets_primitiveToCompactedJson.js";
+import { snippets_primitiveToExpandedJson } from "./_snippets/snippets_primitiveToExpandedJson.js";
 import { snippets_propertyEquals } from "./_snippets/snippets_propertyEquals.js";
 import { snippets_rdfResourceIdentifierValues } from "./_snippets/snippets_rdfResourceIdentifierValues.js";
 import { snippets_sequenceRecord } from "./_snippets/snippets_sequenceRecord.js";
@@ -195,7 +203,6 @@ import { snippets_sparqlValueInPattern } from "./_snippets/snippets_sparqlValueI
 import { snippets_strictEquals } from "./_snippets/snippets_strictEquals.js";
 import { snippets_stringFromRdfResourceValues } from "./_snippets/snippets_stringFromRdfResourceValues.js";
 import { snippets_stringSparqlWherePatterns } from "./_snippets/snippets_stringSparqlWherePatterns.js";
-import { snippets_stringToExpandedJson } from "./_snippets/snippets_stringToExpandedJson.js";
 import { snippets_termFilterSparqlPatterns } from "./_snippets/snippets_termFilterSparqlPatterns.js";
 import { snippets_termFromExpandedJson } from "./_snippets/snippets_termFromExpandedJson.js";
 import { snippets_termFromRdfResourceValues } from "./_snippets/snippets_termFromRdfResourceValues.js";
@@ -441,6 +448,11 @@ export class Snippets {
   }
 
   @Memoize()
+  get Primitive(): Snippet {
+    return this.snippet(snippets_Primitive);
+  }
+
+  @Memoize()
   get ProblemDetailsJson(): Snippet {
     return this.snippet(snippets_ProblemDetailsJson);
   }
@@ -601,8 +613,28 @@ export class Snippets {
   }
 
   @Memoize()
+  get bigIntFromCompactedJson(): Snippet {
+    return this.snippet(snippets_bigIntFromCompactedJson);
+  }
+
+  @Memoize()
+  get bigIntFromExpandedJson(): Snippet {
+    return this.snippet(snippets_bigIntFromExpandedJson);
+  }
+
+  @Memoize()
   get bigIntFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_bigIntFromRdfResourceValues);
+  }
+
+  @Memoize()
+  get bigIntToCompactedJson(): Snippet {
+    return this.snippet(snippets_bigIntToCompactedJson);
+  }
+
+  @Memoize()
+  get bigIntToExpandedJson(): Snippet {
+    return this.snippet(snippets_bigIntToExpandedJson);
   }
 
   @Memoize()
@@ -641,6 +673,11 @@ export class Snippets {
   }
 
   @Memoize()
+  get booleanFromExpandedJson(): Snippet {
+    return this.snippet(snippets_booleanFromExpandedJson);
+  }
+
+  @Memoize()
   get booleanFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_booleanFromRdfResourceValues);
   }
@@ -651,13 +688,13 @@ export class Snippets {
   }
 
   @Memoize()
-  get booleanToExpandedJson(): Snippet {
-    return this.snippet(snippets_booleanToExpandedJson);
+  get compactRecord(): Snippet {
+    return this.snippet(snippets_compactRecord);
   }
 
   @Memoize()
-  get compactRecord(): Snippet {
-    return this.snippet(snippets_compactRecord);
+  get constrainPrimitive(): Snippet {
+    return this.snippet(snippets_constrainPrimitive);
   }
 
   @Memoize()
@@ -1106,8 +1143,18 @@ export class Snippets {
   }
 
   @Memoize()
+  get primitiveFromCompactedJson(): Snippet {
+    return this.snippet(snippets_primitiveFromCompactedJson);
+  }
+
+  @Memoize()
   get primitiveToCompactedJson(): Snippet {
     return this.snippet(snippets_primitiveToCompactedJson);
+  }
+
+  @Memoize()
+  get primitiveToExpandedJson(): Snippet {
+    return this.snippet(snippets_primitiveToExpandedJson);
   }
 
   @Memoize()
@@ -1188,11 +1235,6 @@ export class Snippets {
   @Memoize()
   get stringSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_stringSparqlWherePatterns);
-  }
-
-  @Memoize()
-  get stringToExpandedJson(): Snippet {
-    return this.snippet(snippets_stringToExpandedJson);
   }
 
   @Memoize()

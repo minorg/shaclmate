@@ -20,6 +20,27 @@ export abstract class AbstractPrimitiveType<
   );
 
   @Memoize()
+  override get fromCompactedJsonFunction(): AbstractTypedLiteralType<ValueT>["fromCompactedJsonFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.primitiveFromCompactedJson}<${this.expression}>`,
+    );
+  }
+
+  @Memoize()
+  override get toCompactedJsonFunction(): AbstractTypedLiteralType<ValueT>["toCompactedJsonFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.primitiveToCompactedJson}<${this.expression}>`,
+    );
+  }
+
+  @Memoize()
+  override get toExpandedJsonFunction(): AbstractTypedLiteralType<ValueT>["toExpandedJsonFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.primitiveToExpandedJson}<${this.expression}>(${this.rdfjsTermExpression(this.datatype)})`,
+    );
+  }
+
+  @Memoize()
   protected override get inlineExpression(): Code {
     if (this.in_.length > 0) {
       const name = this.name.extract();
@@ -39,26 +60,6 @@ export abstract class AbstractPrimitiveType<
   override toLoggableExpression({
     variables,
   }: Parameters<AbstractLiteralType["toLoggableExpression"]>[0]): Code {
-    return variables.value;
-  }
-
-  protected override fromCompactedJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractTypedLiteralType<Date>["fromJsonExpression"]
-  >[0]): Code {
-    let fromCompactedJsonExpression = variables.value;
-    if (this.in_.length > 0) {
-      fromCompactedJsonExpression = code`(${fromCompactedJsonExpression} as ${this.expression})`;
-    }
-    return fromCompactedJsonExpression;
-  }
-
-  protected override toCompactedJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractTypedLiteralType<Date>["toCompactedJsonExpression"]
-  >[0]): Code {
     return variables.value;
   }
 }

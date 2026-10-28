@@ -66,7 +66,7 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
     this.reusables.snippets.bigDecimalToCompactedJson,
   );
   override readonly toExpandedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.bigDecimalToExpandedJson,
+    code`${this.reusables.snippets.bigDecimalToExpandedJson}(${this.rdfjsTermExpression(this.datatype)})`,
   );
   override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.bigDecimalSparqlWherePatterns,

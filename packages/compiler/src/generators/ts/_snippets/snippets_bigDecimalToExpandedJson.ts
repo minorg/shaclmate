@@ -9,6 +9,7 @@ export const snippets_bigDecimalToExpandedJson: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}bigDecimalToExpandedJson`,
     code`\
-const ${syntheticNamePrefix}bigDecimalToExpandedJson: ${snippets.ToExpandedJsonFunction}<${imports.BigDecimal}, ${snippets.LiteralExpandedJson}> =
-  (value, { schema }) => ${snippets.literalToExpandedJson}(${snippets.literalFactory}.bigdecimal(value, schema.datatype));`,
+function ${syntheticNamePrefix}bigDecimalToExpandedJson(datatype: ${imports.NamedNode}): ${snippets.ToExpandedJsonFunction}<${imports.BigDecimal}, ${snippets.LiteralExpandedJson}> {
+  return (value) => ${snippets.literalToExpandedJson}(${snippets.literalFactory}.bigdecimal(value, datatype));
+}`,
   );

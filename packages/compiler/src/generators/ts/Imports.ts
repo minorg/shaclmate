@@ -31,6 +31,7 @@ export class Imports {
   );
   readonly Left = imp("Left@purify-ts");
   readonly Literal = imp("t:Literal@@rdfjs/types");
+  readonly LiteralDecoder = imp("LiteralDecoder@@rdfx/literal");
   readonly LiteralFactory = imp("LiteralFactory@@rdfx/literal");
   readonly Logger = imp("t:Logger@@rdfx/logger");
   readonly Maybe = imp("Maybe@purify-ts");
