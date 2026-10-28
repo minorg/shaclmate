@@ -1,9 +1,8 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractLazyType } from "./AbstractLazyType.js";
-import type { Callable } from "./Callable.js";
-import { InlineCallable } from "./InlineCallable.js";
 import type { SetType } from "./SetType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -11,6 +10,9 @@ export class LazySetType extends AbstractLazyType<
   SetType<AbstractLazyType.ItemTypeConstraint>,
   SetType<AbstractLazyType.ItemTypeConstraint>
 > {
+  protected override readonly partialItemType = this.partialType.itemType;
+  protected override readonly resolveItemType = this.resolveType.itemType;
+
   override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.of({
     limit: {
       type: code`${this.reusables.imports.GraphQLInt}`,
@@ -55,6 +57,14 @@ ${this.reusables.snippets.convertToLazySet}<
     });
   }
 
+  protected override objectSetResolverFunctionExpressions({
+    variables,
+  }: {
+    variables: { objectSet: Code };
+  }): Code {
+    return code`(partials, options) => ${variables.objectSet}.${this.resolveType.itemType.objectSetMethodNames.objects}({ identifiers: partials.map(partial => partial.${this.partialItemType.identifierProperty.unsafeCoerce().name}()), ...options })`;
+  }
+
   @Memoize()
   protected override get runtimeClass() {
     return {
@@ -62,25 +72,6 @@ ${this.reusables.snippets.convertToLazySet}<
       partialPropertyName: "partials",
       rawName: code`${this.reusables.snippets.LazySet}`,
     };
-  }
-
-  override fromJsonExpression(
-    parameters: Parameters<Super["fromJsonExpression"]>[0],
-  ): Code {
-    return code`${this.partialType.fromJsonExpression(parameters)}.map(partials => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: partials, resolver: () => Promise.resolve(${this.reusables.imports.Left}(new Error("unable to resolve partials deserialized from JSON"))) }))`;
-  }
-
-  @Memoize()
-  override get fromRdfResourceValuesFunction(): Callable {
-    return new InlineCallable(
-      code`\
-(values, { objectSet, schema, ...otherOptions }) =>
-  ${this.partialType.fromRdfResourceValuesFunction.annotatedUsage}(values, { ...otherOptions, objectSet, schema: schema.partialType })
-    .map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (partials, options) => objectSet.${this.resolveType.itemType.objectSetMethodNames.objects}({ identifiers: partials.map(partial => partial.${this.partialType.itemType.identifierProperty.unsafeCoerce().name}()), ...options }) })))`,
-      {
-        type: code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`,
-      },
-    );
   }
 
   override graphqlResolveExpression({

@@ -15,6 +15,8 @@ export abstract class AbstractLazyType<
   PartialTypeT extends AbstractLazyType.PartialTypeConstraint,
   ResolveTypeT extends AbstractLazyType.ResolveTypeConstraint,
 > extends AbstractType {
+  protected abstract readonly partialItemType: AbstractLazyType.ItemTypeConstraint;
+  protected abstract readonly resolveItemType: AbstractLazyType.ItemTypeConstraint;
   protected abstract readonly runtimeClass: {
     readonly name: Code;
     readonly partialPropertyName: string;
@@ -23,6 +25,7 @@ export abstract class AbstractLazyType<
 
   override readonly discriminantProperty: AbstractType["discriminantProperty"] =
     Maybe.empty();
+  abstract override readonly kind: "Lazy" | "LazyOption" | "LazySet";
   override readonly mutable = false;
   readonly partialType: PartialTypeT;
   readonly resolveType: ResolveTypeT;
@@ -72,6 +75,39 @@ export abstract class AbstractLazyType<
 
   get filterType(): Code {
     return this.partialType.filterType;
+  }
+
+  override get fromCompactedJsonFunction(): AbstractType["fromCompactedJsonFunction"] {
+    return new InlineCallable(
+      code`(compactedJson, { ...otherOptions, objectSet, schema }) => ${this.partialType.fromCompactedJsonFunction.annotatedUsage}(compactedJson, { ...otherOptions, objectSet, schema: schema.partialType })
+        .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.objectSetResolverFunctionExpressions({ variables: { objectSet: code`objectSet` } })} }))`,
+      {
+        type: code`${this.reusables.snippets.FromCompactedJsonFunction}<${this.compactedJsonType.expression}, ${this.expression}, ${this.schema}>`,
+      },
+    );
+  }
+
+  override get fromExpandedJsonFunction(): AbstractType["fromExpandedJsonFunction"] {
+    return new InlineCallable(
+      code`(expandedJson, { ...otherOptions, objectSet, schema }) => ${this.partialType.fromExpandedJsonFunction.annotatedUsage}(expandedJson, { ...otherOptions, objectSet, schema: schema.partialType })
+        .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.objectSetResolverFunctionExpressions({ variables: { objectSet: code`objectSet` } })} }))`,
+      {
+        type: code`${this.reusables.snippets.FromExpandedJsonFunction}<${this.expandedJsonType.expression}, ${this.expression}, ${this.schema}>`,
+      },
+    );
+  }
+
+  @Memoize()
+  override get fromRdfResourceValuesFunction(): Callable {
+    return new InlineCallable(
+      code`\
+  (values, { objectSet, schema, ...otherOptions }) =>
+    ${this.partialType.fromRdfResourceValuesFunction.annotatedUsage}(values, { ...otherOptions, objectSet, schema: schema.partialType })
+      .map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.objectSetResolverFunctionExpressions({ variables: { objectSet: code`objectSet` } })} })))`,
+      {
+        type: code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`,
+      },
+    );
   }
 
   override get graphqlType(): AbstractType.GraphqlType {
@@ -194,6 +230,10 @@ export abstract class AbstractLazyType<
       },
     });
   }
+
+  protected abstract objectSetResolverFunctionExpressions(parameters: {
+    variables: { objectSet: Code };
+  }): Code;
 
   protected resolveToPartialFunction<
     ObjectTypeT extends AbstractLazyType.ItemTypeConstraint,
