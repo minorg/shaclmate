@@ -10,10 +10,10 @@ export const snippets_arrayFromCompactedJson: SnippetFactory = ({
     `${syntheticNamePrefix}arrayFromCompactedJson`,
     code`\
 function ${syntheticNamePrefix}arrayFromCompactedJson<ItemCompactedJsonT, ItemT, ItemSchemaT>(itemFromCompactedJson: ${snippets.FromCompactedJsonFunction}<ItemCompactedJsonT, ItemT, ItemSchemaT>): ${snippets.FromCompactedJsonFunction}<ItemCompactedJsonT[], ItemT[], ${snippets.CollectionSchema}<ItemSchemaT>> {
-  return (values, options) => {
+  return (arrayCompactedJson, options) => {
     const { schema, ...otherOptions } = options;
     const itemFromCompactedJsonOptions = { ...otherOptions, schema: schema.itemType };
-    return ${imports.Either}.sequence(values.map(value => itemFromCompactedJson(value, itemFromCompactedJsonOptions)));
+    return ${imports.Either}.sequence(arrayCompactedJson.map(itemCompactedJson => itemFromCompactedJson(itemCompactedJson, itemFromCompactedJsonOptions)));
   }
 }`,
   );

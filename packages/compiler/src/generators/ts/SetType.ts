@@ -120,6 +120,7 @@ export class SetType<
     );
   }
 
+  @Memoize()
   override get toCompactedJsonFunction(): AbstractCollectionType<ItemTypeT>["toCompactedJsonFunction"] {
     return new ReferenceCallable(
       code`${this.reusables.snippets.arrayToCompactedJson}(${this.itemType.toCompactedJsonFunction})`,

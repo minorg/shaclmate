@@ -72,8 +72,10 @@ import { snippets__FromRdfResourceFunction } from "./_snippets/snippets__FromRdf
 import { snippets__ToRdfResourceFunction } from "./_snippets/snippets__ToRdfResourceFunction.js";
 import { snippets_arrayEquals } from "./_snippets/snippets_arrayEquals.js";
 import { snippets_arrayFromCompactedJson } from "./_snippets/snippets_arrayFromCompactedJson.js";
+import { snippets_arrayFromExpandedJson } from "./_snippets/snippets_arrayFromExpandedJson.js";
 import { snippets_arrayIntersection } from "./_snippets/snippets_arrayIntersection.js";
 import { snippets_arrayToCompactedJson } from "./_snippets/snippets_arrayToCompactedJson.js";
+import { snippets_arrayToExpandedJson } from "./_snippets/snippets_arrayToExpandedJson.js";
 import { snippets_bigDecimalFromCompactedJson } from "./_snippets/snippets_bigDecimalFromCompactedJson.js";
 import { snippets_bigDecimalFromExpandedJson } from "./_snippets/snippets_bigDecimalFromExpandedJson.js";
 import { snippets_bigDecimalFromRdfResourceValues } from "./_snippets/snippets_bigDecimalFromRdfResourceValues.js";
@@ -591,6 +593,11 @@ export class Snippets {
   }
 
   @Memoize()
+  get arrayFromExpandedJson(): Snippet {
+    return this.snippet(snippets_arrayFromExpandedJson);
+  }
+
+  @Memoize()
   get arrayIntersection(): Snippet {
     return this.snippet(snippets_arrayIntersection);
   }
@@ -598,6 +605,11 @@ export class Snippets {
   @Memoize()
   get arrayToCompactedJson(): Snippet {
     return this.snippet(snippets_arrayToCompactedJson);
+  }
+
+  @Memoize()
+  get arrayToExpandedJson(): Snippet {
+    return this.snippet(snippets_arrayToExpandedJson);
   }
 
   @Memoize()

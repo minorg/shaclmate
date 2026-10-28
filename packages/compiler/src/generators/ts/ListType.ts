@@ -25,6 +25,7 @@ import type { LiteralType } from "./LiteralType.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
@@ -55,6 +56,13 @@ export class ListType<
   }
 
   @Memoize()
+  override get compactedJsonType(): AbstractCollectionType<ItemTypeT>["compactedJsonType"] {
+    return this.jsonTypeFactory.createJsonArrayType(
+      this.itemType.compactedJsonType,
+    );
+  }
+
+  @Memoize()
   override get conversionFunction(): Maybe<AbstractCollectionType.ConversionFunction> {
     const itemConversionFunction = this.itemType.conversionFunction.orDefault(
       this.itemConversionFunctionDefault,
@@ -77,9 +85,44 @@ export class ListType<
   }
 
   @Memoize()
+  override get expandedJsonType(): AbstractCollectionType<ItemTypeT>["expandedJsonType"] {
+    return this.jsonTypeFactory.createJsonObjectType({
+      "@list": { type: this.compactedJsonType },
+    });
+  }
+
+  @Memoize()
+  override get fromCompactedJsonFunction(): AbstractCollectionType<ItemTypeT>["fromCompactedJsonFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.arrayFromCompactedJson}(${this.itemType.fromCompactedJsonFunction})`,
+    );
+  }
+
+  @Memoize()
+  override get fromExpandedJsonFunction(): AbstractCollectionType<ItemTypeT>["fromExpandedJsonFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.arrayFromExpandedJson}(${this.itemType.fromExpandedJsonFunction})`,
+    );
+  }
+
+  @Memoize()
   override get fromRdfResourceValuesFunction(): Callable {
     return new InlineCallable(
       code`${this._mutable ? this.reusables.snippets.mutableListFromRdfResourceValues : this.reusables.snippets.listFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
+    );
+  }
+
+  @Memoize()
+  override get toCompactedJsonFunction(): AbstractCollectionType<ItemTypeT>["toCompactedJsonFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.arrayToCompactedJson}(${this.itemType.toCompactedJsonFunction})`,
+    );
+  }
+
+  @Memoize()
+  override get toExpandedJsonFunction(): AbstractCollectionType<ItemTypeT>["toExpandedJsonFunction"] {
+    return new InlineCallable(
+      code`${this.reusables.snippets.arrayToExpandedJson}(${this.itemType.toExpandedJsonFunction}, "@list")`,
     );
   }
 
@@ -100,61 +143,6 @@ export class ListType<
     return new InlineCallable(
       code`${this.reusables.snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
     );
-  }
-
-  override fromJsonExpression({
-    form,
-    variables,
-  }: Parameters<
-    AbstractCollectionType<ItemTypeT>["fromJsonExpression"]
-  >[0]): Code {
-    let valueVariable = variables.value;
-    if (form === "expanded") {
-      valueVariable = code`${valueVariable}["@list"]`;
-    }
-
-    return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.expression}>(${valueVariable}.map(item => (${this.itemType.fromJsonExpression(
-      {
-        form: "compact",
-        variables: { value: code`item` },
-      },
-    )})))`;
-  }
-
-  override jsonType({
-    discriminantProperty,
-    form,
-  }: Parameters<
-    AbstractCollectionType<ItemTypeT>["jsonType"]
-  >[0]): AbstractCollectionType.JsonType {
-    const compactedJsonType = this.jsonTypeFactory.createJsonArrayType(
-      this.itemType.jsonType({ form: "compact" }),
-    );
-    switch (form) {
-      case "compact":
-        return compactedJsonType;
-      case "expanded":
-        return this.jsonTypeFactory.createJsonObjectType({
-          ...discriminantProperty,
-          "@list": { type: compactedJsonType },
-        });
-    }
-  }
-
-  override toJsonExpression({
-    discriminantProperty,
-    form,
-    variables,
-  }: Parameters<
-    AbstractCollectionType<ItemTypeT>["toJsonExpression"]
-  >[0]): Code {
-    const toCompactedJsonExpression = code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ form: "compact", variables: { value: code`item` } })}))`;
-    switch (form) {
-      case "compact":
-        return toCompactedJsonExpression;
-      case "expanded":
-        return code`${{ ...discriminantProperty, "@list": toCompactedJsonExpression }}`;
-    }
   }
 
   override toRdfResourceValuesExpression({
