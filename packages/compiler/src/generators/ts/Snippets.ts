@@ -33,6 +33,7 @@ import { snippets_IdentifierSchema } from "./_snippets/snippets_IdentifierSchema
 import { snippets_IdentifierSet } from "./_snippets/snippets_IdentifierSet.js";
 import { snippets_IriFilter } from "./_snippets/snippets_IriFilter.js";
 import { snippets_IriSchema } from "./_snippets/snippets_IriSchema.js";
+import { snippets_LangStringExpandedJson } from "./_snippets/snippets_LangStringExpandedJson.js";
 import { snippets_LangStringSchema } from "./_snippets/snippets_LangStringSchema.js";
 import { snippets_Lazy } from "./_snippets/snippets_Lazy.js";
 import { snippets_LazyOption } from "./_snippets/snippets_LazyOption.js";
@@ -165,8 +166,10 @@ import { snippets_iriFromRdfResourceValues } from "./_snippets/snippets_iriFromR
 import { snippets_iriSparqlWherePatterns } from "./_snippets/snippets_iriSparqlWherePatterns.js";
 import { snippets_iriToCompactedJson } from "./_snippets/snippets_iriToCompactedJson.js";
 import { snippets_iriToExpandedJson } from "./_snippets/snippets_iriToExpandedJson.js";
+import { snippets_langStringFromExpandedJson } from "./_snippets/snippets_langStringFromExpandedJson.js";
 import { snippets_langStringFromRdfResourceValues } from "./_snippets/snippets_langStringFromRdfResourceValues.js";
 import { snippets_langStringSparqlWherePatterns } from "./_snippets/snippets_langStringSparqlWherePatterns.js";
+import { snippets_langStringToExpandedJson } from "./_snippets/snippets_langStringToExpandedJson.js";
 import { snippets_liftSparqlPatterns } from "./_snippets/snippets_liftSparqlPatterns.js";
 import { snippets_listFromRdfResourceValues } from "./_snippets/snippets_listFromRdfResourceValues.js";
 import { snippets_listSparqlConstructTriples } from "./_snippets/snippets_listSparqlConstructTriples.js";
@@ -395,6 +398,11 @@ export class Snippets {
   @Memoize()
   get IriSchema(): Snippet {
     return this.snippet(snippets_IriSchema);
+  }
+
+  @Memoize()
+  get LangStringExpandedJson(): Snippet {
+    return this.snippet(snippets_LangStringExpandedJson);
   }
 
   @Memoize()
@@ -1058,6 +1066,11 @@ export class Snippets {
   }
 
   @Memoize()
+  get langStringFromExpandedJson(): Snippet {
+    return this.snippet(snippets_langStringFromExpandedJson);
+  }
+
+  @Memoize()
   get langStringFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_langStringFromRdfResourceValues);
   }
@@ -1065,6 +1078,11 @@ export class Snippets {
   @Memoize()
   get langStringSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_langStringSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get langStringToExpandedJson(): Snippet {
+    return this.snippet(snippets_langStringToExpandedJson);
   }
 
   @Memoize()
