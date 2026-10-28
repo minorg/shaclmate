@@ -237,9 +237,8 @@ ${joinCode(
         }
         const parameterProperty = parameterProperties.get(parameterName);
         invariant(parameterProperty);
-        const parameterJsonSchema = parameterProperty.type.jsonType({
-          form: "compact",
-        }).schema;
+        const parameterJsonSchema =
+          parameterProperty.type.compactedJsonType.schema;
         targetSchemas_.push(
           code`${parameterProperty.name}: ${parameterJsonSchema}`,
         );
@@ -259,12 +258,7 @@ async (c) =>
           (acc, [parameterName, parameterSource]) => {
             const parameterProperty = parameterProperties.get(parameterName)!;
             acc[parameterName] =
-              code`${parameterProperty.type.fromJsonExpression({
-                form: "compact",
-                variables: {
-                  value: code`c.req.valid("${parameterSource === "path" ? "param" : parameterSource}").${parameterName}`,
-                },
-              })}`;
+              code`${parameterProperty.type.fromCompactedJsonFunction.unannotatedUsage}(c.req.valid("${parameterSource === "path" ? "param" : parameterSource}").${parameterName})`;
             return acc;
           },
           {} as Record<string, Code>,
@@ -283,7 +277,7 @@ async (c) =>
       const result = this.operation.result.unsafeCoerce();
       switch (contentType) {
         case "application/json":
-          return code`c.json(${result.toJsonExpression({ form: "compact", variables: { value: code`result` } })}`;
+          return code`c.json(${result.toCompactedJsonFunction.unannotatedUsage}(result))`;
         default:
           contentType satisfies never;
           throw new RangeError(contentType);
