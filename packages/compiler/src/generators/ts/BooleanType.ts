@@ -22,7 +22,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   );
   override readonly filterType = code`${this.reusables.snippets.BooleanFilter}`;
   override readonly fromExpandedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.booleanFromExpandedJson,
+    code`${this.reusables.snippets.booleanFromExpandedJson}<${this.expression}>`,
   );
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${this.reusables.imports.GraphQLBoolean}`,

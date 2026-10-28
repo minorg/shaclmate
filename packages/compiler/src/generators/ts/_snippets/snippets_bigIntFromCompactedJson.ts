@@ -9,7 +9,7 @@ export const snippets_bigIntFromCompactedJson: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}bigIntFromCompactedJson`,
     code`\
-function ${syntheticNamePrefix}bigIntFromCompactedJson<CompactedJsonT extends string, BigIntT extends bigint>(compactedJson: CompactedJsonT, options: Parameters<${snippets.FromExpandedJsonFunction}<BigIntT, ${snippets.NumericSchema}<BigIntT>>>[1]): ${imports.Either}<Error, BigIntT> {
+function ${syntheticNamePrefix}bigIntFromCompactedJson<CompactedJsonT extends string, BigIntT extends bigint>(compactedJson: CompactedJsonT, options: Parameters<${snippets.FromCompactedJsonFunction}<string, BigIntT, ${snippets.NumericSchema}<BigIntT>>>[1]): ${imports.Either}<Error, BigIntT> {
   const { schema } = options;
   return ${imports.Either}.encase(() => BigInt(compactedJson) as BigIntT)
     .chain(value => ${snippets.constrainPrimitive}(value, schema.in));

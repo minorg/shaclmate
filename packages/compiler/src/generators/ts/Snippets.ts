@@ -54,6 +54,7 @@ import { snippets_SparqlPattern } from "./_snippets/snippets_SparqlPattern.js";
 import { snippets_SparqlPattern_isSolutionGenerating } from "./_snippets/snippets_SparqlPattern_isSolutionGenerating.js";
 import { snippets_StringFilter } from "./_snippets/snippets_StringFilter.js";
 import { snippets_StringSchema } from "./_snippets/snippets_StringSchema.js";
+import { snippets_TermExpandedJson } from "./_snippets/snippets_TermExpandedJson.js";
 import { snippets_TermFilter } from "./_snippets/snippets_TermFilter.js";
 import { snippets_TermSchema } from "./_snippets/snippets_TermSchema.js";
 import { snippets_ToCompactedJsonFunction } from "./_snippets/snippets_ToCompactedJsonFunction.js";
@@ -201,6 +202,7 @@ import { snippets_sparqlInstancesOfPattern } from "./_snippets/snippets_sparqlIn
 import { snippets_sparqlPropertyPath } from "./_snippets/snippets_sparqlPropertyPath.js";
 import { snippets_sparqlValueInPattern } from "./_snippets/snippets_sparqlValueInPattern.js";
 import { snippets_strictEquals } from "./_snippets/snippets_strictEquals.js";
+import { snippets_stringFromExpandedJson } from "./_snippets/snippets_stringFromExpandedJson.js";
 import { snippets_stringFromRdfResourceValues } from "./_snippets/snippets_stringFromRdfResourceValues.js";
 import { snippets_stringSparqlWherePatterns } from "./_snippets/snippets_stringSparqlWherePatterns.js";
 import { snippets_termFilterSparqlPatterns } from "./_snippets/snippets_termFilterSparqlPatterns.js";
@@ -490,6 +492,11 @@ export class Snippets {
   @Memoize()
   get StringSchema(): Snippet {
     return this.snippet(snippets_StringSchema);
+  }
+
+  @Memoize()
+  get TermExpandedJson(): Snippet {
+    return this.snippet(snippets_TermExpandedJson);
   }
 
   @Memoize()
@@ -1225,6 +1232,11 @@ export class Snippets {
   @Memoize()
   get strictEquals(): Snippet {
     return this.snippet(snippets_strictEquals);
+  }
+
+  @Memoize()
+  get stringFromExpandedJson(): Snippet {
+    return this.snippet(snippets_stringFromExpandedJson);
   }
 
   @Memoize()

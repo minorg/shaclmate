@@ -9,7 +9,7 @@ export const snippets_literalFromExpandedJson: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}literalFromExpandedJson`,
     code`\
-const ${syntheticNamePrefix}literalFromExpandedJson: ${snippets.FromExpandedJsonFunction}<${snippets.IdentifierExpandedJson}, ${imports.BlankNode}, ${snippets.BlankNodeSchema}> = 
+const ${syntheticNamePrefix}literalFromExpandedJson: ${snippets.FromExpandedJsonFunction}<${snippets.LiteralExpandedJson}, ${imports.Literal}, ${snippets.LiteralSchema}> = 
   (expandedJson) => ${imports.Right}(
     ${imports.dataFactory}.literal(
       expandedJson["@value"],

@@ -13,12 +13,27 @@ import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 export class StringType extends AbstractPrimitiveType<string> {
   private readonly languageIn: readonly string[];
 
+  protected override readonly decodedIn = this.in_.map((in_) =>
+    LiteralDecoder.decodeStringLiteral(in_).unsafeCoerce(),
+  );
+
+  override readonly compactedJsonType: AbstractPrimitiveType.JsonType =
+    this.jsonTypeFactory.createJsonStringType({
+      in_: this.decodedIn,
+      inReference:
+        this.name.isJust() && this.configuration.features.has("Object.schema")
+          ? code`${this.name.extract()!}.schema.in`
+          : undefined,
+    });
   override readonly conversionFunction: Maybe<AbstractPrimitiveType.ConversionFunction> =
     Maybe.empty();
   override readonly filterFunction = new ReferenceCallable(
     this.reusables.snippets.filterString,
   );
   override readonly filterType = code`${this.reusables.snippets.StringFilter}`;
+  override readonly fromExpandedJsonFunction = new ReferenceCallable(
+    code`${this.reusables.snippets.stringFromExpandedJson}<${this.expression}>`,
+  );
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${this.reusables.imports.GraphQLString}`,
     this.reusables,
@@ -56,24 +71,6 @@ export class StringType extends AbstractPrimitiveType<string> {
   @Memoize()
   override get schemaType(): Code {
     return code`${this.reusables.snippets.StringSchema}<${this.expression}>`;
-  }
-
-  @Memoize()
-  protected override get compactedJsonType(): AbstractPrimitiveType.JsonType {
-    return this.jsonTypeFactory.createJsonStringType({
-      in_: this.decodedIn,
-      inReference:
-        this.name.isJust() && this.configuration.features.has("Object.schema")
-          ? code`${this.name.extract()!}.schema.in`
-          : undefined,
-    });
-  }
-
-  @Memoize()
-  protected override get decodedIn(): readonly string[] {
-    return this.in_.map((in_) =>
-      LiteralDecoder.decodeStringLiteral(in_).unsafeCoerce(),
-    );
   }
 
   protected override get schemaInitializers(): readonly Code[] {
