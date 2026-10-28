@@ -176,9 +176,13 @@ import { snippets_literalSchemaSparqlPatterns } from "./_snippets/snippets_liter
 import { snippets_literalSparqlWherePatterns } from "./_snippets/snippets_literalSparqlWherePatterns.js";
 import { snippets_literalToExpandedJson } from "./_snippets/snippets_literalToExpandedJson.js";
 import { snippets_maybeEquals } from "./_snippets/snippets_maybeEquals.js";
+import { snippets_maybeFromCompactedJson } from "./_snippets/snippets_maybeFromCompactedJson.js";
+import { snippets_maybeFromExpandedJson } from "./_snippets/snippets_maybeFromExpandedJson.js";
 import { snippets_maybeFromRdfResourceValues } from "./_snippets/snippets_maybeFromRdfResourceValues.js";
 import { snippets_maybeSparqlConstructTriples } from "./_snippets/snippets_maybeSparqlConstructTriples.js";
 import { snippets_maybeSparqlWherePatterns } from "./_snippets/snippets_maybeSparqlWherePatterns.js";
+import { snippets_maybeToCompactedJson } from "./_snippets/snippets_maybeToCompactedJson.js";
+import { snippets_maybeToExpandedJson } from "./_snippets/snippets_maybeToExpandedJson.js";
 import { snippets_monkeyPatchObject } from "./_snippets/snippets_monkeyPatchObject.js";
 import { snippets_mutableListFromRdfResourceValues } from "./_snippets/snippets_mutableListFromRdfResourceValues.js";
 import { snippets_mutableSetFromRdfResourceValues } from "./_snippets/snippets_mutableSetFromRdfResourceValues.js";
@@ -1107,6 +1111,16 @@ export class Snippets {
   }
 
   @Memoize()
+  get maybeFromCompactedJson(): Snippet {
+    return this.snippet(snippets_maybeFromCompactedJson);
+  }
+
+  @Memoize()
+  get maybeFromExpandedJson(): Snippet {
+    return this.snippet(snippets_maybeFromExpandedJson);
+  }
+
+  @Memoize()
   get maybeFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_maybeFromRdfResourceValues);
   }
@@ -1119,6 +1133,16 @@ export class Snippets {
   @Memoize()
   get maybeSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_maybeSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get maybeToCompactedJson(): Snippet {
+    return this.snippet(snippets_maybeToCompactedJson);
+  }
+
+  @Memoize()
+  get maybeToExpandedJson(): Snippet {
+    return this.snippet(snippets_maybeToExpandedJson);
   }
 
   @Memoize()

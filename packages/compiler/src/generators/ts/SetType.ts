@@ -102,6 +102,7 @@ export class SetType<
     throw new Error("should never be called");
   }
 
+  @Memoize()
   override get fromCompactedJsonFunction(): AbstractCollectionType<ItemTypeT>["fromCompactedJsonFunction"] {
     return new ReferenceCallable(
       code`${this.reusables.snippets.arrayFromCompactedJson}(${this.itemType.fromCompactedJsonFunction})`,

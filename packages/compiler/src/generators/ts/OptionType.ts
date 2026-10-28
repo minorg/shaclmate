@@ -6,6 +6,7 @@ import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { Callable } from "./Callable.js";
 import { codeEquals } from "./codeEquals.js";
 import { InlineCallable } from "./InlineCallable.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class OptionType<
@@ -19,6 +20,10 @@ export class OptionType<
     { instanceof: "Maybe", typeof: "object" },
   ] as const;
   override readonly kind = "Option";
+
+  override get compactedJsonType(): AbstractContainerType<ItemTypeT>["compactedJsonType"] {
+    return this.itemType.compactedJsonType;
+  }
 
   @Memoize()
   override get conversionFunction(): Maybe<AbstractContainerType.ConversionFunction> {
@@ -49,16 +54,34 @@ export class OptionType<
     );
   }
 
+  override get expandedJsonType(): AbstractContainerType<ItemTypeT>["expandedJsonType"] {
+    return this.itemType.expandedJsonType;
+  }
+
   @Memoize()
-  get filterFunction(): Callable {
+  override get filterFunction(): Callable {
     return new InlineCallable(
       code`${this.reusables.snippets.filterMaybe}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction.unannotatedUsage})`,
     );
   }
 
   @Memoize()
-  get filterType(): Code {
+  override get filterType(): Code {
     return code`${this.reusables.snippets.MaybeFilter}<${this.itemType.filterType}>`;
+  }
+
+  @Memoize()
+  override get fromCompactedJsonFunction(): AbstractContainerType<ItemTypeT>["fromCompactedJsonFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.maybeFromCompactedJson}(${this.itemType.fromCompactedJsonFunction})`,
+    );
+  }
+
+  @Memoize()
+  override get fromExpandedJsonFunction(): AbstractContainerType<ItemTypeT>["fromExpandedJsonFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.maybeFromExpandedJson}(${this.itemType.fromExpandedJsonFunction})`,
+    );
   }
 
   @Memoize()
@@ -81,7 +104,7 @@ export class OptionType<
   }
 
   @Memoize()
-  get hashFunction(): Callable {
+  override get hashFunction(): Callable {
     return new InlineCallable(
       code`${this.reusables.snippets.hashMaybe}(${this.itemType.hashFunction.annotatedUsage})`,
     );
@@ -94,6 +117,20 @@ export class OptionType<
   @Memoize()
   override get schemaType(): Code {
     return code`${this.reusables.snippets.MaybeSchema}<${this.itemType.schemaType}>`;
+  }
+
+  @Memoize()
+  override get toCompactedJsonFunction(): AbstractContainerType<ItemTypeT>["toCompactedJsonFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.maybeToCompactedJson}(${this.itemType.toCompactedJsonFunction})`,
+    );
+  }
+
+  @Memoize()
+  override get toExpandedJsonFunction(): AbstractContainerType<ItemTypeT>["toExpandedJsonFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.maybeToExpandedJson}(${this.itemType.toExpandedJsonFunction})`,
+    );
   }
 
   override get toRdfResourceValueTypes(): AbstractContainerType<ItemTypeT>["toRdfResourceValueTypes"] {
@@ -130,42 +167,12 @@ export class OptionType<
     return code`${this.reusables.imports.Maybe}<${this.itemType.expression}>`;
   }
 
-  override fromJsonExpression({
-    form,
-    variables,
-  }: Parameters<
-    AbstractContainerType<ItemTypeT>["fromJsonExpression"]
-  >[0]): Code {
-    const expression = code`${this.reusables.imports.Maybe}.fromNullable(${variables.value})`;
-    const itemFromJsonExpression = this.itemType.fromJsonExpression({
-      form,
-      variables: { value: code`item` },
-    });
-    return code`${expression}.map(item => (${itemFromJsonExpression}).map(item => ${this.reusables.imports.Maybe}.of(item))).orDefault(${this.reusables.imports.Either}.of(${this.reusables.imports.Maybe}.empty()))`;
-  }
-
   override graphqlResolveExpression(
     parameters: Parameters<
       AbstractContainerType<ItemTypeT>["graphqlResolveExpression"]
     >[0],
   ): Code {
     return code`${this.itemType.graphqlResolveExpression(parameters)}.extractNullable()`;
-  }
-
-  @Memoize()
-  override jsonType(
-    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],
-  ): AbstractContainerType.JsonType {
-    return this.itemType.jsonType(parameters);
-  }
-
-  override toJsonExpression({
-    form,
-    variables,
-  }: Parameters<
-    AbstractContainerType<ItemTypeT>["toJsonExpression"]
-  >[0]): Code {
-    return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ form, variables: { value: code`item` } })})).extract()`;
   }
 
   override toLoggableExpression({
