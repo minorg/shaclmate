@@ -5,7 +5,7 @@ import { Maybe } from "purify-ts";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { ReferenceCallable } from "./ReferenceCallable.js";
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { code } from "./ts-poet-wrapper.js";
 
 export class IdentifierType extends AbstractIdentifierType<
   BlankNode | NamedNode
@@ -40,6 +40,12 @@ export class IdentifierType extends AbstractIdentifierType<
   override readonly filterFunction = new ReferenceCallable(
     this.reusables.snippets.filterIdentifier,
   );
+  override readonly fromCompactedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.identifierFromCompactedJson,
+  );
+  override readonly fromExpandedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.identifierFromExpandedJson,
+  );
   override readonly filterType =
     code`${this.reusables.snippets.IdentifierFilter}`;
   override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
@@ -52,6 +58,12 @@ export class IdentifierType extends AbstractIdentifierType<
   );
   override readonly schemaType =
     code`${this.reusables.snippets.IdentifierSchema}`;
+  override readonly toCompactedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.identifierToCompactedJson,
+  );
+  override readonly toExpandedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.identifierToExpandedJson,
+  );
   override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.identifierSparqlWherePatterns,
   );
@@ -69,22 +81,6 @@ export class IdentifierType extends AbstractIdentifierType<
       hasValues: [],
       in_: [],
     });
-  }
-
-  protected override fromCompactedJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractIdentifierType<BlankNode | NamedNode>["fromCompactedJsonExpression"]
-  >[0]): Code {
-    return code`(${variables.value}.startsWith("_:") ? ${this.reusables.imports.dataFactory}.blankNode(${variables.value}.substring(2)) : ${this.reusables.imports.dataFactory}.namedNode(${variables.value}))`;
-  }
-
-  protected override toCompactedJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractIdentifierType<BlankNode | NamedNode>["toCompactedJsonExpression"]
-  >[0]): Code {
-    return code`(${variables.value}.termType === "BlankNode" ? \`_:\${${variables.value}.value}\` : ${variables.value}.value)`;
   }
 }
 

@@ -156,8 +156,12 @@ import { snippets_hashMaybe } from "./_snippets/snippets_hashMaybe.js";
 import { snippets_hashNumeric } from "./_snippets/snippets_hashNumeric.js";
 import { snippets_hashString } from "./_snippets/snippets_hashString.js";
 import { snippets_hashTerm } from "./_snippets/snippets_hashTerm.js";
+import { snippets_identifierFromCompactedJson } from "./_snippets/snippets_identifierFromCompactedJson.js";
+import { snippets_identifierFromExpandedJson } from "./_snippets/snippets_identifierFromExpandedJson.js";
 import { snippets_identifierFromRdfResourceValues } from "./_snippets/snippets_identifierFromRdfResourceValues.js";
 import { snippets_identifierSparqlWherePatterns } from "./_snippets/snippets_identifierSparqlWherePatterns.js";
+import { snippets_identifierToCompactedJson } from "./_snippets/snippets_identifierToCompactedJson.js";
+import { snippets_identifierToExpandedJson } from "./_snippets/snippets_identifierToExpandedJson.js";
 import { snippets_identityConversionFunction } from "./_snippets/snippets_identityConversionFunction.js";
 import { snippets_identityValidationFunction } from "./_snippets/snippets_identityValidationFunction.js";
 import { snippets_intFromExpandedJson } from "./_snippets/snippets_intFromExpandedJson.js";
@@ -1018,6 +1022,16 @@ export class Snippets {
   }
 
   @Memoize()
+  get identifierFromCompactedJson(): Snippet {
+    return this.snippet(snippets_identifierFromCompactedJson);
+  }
+
+  @Memoize()
+  get identifierFromExpandedJson(): Snippet {
+    return this.snippet(snippets_identifierFromExpandedJson);
+  }
+
+  @Memoize()
   get identifierFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_identifierFromRdfResourceValues);
   }
@@ -1025,6 +1039,16 @@ export class Snippets {
   @Memoize()
   get identifierSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_identifierSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get identifierToCompactedJson(): Snippet {
+    return this.snippet(snippets_identifierToCompactedJson);
+  }
+
+  @Memoize()
+  get identifierToExpandedJson(): Snippet {
+    return this.snippet(snippets_identifierToExpandedJson);
   }
 
   @Memoize()
