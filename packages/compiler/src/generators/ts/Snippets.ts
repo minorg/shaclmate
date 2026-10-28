@@ -145,6 +145,7 @@ import { snippets_filterMaybe } from "./_snippets/snippets_filterMaybe.js";
 import { snippets_filterNumeric } from "./_snippets/snippets_filterNumeric.js";
 import { snippets_filterString } from "./_snippets/snippets_filterString.js";
 import { snippets_filterTerm } from "./_snippets/snippets_filterTerm.js";
+import { snippets_floatFromExpandedJson } from "./_snippets/snippets_floatFromExpandedJson.js";
 import { snippets_floatFromRdfResourceValues } from "./_snippets/snippets_floatFromRdfResourceValues.js";
 import { snippets_hashArray } from "./_snippets/snippets_hashArray.js";
 import { snippets_hashBigDecimal } from "./_snippets/snippets_hashBigDecimal.js";
@@ -159,6 +160,7 @@ import { snippets_identifierFromRdfResourceValues } from "./_snippets/snippets_i
 import { snippets_identifierSparqlWherePatterns } from "./_snippets/snippets_identifierSparqlWherePatterns.js";
 import { snippets_identityConversionFunction } from "./_snippets/snippets_identityConversionFunction.js";
 import { snippets_identityValidationFunction } from "./_snippets/snippets_identityValidationFunction.js";
+import { snippets_intFromExpandedJson } from "./_snippets/snippets_intFromExpandedJson.js";
 import { snippets_intFromRdfResourceValues } from "./_snippets/snippets_intFromRdfResourceValues.js";
 import { snippets_iriFromCompactedJson } from "./_snippets/snippets_iriFromCompactedJson.js";
 import { snippets_iriFromExpandedJson } from "./_snippets/snippets_iriFromExpandedJson.js";
@@ -961,6 +963,11 @@ export class Snippets {
   }
 
   @Memoize()
+  get floatFromExpandedJson(): Snippet {
+    return this.snippet(snippets_floatFromExpandedJson);
+  }
+
+  @Memoize()
   get floatFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_floatFromRdfResourceValues);
   }
@@ -1028,6 +1035,11 @@ export class Snippets {
   @Memoize()
   get identityValidationFunction(): Snippet {
     return this.snippet(snippets_identityValidationFunction);
+  }
+
+  @Memoize()
+  get intFromExpandedJson(): Snippet {
+    return this.snippet(snippets_intFromExpandedJson);
   }
 
   @Memoize()

@@ -1,7 +1,9 @@
 import type { Literal } from "@rdfjs/types";
 import { LiteralDecoder } from "@rdfx/literal";
+
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractNumericType } from "./AbstractNumericType.js";
 import type { Callable } from "./Callable.js";
 import { ReferenceCallable } from "./ReferenceCallable.js";
@@ -11,6 +13,7 @@ export class FloatType extends AbstractNumericType<number> {
   protected override readonly decodedIn = this.in_.map((in_) =>
     LiteralDecoder.decodeFloatLiteral(in_).unsafeCoerce(),
   );
+
   override readonly compactedJsonType: AbstractNumericType.JsonType =
     this.jsonTypeFactory.createJsonNumberType({ in_: this.decodedIn });
   override readonly conversionFunction: Maybe<AbstractNumericType.ConversionFunction> =
@@ -21,6 +24,13 @@ export class FloatType extends AbstractNumericType<number> {
   );
   override readonly jsTypes = [{ typeof: "number" }] as const;
   override readonly kind = "Float";
+
+  @Memoize()
+  get fromExpandedJsonFunction(): Callable {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.floatFromExpandedJson}<${this.expression}>`,
+    );
+  }
 
   @Memoize()
   get fromRdfResourceValuesFunction(): Callable {
