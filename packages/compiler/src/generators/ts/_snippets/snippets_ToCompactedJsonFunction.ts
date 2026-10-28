@@ -6,5 +6,5 @@ export const snippets_ToCompactedJsonFunction: SnippetFactory = ({
 }) =>
   conditionalOutput(
     `${syntheticNamePrefix}ToCompactedJsonFunction`,
-    code`export type ${syntheticNamePrefix}ToCompactedJsonFunction<T, JsonT> = (value: T) => JsonT;`,
+    code`export type ${syntheticNamePrefix}ToCompactedJsonFunction<T, CompactedJsonT> = (value: T) => CompactedJsonT;`,
   );
