@@ -15,8 +15,6 @@ export abstract class AbstractLazyType<
   PartialTypeT extends AbstractLazyType.PartialTypeConstraint,
   ResolveTypeT extends AbstractLazyType.ResolveTypeConstraint,
 > extends AbstractType {
-  readonly partialType: PartialTypeT;
-  readonly resolveType: ResolveTypeT;
   protected abstract readonly runtimeClass: {
     readonly name: Code;
     readonly partialPropertyName: string;
@@ -26,6 +24,8 @@ export abstract class AbstractLazyType<
   override readonly discriminantProperty: AbstractType["discriminantProperty"] =
     Maybe.empty();
   override readonly mutable = false;
+  readonly partialType: PartialTypeT;
+  readonly resolveType: ResolveTypeT;
   override readonly validationFunction: AbstractType["validationFunction"] =
     Maybe.empty();
 
@@ -42,6 +42,10 @@ export abstract class AbstractLazyType<
     this.resolveType = resolveType;
   }
 
+  get compactedJsonType(): AbstractType["compactedJsonType"] {
+    return this.partialType.compactedJsonType;
+  }
+
   @Memoize()
   override get equalsFunction(): Callable {
     return new InlineCallable(
@@ -50,6 +54,10 @@ export abstract class AbstractLazyType<
         type: code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`,
       },
     );
+  }
+
+  get expandedJsonType(): AbstractType["expandedJsonType"] {
+    return this.partialType.expandedJsonType;
   }
 
   @Memoize()
@@ -108,6 +116,24 @@ export abstract class AbstractLazyType<
     }}`;
   }
 
+  override get toCompactedJsonFunction(): AbstractType["toCompactedJsonFunction"] {
+    return new InlineCallable(
+      code`(value) => ${this.partialType.toCompactedJsonFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
+      {
+        type: code`${this.reusables.snippets.ToCompactedJsonFunction}<${this.expression}, ${this.compactedJsonType.expression}>`,
+      },
+    );
+  }
+
+  override get toExpandedJsonFunction(): AbstractType["toExpandedJsonFunction"] {
+    return new InlineCallable(
+      code`(value) => ${this.partialType.toExpandedJsonFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
+      {
+        type: code`${this.reusables.snippets.ToExpandedJsonFunction}<${this.expression}, ${this.compactedJsonType.expression}>`,
+      },
+    );
+  }
+
   get toRdfResourceValueTypes(): AbstractType["toRdfResourceValueTypes"] {
     return this.partialType.toRdfResourceValueTypes;
   }
@@ -136,24 +162,6 @@ export abstract class AbstractLazyType<
     return super.schemaInitializers.concat(
       code`get partialType() { return ${this.partialType.schema}; }`,
     );
-  }
-
-  override jsonType(
-    parameters: Parameters<AbstractType["jsonType"]>[0],
-  ): AbstractType.JsonType {
-    return this.partialType.jsonType(parameters);
-  }
-
-  override toJsonExpression({
-    variables,
-    ...parameters
-  }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
-    return this.partialType.toJsonExpression({
-      ...parameters,
-      variables: {
-        value: code`${variables.value}.${this.runtimeClass.partialPropertyName}`,
-      },
-    });
   }
 
   override toLoggableExpression({

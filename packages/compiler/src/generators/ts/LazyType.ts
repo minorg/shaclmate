@@ -48,10 +48,30 @@ ${this.reusables.snippets.convertToLazy}<
     };
   }
 
-  override fromJsonExpression(
-    parameters: Parameters<Super["fromJsonExpression"]>[0],
-  ): Code {
-    return code`${this.partialType.fromJsonExpression(parameters)}.map(partial => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: partial, resolver: (partial) => Promise.resolve(${this.reusables.imports.Left}(new Error(\`unable to resolve \${partial} deserialized from JSON\`))) }))`;
+  override get fromCompactedJsonFunction(): AbstractLazyType<
+    AbstractLazyType.ItemTypeConstraint,
+    AbstractLazyType.ItemTypeConstraint
+  >["fromCompactedJsonFunction"] {
+    return new InlineCallable(
+      code`(compactedJson, { ...otherOptions, objectSet, schema: schema.partialType }) => ${this.partialType.fromCompactedJsonFunction.annotatedUsage}(compactedJson, { ...otherOptions, objectSet, schema: schema.partialType })
+        .map(partial => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: partial, resolver: (partial, options) => objectSet.${this.resolveType.objectSetMethodNames.object}(partial.${this.partialType.identifierProperty.unsafeCoerce().name}(), options) }))`,
+      {
+        type: code`${this.reusables.snippets.FromCompactedJsonFunction}<${this.compactedJsonType.expression}, ${this.expression}, ${this.schema}>`,
+      },
+    );
+  }
+
+  override get fromExpandedJsonFunction(): AbstractLazyType<
+    AbstractLazyType.ItemTypeConstraint,
+    AbstractLazyType.ItemTypeConstraint
+  >["fromExpandedJsonFunction"] {
+    return new InlineCallable(
+      code`(expandedJson, { ...otherOptions, objectSet, schema: schema.partialType }) => ${this.partialType.fromExpandedJsonFunction.annotatedUsage}(expandedJson, { ...otherOptions, objectSet, schema: schema.partialType })
+        .map(partial => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: partial, resolver: (partial, options) => objectSet.${this.resolveType.objectSetMethodNames.object}(partial.${this.partialType.identifierProperty.unsafeCoerce().name}(), options) }))`,
+      {
+        type: code`${this.reusables.snippets.FromExpandedJsonFunction}<${this.expandedJsonType.expression}, ${this.expression}, ${this.schema}>`,
+      },
+    );
   }
 
   @Memoize()
