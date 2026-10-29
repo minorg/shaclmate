@@ -17,7 +17,6 @@ import type { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { InlineCallable } from "./InlineCallable.js";
-import type { IntersectionType } from "./IntersectionType.js";
 import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
 import type { LangStringType } from "./LangStringType.js";
@@ -216,7 +215,6 @@ export namespace ListType {
     | FloatType
     | IdentifierType
     | IntType
-    | IntersectionType
     | IriType
     | LangStringType
     | ListType<ListType.ItemType>
@@ -239,7 +237,6 @@ export namespace ListType {
       case "Float":
       case "Identifier":
       case "Int":
-      case "Intersection":
       case "Iri":
       case "LangString":
       case "List":

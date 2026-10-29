@@ -111,20 +111,6 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
   }
 
   @Memoize()
-  protected override get inlineExpression(): Code {
-    return joinCode(
-      this.members.map((member) => {
-        let memberTypeExpression = member.type.expression;
-        member.type.discriminantProperty.ifJust((discriminantProperty) => {
-          memberTypeExpression = code`Omit<${memberTypeExpression}, ${literalOf(discriminantProperty.name)}>`;
-        });
-        return memberTypeExpression;
-      }),
-      { on: " & " },
-    );
-  }
-
-  @Memoize()
   override jsonType(): AbstractIntersectionType.JsonType {
     return ObjectIntersectionType_jsonType.call(this);
   }

@@ -95,7 +95,6 @@ export class DefaultValueType<
       case "Term":
         return this.rdfjsTermExpression(this.defaultValue);
       case "DiscriminatedUnion":
-      case "Intersection":
       case "List":
       case "Object":
       case "ObjectDiscriminatedUnion":

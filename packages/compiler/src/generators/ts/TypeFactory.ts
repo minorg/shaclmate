@@ -22,7 +22,6 @@ import { DefaultValueType } from "./DefaultValueType.js";
 import { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import { FloatType } from "./FloatType.js";
 import { IdentifierType } from "./IdentifierType.js";
-import { IntersectionType } from "./IntersectionType.js";
 import { IntType } from "./IntType.js";
 import { IriType } from "./IriType.js";
 import { LangStringType } from "./LangStringType.js";
@@ -108,24 +107,12 @@ export class TypeFactory {
 
   createIntersectionType(
     astType: ast.IntersectionType,
-  ): IntersectionType | ObjectIntersectionType {
+  ): ObjectIntersectionType {
     if (astType.isStructIntersectionType()) {
       return this.createObjectIntersectionType(astType);
     }
 
-    return new IntersectionType({
-      ...this.constructorParameters,
-      comment: astType.comment,
-      identifierProperty: Maybe.empty(),
-      label: astType.label,
-      members: astType.members.map((member) => ({
-        type: this.createType(member.type),
-      })),
-      name: astType.name.map((name) => this.tsName(name)),
-      recursive: astType.recursive,
-      shapeIdentifier: astType.shapeIdentifier,
-      synthetic: astType.synthetic,
-    });
+    throw new Error("non-object intersection types are unsupported");
   }
 
   createObjectDiscriminatedUnionType(

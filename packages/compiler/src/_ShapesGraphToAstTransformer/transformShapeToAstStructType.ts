@@ -28,10 +28,6 @@ function isStructTypeFieldRequired(field: {
           );
         case "DefaultValue":
           return false;
-        case "Intersection":
-          return field.type.members.every((member) =>
-            isStructTypeFieldRequired({ kind: "Shacl", type: member.type }),
-          );
         case "LazyOption":
           return false;
         case "LazySet":

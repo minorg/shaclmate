@@ -8,7 +8,6 @@ import type { DefaultValueType } from "./DefaultValueType.js";
 import type { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
-import type { IntersectionType } from "./IntersectionType.js";
 import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
 import type { LangStringType } from "./LangStringType.js";
@@ -37,7 +36,6 @@ export type Type =
   | FloatType
   | IdentifierType
   | IntType
-  | IntersectionType
   | IriType
   | LangStringType
   | LazyOptionType

@@ -104,6 +104,14 @@ export abstract class AbstractIntersectionType<
     return jsTypes;
   }
 
+  @Memoize()
+  protected override get inlineExpression(): Code {
+    return joinCode(
+      this.members.map((member) => member.type.expression),
+      { on: " & " },
+    );
+  }
+
   protected override get schemaInitializers(): readonly Code[] {
     return super.schemaInitializers.concat(
       code`members: [${joinCode(

@@ -81,7 +81,6 @@ export class TsGenerator implements Generator {
 
     for (const tsNamedType of tsNamedTypes) {
       switch (tsNamedType.kind) {
-        case "Intersection":
         case "DiscriminatedUnion":
         case "ObjectDiscriminatedUnion":
         case "ObjectIntersection":
@@ -97,7 +96,6 @@ export class TsGenerator implements Generator {
     for (const tsNamedType of tsNamedTypes) {
       switch (tsNamedType.kind) {
         case "DiscriminatedUnion":
-        case "Intersection":
         case "ObjectDiscriminatedUnion":
         case "ObjectIntersection":
           break;
