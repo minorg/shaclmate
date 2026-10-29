@@ -68,7 +68,7 @@ export abstract class AbstractType extends AbstractConstruct {
    * JSON-LD 1.1 (https://www.w3.org/TR/json-ld11/#forms-of-json-ld) "expanded" form of the type. It must be a JSON object type.
    */
   abstract readonly expandedJsonType: AbstractType.JsonType & {
-    readonly kind: "JsonDiscriminatedUnion" | "JsonObject" | "SnippetJson";
+    readonly kind: "JsonDiscriminatedUnion" | "JsonIntersection" | "JsonObject";
   };
 
   /**

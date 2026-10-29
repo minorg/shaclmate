@@ -1,7 +1,7 @@
 import type { ObjectIntersectionType } from "../ObjectIntersectionType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function ObjectIntersectionType_fromJsonFunctionExpression(
+export function ObjectIntersectionType_fromExpandedJsonFunctionExpression(
   this: ObjectIntersectionType,
 ): Code {
   return code`\
@@ -9,12 +9,7 @@ export function ObjectIntersectionType_fromJsonFunctionExpression(
     ${joinCode(
       this.members.map(
         (member, memberI) => code`
-${member.type.fromJsonExpression({
-  form: "compact",
-  variables: {
-    value: code`value`,
-  },
-})}.${memberI + 1 < this.members.length ? "chain" : "map"}(member${memberI} =>`,
+${member.type.fromExpandedJsonFunction.unannotatedUsage}(value).${memberI + 1 < this.members.length ? "chain" : "map"}(member${memberI} =>`,
       ),
     )} ({ ${joinCode(
       this.members.map((_, memberI) => code`...member${memberI}`),

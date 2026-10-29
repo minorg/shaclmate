@@ -1,23 +1,21 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import { AbstractDiscriminatedUnionType_conversionFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_conversionFunctionExpression.js";
+import { AbstractDiscriminatedUnionType_conversionFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_conversionFunction.js";
 import type { AbstractDiscriminatedUnionType_Discriminant } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_Discriminant.js";
-import { AbstractDiscriminatedUnionType_equalsFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_equalsFunctionExpression.js";
-import { AbstractDiscriminatedUnionType_filterFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_filterFunctionExpression.js";
+import { AbstractDiscriminatedUnionType_equalsFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_equalsFunction.js";
+import { AbstractDiscriminatedUnionType_filterFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_filterFunction.js";
 import { AbstractDiscriminatedUnionType_filterTypeExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_filterTypeExpression.js";
-import { AbstractDiscriminatedUnionType_fromJsonFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_fromJsonFunctionExpression.js";
-import { AbstractDiscriminatedUnionType_fromRdfResourceValuesFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_fromRdfResourceValuesFunctionExpression.js";
-import { AbstractDiscriminatedUnionType_hashFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_hashFunctionExpression.js";
+import { AbstractDiscriminatedUnionType_fromRdfResourceValuesFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_fromRdfResourceValuesFunction.js";
+import { AbstractDiscriminatedUnionType_hashFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_hashFunction.js";
 import { AbstractDiscriminatedUnionType_inferDiscriminant } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_inferDiscriminant.js";
 import { AbstractDiscriminatedUnionType_inlineExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_inlineExpression.js";
 import { AbstractDiscriminatedUnionType_schemaTypeExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_schemaTypeExpression.js";
-import { AbstractDiscriminatedUnionType_toJsonFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toJsonFunctionExpression.js";
-import { AbstractDiscriminatedUnionType_toLoggableFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toLoggableFunctionExpression.js";
-import { AbstractDiscriminatedUnionType_toRdfResourceValuesFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toRdfResourceValuesFunctionExpression.js";
-import { AbstractDiscriminatedUnionType_toStringFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toStringFunctionExpression.js";
-import { AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpression.js";
-import { AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression.js";
+import { AbstractDiscriminatedUnionType_toLoggableFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toLoggableFunction.js";
+import { AbstractDiscriminatedUnionType_toRdfResourceValuesFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toRdfResourceValuesFunction.js";
+import { AbstractDiscriminatedUnionType_toStringFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toStringFunction.js";
+import { AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunction.js";
+import { AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunction.js";
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
@@ -38,15 +36,15 @@ export abstract class AbstractDiscriminatedUnionType<
     AbstractDiscriminatedUnionType_filterFunctionExpression;
   protected override filterTypeExpression =
     AbstractDiscriminatedUnionType_filterTypeExpression;
-  protected override fromJsonFunctionExpression =
-    AbstractDiscriminatedUnionType_fromJsonFunctionExpression;
+  protected override fromExpandedJsonFunctionExpression =
+    AbstractDiscriminatedUnionType_fromExpandedJsonFunctionExpression;
   protected override fromRdfResourceValuesFunctionExpression =
     AbstractDiscriminatedUnionType_fromRdfResourceValuesFunctionExpression;
   protected override hashFunctionExpression =
     AbstractDiscriminatedUnionType_hashFunctionExpression;
   protected override schemaTypeExpression =
     AbstractDiscriminatedUnionType_schemaTypeExpression;
-  protected override toJsonFunctionExpression =
+  protected override toExpandedJsonFunctionExpression =
     AbstractDiscriminatedUnionType_toJsonFunctionExpression;
   protected override toLoggableFunctionExpression =
     AbstractDiscriminatedUnionType_toLoggableFunctionExpression;

@@ -7,11 +7,10 @@ import { ObjectIntersectionType_createFunctionParameters } from "./_ObjectInters
 import { ObjectIntersectionType_createUnsafeFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_createUnsafeFunction.js";
 import { ObjectIntersectionType_focusSparqlConstructTriplesFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_focusSparqlConstructTriplesFunction.js";
 import { ObjectIntersectionType_focusSparqlWherePatternsFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_focusSparqlWherePatternsFunction.js";
-import { ObjectIntersectionType_fromJsonFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_fromJsonFunction.js";
+import { ObjectIntersectionType_fromExpandedJsonFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_fromExpandedJsonFunction.js";
 import { ObjectIntersectionType_fromRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_fromRdfResourceFunction.js";
 import { ObjectIntersectionType_fromRdfResourceValuesFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_fromRdfResourceValuesFunction.js";
-import { ObjectIntersectionType_jsonType } from "./_ObjectIntersectionType/ObjectIntersectionType_jsonType.js";
-import { ObjectIntersectionType_toJsonFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_toJsonFunction.js";
+import { ObjectIntersectionType_toExpandedJsonFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_toExpandedJsonFunction.js";
 import { ObjectIntersectionType_toRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_toRdfResourceFunction.js";
 import { ObjectIntersectionType_toRdfResourceValuesFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_toRdfResourceValuesFunction.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
@@ -25,15 +24,15 @@ import { DeclaredCallable } from "./DeclaredCallable.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import type { ObjectType } from "./ObjectType.js";
-import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType> {
-  protected override fromJsonFunctionExpression =
-    ObjectIntersectionType_fromJsonFunctionExpression;
+  protected override fromExpandedJsonFunctionExpression =
+    ObjectIntersectionType_fromExpandedJsonFunctionExpression;
   protected override fromRdfResourceValuesFunctionExpression =
     ObjectIntersectionType_fromRdfResourceValuesFunctionExpression;
-  protected override toJsonFunctionExpression =
-    ObjectIntersectionType_toJsonFunctionExpression;
+  protected override toExpandedJsonFunctionExpression =
+    ObjectIntersectionType_toExpandedJsonFunctionExpression;
   protected override toRdfResourceValuesFunctionExpression =
     ObjectIntersectionType_toRdfResourceValuesFunctionExpression;
 
@@ -60,6 +59,10 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
     return ObjectIntersectionType__toRdfResourceFunction.call(this);
   }
 
+  get compactedJsonType(): AbstractIntersectionType<ObjectType>["compactedJsonType"] {
+    return this.expandedJsonType;
+  }
+
   @Memoize()
   get createFunction(): Callable {
     return ObjectIntersectionType_createFunction.call(this);
@@ -68,6 +71,17 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
   @Memoize()
   get createFunctionParameters(): ObjectType.CreateFunctionParameters {
     return ObjectIntersectionType_createFunctionParameters.call(this);
+  }
+
+  @Memoize()
+  override get expandedJsonType(): AbstractIntersectionType<ObjectType>["expandedJsonType"] {
+    return this.jsonTypeFactory.createJsonIntersectionType(
+      this.members.map((member) => member.type.expandedJsonType),
+      {
+        name: this.name.map((name) => [name, "Json"]).extract(),
+        recursive: this.recursive,
+      },
+    );
   }
 
   @Memoize()
@@ -108,11 +122,6 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
   @Memoize()
   protected get createUnsafeFunction(): Callable {
     return ObjectIntersectionType_createUnsafeFunction.call(this);
-  }
-
-  @Memoize()
-  override jsonType(): AbstractIntersectionType.JsonType {
-    return ObjectIntersectionType_jsonType.call(this);
   }
 
   protected override staticModuleDeclarations(
