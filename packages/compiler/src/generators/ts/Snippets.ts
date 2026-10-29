@@ -126,9 +126,15 @@ import { snippets_convertToMutableScalarSet } from "./_snippets/snippets_convert
 import { snippets_convertToScalarSet } from "./_snippets/snippets_convertToScalarSet.js";
 import { snippets_convertWithDefaultValue } from "./_snippets/snippets_convertWithDefaultValue.js";
 import { snippets_dateEquals } from "./_snippets/snippets_dateEquals.js";
+import { snippets_dateFromCompactedJson } from "./_snippets/snippets_dateFromCompactedJson.js";
+import { snippets_dateFromExpandedJson } from "./_snippets/snippets_dateFromExpandedJson.js";
 import { snippets_dateFromRdfResourceValues } from "./_snippets/snippets_dateFromRdfResourceValues.js";
 import { snippets_dateSparqlWherePatterns } from "./_snippets/snippets_dateSparqlWherePatterns.js";
+import { snippets_dateTimeFromExpandedJson } from "./_snippets/snippets_dateTimeFromExpandedJson.js";
 import { snippets_dateTimeFromRdfResourceValues } from "./_snippets/snippets_dateTimeFromRdfResourceValues.js";
+import { snippets_dateTimeToCompactedJson } from "./_snippets/snippets_dateTimeToCompactedJson.js";
+import { snippets_dateToCompactedJson } from "./_snippets/snippets_dateToCompactedJson.js";
+import { snippets_dateToExpandedJson } from "./_snippets/snippets_dateToExpandedJson.js";
 import { snippets_deduplicateSparqlPatterns } from "./_snippets/snippets_deduplicateSparqlPatterns.js";
 import { snippets_defaultValueFromRdfResourceValues } from "./_snippets/snippets_defaultValueFromRdfResourceValues.js";
 import { snippets_defaultValueSparqlWherePatterns } from "./_snippets/snippets_defaultValueSparqlWherePatterns.js";
@@ -874,6 +880,16 @@ export class Snippets {
   }
 
   @Memoize()
+  get dateFromCompactedJson(): Snippet {
+    return this.snippet(snippets_dateFromCompactedJson);
+  }
+
+  @Memoize()
+  get dateFromExpandedJson(): Snippet {
+    return this.snippet(snippets_dateFromExpandedJson);
+  }
+
+  @Memoize()
   get dateFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_dateFromRdfResourceValues);
   }
@@ -884,8 +900,28 @@ export class Snippets {
   }
 
   @Memoize()
+  get dateTimeFromExpandedJson(): Snippet {
+    return this.snippet(snippets_dateTimeFromExpandedJson);
+  }
+
+  @Memoize()
   get dateTimeFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_dateTimeFromRdfResourceValues);
+  }
+
+  @Memoize()
+  get dateTimeToCompactedJson(): Snippet {
+    return this.snippet(snippets_dateTimeToCompactedJson);
+  }
+
+  @Memoize()
+  get dateToCompactedJson(): Snippet {
+    return this.snippet(snippets_dateToCompactedJson);
+  }
+
+  @Memoize()
+  get dateToExpandedJson(): Snippet {
+    return this.snippet(snippets_dateToExpandedJson);
   }
 
   @Memoize()

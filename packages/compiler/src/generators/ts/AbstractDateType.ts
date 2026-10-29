@@ -21,6 +21,9 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
     this.reusables.snippets.filterDate,
   );
   override readonly filterType = code`${this.reusables.snippets.DateFilter}`;
+  override readonly fromCompactedJsonFunction = new ReferenceCallable(
+    this.reusables.snippets.dateFromCompactedJson,
+  );
   override readonly jsTypes = [
     {
       instanceof: "Date",
@@ -33,7 +36,7 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
   );
 
   @Memoize()
-  protected override get compactedJsonType(): AbstractTypedLiteralType.JsonType {
+  override get compactedJsonType(): AbstractTypedLiteralType.JsonType {
     return this.jsonTypeFactory.createJsonStringType({
       format: this.jsonStringFormat,
     });
