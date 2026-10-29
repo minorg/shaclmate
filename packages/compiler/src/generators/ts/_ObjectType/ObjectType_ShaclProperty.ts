@@ -134,12 +134,11 @@ export class ObjectType_ShaclProperty<
       optional: this.minCount === 0n && this.type.kind !== "DefaultValue",
       recursive: this.recursive,
       type: this.recursive
-        ? () => this.type.jsonType({ form: "compact" })
-        : this.type.jsonType({ form: "compact" }),
+        ? () => this.type.compactedJsonType
+        : this.type.compactedJsonType,
       uiSchemaElement: Maybe.of(({ variables }) => {
         const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
-        return this.type
-          .jsonType({ form: "compact" })
+        return this.type.compactedJsonType
           .uiSchemaElement({ variables })
           .altLazy(() =>
             Maybe.of(
@@ -248,10 +247,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["fromExpandedJsonInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: ${this.type.fromJsonExpression({
-        form: "compact",
-        variables: { value: code`${variables.jsonObject}["${this.name}"]` },
-      })}`,
+      code`${this.name}: (${this.type.fromExpandedJsonFunction.unannotatedUsage})(${variables.jsonObject}["${this.name}"])`,
     );
   }
 
@@ -333,7 +329,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["toJsonInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: ${this.type.toJsonExpression({ form: "compact", variables: { value: code`${variables.object}.${this.name}` } })}`,
+      code`${this.name}: (${this.type.toCompactedJsonFunction})(${variables.object}.${this.name})`,
     );
   }
 
