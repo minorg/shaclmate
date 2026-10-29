@@ -9,7 +9,7 @@ export const snippets_floatFromExpandedJson: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}floatFromExpandedJson`,
     code`\
-function ${syntheticNamePrefix}floatFromExpandedJson<FloatT extends number>(expandedJson: ${snippets.LiteralExpandedJson}, options: Parameters<${snippets.FromExpandedJsonFunction}<${snippets.LiteralExpandedJson}, FloatT, ${snippets.NumericSchema}<FloatT>>>[1]): ${imports.Either}<Error, FloatT> {
+function ${syntheticNamePrefix}floatFromExpandedJson<FloatT extends number>(expandedJson: ${snippets.TypedLiteralExpandedJson}, options: Parameters<${snippets.FromExpandedJsonFunction}<${snippets.TypedLiteralExpandedJson}, FloatT, ${snippets.NumericSchema}<FloatT>>>[1]): ${imports.Either}<Error, FloatT> {
   const { schema } = options;
   return ${snippets.literalFromExpandedJson}(expandedJson)
     .chain(${imports.LiteralDecoder}.decodeFloatLiteral)

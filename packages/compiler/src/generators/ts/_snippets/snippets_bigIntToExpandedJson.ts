@@ -9,7 +9,7 @@ export const snippets_bigIntToExpandedJson: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}bigIntToExpandedJson`,
     code`\
-function ${syntheticNamePrefix}bigIntToExpandedJson(datatype: ${imports.NamedNode}): ${snippets.ToExpandedJsonFunction}<bigint, ${snippets.LiteralExpandedJson}> {
-  return (value) => ${snippets.literalToExpandedJson}(${snippets.literalFactory}.bigint(value, datatype));
+function ${syntheticNamePrefix}bigIntToExpandedJson(datatype: ${imports.NamedNode}): ${snippets.ToExpandedJsonFunction}<bigint, ${snippets.TypedLiteralExpandedJson}> {
+  return (value) => ${snippets.typedLiteralToExpandedJson}(${snippets.literalFactory}.bigint(value, datatype));
 }`,
   );

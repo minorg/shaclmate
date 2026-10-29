@@ -65,6 +65,7 @@ import { snippets_ToRdfResourceFunction } from "./_snippets/snippets_ToRdfResour
 import { snippets_ToRdfResourceValuesFunction } from "./_snippets/snippets_ToRdfResourceValuesFunction.js";
 import { snippets_ToStringFunction } from "./_snippets/snippets_ToStringFunction.js";
 import { snippets_ToStringRecordFunction } from "./_snippets/snippets_ToStringRecordFunction.js";
+import { snippets_TypedLiteralExpandedJson } from "./_snippets/snippets_TypedLiteralExpandedJson.js";
 import { snippets_UnwrapR } from "./_snippets/snippets_UnwrapR.js";
 import { snippets_ValidationFunction } from "./_snippets/snippets_ValidationFunction.js";
 import { snippets_ValueSparqlConstructTriplesFunction } from "./_snippets/snippets_ValueSparqlConstructTriplesFunction.js";
@@ -230,6 +231,7 @@ import { snippets_termSchemaSparqlPatterns } from "./_snippets/snippets_termSche
 import { snippets_termSparqlWherePatterns } from "./_snippets/snippets_termSparqlWherePatterns.js";
 import { snippets_termToExpandedJson } from "./_snippets/snippets_termToExpandedJson.js";
 import { snippets_toIsoDateString } from "./_snippets/snippets_toIsoDateString.js";
+import { snippets_typedLiteralToExpandedJson } from "./_snippets/snippets_typedLiteralToExpandedJson.js";
 import { snippets_validateArray } from "./_snippets/snippets_validateArray.js";
 import { snippets_validateMaybe } from "./_snippets/snippets_validateMaybe.js";
 import { snippets_validateMutableArray } from "./_snippets/snippets_validateMutableArray.js";
@@ -564,6 +566,11 @@ export class Snippets {
   @Memoize()
   get ToStringRecordFunction(): Snippet {
     return this.snippet(snippets_ToStringRecordFunction);
+  }
+
+  @Memoize()
+  get TypedLiteralExpandedJson(): Snippet {
+    return this.snippet(snippets_TypedLiteralExpandedJson);
   }
 
   @Memoize()
@@ -1389,6 +1396,11 @@ export class Snippets {
   @Memoize()
   get toIsoDateString(): Snippet {
     return this.snippet(snippets_toIsoDateString);
+  }
+
+  @Memoize()
+  get typedLiteralToExpandedJson(): Snippet {
+    return this.snippet(snippets_typedLiteralToExpandedJson);
   }
 
   @Memoize()
