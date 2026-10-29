@@ -195,10 +195,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     ObjectType_AbstractProperty["fromExpandedJsonInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: ${this.type.fromJsonExpression({
-        form: "compact",
-        variables: { value: code`${variables.jsonObject}["@id"]` },
-      })}`,
+      code`${this.name}: (${this.type.fromCompactedJsonFunction})(${variables.jsonObject}["@id"])`,
     );
   }
 
