@@ -14,7 +14,8 @@ import { type Code, code } from "./ts-poet-wrapper.js";
 export class DefaultValueType<
   ItemTypeT extends DefaultValueType.ItemType,
 > extends AbstractContainerType<ItemTypeT> {
-  override readonly compactedJsonType = this.itemType.compactedJsonType;
+  override readonly compactedJsonType: AbstractContainerType<ItemTypeT>["compactedJsonType"] =
+    this.itemType.compactedJsonType;
   readonly defaultValue: Literal | NamedNode;
   override readonly discriminantProperty: Maybe<AbstractType.DiscriminantProperty> =
     Maybe.empty();
