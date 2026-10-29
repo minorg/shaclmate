@@ -57,24 +57,6 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
   >[0]): Code {
     return code`[${this.reusables.snippets.literalFactory}.date(${variables.value}, ${this.rdfjsTermExpression(this.datatype)})]`;
   }
-
-  protected override fromCompactedJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractTypedLiteralType<Date>["fromJsonExpression"]
-  >[0]): Code {
-    return code`new Date(${variables.value})`;
-  }
-
-  protected override toCompactedJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractTypedLiteralType<Date>["toCompactedJsonExpression"]
-  >[0]): Code {
-    return this.jsonStringFormat === "datetime"
-      ? code`${variables.value}.toISOString()`
-      : code`${this.reusables.snippets.toIsoDateString}(${variables.value})`;
-  }
 }
 
 export namespace AbstractDateType {
