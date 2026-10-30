@@ -128,16 +128,14 @@ export abstract class AbstractType extends AbstractConstruct {
   abstract readonly jsTypes: readonly AbstractType.JsType[];
 
   /**
-   * JSON-LD 1.1 (https://www.w3.org/TR/json-ld11/#forms-of-json-ld) "expanded" form of the type. It must be a JSON object type.
+   * JSON object form of this type.
    */
   abstract readonly jsonObjectType: AbstractType.JsonType & {
     readonly kind: "JsonDiscriminatedUnion" | "JsonIntersection" | "JsonObject";
   };
 
   /**
-   * JSON-LD 1.1 (https://www.w3.org/TR/json-ld11/#forms-of-json-ld) "compacted" form of this type. It can be any JSON type e.g., string or object.
-   *
-   * Some types (e.g., ObjectType) may only have an "expanded" type, in which case jsonValueType delegates to jsonObjectType.
+   * JSON value form of this type. May be the same as the JSON object form.
    */
   abstract readonly jsonValueType: AbstractType.JsonType;
 
