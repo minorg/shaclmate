@@ -92,7 +92,7 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
     return Maybe.empty();
   }
 
-  override toJsonInitializer(): Maybe<Code> {
+  override toJsonObjectInitializer(): Maybe<Code> {
     return Maybe.empty();
   }
 

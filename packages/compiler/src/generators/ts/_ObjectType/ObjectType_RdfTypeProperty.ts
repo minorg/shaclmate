@@ -187,7 +187,7 @@ type: "optional" as const
   }
 
   @Memoize()
-  override toJsonInitializer(): Maybe<Code> {
+  override toJsonObjectInitializer(): Maybe<Code> {
     return Maybe.of(
       code`"@type":
           ${

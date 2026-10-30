@@ -243,7 +243,7 @@ export abstract class ObjectType_AbstractProperty {
   /**
    * Initializer (name: value) to JSON.
    */
-  abstract toJsonInitializer(parameters: {
+  abstract toJsonObjectInitializer(parameters: {
     variables: { object: Code };
   }): Maybe<Code>;
 

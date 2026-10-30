@@ -245,10 +245,10 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     });
   }
 
-  override toJsonInitializer({
+  override toJsonObjectInitializer({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty["toJsonInitializer"]
+    ObjectType_AbstractProperty["toJsonObjectInitializer"]
   >[0]): Maybe<Code> {
     const nodeKinds = [...this.type.nodeKinds];
     const valueToNodeKinds = nodeKinds.map((nodeKind) => {

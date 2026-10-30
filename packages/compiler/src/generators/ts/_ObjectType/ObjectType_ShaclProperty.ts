@@ -247,7 +247,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["fromJsonObjectInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: (${this.type.fromJsonObjectFunction.unannotatedUsage})(${variables.jsonObject}["${this.name}"])`,
+      code`${this.name}: (${this.type.fromJsonValueFunction.unannotatedUsage})(${variables.jsonObject}["${this.name}"])`,
     );
   }
 
@@ -323,10 +323,10 @@ export class ObjectType_ShaclProperty<
     });
   }
 
-  override toJsonInitializer({
+  override toJsonObjectInitializer({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty["toJsonInitializer"]
+    ObjectType_AbstractProperty["toJsonObjectInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.name}: (${this.type.toJsonValueFunction})(${variables.object}.${this.name})`,

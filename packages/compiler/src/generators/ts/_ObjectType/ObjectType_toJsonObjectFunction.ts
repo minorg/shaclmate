@@ -11,7 +11,7 @@ export function ObjectType_toJsonObjectFunctionExpression(
 (${this.thisVariable}) => JSON.parse(JSON.stringify({ ${joinCode(
     this.properties.flatMap((property) =>
       property
-        .toJsonInitializer({
+        .toJsonObjectInitializer({
           variables,
         })
         .toList(),
