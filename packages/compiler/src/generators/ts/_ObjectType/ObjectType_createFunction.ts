@@ -19,7 +19,7 @@ function ObjectType_createFunctionExpression(this: ObjectType): Code {
 
   const monkeyPatchMethods: Record<string, Code> = {};
   if (this.configuration.features.has("Object.toJson")) {
-    monkeyPatchMethods["toJson"] = this.toJsonFunction.annotatedUsage;
+    monkeyPatchMethods["toJson"] = this.toExpandedJsonFunction.annotatedUsage;
   }
   if (this.configuration.features.has("Object.toString")) {
     monkeyPatchMethods[`${this.configuration.syntheticNamePrefix}toString`] =

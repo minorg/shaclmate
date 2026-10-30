@@ -21,5 +21,5 @@ export function ObjectType_fromExpandedJsonFunctionExpression(
 export function ObjectType_fromExpandedJsonFunctionType(
   this: ObjectType,
 ): Code {
-  return code`${this.reusables.snippets.FromExpandedJsonFunction}<${this.discriminatedExpression}, ${this.jsonType({ form: "expanded" }).expression}>`;
+  return code`${this.reusables.snippets.FromExpandedJsonFunction}<${this.discriminatedExpression}, ${this.expandedJsonType.expression}>`;
 }

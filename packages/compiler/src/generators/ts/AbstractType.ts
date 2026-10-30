@@ -303,11 +303,11 @@ ${joinCode(
   get schema(): Code {
     return this.name
       .map((name) => code`${name}.schema`)
-      .orDefaultLazy(() => this.schemaExpression);
+      .orDefaultLazy(() => this.schemaExpression());
   }
 
   @Memoize()
-  protected get schemaExpression(): Code {
+  protected schemaExpression(): Code {
     return code`{ ${joinCode(this.schemaInitializers.concat(), { on: ", " })} }`;
   }
 

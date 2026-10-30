@@ -124,37 +124,29 @@ export class TermType<
 
   @Memoize()
   override get expandedJsonType(): AbstractTermType["expandedJsonType"] {
-    return this.jsonTypeFactory.createJsonDiscriminatedUnionType(
-      [...this.nodeKinds].flatMap((nodeKind) => {
-        switch (nodeKind) {
-          case "BlankNode":
-          case "IRI":
-            return this.jsonTypeFactory.createJsonObjectType({
-              "@id": {
-                type: this.jsonTypeFactory.createJsonStringType({
-                  minLength: 1n,
-                }),
-              },
-            });
-          case "Literal":
-            return this.jsonTypeFactory.createJsonObjectType({
-              "@language": {
-                optional: true,
-                type: this.jsonTypeFactory.createJsonStringType(),
-              },
-              "@type": {
-                optional: true,
-                type: this.jsonTypeFactory.createJsonStringType(),
-              },
-              "@value": {
-                type: this.jsonTypeFactory.createJsonStringType(),
-              },
-            });
-          default:
-            nodeKind satisfies never;
-            throw new RangeError(nodeKind);
-        }
-      }),
+    // This is a z.union in the snippet but an object here so a discriminant can be added if necessary.
+    return this.jsonTypeFactory.createJsonObjectType(
+      {
+        "@id": {
+          type: this.jsonTypeFactory.createJsonStringType({
+            minLength: 1n,
+          }),
+        },
+        "@language": {
+          optional: true,
+          type: this.jsonTypeFactory.createJsonStringType(),
+        },
+        "@type": {
+          optional: true,
+          type: this.jsonTypeFactory.createJsonStringType(),
+        },
+        "@value": {
+          type: this.jsonTypeFactory.createJsonStringType(),
+        },
+      },
+      {
+        snippet: this.reusables.snippets.TermExpandedJson,
+      },
     );
   }
 

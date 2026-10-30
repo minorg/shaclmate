@@ -203,23 +203,26 @@ class JsonBooleanType extends AbstractJsonPrimitiveType<boolean> {
 
 class JsonDiscriminatedUnionType extends AbstractJsonType {
   override readonly kind = "JsonDiscriminatedUnion";
-  readonly memberTypes: readonly JsonObjectType[];
+  readonly members: readonly JsonDiscriminatedUnionType.Member[];
 
   constructor({
-    memberTypes,
+    members,
     ...superParameters
   }: {
-    memberTypes: readonly JsonObjectType[];
+    members: readonly JsonDiscriminatedUnionType.Member[];
     recursive: boolean;
   } & ConstructorParameters<typeof AbstractJsonType>[0]) {
     super(superParameters);
-    this.memberTypes = memberTypes;
+    this.members = members;
   }
 
   @Memoize()
   protected get inlineExpression(): Code {
     return code`(${joinCode(
-      this.memberTypes.map((memberType) => memberType.expression),
+      this.members.map(
+        (member) =>
+          code`(${member.type.expression} & { ${this.configuration.objectDiscriminantProperty.jsonName}: ${literalOf(member.discriminantValue)} })`,
+      ),
       { on: " | " },
     )})`;
   }
@@ -227,9 +230,19 @@ class JsonDiscriminatedUnionType extends AbstractJsonType {
   @Memoize()
   protected get schemaExpression(): Code {
     return code`${this.reusables.imports.z}.discriminatedUnion(${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}, [${joinCode(
-      this.memberTypes.map((memberType) => memberType.schema),
+      this.members.map(
+        (member) =>
+          code`${this.reusables.imports.z}.intersection(${member.type.schema}, ${this.reusables.imports.z}.object({ ${this.configuration.objectDiscriminantProperty.jsonName}: ${this.reusables.imports.z}.literal(${literalOf(member.discriminantValue)}) }))`,
+      ),
       { on: ", " },
     )}])`;
+  }
+}
+
+namespace JsonDiscriminatedUnionType {
+  export interface Member {
+    readonly discriminantValue: number | string;
+    readonly type: JsonObjectType;
   }
 }
 
@@ -490,7 +503,7 @@ class JsonTypeFactory {
   }
 
   createJsonDiscriminatedUnionType(
-    memberTypes: readonly JsonObjectType[],
+    members: readonly JsonDiscriminatedUnionType.Member[],
     options?: {
       name?: AbstractJsonType.Name;
       recursive?: boolean;
@@ -499,7 +512,7 @@ class JsonTypeFactory {
   ): JsonDiscriminatedUnionType {
     return new JsonDiscriminatedUnionType({
       ...this.constructorParameters,
-      memberTypes,
+      members,
       name: Maybe.fromNullable(options?.name),
       recursive: !!options?.recursive,
       snippet: Maybe.fromNullable(options?.snippet),

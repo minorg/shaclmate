@@ -31,7 +31,7 @@ import {
   ObjectType_fromRdfResourceValuesFunctionExpression,
   ObjectType_fromRdfResourceValuesFunctionType,
 } from "./_ObjectType/ObjectType_fromRdfResourceValuesFunction.js";
-import { ObjectType_graphqlTypeExpression } from "./_ObjectType/ObjectType_graphqlType.js";
+import { ObjectType_graphqlTypeExpression } from "./_ObjectType/ObjectType_graphqlTypeExpression.js";
 import {
   ObjectType_hashFunctionExpression,
   ObjectType_hashFunctionType,
@@ -96,6 +96,7 @@ export class ObjectType extends AbstractStructuredType {
     ObjectType_fromRdfResourceValuesFunctionType;
   protected override hashFunctionExpression = ObjectType_hashFunctionExpression;
   protected override hashFunctionType = ObjectType_hashFunctionType;
+  protected override schemaExpression = ObjectType_schemaExpression;
   protected override schemaTypeExpression = ObjectType_schemaTypeExpression;
   protected override toExpandedJsonFunctionExpression =
     ObjectType_toExpandedJsonFunctionExpression;
@@ -197,31 +198,6 @@ export class ObjectType extends AbstractStructuredType {
   @Memoize()
   get createUnsafeFunction(): Callable {
     return ObjectType_createUnsafeFunction.call(this);
-  }
-
-  @Memoize()
-  get sparqlConstructQueryFunction(): Callable {
-    return ObjectType_sparqlConstructQueryFunction.call({
-      configuration: this.configuration,
-      filterType: this.filterType,
-      _function: this._function.bind(this),
-      focusSparqlConstructTriplesFunction:
-        this.focusSparqlConstructTriplesFunction,
-      focusSparqlWherePatternsFunction: this.focusSparqlWherePatternsFunction,
-      name: this.name,
-      reusables: this.reusables,
-    });
-  }
-
-  @Memoize()
-  get sparqlConstructQueryStringFunction(): Callable {
-    return ObjectType_sparqlConstructQueryStringFunction.call({
-      configuration: this.configuration,
-      filterType: this.filterType,
-      _function: this._function.bind(this),
-      sparqlConstructQueryFunction: this.sparqlConstructQueryFunction,
-      reusables: this.reusables,
-    });
   }
 
   override get declaration(): Maybe<Code> {
@@ -332,8 +308,28 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
-  override get schemaExpression(): Code {
-    return ObjectType_schemaExpression.call(this);
+  get sparqlConstructQueryFunction(): Callable {
+    return ObjectType_sparqlConstructQueryFunction.call({
+      configuration: this.configuration,
+      filterType: this.filterType,
+      _function: this._function.bind(this),
+      focusSparqlConstructTriplesFunction:
+        this.focusSparqlConstructTriplesFunction,
+      focusSparqlWherePatternsFunction: this.focusSparqlWherePatternsFunction,
+      name: this.name,
+      reusables: this.reusables,
+    });
+  }
+
+  @Memoize()
+  get sparqlConstructQueryStringFunction(): Callable {
+    return ObjectType_sparqlConstructQueryStringFunction.call({
+      configuration: this.configuration,
+      filterType: this.filterType,
+      _function: this._function.bind(this),
+      sparqlConstructQueryFunction: this.sparqlConstructQueryFunction,
+      reusables: this.reusables,
+    });
   }
 
   @Memoize()

@@ -15,8 +15,8 @@ import { ObjectIntersectionType_toRdfResourceFunction } from "./_ObjectIntersect
 import { ObjectIntersectionType_toRdfResourceValuesFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_toRdfResourceValuesFunction.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
-import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
-import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
+import { ObjectType_sparqlConstructQueryFunction } from "./_ObjectType/ObjectType_sparqlConstructQueryFunction.js";
+import { ObjectType_sparqlConstructQueryStringFunction } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunction.js";
 import { AbstractIntersectionType } from "./AbstractIntersectionType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { Callable } from "./Callable.js";
@@ -107,6 +107,31 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
   }
 
   @Memoize()
+  get sparqlConstructQueryFunction(): Callable {
+    return ObjectType_sparqlConstructQueryFunction.call({
+      configuration: this.configuration,
+      filterType: this.filterType,
+      _function: this._function.bind(this),
+      focusSparqlConstructTriplesFunction:
+        this.focusSparqlConstructTriplesFunction,
+      focusSparqlWherePatternsFunction: this.focusSparqlWherePatternsFunction,
+      name: this.name,
+      reusables: this.reusables,
+    });
+  }
+
+  @Memoize()
+  get sparqlConstructQueryStringFunction(): Callable {
+    return ObjectType_sparqlConstructQueryStringFunction.call({
+      configuration: this.configuration,
+      filterType: this.filterType,
+      _function: this._function.bind(this),
+      sparqlConstructQueryFunction: this.sparqlConstructQueryFunction,
+      reusables: this.reusables,
+    });
+  }
+
+  @Memoize()
   get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
     return ObjectType_objectSetMethodNames.call({
       name: this.name.unsafeCoerce(),
@@ -153,20 +178,8 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
     if (this.configuration.features.has("Object.SPARQL")) {
       addFunctionDeclaration(this.focusSparqlConstructTriplesFunction);
       addFunctionDeclaration(this.focusSparqlWherePatternsFunction);
-      staticModuleDeclarations["sparqlConstructQuery"] =
-        ObjectType_sparqlConstructQueryFunctionDeclaration.call({
-          name,
-          configuration: this.configuration,
-          filterType: this.filterType,
-          reusables: this.reusables,
-        });
-      staticModuleDeclarations["sparqlConstructQueryString"] =
-        ObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
-          name,
-          configuration: this.configuration,
-          filterType: this.filterType,
-          reusables: this.reusables,
-        });
+      addFunctionDeclaration(this.sparqlConstructQueryFunction);
+      addFunctionDeclaration(this.sparqlConstructQueryStringFunction);
     }
 
     if (this.configuration.features.has("Object.toRdf")) {

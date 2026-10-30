@@ -1,4 +1,3 @@
-import type { Maybe } from "purify-ts";
 import type { Callable } from "../Callable.js";
 import type { CodeThunk } from "../CodeThunk.js";
 import type { Reusables } from "../Reusables.js";

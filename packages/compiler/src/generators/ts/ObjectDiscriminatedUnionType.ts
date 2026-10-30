@@ -1,4 +1,4 @@
-import { Maybe } from "purify-ts";
+import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { ObjectDiscriminatedUnionType_focusSparqlConstructTriplesFunction } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_focusSparqlConstructTriplesFunction.js";
@@ -22,6 +22,9 @@ import type { ObjectType } from "./ObjectType.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType<ObjectType> {
+  protected override schemaExpression =
+    ObjectDiscriminatedUnionType_schemaExpression;
+
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
   override readonly kind = "ObjectDiscriminatedUnion";
 
@@ -38,8 +41,22 @@ export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType
   }
 
   @Memoize()
-  override get schemaExpression(): Code {
-    return ObjectDiscriminatedUnionType_schemaExpression.call(this);
+  get focusSparqlConstructTriplesFunction(): Callable {
+    return ObjectDiscriminatedUnionType_focusSparqlConstructTriplesFunction.call(
+      this,
+    );
+  }
+
+  @Memoize()
+  get focusSparqlWherePatternsFunction(): Callable {
+    return ObjectDiscriminatedUnionType_focusSparqlWherePatternsFunction.call(
+      this,
+    );
+  }
+
+  @Memoize()
+  get fromRdfResourceFunction(): Callable {
+    return ObjectDiscriminatedUnionType_fromRdfResourceFunction.call(this);
   }
 
   @Memoize()
@@ -57,29 +74,6 @@ export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType
         }),
       )
       .unsafeCoerce();
-  }
-
-  @Memoize()
-  get typeGuardFunction(): Maybe<Code> {
-    if (
-      Object.keys(
-        ObjectDiscriminatedUnionType_typeGuardFunctionDeclaration.call(this),
-      ).length === 0
-    ) {
-      return Maybe.empty();
-    }
-    return this.name.map((name) => code`${name}.is${name}`);
-  }
-
-  @Memoize()
-  protected override get inlineExpression() {
-    if (this.discriminant.kind === "Intrinsic") {
-      return code`(${joinCode(
-        this.members.map(({ type }) => type.discriminatedExpression),
-        { on: " | " },
-      )})`;
-    }
-    return super.inlineExpression;
   }
 
   @Memoize()
@@ -108,27 +102,24 @@ export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType
   }
 
   @Memoize()
-  get focusSparqlConstructTriplesFunction(): Callable {
-    return ObjectDiscriminatedUnionType_focusSparqlConstructTriplesFunction.call(
-      this,
-    );
-  }
-
-  @Memoize()
-  get focusSparqlWherePatternsFunction(): Callable {
-    return ObjectDiscriminatedUnionType_focusSparqlWherePatternsFunction.call(
-      this,
-    );
-  }
-
-  @Memoize()
-  get fromRdfResourceFunction(): Callable {
-    return ObjectDiscriminatedUnionType_fromRdfResourceFunction.call(this);
-  }
-
-  @Memoize()
   get toRdfResourceFunction(): Callable {
     return ObjectDiscriminatedUnionType_toRdfResourceFunction.call(this);
+  }
+
+  @Memoize()
+  get typeGuardFunction(): Maybe<Callable> {
+    return ObjectDiscriminatedUnionType_typeGuardFunction.call(this);
+  }
+
+  @Memoize()
+  protected override get inlineExpression() {
+    if (this.discriminant.kind === "Intrinsic") {
+      return code`(${joinCode(
+        this.members.map(({ type }) => type.discriminatedExpression),
+        { on: " | " },
+      )})`;
+    }
+    return super.inlineExpression;
   }
 
   protected override staticModuleDeclarations(
