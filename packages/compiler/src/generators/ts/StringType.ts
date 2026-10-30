@@ -31,9 +31,6 @@ export class StringType extends AbstractPrimitiveType<string> {
     this.reusables.snippets.filterString,
   );
   override readonly filterType = code`${this.reusables.snippets.StringFilter}`;
-  override readonly fromJsonObjectFunction = new ReferenceCallable(
-    code`${this.reusables.snippets.stringFromJsonObject}<${this.expression}>`,
-  );
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${this.reusables.imports.GraphQLString}`,
     this.reusables,
@@ -50,6 +47,13 @@ export class StringType extends AbstractPrimitiveType<string> {
   override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.stringSparqlWherePatterns,
   );
+
+  @Memoize()
+  get fromJsonObjectFunction(): Callable {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.stringFromJsonObject}<${this.expression}>`,
+    );
+  }
 
   constructor({
     languageIn,

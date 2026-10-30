@@ -306,6 +306,9 @@ ${joinCode(
 
   @Memoize()
   get schemaVariable(): Maybe<Code> {
+    if (!this.configuration.features.has("Object.schema")) {
+      return Maybe.empty();
+    }
     return this.name.map((name) => code`${name}.schema`);
   }
 
