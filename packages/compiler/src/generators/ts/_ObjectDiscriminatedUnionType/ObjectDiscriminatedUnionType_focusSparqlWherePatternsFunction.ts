@@ -1,19 +1,15 @@
 import { pascalCase } from "change-case";
+import type { Callable } from "../Callable.js";
 import type { ObjectDiscriminatedUnionType } from "../ObjectDiscriminatedUnionType.js";
-import { singleEntryRecord } from "../singleEntryRecord.js";
-import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
+import { code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
-export function ObjectDiscriminatedUnionType_focusSparqlWherePatternsFunctionDeclaration(
+export function ObjectDiscriminatedUnionType_focusSparqlWherePatternsFunction(
   this: ObjectDiscriminatedUnionType,
-): Record<string, Code> {
-  if (!this.configuration.features.has("Object.SPARQL")) {
-    return {};
-  }
-
-  return singleEntryRecord(
-    `focusSparqlWherePatterns`,
-    code`\
-export function focusSparqlWherePatterns({ filter, focusIdentifier, preferredLanguages, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${this.reusables.imports.NamedNode} | ${this.reusables.imports.Variable}; ignoreRdfType: boolean; preferredLanguages: readonly string[] | undefined; variablePrefix: string }): readonly ${this.reusables.snippets.SparqlPattern}[] {
+): Callable {
+  return this._function({
+    type: code`${this.reusables.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}`,
+    unannotatedExpression: code`\
+({ filter, focusIdentifier, preferredLanguages, variablePrefix }) => {
 ${joinCode([
   code`let patterns: ${this.reusables.snippets.SparqlPattern}[] = [];`,
   code`\
@@ -41,5 +37,6 @@ if (focusIdentifier.termType === "Variable") {
   code`return patterns;`,
 ])}
 }`,
-  );
+    unqualifiedName: "focusSparqlWherePatterns",
+  });
 }

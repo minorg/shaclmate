@@ -1,23 +1,18 @@
+import type { Callable } from "../Callable.js";
 import type { ObjectDiscriminatedUnionType } from "../ObjectDiscriminatedUnionType.js";
-import { singleEntryRecord } from "../singleEntryRecord.js";
-import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
+import { code, joinCode } from "../ts-poet-wrapper.js";
 
-export function ObjectDiscriminatedUnionType_toRdfResourceFunctionDeclaration(
+export function ObjectDiscriminatedUnionType_toRdfResourceFunction(
   this: ObjectDiscriminatedUnionType,
-): Record<string, Code> {
-  if (!this.configuration.features.has("Object.toRdf")) {
-    return {};
-  }
-
+): Callable {
   const identifierTypeExpression = this.name
     .map(() => this.identifierTypeAlias)
     .orDefault(this.identifierType.expression);
-  const name = this.name.unsafeCoerce();
 
-  return singleEntryRecord(
-    `toRdfResource`,
-    code`\
-export const toRdfResource: ${this.reusables.snippets.ToRdfResourceFunction}<${identifierTypeExpression}, ${name}> = (object, options) => {
+  return this._function({
+    type: code`${this.reusables.snippets.ToRdfResourceFunction}<${identifierTypeExpression}, ${this.expression}>`,
+    unannotatedExpression: code`\
+(object, options) => {
 ${joinCode(
   this.members
     .map(
@@ -27,5 +22,6 @@ ${joinCode(
     .concat(code`throw new Error("unrecognized type");`),
 )}
 };`,
-  );
+    unqualifiedName: "toRdfResource",
+  });
 }

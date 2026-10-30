@@ -44,8 +44,8 @@ import { ObjectType_RdfTypeProperty } from "./_ObjectType/ObjectType_RdfTypeProp
 import { ObjectType_ShaclProperty } from "./_ObjectType/ObjectType_ShaclProperty.js";
 import { ObjectType_schemaExpression } from "./_ObjectType/ObjectType_schemaExpression.js";
 import { ObjectType_schemaTypeExpression } from "./_ObjectType/ObjectType_schemaTypeExpression.js";
-import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
-import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
+import { ObjectType_sparqlConstructQueryFunction } from "./_ObjectType/ObjectType_sparqlConstructQueryFunction.js";
+import { ObjectType_sparqlConstructQueryStringFunction } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunction.js";
 import {
   ObjectType_toExpandedJsonFunctionExpression,
   ObjectType_toExpandedJsonFunctionType,
@@ -64,7 +64,7 @@ import {
   ObjectType_toStringFunctionType,
 } from "./_ObjectType/ObjectType_toStringFunction.js";
 import { ObjectType_toStringRecordFunction } from "./_ObjectType/ObjectType_toStringRecordFunction.js";
-import { ObjectType_typeGuardFunctionExpression } from "./_ObjectType/ObjectType_typeGuardFunction.js";
+import { ObjectType_typeGuardFunction } from "./_ObjectType/ObjectType_typeGuardFunction.js";
 import { ObjectType_valueSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunction.js";
 import { ObjectType_valueSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunction.js";
 import { AbstractStructuredType } from "./AbstractStructuredType.js";
@@ -199,6 +199,31 @@ export class ObjectType extends AbstractStructuredType {
     return ObjectType_createUnsafeFunction.call(this);
   }
 
+  @Memoize()
+  get sparqlConstructQueryFunction(): Callable {
+    return ObjectType_sparqlConstructQueryFunction.call({
+      configuration: this.configuration,
+      filterType: this.filterType,
+      _function: this._function.bind(this),
+      focusSparqlConstructTriplesFunction:
+        this.focusSparqlConstructTriplesFunction,
+      focusSparqlWherePatternsFunction: this.focusSparqlWherePatternsFunction,
+      name: this.name,
+      reusables: this.reusables,
+    });
+  }
+
+  @Memoize()
+  get sparqlConstructQueryStringFunction(): Callable {
+    return ObjectType_sparqlConstructQueryStringFunction.call({
+      configuration: this.configuration,
+      filterType: this.filterType,
+      _function: this._function.bind(this),
+      sparqlConstructQueryFunction: this.sparqlConstructQueryFunction,
+      reusables: this.reusables,
+    });
+  }
+
   override get declaration(): Maybe<Code> {
     return !this.extern ? super.declaration : Maybe.empty();
   }
@@ -312,11 +337,6 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
-  get schemaVariable(): Maybe<Code> {
-    return this.name.map((name) => code`${name}.schema`);
-  }
-
-  @Memoize()
   get toRdfResourceFunction(): Callable {
     return ObjectType_toRdfResourceFunction.call(this);
   }
@@ -337,10 +357,8 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
-  get typeGuardFunction(): Maybe<Code> {
-    return ObjectType_typeGuardFunctionExpression.call(this).map((expression) =>
-      this.name.map((name) => code`${name}.is${name}`).orDefault(expression),
-    );
+  get typeGuardFunction(): Maybe<Callable> {
+    return ObjectType_typeGuardFunction.call(this);
   }
 
   protected override get inlineExpression(): Code {
@@ -431,7 +449,6 @@ export class ObjectType extends AbstractStructuredType {
         code`export ${function_.declaration}`;
     }
 
-    // create
     if (this.configuration.features.has("Object.create")) {
       staticModuleDeclarations["CreateParameters"] =
         code`export type CreateParameters<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}> = ${this.createFunctionParameters.type.inlineExpression};`;
@@ -439,25 +456,32 @@ export class ObjectType extends AbstractStructuredType {
       addFunctionDeclaration(this.createUnsafeFunction);
     }
 
-    // GraphQL
     if (this.configuration.features.has("GraphQL") && !this.synthetic) {
       staticModuleDeclarations["GraphQL"] =
         code`export const GraphQL = ${ObjectType_graphqlTypeExpression.call(this)};`;
     }
 
-    // focusSparqlConstructTriples / focusSparqlWherePatterns
-    if (this.configuration.features.has("Object.SPARQL")) {
-      addFunctionDeclaration(this.focusSparqlConstructTriplesFunction);
-      addFunctionDeclaration(this.focusSparqlWherePatternsFunction);
-    }
-
-    // fromRdfResource
     if (this.configuration.features.has("Object.fromRdf")) {
       addFunctionDeclaration(this._fromRdfResourceFunction);
       addFunctionDeclaration(this.fromRdfResourceFunction);
     }
 
-    // Identifier
+    if (this.configuration.features.has("Object.SPARQL")) {
+      addFunctionDeclaration(this.focusSparqlConstructTriplesFunction);
+      addFunctionDeclaration(this.focusSparqlWherePatternsFunction);
+      addFunctionDeclaration(this.sparqlConstructQueryFunction);
+      addFunctionDeclaration(this.sparqlConstructQueryStringFunction);
+    }
+
+    if (this.configuration.features.has("Object.toRdf")) {
+      addFunctionDeclaration(this._toRdfResourceFunction);
+      addFunctionDeclaration(this.toRdfResourceFunction);
+    }
+
+    if (this.configuration.features.has("Object.toString")) {
+      addFunctionDeclaration(this.toStringRecordFunction);
+    }
+
     if (this.configuration.features.has("Object.type")) {
       staticModuleDeclarations = {
         ...staticModuleDeclarations,
@@ -467,52 +491,7 @@ export class ObjectType extends AbstractStructuredType {
         staticModuleDeclarations["Discriminated"] =
           code`export type Discriminated = ${name} & { readonly ${discriminantProperty.name}: ${literalOf(discriminantProperty.value)} };`;
       });
-    }
-
-    // Type guard
-    ObjectType_typeGuardFunctionExpression.call(this).ifJust(
-      (typeGuardFunctionExpression) => {
-        staticModuleDeclarations[`is${name}`] =
-          code`export const is${name} = ${typeGuardFunctionExpression};`;
-      },
-    );
-
-    // schema / Schema
-    if (this.configuration.features.has("Object.schema")) {
-      staticModuleDeclarations["schema"] =
-        code`export const schema = ${ObjectType_schemaExpression.call(this)};`;
-      staticModuleDeclarations["Schema"] =
-        code`export type Schema = typeof schema;`;
-    }
-
-    // sparqlConstructQuery / sparqlConstructQueryString
-    if (this.configuration.features.has("Object.SPARQL")) {
-      staticModuleDeclarations["sparqlConstructQuery"] =
-        ObjectType_sparqlConstructQueryFunctionDeclaration.call({
-          name,
-          configuration: this.configuration,
-          filterType: this.filterType,
-          reusables: this.reusables,
-        });
-
-      staticModuleDeclarations["sparqlConstructQueryString"] =
-        ObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
-          name,
-          configuration: this.configuration,
-          filterType: this.filterType,
-          reusables: this.reusables,
-        });
-    }
-
-    // toRdfResource
-    if (this.configuration.features.has("Object.toRdf")) {
-      addFunctionDeclaration(this._toRdfResourceFunction);
-      addFunctionDeclaration(this.toRdfResourceFunction);
-    }
-
-    // toStringRecord
-    if (this.configuration.features.has("Object.toString")) {
-      addFunctionDeclaration(this.toStringRecordFunction);
+      ObjectType_typeGuardFunction.call(this).ifJust(addFunctionDeclaration);
     }
 
     return staticModuleDeclarations;

@@ -50,6 +50,8 @@ import { snippets_Primitive } from "./_snippets/snippets_Primitive.js";
 import { snippets_ProblemDetailsJson } from "./_snippets/snippets_ProblemDetailsJson.js";
 import { snippets_PropertyPath } from "./_snippets/snippets_PropertyPath.js";
 import { snippets_ShaclPropertySchema } from "./_snippets/snippets_ShaclPropertySchema.js";
+import { snippets_SparqlConstructQueryFunction } from "./_snippets/snippets_SparqlConstructQueryFunction.js";
+import { snippets_SparqlConstructQueryStringFunction } from "./_snippets/snippets_SparqlConstructQueryStringFunction.js";
 import { snippets_SparqlFilterPattern } from "./_snippets/snippets_SparqlFilterPattern.js";
 import { snippets_SparqlPattern } from "./_snippets/snippets_SparqlPattern.js";
 import { snippets_SparqlPattern_isSolutionGenerating } from "./_snippets/snippets_SparqlPattern_isSolutionGenerating.js";
@@ -497,6 +499,16 @@ export class Snippets {
   @Memoize()
   get ShaclPropertySchema(): Snippet {
     return this.snippet(snippets_ShaclPropertySchema);
+  }
+
+  @Memoize()
+  get SparqlConstructQueryFunction(): Snippet {
+    return this.snippet(snippets_SparqlConstructQueryFunction);
+  }
+
+  @Memoize()
+  get SparqlConstructQueryStringFunction(): Snippet {
+    return this.snippet(snippets_SparqlConstructQueryStringFunction);
   }
 
   @Memoize()

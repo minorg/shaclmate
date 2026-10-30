@@ -1,3 +1,4 @@
+import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
@@ -74,6 +75,11 @@ export abstract class AbstractStructuredType extends AbstractType {
     return this.name
       .map(() => code`typeof ${this.schema}`)
       .orDefaultLazy(() => this.schemaTypeExpression());
+  }
+
+  @Memoize()
+  get schemaVariable(): Maybe<Code> {
+    return this.name.map((name) => code`${name}.schema`);
   }
 
   override get toCompactedJsonFunction(): AbstractType["toCompactedJsonFunction"] {
@@ -278,6 +284,14 @@ export abstract class AbstractStructuredType extends AbstractType {
 
     if (this.configuration.features.has("Object.fromRdf")) {
       addFunctionDeclaration(this.fromRdfResourceValuesFunction);
+    }
+
+    // schema / Schema
+    if (this.configuration.features.has("Object.schema")) {
+      staticModuleDeclarations["schema"] =
+        code`export const schema = ${this.schemaExpression()};`;
+      staticModuleDeclarations["Schema"] =
+        code`export type Schema = typeof schema;`;
     }
 
     if (this.configuration.features.has("Object.SPARQL")) {

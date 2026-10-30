@@ -1,17 +1,12 @@
 import { PropertyPath } from "@rdfx/resource";
 import type { ObjectDiscriminatedUnionType } from "../ObjectDiscriminatedUnionType.js";
 import type { ObjectType } from "../ObjectType.js";
-import { singleEntryRecord } from "../singleEntryRecord.js";
 import type { Type } from "../Type.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function ObjectDiscriminatedUnionType_schemaVariableStatement(
+export function ObjectDiscriminatedUnionType_schemaExpression(
   this: ObjectDiscriminatedUnionType,
-): Record<string, Code> {
-  if (!this.configuration.features.has("Object.schema")) {
-    return {};
-  }
-
+): Code {
   const commonPropertiesByName: Record<
     string,
     {
@@ -58,9 +53,5 @@ export function ObjectDiscriminatedUnionType_schemaVariableStatement(
     });
   }
 
-  return singleEntryRecord(
-    `schema`,
-    code`\
-export const schema = { ${joinCode(this.schemaInitializers.concat(code`properties: { ${joinCode(propertiesObject, { on: ", " })} }`), { on: ", " })} } as const;`,
-  );
+  return code`{ ${joinCode(this.schemaInitializers.concat(code`properties: { ${joinCode(propertiesObject, { on: ", " })} }`), { on: ", " })} } as const;`;
 }

@@ -1,26 +1,22 @@
 import { pascalCase } from "change-case";
+import type { Callable } from "../Callable.js";
 import type { ObjectDiscriminatedUnionType } from "../ObjectDiscriminatedUnionType.js";
-import { singleEntryRecord } from "../singleEntryRecord.js";
-import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
+import { code, joinCode } from "../ts-poet-wrapper.js";
 
-export function ObjectDiscriminatedUnionType_focusSparqlConstructTriplesFunctionDeclaration(
+export function ObjectDiscriminatedUnionType_focusSparqlConstructTriplesFunction(
   this: ObjectDiscriminatedUnionType,
-): Record<string, Code> {
-  if (!this.configuration.features.has("Object.SPARQL")) {
-    return {};
-  }
-
-  return singleEntryRecord(
-    `focusSparqlConstructTriples`,
-    code`\
-export function focusSparqlConstructTriples({ filter, focusIdentifier, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${this.reusables.imports.NamedNode} | ${this.reusables.imports.Variable}; ignoreRdfType: boolean; variablePrefix: string }): readonly ${this.reusables.imports.sparqljs}.Triple[] {
-  return [${joinCode(
+): Callable {
+  return this._function({
+    type: code`${this.reusables.snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}>`,
+    unannotatedExpression: code`\
+({ filter, focusIdentifier, variablePrefix }) =>
+  [${joinCode(
     this.members.map(
       (member) =>
         code`...${member.type.name.unsafeCoerce()}.focusSparqlConstructTriples({ filter: filter?.on?.${member.primaryDiscriminantValue}, focusIdentifier, ignoreRdfType: false, variablePrefix: \`\${variablePrefix}${pascalCase(member.type.name.unsafeCoerce())}\` }).concat()`,
     ),
     { on: ", " },
-  )}];
-}`,
-  );
+  )}]`,
+    unqualifiedName: "focusSparqlConstructTriples",
+  });
 }

@@ -1,30 +1,27 @@
+import { Maybe } from "purify-ts";
+import type { Callable } from "../Callable.js";
 import type { ObjectDiscriminatedUnionType } from "../ObjectDiscriminatedUnionType.js";
-import { singleEntryRecord } from "../singleEntryRecord.js";
-import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
+import { code, joinCode } from "../ts-poet-wrapper.js";
 
-export function ObjectDiscriminatedUnionType_typeGuardFunctionDeclaration(
+export function ObjectDiscriminatedUnionType_typeGuardFunction(
   this: ObjectDiscriminatedUnionType,
-): Record<string, Code> {
-  if (!this.configuration.features.has("Object.type")) {
-    return {};
-  }
-
+): Maybe<Callable> {
   const name = this.name.extract();
   if (!name) {
-    return {};
+    return Maybe.empty();
   }
 
-  return singleEntryRecord(
-    `is${name}`,
-    code`\
-    export function is${name}(object: ${this.configuration.syntheticNamePrefix}Object): object is ${name} {
-      return ${joinCode(
+  return Maybe.of(
+    this._function({
+      type: code`(object: ${this.configuration.syntheticNamePrefix}Object): object is ${this.expression}`,
+      unannotatedExpression: code`(object) => ${joinCode(
         this.members.map(
           (member) =>
             code`${member.type.name.unsafeCoerce()}.is${member.type.name.unsafeCoerce()}(object)`,
         ),
         { on: " || " },
-      )};
-    }`,
+      )};`,
+      unqualifiedName: `is${name}`,
+    }),
   );
 }
