@@ -30,37 +30,37 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   );
 
   @Memoize()
-  override get fromCompactedJsonFunction(): AbstractIdentifierType<NamedNode>["fromCompactedJsonFunction"] {
+  override get fromJsonValueFunction(): AbstractIdentifierType<NamedNode>["fromJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.iriFromCompactedJson}<${this.expression}>`,
+      code`${this.reusables.snippets.iriFromJsonString}<${this.expression}>`,
     );
   }
 
   @Memoize()
-  override get fromExpandedJsonFunction(): AbstractIdentifierType<NamedNode>["fromExpandedJsonFunction"] {
+  override get fromJsonObjectFunction(): AbstractIdentifierType<NamedNode>["fromJsonObjectFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.iriFromExpandedJson}<${this.expression}>`,
+      code`${this.reusables.snippets.iriFromJsonObject}<${this.expression}>`,
     );
   }
 
   @Memoize()
-  override get toCompactedJsonFunction(): AbstractIdentifierType<NamedNode>["toCompactedJsonFunction"] {
+  override get toJsonValueFunction(): AbstractIdentifierType<NamedNode>["toJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.iriToCompactedJson}<${this.expression}>`,
+      code`${this.reusables.snippets.iriToJsonString}<${this.expression}>`,
     );
   }
 
   @Memoize()
-  override get toExpandedJsonFunction(): AbstractIdentifierType<NamedNode>["toExpandedJsonFunction"] {
+  override get toJsonObjectFunction(): AbstractIdentifierType<NamedNode>["toJsonObjectFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.iriToExpandedJson}<${this.expression}>`,
+      code`${this.reusables.snippets.iriToJsonObject}<${this.expression}>`,
     );
   }
 
   @Memoize()
-  override get compactedJsonType(): AbstractIdentifierType<NamedNode>["compactedJsonType"] {
+  override get jsonValueType(): AbstractIdentifierType<NamedNode>["jsonValueType"] {
     if (this.in_.length === 0) {
-      return super.compactedJsonType;
+      return super.jsonValueType;
     }
 
     return this.jsonTypeFactory.createJsonStringType({
@@ -73,13 +73,13 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   }
 
   @Memoize()
-  override get expandedJsonType(): AbstractIdentifierType<NamedNode>["expandedJsonType"] {
+  override get jsonObjectType(): AbstractIdentifierType<NamedNode>["jsonObjectType"] {
     if (this.in_.length === 0) {
-      return super.expandedJsonType;
+      return super.jsonObjectType;
     }
 
     return this.jsonTypeFactory.createJsonObjectType({
-      "@id": { type: this.compactedJsonType },
+      "@id": { type: this.jsonValueType },
     });
   }
 

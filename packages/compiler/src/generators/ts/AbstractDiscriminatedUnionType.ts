@@ -6,13 +6,13 @@ import type { AbstractDiscriminatedUnionType_Discriminant } from "./_AbstractDis
 import { AbstractDiscriminatedUnionType_equalsFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_equalsFunction.js";
 import { AbstractDiscriminatedUnionType_filterFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_filterFunction.js";
 import { AbstractDiscriminatedUnionType_filterTypeExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_filterTypeExpression.js";
-import { AbstractDiscriminatedUnionType_fromExpandedJsonFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_fromExpandedJsonFunction.js";
+import { AbstractDiscriminatedUnionType_fromJsonObjectFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_fromJsonObjectFunction.js";
 import { AbstractDiscriminatedUnionType_fromRdfResourceValuesFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_fromRdfResourceValuesFunction.js";
 import { AbstractDiscriminatedUnionType_hashFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_hashFunction.js";
 import { AbstractDiscriminatedUnionType_inferDiscriminant } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_inferDiscriminant.js";
 import { AbstractDiscriminatedUnionType_inlineExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_inlineExpression.js";
 import { AbstractDiscriminatedUnionType_schemaTypeExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_schemaTypeExpression.js";
-import { AbstractDiscriminatedUnionType_toExpandedJsonFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toExpandedJsonFunction.js";
+import { AbstractDiscriminatedUnionType_toJsonObjectFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toJsonObjectFunction.js";
 import { AbstractDiscriminatedUnionType_toLoggableFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toLoggableFunction.js";
 import { AbstractDiscriminatedUnionType_toRdfResourceValuesFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toRdfResourceValuesFunction.js";
 import { AbstractDiscriminatedUnionType_toStringFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toStringFunction.js";
@@ -37,16 +37,16 @@ export abstract class AbstractDiscriminatedUnionType<
     AbstractDiscriminatedUnionType_filterFunctionExpression;
   protected override filterTypeExpression =
     AbstractDiscriminatedUnionType_filterTypeExpression;
-  protected override fromExpandedJsonFunctionExpression =
-    AbstractDiscriminatedUnionType_fromExpandedJsonFunctionExpression;
+  protected override fromJsonObjectFunctionExpression =
+    AbstractDiscriminatedUnionType_fromJsonObjectFunctionExpression;
   protected override fromRdfResourceValuesFunctionExpression =
     AbstractDiscriminatedUnionType_fromRdfResourceValuesFunctionExpression;
   protected override hashFunctionExpression =
     AbstractDiscriminatedUnionType_hashFunctionExpression;
   protected override schemaTypeExpression =
     AbstractDiscriminatedUnionType_schemaTypeExpression;
-  protected override toExpandedJsonFunctionExpression =
-    AbstractDiscriminatedUnionType_toExpandedJsonFunctionExpression;
+  protected override toJsonObjectFunctionExpression =
+    AbstractDiscriminatedUnionType_toJsonObjectFunctionExpression;
   protected override toLoggableFunctionExpression =
     AbstractDiscriminatedUnionType_toLoggableFunctionExpression;
   protected override toRdfResourceValuesFunctionExpression =
@@ -194,11 +194,11 @@ export abstract class AbstractDiscriminatedUnionType<
       });
   }
 
-  get compactedJsonType(): AbstractCompoundType<
+  get jsonValueType(): AbstractCompoundType<
     AbstractDiscriminatedUnionType.Member<MemberTypeT>,
     MemberTypeT
-  >["compactedJsonType"] {
-    return this.expandedJsonType;
+  >["jsonValueType"] {
+    return this.jsonObjectType;
   }
 
   @Memoize()
@@ -243,13 +243,13 @@ export abstract class AbstractDiscriminatedUnionType<
   }
 
   @Memoize()
-  get expandedJsonType(): AbstractCompoundType<
+  get jsonObjectType(): AbstractCompoundType<
     AbstractDiscriminatedUnionType.Member<MemberTypeT>,
     MemberTypeT
-  >["expandedJsonType"] {
+  >["jsonObjectType"] {
     return this.jsonTypeFactory.createJsonDiscriminatedUnionType(
       this.members.map((member) => {
-        const type = member.type.expandedJsonType;
+        const type = member.type.jsonObjectType;
         invariant(type.kind === "JsonObject");
         return {
           discriminantValue: member.primaryDiscriminantValue,

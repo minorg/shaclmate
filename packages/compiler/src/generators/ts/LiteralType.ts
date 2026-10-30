@@ -13,8 +13,8 @@ export class LiteralType extends AbstractLiteralType {
   protected override readonly inlineExpression =
     code`${this.reusables.imports.Literal}`;
 
-  override readonly compactedJsonType: AbstractLiteralType["compactedJsonType"] =
-    this.expandedJsonType;
+  override readonly jsonValueType: AbstractLiteralType["jsonValueType"] =
+    this.jsonObjectType;
   override readonly conversionFunction: Maybe<AbstractLiteralType.ConversionFunction> =
     Maybe.of({
       code: code`${this.reusables.snippets.convertToLiteral}`,
@@ -39,10 +39,10 @@ export class LiteralType extends AbstractLiteralType {
     this.reusables.snippets.filterLiteral,
   );
   override readonly filterType = code`${this.reusables.snippets.LiteralFilter}`;
-  override readonly fromExpandedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.literalFromExpandedJson,
+  override readonly fromJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.literalFromJsonObject,
   );
-  override readonly fromCompactedJsonFunction = this.fromExpandedJsonFunction;
+  override readonly fromJsonValueFunction = this.fromJsonObjectFunction;
   override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
     this.reusables.snippets.literalFromRdfResourceValues,
   );
@@ -51,10 +51,10 @@ export class LiteralType extends AbstractLiteralType {
   ] as const;
   override readonly kind = "Literal";
   override readonly schemaType = code`${this.reusables.snippets.LiteralSchema}`;
-  override readonly toExpandedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.literalToExpandedJson,
+  override readonly toJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.literalToJsonObject,
   );
-  override readonly toCompactedJsonFunction = this.toExpandedJsonFunction;
+  override readonly toJsonValueFunction = this.toJsonObjectFunction;
   override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.literalSparqlWherePatterns,
   );

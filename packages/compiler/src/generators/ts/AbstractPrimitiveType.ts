@@ -20,23 +20,23 @@ export abstract class AbstractPrimitiveType<
   );
 
   @Memoize()
-  override get fromCompactedJsonFunction(): AbstractTypedLiteralType<ValueT>["fromCompactedJsonFunction"] {
+  override get fromJsonValueFunction(): AbstractTypedLiteralType<ValueT>["fromJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.primitiveFromCompactedJson}<${this.expression}>`,
+      code`${this.reusables.snippets.primitiveFromJsonValue}<${this.expression}>`,
     );
   }
 
   @Memoize()
-  override get toCompactedJsonFunction(): AbstractTypedLiteralType<ValueT>["toCompactedJsonFunction"] {
+  override get toJsonValueFunction(): AbstractTypedLiteralType<ValueT>["toJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.primitiveToCompactedJson}<${this.expression}>`,
+      code`${this.reusables.snippets.primitiveToJsonValue}<${this.expression}>`,
     );
   }
 
   @Memoize()
-  override get toExpandedJsonFunction(): AbstractTypedLiteralType<ValueT>["toExpandedJsonFunction"] {
+  override get toJsonObjectFunction(): AbstractTypedLiteralType<ValueT>["toJsonObjectFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.primitiveToExpandedJson}<${this.expression}>(${this.rdfjsTermExpression(this.datatype)})`,
+      code`${this.reusables.snippets.primitiveToJsonObject}<${this.expression}>(${this.rdfjsTermExpression(this.datatype)})`,
     );
   }
 

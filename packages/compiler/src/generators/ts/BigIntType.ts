@@ -14,7 +14,7 @@ export class BigIntType extends AbstractNumericType<bigint> {
     LiteralDecoder.decodeBigIntLiteral(in_).unsafeCoerce(),
   );
 
-  override readonly compactedJsonType: AbstractNumericType.JsonType =
+  override readonly jsonValueType: AbstractNumericType.JsonType =
     this.jsonTypeFactory.createJsonStringType({
       in_: this.decodedIn.map((in_) => in_.toString()),
     });
@@ -46,16 +46,16 @@ export class BigIntType extends AbstractNumericType<bigint> {
   override readonly kind = "BigInt";
 
   @Memoize()
-  override get fromCompactedJsonFunction(): Callable {
+  override get fromJsonValueFunction(): Callable {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.bigIntFromCompactedJson}<${this.compactedJsonType.expression}, ${this.expression}>`,
+      code`${this.reusables.snippets.bigIntFromJsonString}<${this.jsonValueType.expression}, ${this.expression}>`,
     );
   }
 
   @Memoize()
-  override get fromExpandedJsonFunction(): Callable {
+  override get fromJsonObjectFunction(): Callable {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.bigIntFromExpandedJson}<${this.expression}>`,
+      code`${this.reusables.snippets.bigIntFromJsonObject}<${this.expression}>`,
     );
   }
 

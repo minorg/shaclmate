@@ -17,7 +17,7 @@ export class StringType extends AbstractPrimitiveType<string> {
     LiteralDecoder.decodeStringLiteral(in_).unsafeCoerce(),
   );
 
-  override readonly compactedJsonType: AbstractPrimitiveType.JsonType =
+  override readonly jsonValueType: AbstractPrimitiveType.JsonType =
     this.jsonTypeFactory.createJsonStringType({
       in_: this.decodedIn,
       inReference:
@@ -31,8 +31,8 @@ export class StringType extends AbstractPrimitiveType<string> {
     this.reusables.snippets.filterString,
   );
   override readonly filterType = code`${this.reusables.snippets.StringFilter}`;
-  override readonly fromExpandedJsonFunction = new ReferenceCallable(
-    code`${this.reusables.snippets.stringFromExpandedJson}<${this.expression}>`,
+  override readonly fromJsonObjectFunction = new ReferenceCallable(
+    code`${this.reusables.snippets.stringFromJsonObject}<${this.expression}>`,
   );
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${this.reusables.imports.GraphQLString}`,

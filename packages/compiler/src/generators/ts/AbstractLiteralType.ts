@@ -9,10 +9,10 @@ export abstract class AbstractLiteralType extends AbstractTermType<
   Literal,
   Literal
 > {
-  override readonly expandedJsonType: AbstractTermType<
+  override readonly jsonObjectType: AbstractTermType<
     Literal,
     Literal
-  >["expandedJsonType"] = this.jsonTypeFactory.createJsonObjectType(
+  >["jsonObjectType"] = this.jsonTypeFactory.createJsonObjectType(
     {
       "@language": {
         optional: true,
@@ -27,7 +27,7 @@ export abstract class AbstractLiteralType extends AbstractTermType<
       },
     },
     {
-      snippet: this.reusables.snippets.LiteralExpandedJson,
+      snippet: this.reusables.snippets.LiteralJsonObject,
     },
   );
 

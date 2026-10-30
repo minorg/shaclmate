@@ -11,7 +11,7 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
   protected override readonly inlineExpression =
     code`${this.reusables.imports.BigDecimal}`;
 
-  override readonly compactedJsonType: AbstractTypedLiteralType.JsonType =
+  override readonly jsonValueType: AbstractTypedLiteralType.JsonType =
     this.jsonTypeFactory.createJsonStringType();
   override readonly jsTypes = [
     {
@@ -43,11 +43,11 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
   );
   override readonly filterType =
     code`${this.reusables.snippets.NumericFilter}<${this.reusables.imports.BigDecimal}>`;
-  override readonly fromCompactedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.bigDecimalFromCompactedJson,
+  override readonly fromJsonValueFunction = new ReferenceCallable(
+    this.reusables.snippets.bigDecimalFromJsonString,
   );
-  override readonly fromExpandedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.bigDecimalFromExpandedJson,
+  override readonly fromJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.bigDecimalFromJsonObject,
   );
   override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
     this.reusables.snippets.bigDecimalFromRdfResourceValues,
@@ -62,11 +62,11 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
   override readonly kind = "BigDecimal";
   override readonly schemaType =
     code`${this.reusables.snippets.NumericSchema}<${this.reusables.imports.BigDecimal}>`;
-  override readonly toCompactedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.bigDecimalToCompactedJson,
+  override readonly toJsonValueFunction = new ReferenceCallable(
+    this.reusables.snippets.bigDecimalToJsonString,
   );
-  override readonly toExpandedJsonFunction = new ReferenceCallable(
-    code`${this.reusables.snippets.bigDecimalToExpandedJson}(${this.rdfjsTermExpression(this.datatype)})`,
+  override readonly toJsonObjectFunction = new ReferenceCallable(
+    code`${this.reusables.snippets.bigDecimalToJsonObject}(${this.rdfjsTermExpression(this.datatype)})`,
   );
   override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.bigDecimalSparqlWherePatterns,

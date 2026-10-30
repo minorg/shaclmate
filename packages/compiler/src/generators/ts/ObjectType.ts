@@ -23,9 +23,9 @@ import { ObjectType_filterTypeExpression } from "./_ObjectType/ObjectType_filter
 import { ObjectType_focusSparqlConstructTriplesFunction } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunction.js";
 import { ObjectType_focusSparqlWherePatternsFunction } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunction.js";
 import {
-  ObjectType_fromExpandedJsonFunctionExpression,
-  ObjectType_fromExpandedJsonFunctionType,
-} from "./_ObjectType/ObjectType_fromExpandedJsonFunction.js";
+  ObjectType_fromJsonObjectFunctionExpression,
+  ObjectType_fromJsonObjectFunctionType,
+} from "./_ObjectType/ObjectType_fromJsonObjectFunction.js";
 import { ObjectType_fromRdfResourceFunction } from "./_ObjectType/ObjectType_fromRdfResourceFunction.js";
 import {
   ObjectType_fromRdfResourceValuesFunctionExpression,
@@ -47,9 +47,9 @@ import { ObjectType_schemaTypeExpression } from "./_ObjectType/ObjectType_schema
 import { ObjectType_sparqlConstructQueryFunction } from "./_ObjectType/ObjectType_sparqlConstructQueryFunction.js";
 import { ObjectType_sparqlConstructQueryStringFunction } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunction.js";
 import {
-  ObjectType_toExpandedJsonFunctionExpression,
-  ObjectType_toExpandedJsonFunctionType,
-} from "./_ObjectType/ObjectType_toExpandedJsonFunction.js";
+  ObjectType_toJsonObjectFunctionExpression,
+  ObjectType_toJsonObjectFunctionType,
+} from "./_ObjectType/ObjectType_toJsonObjectFunction.js";
 import {
   ObjectType_toLoggableFunctionExpression,
   ObjectType_toLoggableFunctionType,
@@ -86,10 +86,10 @@ export class ObjectType extends AbstractStructuredType {
     ObjectType_filterFunctionExpression;
   protected override filterFunctionType = ObjectType_filterFunctionType;
   protected override filterTypeExpression = ObjectType_filterTypeExpression;
-  protected override fromExpandedJsonFunctionExpression =
-    ObjectType_fromExpandedJsonFunctionExpression;
-  protected override fromExpandedJsonFunctionType =
-    ObjectType_fromExpandedJsonFunctionType;
+  protected override fromJsonObjectFunctionExpression =
+    ObjectType_fromJsonObjectFunctionExpression;
+  protected override fromJsonObjectFunctionType =
+    ObjectType_fromJsonObjectFunctionType;
   protected override fromRdfResourceValuesFunctionExpression =
     ObjectType_fromRdfResourceValuesFunctionExpression;
   protected override fromRdfResourceValuesFunctionType =
@@ -98,10 +98,10 @@ export class ObjectType extends AbstractStructuredType {
   protected override hashFunctionType = ObjectType_hashFunctionType;
   protected override schemaExpression = ObjectType_schemaExpression;
   protected override schemaTypeExpression = ObjectType_schemaTypeExpression;
-  protected override toExpandedJsonFunctionExpression =
-    ObjectType_toExpandedJsonFunctionExpression;
-  protected override toExpandedJsonFunctionType =
-    ObjectType_toExpandedJsonFunctionType;
+  protected override toJsonObjectFunctionExpression =
+    ObjectType_toJsonObjectFunctionExpression;
+  protected override toJsonObjectFunctionType =
+    ObjectType_toJsonObjectFunctionType;
   protected override toLoggableFunctionExpression =
     ObjectType_toLoggableFunctionExpression;
   protected override toLoggableFunctionType = ObjectType_toLoggableFunctionType;
@@ -176,8 +176,8 @@ export class ObjectType extends AbstractStructuredType {
     return ObjectType__toRdfResourceFunction.call(this);
   }
 
-  get compactedJsonType(): AbstractStructuredType["expandedJsonType"] {
-    return this.expandedJsonType;
+  get jsonValueType(): AbstractStructuredType["jsonObjectType"] {
+    return this.jsonObjectType;
   }
 
   @Memoize()
@@ -215,7 +215,7 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
-  override get expandedJsonType(): AbstractStructuredType["expandedJsonType"] {
+  override get jsonObjectType(): AbstractStructuredType["jsonObjectType"] {
     return this.jsonTypeFactory.createJsonObjectType(
       this.properties.flatMap((property) => property.jsonObjectMember.toList()),
       {

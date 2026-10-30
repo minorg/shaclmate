@@ -33,7 +33,7 @@ export class ZodGenerator implements Generator {
           const tsNamedObjectType = typeFactory.createObjectType(astNamedType);
           declarations.push(code`\
 export namespace ${tsNamedObjectType.name.unsafeCoerce()} {
-${tsNamedObjectType.expandedJsonType.declaration.unsafeCoerce()}
+${tsNamedObjectType.jsonObjectType.declaration.unsafeCoerce()}
 }`);
           break;
         }
@@ -42,7 +42,7 @@ ${tsNamedObjectType.expandedJsonType.declaration.unsafeCoerce()}
             typeFactory.createDiscriminatedUnionType(astNamedType);
           declarations.push(code`\
 export namespace ${tsNamedDiscriminatedUnionType.name.unsafeCoerce()} {
-${tsNamedDiscriminatedUnionType.expandedJsonType.declaration.unsafeCoerce()}
+${tsNamedDiscriminatedUnionType.jsonObjectType.declaration.unsafeCoerce()}
 }`);
           break;
         }

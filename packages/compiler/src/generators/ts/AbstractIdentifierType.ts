@@ -20,20 +20,20 @@ export abstract class AbstractIdentifierType<
   abstract readonly parseFunction: Callable;
 
   @Memoize()
-  get compactedJsonType(): AbstractTermType["compactedJsonType"] {
+  get jsonValueType(): AbstractTermType["jsonValueType"] {
     return this.jsonTypeFactory.createJsonStringType({
       minLength: 1n,
     });
   }
 
   @Memoize()
-  get expandedJsonType(): AbstractTermType["expandedJsonType"] {
+  get jsonObjectType(): AbstractTermType["jsonObjectType"] {
     return this.jsonTypeFactory.createJsonObjectType(
       {
-        "@id": { type: this.compactedJsonType },
+        "@id": { type: this.jsonValueType },
       },
       {
-        snippet: this.reusables.snippets.IdentifierExpandedJson,
+        snippet: this.reusables.snippets.IdentifierJsonObject,
       },
     );
   }

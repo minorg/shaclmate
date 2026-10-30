@@ -13,7 +13,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   protected override readonly decodedIn = this.in_.map((in_) =>
     LiteralDecoder.decodeBooleanLiteral(in_).unsafeCoerce(),
   );
-  override readonly compactedJsonType: AbstractPrimitiveType.JsonType =
+  override readonly jsonValueType: AbstractPrimitiveType.JsonType =
     this.jsonTypeFactory.createJsonBooleanType({ in_: this.decodedIn });
   override readonly conversionFunction: Maybe<AbstractPrimitiveType.ConversionFunction> =
     Maybe.empty();
@@ -21,8 +21,8 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     this.reusables.snippets.filterBoolean,
   );
   override readonly filterType = code`${this.reusables.snippets.BooleanFilter}`;
-  override readonly fromExpandedJsonFunction = new ReferenceCallable(
-    code`${this.reusables.snippets.booleanFromExpandedJson}<${this.expression}>`,
+  override readonly fromJsonObjectFunction = new ReferenceCallable(
+    code`${this.reusables.snippets.booleanFromJsonObject}<${this.expression}>`,
   );
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${this.reusables.imports.GraphQLBoolean}`,

@@ -189,13 +189,13 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     );
   }
 
-  override fromExpandedJsonInitializer({
+  override fromJsonObjectInitializer({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty["fromExpandedJsonInitializer"]
+    ObjectType_AbstractProperty["fromJsonObjectInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: (${this.type.fromCompactedJsonFunction})(${variables.jsonObject}["@id"])`,
+      code`${this.name}: (${this.type.fromJsonValueFunction})(${variables.jsonObject}["@id"])`,
     );
   }
 

@@ -20,7 +20,7 @@ function ObjectIntersectionType_createFunctionExpression(
 
   const monkeyPatchMethods: Record<string, Code> = {};
   if (this.configuration.features.has("Object.toJson")) {
-    monkeyPatchMethods["toJson"] = this.toExpandedJsonFunction.annotatedUsage;
+    monkeyPatchMethods["toJson"] = this.toJsonObjectFunction.annotatedUsage;
   }
   if (this.configuration.features.has("Object.toString")) {
     monkeyPatchMethods[`${this.configuration.syntheticNamePrefix}toString`] =

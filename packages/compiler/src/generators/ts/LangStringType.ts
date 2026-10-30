@@ -22,7 +22,7 @@ export class LangStringType extends AbstractLiteralType {
         },
       ],
     });
-  override readonly expandedJsonType: AbstractLiteralType["expandedJsonType"] =
+  override readonly jsonObjectType: AbstractLiteralType["jsonObjectType"] =
     this.jsonTypeFactory.createJsonObjectType(
       {
         "@language": {
@@ -30,18 +30,18 @@ export class LangStringType extends AbstractLiteralType {
         },
         "@value": { type: this.jsonTypeFactory.createJsonStringType() },
       },
-      { snippet: this.reusables.snippets.LangStringExpandedJson },
+      { snippet: this.reusables.snippets.LangStringJsonObject },
     );
-  override readonly compactedJsonType: AbstractLiteralType["compactedJsonType"] =
-    this.expandedJsonType;
+  override readonly jsonValueType: AbstractLiteralType["jsonValueType"] =
+    this.jsonObjectType;
   override readonly filterFunction = new ReferenceCallable(
     this.reusables.snippets.filterLiteral,
   );
   override readonly filterType = code`${this.reusables.snippets.LiteralFilter}`;
-  override readonly fromExpandedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.langStringFromExpandedJson,
+  override readonly fromJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.langStringFromJsonObject,
   );
-  override readonly fromCompactedJsonFunction = this.fromExpandedJsonFunction;
+  override readonly fromJsonValueFunction = this.fromJsonObjectFunction;
   override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
     this.reusables.snippets.langStringFromRdfResourceValues,
   );
@@ -51,10 +51,10 @@ export class LangStringType extends AbstractLiteralType {
   override readonly kind = "LangString";
   override readonly schemaType =
     code`${this.reusables.snippets.LangStringSchema}`;
-  override readonly toExpandedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.langStringToExpandedJson,
+  override readonly toJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.langStringToJsonObject,
   );
-  override readonly toCompactedJsonFunction = this.toExpandedJsonFunction;
+  override readonly toJsonValueFunction = this.toJsonObjectFunction;
   override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.langStringSparqlWherePatterns,
   );

@@ -14,20 +14,19 @@ import { type Code, code } from "./ts-poet-wrapper.js";
 export class DefaultValueType<
   ItemTypeT extends DefaultValueType.ItemType,
 > extends AbstractContainerType<ItemTypeT> {
-  override readonly compactedJsonType: AbstractContainerType<ItemTypeT>["compactedJsonType"] =
-    this.itemType.compactedJsonType;
+  override readonly jsonValueType: AbstractContainerType<ItemTypeT>["jsonValueType"] =
+    this.itemType.jsonValueType;
   readonly defaultValue: Literal | NamedNode;
   override readonly discriminantProperty: Maybe<AbstractType.DiscriminantProperty> =
     Maybe.empty();
   override readonly equalsFunction = this.itemType.equalsFunction;
-  override readonly expandedJsonType: AbstractContainerType<ItemTypeT>["expandedJsonType"] =
-    this.itemType.expandedJsonType;
+  override readonly jsonObjectType: AbstractContainerType<ItemTypeT>["jsonObjectType"] =
+    this.itemType.jsonObjectType;
   override readonly filterFunction = this.itemType.filterFunction;
   override readonly filterType = this.itemType.filterType;
-  override readonly fromCompactedJsonFunction =
-    this.itemType.fromCompactedJsonFunction;
-  override readonly fromExpandedJsonFunction =
-    this.itemType.fromExpandedJsonFunction;
+  override readonly fromJsonValueFunction = this.itemType.fromJsonValueFunction;
+  override readonly fromJsonObjectFunction =
+    this.itemType.fromJsonObjectFunction;
   override readonly fromRdfResourceValuesFunction = new InlineCallable(
     code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
   );
@@ -40,10 +39,8 @@ export class DefaultValueType<
   override readonly mutable = this.itemType.mutable;
   override readonly schemaType =
     code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.schemaType}>`;
-  override readonly toCompactedJsonFunction =
-    this.itemType.toCompactedJsonFunction;
-  override readonly toExpandedJsonFunction =
-    this.itemType.toExpandedJsonFunction;
+  override readonly toJsonValueFunction = this.itemType.toJsonValueFunction;
+  override readonly toJsonObjectFunction = this.itemType.toJsonObjectFunction;
   override readonly toRdfResourceValueTypes =
     this.itemType.toRdfResourceValueTypes;
   override readonly validationFunction: AbstractType["validationFunction"] =

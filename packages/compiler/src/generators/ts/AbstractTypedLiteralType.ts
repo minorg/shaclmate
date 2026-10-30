@@ -16,10 +16,10 @@ export abstract class AbstractTypedLiteralType<
 > extends AbstractLiteralType {
   readonly datatype: NamedNode;
 
-  override readonly expandedJsonType: AbstractTermType<
+  override readonly jsonObjectType: AbstractTermType<
     Literal,
     Literal
-  >["expandedJsonType"] = this.jsonTypeFactory.createJsonObjectType(
+  >["jsonObjectType"] = this.jsonTypeFactory.createJsonObjectType(
     {
       "@type": {
         type: this.jsonTypeFactory.createJsonStringType(),
@@ -29,7 +29,7 @@ export abstract class AbstractTypedLiteralType<
       },
     },
     {
-      snippet: this.reusables.snippets.TypedLiteralExpandedJson,
+      snippet: this.reusables.snippets.TypedLiteralJsonObject,
     },
   );
 

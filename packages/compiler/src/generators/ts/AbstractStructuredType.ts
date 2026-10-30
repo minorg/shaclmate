@@ -37,16 +37,16 @@ export abstract class AbstractStructuredType extends AbstractType {
       .orDefaultLazy(() => this.filterTypeExpression());
   }
 
-  override get fromCompactedJsonFunction(): AbstractType["fromCompactedJsonFunction"] {
-    return this.fromExpandedJsonFunction;
+  override get fromJsonValueFunction(): AbstractType["fromJsonValueFunction"] {
+    return this.fromJsonObjectFunction;
   }
 
   @Memoize()
-  get fromExpandedJsonFunction(): Callable {
+  get fromJsonObjectFunction(): Callable {
     return this._function({
-      type: () => this.fromExpandedJsonFunctionType(),
-      unannotatedExpression: () => this.fromExpandedJsonFunctionExpression(),
-      unqualifiedName: "fromExpandedJson",
+      type: () => this.fromJsonObjectFunctionType(),
+      unannotatedExpression: () => this.fromJsonObjectFunctionExpression(),
+      unqualifiedName: "fromJsonObject",
     });
   }
 
@@ -76,15 +76,15 @@ export abstract class AbstractStructuredType extends AbstractType {
       .orDefaultLazy(() => this.schemaTypeExpression());
   }
 
-  override get toCompactedJsonFunction(): AbstractType["toCompactedJsonFunction"] {
-    return this.toExpandedJsonFunction;
+  override get toJsonValueFunction(): AbstractType["toJsonValueFunction"] {
+    return this.toJsonObjectFunction;
   }
 
   @Memoize()
-  get toExpandedJsonFunction(): Callable {
+  get toJsonObjectFunction(): Callable {
     return this._function({
-      type: () => this.toExpandedJsonFunctionType(),
-      unannotatedExpression: () => this.toExpandedJsonFunctionExpression(),
+      type: () => this.toJsonObjectFunctionType(),
+      unannotatedExpression: () => this.toJsonObjectFunctionExpression(),
       unqualifiedName: "toJson",
     });
   }
@@ -218,10 +218,10 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   protected abstract filterTypeExpression(): Code;
 
-  protected abstract fromExpandedJsonFunctionExpression(): Code;
+  protected abstract fromJsonObjectFunctionExpression(): Code;
 
-  protected fromExpandedJsonFunctionType(): Code {
-    return code`${this.reusables.snippets.FromExpandedJsonFunction}<${this.expression}, ${this.expandedJsonType.expression}>`;
+  protected fromJsonObjectFunctionType(): Code {
+    return code`${this.reusables.snippets.FromJsonObjectFunction}<${this.expression}, ${this.jsonObjectType.expression}>`;
   }
 
   protected abstract fromRdfResourceValuesFunctionExpression(): Code;
@@ -267,13 +267,13 @@ export abstract class AbstractStructuredType extends AbstractType {
     }
 
     if (this.configuration.features.has("Object.JSON.type")) {
-      this.expandedJsonType.declaration.ifJust((jsonTypeDeclaration) => {
+      this.jsonObjectType.declaration.ifJust((jsonTypeDeclaration) => {
         staticModuleDeclarations["JSON"] = jsonTypeDeclaration;
       });
     }
 
     if (this.configuration.features.has("Object.fromJson")) {
-      addFunctionDeclaration(this.fromExpandedJsonFunction);
+      addFunctionDeclaration(this.fromJsonObjectFunction);
     }
 
     if (this.configuration.features.has("Object.fromRdf")) {
@@ -286,7 +286,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     }
 
     if (this.configuration.features.has("Object.toJson")) {
-      addFunctionDeclaration(this.toExpandedJsonFunction);
+      addFunctionDeclaration(this.toJsonObjectFunction);
     }
 
     if (this.configuration.features.has("Object.toLoggable")) {
@@ -304,10 +304,10 @@ export abstract class AbstractStructuredType extends AbstractType {
     return staticModuleDeclarations;
   }
 
-  protected abstract toExpandedJsonFunctionExpression(): Code;
+  protected abstract toJsonObjectFunctionExpression(): Code;
 
-  protected toExpandedJsonFunctionType(): Code {
-    return code`${this.reusables.snippets.ToExpandedJsonFunction}<${this.expression}, ${this.expandedJsonType.expression}>`;
+  protected toJsonObjectFunctionType(): Code {
+    return code`${this.reusables.snippets.ToJsonObjectFunction}<${this.expression}, ${this.jsonObjectType.expression}>`;
   }
 
   protected abstract toLoggableFunctionExpression(): Code;

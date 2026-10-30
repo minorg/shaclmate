@@ -40,11 +40,11 @@ export class IdentifierType extends AbstractIdentifierType<
   override readonly filterFunction = new ReferenceCallable(
     this.reusables.snippets.filterIdentifier,
   );
-  override readonly fromCompactedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.identifierFromCompactedJson,
+  override readonly fromJsonValueFunction = new ReferenceCallable(
+    this.reusables.snippets.identifierFromJsonString,
   );
-  override readonly fromExpandedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.identifierFromExpandedJson,
+  override readonly fromJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.identifierFromJsonObject,
   );
   override readonly filterType =
     code`${this.reusables.snippets.IdentifierFilter}`;
@@ -58,11 +58,11 @@ export class IdentifierType extends AbstractIdentifierType<
   );
   override readonly schemaType =
     code`${this.reusables.snippets.IdentifierSchema}`;
-  override readonly toCompactedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.identifierToCompactedJson,
+  override readonly toJsonValueFunction = new ReferenceCallable(
+    this.reusables.snippets.identifierToJsonString,
   );
-  override readonly toExpandedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.identifierToExpandedJson,
+  override readonly toJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.identifierToJsonObject,
   );
   override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.identifierSparqlWherePatterns,

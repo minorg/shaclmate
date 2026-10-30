@@ -14,7 +14,7 @@ export class FloatType extends AbstractNumericType<number> {
     LiteralDecoder.decodeFloatLiteral(in_).unsafeCoerce(),
   );
 
-  override readonly compactedJsonType: AbstractNumericType.JsonType =
+  override readonly jsonValueType: AbstractNumericType.JsonType =
     this.jsonTypeFactory.createJsonNumberType({ in_: this.decodedIn });
   override readonly conversionFunction: Maybe<AbstractNumericType.ConversionFunction> =
     Maybe.empty();
@@ -26,9 +26,9 @@ export class FloatType extends AbstractNumericType<number> {
   override readonly kind = "Float";
 
   @Memoize()
-  get fromExpandedJsonFunction(): Callable {
+  get fromJsonObjectFunction(): Callable {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.floatFromExpandedJson}<${this.expression}>`,
+      code`${this.reusables.snippets.floatFromJsonObject}<${this.expression}>`,
     );
   }
 

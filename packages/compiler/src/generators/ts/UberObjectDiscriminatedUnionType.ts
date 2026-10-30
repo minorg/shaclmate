@@ -120,7 +120,7 @@ ${this.memberTypeSwitch({
   caseBlock: (member) =>
     code`\
 return {
-  ...(${member.toExpandedJsonFunction.annotatedUsage})(object),
+  ...(${member.toJsonObjectFunction.annotatedUsage})(object),
   ${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}: ${literalOf(member.discriminantProperty.unsafeCoerce().value)}
 };`,
   variables: { value: code`object` },

@@ -21,8 +21,8 @@ export class OptionType<
   ] as const;
   override readonly kind = "Option";
 
-  override get compactedJsonType(): AbstractContainerType<ItemTypeT>["compactedJsonType"] {
-    return this.itemType.compactedJsonType;
+  override get jsonValueType(): AbstractContainerType<ItemTypeT>["jsonValueType"] {
+    return this.itemType.jsonValueType;
   }
 
   @Memoize()
@@ -54,8 +54,8 @@ export class OptionType<
     );
   }
 
-  override get expandedJsonType(): AbstractContainerType<ItemTypeT>["expandedJsonType"] {
-    return this.itemType.expandedJsonType;
+  override get jsonObjectType(): AbstractContainerType<ItemTypeT>["jsonObjectType"] {
+    return this.itemType.jsonObjectType;
   }
 
   @Memoize()
@@ -71,16 +71,16 @@ export class OptionType<
   }
 
   @Memoize()
-  override get fromCompactedJsonFunction(): AbstractContainerType<ItemTypeT>["fromCompactedJsonFunction"] {
+  override get fromJsonValueFunction(): AbstractContainerType<ItemTypeT>["fromJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.maybeFromCompactedJson}(${this.itemType.fromCompactedJsonFunction})`,
+      code`${this.reusables.snippets.maybeFromJsonValue}(${this.itemType.fromJsonValueFunction})`,
     );
   }
 
   @Memoize()
-  override get fromExpandedJsonFunction(): AbstractContainerType<ItemTypeT>["fromExpandedJsonFunction"] {
+  override get fromJsonObjectFunction(): AbstractContainerType<ItemTypeT>["fromJsonObjectFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.maybeFromExpandedJson}(${this.itemType.fromExpandedJsonFunction})`,
+      code`${this.reusables.snippets.maybeFromJsonObject}(${this.itemType.fromJsonObjectFunction})`,
     );
   }
 
@@ -120,16 +120,16 @@ export class OptionType<
   }
 
   @Memoize()
-  override get toCompactedJsonFunction(): AbstractContainerType<ItemTypeT>["toCompactedJsonFunction"] {
+  override get toJsonValueFunction(): AbstractContainerType<ItemTypeT>["toJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.maybeToCompactedJson}(${this.itemType.toCompactedJsonFunction})`,
+      code`${this.reusables.snippets.maybeToJsonValue}(${this.itemType.toJsonValueFunction})`,
     );
   }
 
   @Memoize()
-  override get toExpandedJsonFunction(): AbstractContainerType<ItemTypeT>["toExpandedJsonFunction"] {
+  override get toJsonObjectFunction(): AbstractContainerType<ItemTypeT>["toJsonObjectFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.maybeToExpandedJson}(${this.itemType.toExpandedJsonFunction})`,
+      code`${this.reusables.snippets.maybeToJsonObject}(${this.itemType.toJsonObjectFunction})`,
     );
   }
 

@@ -55,9 +55,9 @@ export class ListType<
   }
 
   @Memoize()
-  override get compactedJsonType(): AbstractCollectionType<ItemTypeT>["compactedJsonType"] {
+  override get jsonValueType(): AbstractCollectionType<ItemTypeT>["jsonValueType"] {
     return this.jsonTypeFactory.createJsonArrayType(
-      this.itemType.compactedJsonType,
+      this.itemType.jsonValueType,
     );
   }
 
@@ -84,23 +84,23 @@ export class ListType<
   }
 
   @Memoize()
-  override get expandedJsonType(): AbstractCollectionType<ItemTypeT>["expandedJsonType"] {
+  override get jsonObjectType(): AbstractCollectionType<ItemTypeT>["jsonObjectType"] {
     return this.jsonTypeFactory.createJsonObjectType({
-      "@list": { type: this.compactedJsonType },
+      "@list": { type: this.jsonValueType },
     });
   }
 
   @Memoize()
-  override get fromCompactedJsonFunction(): AbstractCollectionType<ItemTypeT>["fromCompactedJsonFunction"] {
+  override get fromJsonValueFunction(): AbstractCollectionType<ItemTypeT>["fromJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.arrayFromCompactedJson}(${this.itemType.fromCompactedJsonFunction})`,
+      code`${this.reusables.snippets.arrayFromJsonArray}(${this.itemType.fromJsonValueFunction})`,
     );
   }
 
   @Memoize()
-  override get fromExpandedJsonFunction(): AbstractCollectionType<ItemTypeT>["fromExpandedJsonFunction"] {
+  override get fromJsonObjectFunction(): AbstractCollectionType<ItemTypeT>["fromJsonObjectFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.arrayFromExpandedJson}(${this.itemType.fromExpandedJsonFunction})`,
+      code`${this.reusables.snippets.arrayFromJsonObject}(${this.itemType.fromJsonObjectFunction})`,
     );
   }
 
@@ -112,16 +112,16 @@ export class ListType<
   }
 
   @Memoize()
-  override get toCompactedJsonFunction(): AbstractCollectionType<ItemTypeT>["toCompactedJsonFunction"] {
+  override get toJsonValueFunction(): AbstractCollectionType<ItemTypeT>["toJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.arrayToCompactedJson}(${this.itemType.toCompactedJsonFunction})`,
+      code`${this.reusables.snippets.arrayToJsonArray}(${this.itemType.toJsonValueFunction})`,
     );
   }
 
   @Memoize()
-  override get toExpandedJsonFunction(): AbstractCollectionType<ItemTypeT>["toExpandedJsonFunction"] {
+  override get toJsonObjectFunction(): AbstractCollectionType<ItemTypeT>["toJsonObjectFunction"] {
     return new InlineCallable(
-      code`${this.reusables.snippets.arrayToExpandedJson}(${this.itemType.toExpandedJsonFunction}, "@list")`,
+      code`${this.reusables.snippets.arrayToJsonObject}(${this.itemType.toJsonObjectFunction}, "@list")`,
     );
   }
 

@@ -14,7 +14,7 @@ export class IntType extends AbstractNumericType<number> {
     LiteralDecoder.decodeFloatLiteral(in_).unsafeCoerce(),
   );
 
-  override readonly compactedJsonType: AbstractNumericType.JsonType =
+  override readonly jsonValueType: AbstractNumericType.JsonType =
     this.jsonTypeFactory.createJsonNumberType({ in_: this.decodedIn });
   override readonly conversionFunction: Maybe<AbstractNumericType.ConversionFunction> =
     Maybe.empty();
@@ -22,9 +22,9 @@ export class IntType extends AbstractNumericType<number> {
   override readonly kind = "Int";
 
   @Memoize()
-  get fromExpandedJsonFunction(): Callable {
+  get fromJsonObjectFunction(): Callable {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.intFromExpandedJson}<${this.expression}>`,
+      code`${this.reusables.snippets.intFromJsonObject}<${this.expression}>`,
     );
   }
 

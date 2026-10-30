@@ -29,11 +29,11 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   );
   override readonly filterType =
     code`${this.reusables.snippets.BlankNodeFilter}`;
-  override readonly fromCompactedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.blankNodeFromCompactedJson,
+  override readonly fromJsonValueFunction = new ReferenceCallable(
+    this.reusables.snippets.blankNodeFromJsonString,
   );
-  override readonly fromExpandedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.blankNodeFromExpandedJson,
+  override readonly fromJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.blankNodeFromJsonObject,
   );
   override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
     this.reusables.snippets.blankNodeFromRdfResourceValues,
@@ -45,11 +45,11 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   );
   override readonly schemaType =
     code`${this.reusables.snippets.BlankNodeSchema}`;
-  override readonly toCompactedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.blankNodeToCompactedJson,
+  override readonly toJsonValueFunction = new ReferenceCallable(
+    this.reusables.snippets.blankNodeToJsonString,
   );
-  override readonly toExpandedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.blankNodeToExpandedJson,
+  override readonly toJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.blankNodeToJsonObject,
   );
   override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.blankNodeSparqlWherePatterns,

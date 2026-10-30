@@ -27,10 +27,10 @@ export class TermType<
   ] as const;
   override readonly kind = "Term";
   override readonly nodeKinds: ReadonlySet<NodeKind>;
-  override readonly toExpandedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.termToExpandedJson,
+  override readonly toJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.termToJsonObject,
   );
-  override readonly toCompactedJsonFunction = this.toExpandedJsonFunction;
+  override readonly toJsonValueFunction = this.toJsonObjectFunction;
   override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.termSparqlWherePatterns,
   );
@@ -57,14 +57,14 @@ export class TermType<
     return code`${this.reusables.snippets.TermFilter}<${this.expression}>`;
   }
 
-  get fromCompactedJsonFunction(): Callable {
-    return this.fromExpandedJsonFunction;
+  get fromJsonValueFunction(): Callable {
+    return this.fromJsonObjectFunction;
   }
 
   @Memoize()
-  override get fromExpandedJsonFunction(): Callable {
+  override get fromJsonObjectFunction(): Callable {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.termFromExpandedJson}<${this.expandedJsonType.expression}, ${this.expression}>`,
+      code`${this.reusables.snippets.termFromJsonObject}<${this.jsonObjectType.expression}, ${this.expression}>`,
     );
   }
 
@@ -118,12 +118,12 @@ export class TermType<
     throw new Error("not implemented");
   }
 
-  get compactedJsonType(): AbstractTermType["compactedJsonType"] {
-    return this.expandedJsonType;
+  get jsonValueType(): AbstractTermType["jsonValueType"] {
+    return this.jsonObjectType;
   }
 
   @Memoize()
-  override get expandedJsonType(): AbstractTermType["expandedJsonType"] {
+  override get jsonObjectType(): AbstractTermType["jsonObjectType"] {
     // This is a z.union in the snippet but an object here so a discriminant can be added if necessary.
     return this.jsonTypeFactory.createJsonObjectType(
       {
@@ -145,7 +145,7 @@ export class TermType<
         },
       },
       {
-        snippet: this.reusables.snippets.TermExpandedJson,
+        snippet: this.reusables.snippets.TermJsonObject,
       },
     );
   }
@@ -153,6 +153,6 @@ export class TermType<
   override toLoggableExpression({
     variables,
   }: Parameters<AbstractTermType["toLoggableExpression"]>[0]): Code {
-    return code`${this.toExpandedJsonFunction.annotatedUsage}(${variables.value})`;
+    return code`${this.toJsonObjectFunction.annotatedUsage}(${variables.value})`;
   }
 }

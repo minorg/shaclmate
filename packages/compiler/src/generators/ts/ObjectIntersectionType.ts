@@ -7,10 +7,10 @@ import { ObjectIntersectionType_createFunctionParameters } from "./_ObjectInters
 import { ObjectIntersectionType_createUnsafeFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_createUnsafeFunction.js";
 import { ObjectIntersectionType_focusSparqlConstructTriplesFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_focusSparqlConstructTriplesFunction.js";
 import { ObjectIntersectionType_focusSparqlWherePatternsFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_focusSparqlWherePatternsFunction.js";
-import { ObjectIntersectionType_fromExpandedJsonFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_fromExpandedJsonFunction.js";
+import { ObjectIntersectionType_fromJsonObjectFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_fromJsonObjectFunction.js";
 import { ObjectIntersectionType_fromRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_fromRdfResourceFunction.js";
 import { ObjectIntersectionType_fromRdfResourceValuesFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_fromRdfResourceValuesFunction.js";
-import { ObjectIntersectionType_toExpandedJsonFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_toExpandedJsonFunction.js";
+import { ObjectIntersectionType_toJsonObjectFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_toJsonObjectFunction.js";
 import { ObjectIntersectionType_toRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_toRdfResourceFunction.js";
 import { ObjectIntersectionType_toRdfResourceValuesFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_toRdfResourceValuesFunction.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
@@ -27,12 +27,12 @@ import type { ObjectType } from "./ObjectType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType> {
-  protected override fromExpandedJsonFunctionExpression =
-    ObjectIntersectionType_fromExpandedJsonFunctionExpression;
+  protected override fromJsonObjectFunctionExpression =
+    ObjectIntersectionType_fromJsonObjectFunctionExpression;
   protected override fromRdfResourceValuesFunctionExpression =
     ObjectIntersectionType_fromRdfResourceValuesFunctionExpression;
-  protected override toExpandedJsonFunctionExpression =
-    ObjectIntersectionType_toExpandedJsonFunctionExpression;
+  protected override toJsonObjectFunctionExpression =
+    ObjectIntersectionType_toJsonObjectFunctionExpression;
   protected override toRdfResourceValuesFunctionExpression =
     ObjectIntersectionType_toRdfResourceValuesFunctionExpression;
 
@@ -59,8 +59,8 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
     return ObjectIntersectionType__toRdfResourceFunction.call(this);
   }
 
-  get compactedJsonType(): AbstractIntersectionType<ObjectType>["compactedJsonType"] {
-    return this.expandedJsonType;
+  get jsonValueType(): AbstractIntersectionType<ObjectType>["jsonValueType"] {
+    return this.jsonObjectType;
   }
 
   @Memoize()
@@ -74,9 +74,9 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
   }
 
   @Memoize()
-  override get expandedJsonType(): AbstractIntersectionType<ObjectType>["expandedJsonType"] {
+  override get jsonObjectType(): AbstractIntersectionType<ObjectType>["jsonObjectType"] {
     return this.jsonTypeFactory.createJsonIntersectionType(
-      this.members.map((member) => member.type.expandedJsonType),
+      this.members.map((member) => member.type.jsonObjectType),
       {
         name: this.name.map((name) => [name, "Json"]).extract(),
         recursive: this.recursive,

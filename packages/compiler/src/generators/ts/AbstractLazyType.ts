@@ -45,8 +45,8 @@ export abstract class AbstractLazyType<
     this.resolveType = resolveType;
   }
 
-  get compactedJsonType(): AbstractType["compactedJsonType"] {
-    return this.partialType.compactedJsonType;
+  get jsonValueType(): AbstractType["jsonValueType"] {
+    return this.partialType.jsonValueType;
   }
 
   @Memoize()
@@ -59,8 +59,8 @@ export abstract class AbstractLazyType<
     );
   }
 
-  get expandedJsonType(): AbstractType["expandedJsonType"] {
-    return this.partialType.expandedJsonType;
+  get jsonObjectType(): AbstractType["jsonObjectType"] {
+    return this.partialType.jsonObjectType;
   }
 
   @Memoize()
@@ -77,22 +77,22 @@ export abstract class AbstractLazyType<
     return this.partialType.filterType;
   }
 
-  override get fromCompactedJsonFunction(): AbstractType["fromCompactedJsonFunction"] {
+  override get fromJsonValueFunction(): AbstractType["fromJsonValueFunction"] {
     return new InlineCallable(
-      code`(compactedJson, { ...otherOptions, objectSet, schema }) => ${this.partialType.fromCompactedJsonFunction.annotatedUsage}(compactedJson, { ...otherOptions, objectSet, schema: schema.partialType })
+      code`(jsonValue, { ...otherOptions, objectSet, schema }) => ${this.partialType.fromJsonValueFunction.annotatedUsage}(jsonValue, { ...otherOptions, objectSet, schema: schema.partialType })
         .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.objectSetResolverFunctionExpressions({ variables: { objectSet: code`objectSet` } })} }))`,
       {
-        type: code`${this.reusables.snippets.FromCompactedJsonFunction}<${this.compactedJsonType.expression}, ${this.expression}, ${this.schema}>`,
+        type: code`${this.reusables.snippets.FromJsonValueFunction}<${this.jsonValueType.expression}, ${this.expression}, ${this.schema}>`,
       },
     );
   }
 
-  override get fromExpandedJsonFunction(): AbstractType["fromExpandedJsonFunction"] {
+  override get fromJsonObjectFunction(): AbstractType["fromJsonObjectFunction"] {
     return new InlineCallable(
-      code`(expandedJson, { ...otherOptions, objectSet, schema }) => ${this.partialType.fromExpandedJsonFunction.annotatedUsage}(expandedJson, { ...otherOptions, objectSet, schema: schema.partialType })
+      code`(jsonObject, { ...otherOptions, objectSet, schema }) => ${this.partialType.fromJsonObjectFunction.annotatedUsage}(jsonObject, { ...otherOptions, objectSet, schema: schema.partialType })
         .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.objectSetResolverFunctionExpressions({ variables: { objectSet: code`objectSet` } })} }))`,
       {
-        type: code`${this.reusables.snippets.FromExpandedJsonFunction}<${this.expandedJsonType.expression}, ${this.expression}, ${this.schema}>`,
+        type: code`${this.reusables.snippets.FromJsonObjectFunction}<${this.jsonObjectType.expression}, ${this.expression}, ${this.schema}>`,
       },
     );
   }
@@ -152,20 +152,20 @@ export abstract class AbstractLazyType<
     }}`;
   }
 
-  override get toCompactedJsonFunction(): AbstractType["toCompactedJsonFunction"] {
+  override get toJsonValueFunction(): AbstractType["toJsonValueFunction"] {
     return new InlineCallable(
-      code`(value) => ${this.partialType.toCompactedJsonFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
+      code`(value) => ${this.partialType.toJsonValueFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
       {
-        type: code`${this.reusables.snippets.ToCompactedJsonFunction}<${this.expression}, ${this.compactedJsonType.expression}>`,
+        type: code`${this.reusables.snippets.ToJsonValueFunction}<${this.expression}, ${this.jsonValueType.expression}>`,
       },
     );
   }
 
-  override get toExpandedJsonFunction(): AbstractType["toExpandedJsonFunction"] {
+  override get toJsonObjectFunction(): AbstractType["toJsonObjectFunction"] {
     return new InlineCallable(
-      code`(value) => ${this.partialType.toExpandedJsonFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
+      code`(value) => ${this.partialType.toJsonObjectFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
       {
-        type: code`${this.reusables.snippets.ToExpandedJsonFunction}<${this.expression}, ${this.compactedJsonType.expression}>`,
+        type: code`${this.reusables.snippets.ToJsonObjectFunction}<${this.expression}, ${this.jsonValueType.expression}>`,
       },
     );
   }

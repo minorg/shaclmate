@@ -6,8 +6,8 @@ import { ReferenceCallable } from "./ReferenceCallable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class DateTimeType extends AbstractDateType {
-  override readonly fromExpandedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.dateTimeFromExpandedJson,
+  override readonly fromJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.dateTimeFromJsonObject,
   );
   override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
     this.reusables.snippets.dateTimeFromRdfResourceValues,
@@ -21,11 +21,11 @@ export class DateTimeType extends AbstractDateType {
     this.reusables.snippets.hashDateTime,
   );
   override readonly kind = "DateTime";
-  override readonly toCompactedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.dateTimeToCompactedJson,
+  override readonly toJsonValueFunction = new ReferenceCallable(
+    this.reusables.snippets.dateTimeToJsonString,
   );
-  override readonly toExpandedJsonFunction = new ReferenceCallable(
-    this.reusables.snippets.dateToExpandedJson,
+  override readonly toJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.dateToJsonObject,
   );
 
   override valueExpression(literal: Date | Literal): Code {

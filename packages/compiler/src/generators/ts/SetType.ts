@@ -35,9 +35,9 @@ export class SetType<
   }
 
   @Memoize()
-  override get compactedJsonType(): AbstractCollectionType<ItemTypeT>["compactedJsonType"] {
+  override get jsonValueType(): AbstractCollectionType<ItemTypeT>["jsonValueType"] {
     return this.jsonTypeFactory.createJsonArrayType(
-      this.itemType.compactedJsonType,
+      this.itemType.jsonValueType,
       {
         minCount: this.minCount,
         name: this.name.map((name) => [name, "Json"]).extract(),
@@ -98,18 +98,18 @@ export class SetType<
     });
   }
 
-  override get expandedJsonType(): AbstractCollectionType<ItemTypeT>["expandedJsonType"] {
+  override get jsonObjectType(): AbstractCollectionType<ItemTypeT>["jsonObjectType"] {
     throw new Error("should never be called");
   }
 
   @Memoize()
-  override get fromCompactedJsonFunction(): AbstractCollectionType<ItemTypeT>["fromCompactedJsonFunction"] {
+  override get fromJsonValueFunction(): AbstractCollectionType<ItemTypeT>["fromJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.arrayFromCompactedJson}(${this.itemType.fromCompactedJsonFunction})`,
+      code`${this.reusables.snippets.arrayFromJsonArray}(${this.itemType.fromJsonValueFunction})`,
     );
   }
 
-  override get fromExpandedJsonFunction(): AbstractCollectionType<ItemTypeT>["fromExpandedJsonFunction"] {
+  override get fromJsonObjectFunction(): AbstractCollectionType<ItemTypeT>["fromJsonObjectFunction"] {
     throw new Error("should never be called");
   }
 
@@ -121,13 +121,13 @@ export class SetType<
   }
 
   @Memoize()
-  override get toCompactedJsonFunction(): AbstractCollectionType<ItemTypeT>["toCompactedJsonFunction"] {
+  override get toJsonValueFunction(): AbstractCollectionType<ItemTypeT>["toJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.arrayToCompactedJson}(${this.itemType.toCompactedJsonFunction})`,
+      code`${this.reusables.snippets.arrayToJsonArray}(${this.itemType.toJsonValueFunction})`,
     );
   }
 
-  override get toExpandedJsonFunction(): AbstractCollectionType<ItemTypeT>["toExpandedJsonFunction"] {
+  override get toJsonObjectFunction(): AbstractCollectionType<ItemTypeT>["toJsonObjectFunction"] {
     throw new Error("should never be called");
   }
 
