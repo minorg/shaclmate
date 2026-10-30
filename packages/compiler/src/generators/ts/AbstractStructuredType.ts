@@ -85,7 +85,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     return this._function({
       type: () => this.toJsonObjectFunctionType(),
       unannotatedExpression: () => this.toJsonObjectFunctionExpression(),
-      unqualifiedName: "toJson",
+      unqualifiedName: "toJsonObject",
     });
   }
 
