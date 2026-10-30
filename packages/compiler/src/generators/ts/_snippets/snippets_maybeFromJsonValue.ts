@@ -11,12 +11,11 @@ export const snippets_maybeFromJsonValue: SnippetFactory = ({
     code`\
 function ${syntheticNamePrefix}maybeFromJsonValue<ItemJsonValueT, ItemT, ItemSchemaT>(itemFromJsonValue: ${snippets.FromJsonValueFunction}<ItemJsonValueT, ItemT, ItemSchemaT>): ${snippets.FromJsonValueFunction}<ItemJsonValueT | undefined, ${imports.Maybe}<ItemT>, ${snippets.MaybeSchema}<ItemSchemaT>> {
   return (value, options) => {
-    const { schema, ...otherOptions } = options;
-    const itemFromJsonValueOptions = { ...otherOptions, schema: schema.itemType };
     if (value === undefined) {
       return ${imports.Either}.of(${imports.Maybe}.empty());
     }
-    return itemFromJsonValue(value).map(value => ${imports.Maybe}.of(value));
+    const { schema, ...otherOptions } = options;
+    return itemFromJsonValue(value, { ...otherOptions, schema: schema.itemType }).map(value => ${imports.Maybe}.of(value));
   };
 }`,
   );

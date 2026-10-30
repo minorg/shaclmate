@@ -372,7 +372,7 @@ ${joinCode(
 
     if (this.configuration.features.has("Object.schema")) {
       staticModuleDeclarations["schema"] =
-        code`export const schema = ${this.schemaExpression}`;
+        code`export const schema = ${this.schemaExpression()}`;
       staticModuleDeclarations["Schema"] =
         code`export type Schema = typeof schema;`;
     }

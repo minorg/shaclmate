@@ -73,14 +73,14 @@ export class OptionType<
   @Memoize()
   override get fromJsonValueFunction(): AbstractContainerType<ItemTypeT>["fromJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.maybeFromJsonValue}(${this.itemType.fromJsonValueFunction})`,
+      code`${this.reusables.snippets.maybeFromJsonValue}(${this.itemType.fromJsonValueFunction.annotatedUsage})`,
     );
   }
 
   @Memoize()
   override get fromJsonObjectFunction(): AbstractContainerType<ItemTypeT>["fromJsonObjectFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.maybeFromJsonObject}(${this.itemType.fromJsonObjectFunction})`,
+      code`${this.reusables.snippets.maybeFromJsonObject}(${this.itemType.fromJsonObjectFunction.annotatedUsage})`,
     );
   }
 
@@ -122,14 +122,14 @@ export class OptionType<
   @Memoize()
   override get toJsonValueFunction(): AbstractContainerType<ItemTypeT>["toJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.maybeToJsonValue}(${this.itemType.toJsonValueFunction})`,
+      code`${this.reusables.snippets.maybeToJsonValue}(${this.itemType.toJsonValueFunction.annotatedUsage})`,
     );
   }
 
   @Memoize()
   override get toJsonObjectFunction(): AbstractContainerType<ItemTypeT>["toJsonObjectFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.maybeToJsonObject}(${this.itemType.toJsonObjectFunction})`,
+      code`${this.reusables.snippets.maybeToJsonObject}(${this.itemType.toJsonObjectFunction.annotatedUsage})`,
     );
   }
 

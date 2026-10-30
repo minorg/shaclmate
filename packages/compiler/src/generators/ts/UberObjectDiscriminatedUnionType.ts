@@ -54,7 +54,7 @@ export class UberObjectDiscriminatedUnionType {
     const staticModuleDeclarations: Code[] = [
       ...this.equalsFunctionDeclaration.toList(),
       ...this.hashFunctionDeclaration.toList(),
-      ...this.toJsonFunctionDeclaration.toList(),
+      ...this.toJsonObjectFunctionDeclaration.toList(),
       ...this.toRdfResourceFunctionDeclaration.toList(),
       ...this.toStringFunctionDeclaration.toList(),
     ];
@@ -103,19 +103,19 @@ ${this.memberTypeSwitch({
     return `${this.configuration.syntheticNamePrefix}Object`;
   }
 
-  private get toJsonFunctionDeclaration(): Maybe<Code> {
+  private get toJsonObjectFunctionDeclaration(): Maybe<Code> {
     if (!this.configuration.features.has("Object.toJson")) {
       return Maybe.empty();
     }
 
     if (this.members.length === 1) {
       return Maybe.of(
-        code`export const toJson = ${this.members[0].name.unsafeCoerce()}.toJson;`,
+        code`export const toJsonObject = ${this.members[0].name.unsafeCoerce()}.toJsonObject;`,
       );
     }
 
     return Maybe.of(code`\
-export function toJson(object: ${this.name}) {
+export function toJsonObject(object: ${this.name}) {
 ${this.memberTypeSwitch({
   caseBlock: (member) =>
     code`\

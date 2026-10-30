@@ -9,12 +9,12 @@ export const snippets_constrainPrimitive: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}constrainPrimitive`,
     code`\
-function constrainPrimitive<ConstrainedT extends UnconstrainedT, UnconstrainedT extends ${snippets.Primitive}>(
+function ${syntheticNamePrefix}constrainPrimitive<ConstrainedT extends UnconstrainedT, UnconstrainedT extends ${snippets.Primitive}>(
   value: UnconstrainedT,
   in_?: readonly ConstrainedT[],
 ): ${imports.Either}<Error, ConstrainedT | UnconstrainedT> {
   if (in_ && !in_.some((check) => value === check)) {
-    return ${imports.Left}(new Error(\"primitive \${value} does not match expected \${in_.map((_) => _.toString()).join(" | ")}\`));
+    return ${imports.Left}(new Error(\`primitive \${value} does not match expected \${in_.map((_) => _.toString()).join(" | ")}\`));
   }
   return ${imports.Either}.of<Error, UnconstrainedT>(value as ConstrainedT);
 }`,

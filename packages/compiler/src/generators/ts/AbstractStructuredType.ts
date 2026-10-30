@@ -72,7 +72,7 @@ export abstract class AbstractStructuredType extends AbstractType {
   @Memoize()
   override get schemaType(): Code {
     return this.name
-      .map(() => code`typeof ${this.schema}`)
+      .map((name) => code`${name}.Schema`)
       .orDefaultLazy(() => this.schemaTypeExpression());
   }
 

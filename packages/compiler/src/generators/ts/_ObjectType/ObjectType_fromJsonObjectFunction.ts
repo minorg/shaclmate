@@ -5,8 +5,13 @@ import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 export function ObjectType_fromJsonObjectFunctionExpression(
   this: ObjectType,
 ): Code {
+  const optionsVariable = code`options`;
+
   const variables = {
-    jsonObject: code`${this.configuration.syntheticNamePrefix}json`,
+    context: code`${optionsVariable}.context`,
+    jsonObject: code`${this.configuration.syntheticNamePrefix}jsonObject`,
+    objectSet: code`${optionsVariable}.objectSet`,
+    options: optionsVariable,
   };
 
   const propertyInitializers = this.properties.flatMap((property) =>
@@ -15,9 +20,9 @@ export function ObjectType_fromJsonObjectFunctionExpression(
   invariant(propertyInitializers.length > 0);
 
   return code`\
-(${variables.jsonObject}) => ${this.reusables.snippets.sequenceRecord}({ ${joinCode(propertyInitializers, { on: "," })} }).chain(${this.createFunction.annotatedUsage})`;
+(${variables.jsonObject}, ${variables.options}) => ${this.reusables.snippets.sequenceRecord}({ ${joinCode(propertyInitializers, { on: "," })} }).chain(${this.createFunction.annotatedUsage})`;
 }
 
 export function ObjectType_fromJsonObjectFunctionType(this: ObjectType): Code {
-  return code`${this.reusables.snippets.FromJsonObjectFunction}<${this.discriminatedExpression}, ${this.jsonObjectType.expression}>`;
+  return code`${this.reusables.snippets.FromJsonObjectFunction}<${this.jsonObjectType.expression}, ${this.discriminatedExpression}, ${this.schemaType}>`;
 }

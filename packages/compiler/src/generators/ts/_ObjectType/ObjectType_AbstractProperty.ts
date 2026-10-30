@@ -168,7 +168,9 @@ export abstract class ObjectType_AbstractProperty {
    */
   abstract fromJsonObjectInitializer(parameters: {
     variables: {
+      context: Code;
       jsonObject: Code;
+      options: Code;
     };
   }): Maybe<Code>;
 

@@ -93,14 +93,14 @@ export class ListType<
   @Memoize()
   override get fromJsonValueFunction(): AbstractCollectionType<ItemTypeT>["fromJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.arrayFromJsonArray}(${this.itemType.fromJsonValueFunction})`,
+      code`${this.reusables.snippets.arrayFromJsonArray}(${this.itemType.fromJsonValueFunction.annotatedUsage})`,
     );
   }
 
   @Memoize()
   override get fromJsonObjectFunction(): AbstractCollectionType<ItemTypeT>["fromJsonObjectFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.arrayFromJsonObject}(${this.itemType.fromJsonObjectFunction})`,
+      code`${this.reusables.snippets.arrayFromJsonObject}(${this.itemType.fromJsonObjectFunction.annotatedUsage})`,
     );
   }
 
@@ -114,14 +114,14 @@ export class ListType<
   @Memoize()
   override get toJsonValueFunction(): AbstractCollectionType<ItemTypeT>["toJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.arrayToJsonArray}(${this.itemType.toJsonValueFunction})`,
+      code`${this.reusables.snippets.arrayToJsonArray}(${this.itemType.toJsonValueFunction.annotatedUsage})`,
     );
   }
 
   @Memoize()
   override get toJsonObjectFunction(): AbstractCollectionType<ItemTypeT>["toJsonObjectFunction"] {
     return new InlineCallable(
-      code`${this.reusables.snippets.arrayToJsonObject}(${this.itemType.toJsonObjectFunction}, "@list")`,
+      code`${this.reusables.snippets.arrayToJsonObject}(${this.itemType.toJsonObjectFunction.annotatedUsage}, "@list")`,
     );
   }
 

@@ -9,8 +9,8 @@ export const snippets_primitiveFromJsonValue: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}primitiveFromJsonValue`,
     code`\
-function ${syntheticNamePrefix}primitiveFromJsonValue<PrimitiveT extends boolean | number | string>(jsonValue: PrimitiveT, options: Parameters<${snippets.FromJsonValueFunction}<FloatT, { readonly in?: readonly PrimitiveT[] }>>[1]): ${imports.Either}<Error, PrimitiveT> {
-  return ${imports.Either}.of<Error, PrimitiveT>(primitive)
-    .chain(value => ${snippets.constrainPrimitive}(value, schema.in));
+function ${syntheticNamePrefix}primitiveFromJsonValue<PrimitiveT extends boolean | number | string>(jsonValue: PrimitiveT, options: Parameters<${snippets.FromJsonValueFunction}<PrimitiveT, PrimitiveT, { readonly in?: readonly PrimitiveT[] }>>[1]): ${imports.Either}<Error, PrimitiveT> {
+  return ${imports.Either}.of<Error, PrimitiveT>(jsonValue)
+    .chain(primitiveValue => ${snippets.constrainPrimitive}(primitiveValue, options.schema.in));
 }`,
   );

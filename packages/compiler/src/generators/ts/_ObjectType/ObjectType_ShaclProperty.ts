@@ -329,7 +329,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["toJsonObjectInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: (${this.type.toJsonValueFunction})(${variables.object}.${this.name})`,
+      code`${this.name}: (${this.type.toJsonValueFunction.unannotatedUsage})(${variables.object}.${this.name})`,
     );
   }
 

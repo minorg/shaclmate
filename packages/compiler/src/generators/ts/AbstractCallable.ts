@@ -17,4 +17,8 @@ export abstract class AbstractCallable {
    * If the callable has an optional type annotation, it won't be included in the returned code.
    */
   abstract readonly unannotatedUsage: Code;
+
+  toString(): string {
+    throw new Error("should never call toString on a Callable");
+  }
 }
