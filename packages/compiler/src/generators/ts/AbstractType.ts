@@ -307,8 +307,8 @@ ${joinCode(
   }
 
   @Memoize()
-  protected schemaExpression(): Code {
-    return code`{ ${joinCode(this.schemaInitializers.concat(), { on: ", " })} }`;
+  get schemaVariable(): Maybe<Code> {
+    return this.name.map((name) => code`${name}.schema`);
   }
 
   /**
@@ -361,12 +361,19 @@ ${joinCode(
    */
   abstract toStringExpression(parameters: { variables: { value: Code } }): Code;
 
+  @Memoize()
+  protected schemaExpression(): Code {
+    return code`{ ${joinCode(this.schemaInitializers.concat(), { on: ", " })} }`;
+  }
+
   protected staticModuleDeclarations(_name: string): Record<string, Code> {
     const staticModuleDeclarations: Record<string, Code> = {};
 
     if (this.configuration.features.has("Object.schema")) {
       staticModuleDeclarations["schema"] =
         code`export const schema = ${this.schemaExpression}`;
+      staticModuleDeclarations["Schema"] =
+        code`export type Schema = typeof schema;`;
     }
 
     return staticModuleDeclarations;
