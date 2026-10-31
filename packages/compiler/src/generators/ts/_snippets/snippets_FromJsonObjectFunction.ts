@@ -13,7 +13,7 @@ export type ${syntheticNamePrefix}FromJsonObjectFunction<JsonObjectT extends obj
   jsonObject: JsonObjectT,
   options: {
     context?: unknown;
-    ${configuration.features.has("ObjectSet") ? code`objectSet: ${syntheticNamePrefix}ObjectSet;` : ""}
+    ${configuration.features.has("ObjectSet") ? code`objectSet?: ${syntheticNamePrefix}ObjectSet;` : ""}
     schema: ValueSchemaT;
   }
 ) => ${imports.Either}<Error, ValueT>;`,

@@ -206,6 +206,7 @@ import { snippets_maybeSparqlConstructTriples } from "./_snippets/snippets_maybe
 import { snippets_maybeSparqlWherePatterns } from "./_snippets/snippets_maybeSparqlWherePatterns.js";
 import { snippets_maybeToJsonObject } from "./_snippets/snippets_maybeToJsonObject.js";
 import { snippets_maybeToJsonValue } from "./_snippets/snippets_maybeToJsonValue.js";
+import { snippets_missingResolver } from "./_snippets/snippets_missingResolver.js";
 import { snippets_monkeyPatchObject } from "./_snippets/snippets_monkeyPatchObject.js";
 import { snippets_mutableListFromRdfResourceValues } from "./_snippets/snippets_mutableListFromRdfResourceValues.js";
 import { snippets_mutableSetFromRdfResourceValues } from "./_snippets/snippets_mutableSetFromRdfResourceValues.js";
@@ -1282,6 +1283,11 @@ export class Snippets {
   @Memoize()
   get maybeToJsonValue(): Snippet {
     return this.snippet(snippets_maybeToJsonValue);
+  }
+
+  @Memoize()
+  get missingResolver(): Snippet {
+    return this.snippet(snippets_missingResolver);
   }
 
   @Memoize()

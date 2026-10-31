@@ -389,9 +389,9 @@ interface $StringSchema<StringT extends string> {
   readonly kind: "String";
 }
 
-export type $ToJsonObjectFunction<T, JsonT extends object> = (
+export type $ToJsonObjectFunction<T, JsonObjectT extends object> = (
   value: T,
-) => JsonT;
+) => JsonObjectT;
 
 export type $ToJsonValueFunction<T, JsonValueT> = (value: T) => JsonValueT;
 
@@ -601,12 +601,6 @@ export namespace FormStruct {
       ])(parameters.object.nestedStructProperty, {
         ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
-        objectSchema: {
-          literals: ["", ".schema"],
-          placeholders: ["FormStruct"],
-          trim: false,
-          oneline: false,
-        },
         resource: parameters.resource,
         resourceSet: parameters.resourceSet,
         propertyPath: FormStruct.schema.properties.nestedStructProperty.path,

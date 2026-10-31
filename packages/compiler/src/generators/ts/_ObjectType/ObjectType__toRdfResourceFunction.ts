@@ -9,7 +9,6 @@ function ObjectType__toRdfResourceFunctionExpression(this: ObjectType): Code {
     ignoreRdfType: code`parameters.ignoreRdfType`,
     graph: code`parameters.graph`,
     object: code`parameters.object`,
-    objectSchema: this.schemaVariable,
     resource: code`parameters.resource`,
     resourceSet: code`parameters.resourceSet`,
   };

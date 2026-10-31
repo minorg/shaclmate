@@ -3,6 +3,7 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_LazyOption: SnippetFactory = ({
   imports,
+  snippets,
   syntheticNamePrefix,
 }) =>
   conditionalOutput(
@@ -35,7 +36,7 @@ export class ${syntheticNamePrefix}LazyOption<PartialT, ResolvedT> {
 
     return new ${syntheticNamePrefix}LazyOption({
       partial: partialMaybe,
-      resolver: async () => ${imports.Left}(new Error("unable to resolve partial"))
+      resolver: ${snippets.missingResolver}
     });
   }
 

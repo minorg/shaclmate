@@ -3,6 +3,7 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_LazySet: SnippetFactory = ({
   imports,
+  snippets,
   syntheticNamePrefix,
 }) =>
   conditionalOutput(
@@ -26,7 +27,7 @@ export class ${syntheticNamePrefix}LazySet<PartialT, ResolvedT> {
   static fromPartials<PartialT, ResolvedT>(partials: readonly PartialT[]): ${syntheticNamePrefix}LazySet<PartialT, ResolvedT> {
     return new ${syntheticNamePrefix}LazySet({
       partials,
-      resolver: async () => ${imports.Left}(new Error("unable to resolve partials"))
+      resolver: ${snippets.missingResolver}
     });
   }
 

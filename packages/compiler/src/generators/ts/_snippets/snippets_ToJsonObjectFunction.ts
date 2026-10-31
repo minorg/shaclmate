@@ -6,5 +6,5 @@ export const snippets_ToJsonObjectFunction: SnippetFactory = ({
 }) =>
   conditionalOutput(
     `${syntheticNamePrefix}ToJsonObjectFunction`,
-    code`export type ${syntheticNamePrefix}ToJsonObjectFunction<T, JsonT extends object> = (value: T) => JsonT;`,
+    code`export type ${syntheticNamePrefix}ToJsonObjectFunction<T, JsonObjectT extends object> = (value: T) => JsonObjectT;`,
   );
