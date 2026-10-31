@@ -36,7 +36,7 @@ export class ${syntheticNamePrefix}LazyOption<PartialT, ResolvedT> {
 
     return new ${syntheticNamePrefix}LazyOption({
       partial: partialMaybe,
-      resolver: ${snippets.missingResolver}
+      resolver: ${snippets.missingResolver}<ResolvedT>
     });
   }
 

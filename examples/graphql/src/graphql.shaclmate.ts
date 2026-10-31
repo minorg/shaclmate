@@ -449,16 +449,13 @@ interface $IdentifierFilter {
   readonly type?: "BlankNode" | "NamedNode";
 }
 
-function $identifierFromRdfResourceValues(
-  values: Resource.Values,
-  options: Parameters<
-    $FromRdfResourceValuesFunction<BlankNode | NamedNode, $IdentifierSchema>
-  >[1],
-): Either<Error, Resource.Values<BlankNode | NamedNode>> {
-  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+const $identifierFromRdfResourceValues: $FromRdfResourceValuesFunction<
+  BlankNode | NamedNode,
+  $IdentifierSchema
+> = (values, options) =>
+  $termLikeFromRdfResourceValues(values, options).chain((values) =>
     values.chainMap((value) => value.toIdentifier()),
   );
-}
 
 interface $IdentifierSchema {
   readonly hasValues?: readonly NamedNode[];
@@ -567,7 +564,7 @@ export class $LazyOption<PartialT, ResolvedT> {
 
     return new $LazyOption({
       partial: partialMaybe,
-      resolver: async () => Left(new Error("unable to resolve partial")),
+      resolver: $missingResolver<ResolvedT>,
     });
   }
 
@@ -612,7 +609,7 @@ export class $LazySet<PartialT, ResolvedT> {
   ): $LazySet<PartialT, ResolvedT> {
     return new $LazySet({
       partials,
-      resolver: async () => Left(new Error("unable to resolve partials")),
+      resolver: $missingResolver<readonly ResolvedT[]>,
     });
   }
 
@@ -672,6 +669,12 @@ interface $MaybeSchema<ItemSchemaT> {
   readonly kind: "Option";
 }
 
+async function $missingResolver<ResolvedT>(): Promise<
+  Either<Error, ResolvedT>
+> {
+  return Left(new Error("unable to resolve partial"));
+}
+
 function $monkeyPatchObject<T extends object>(
   obj: T,
   methods: { toJson?: (obj: T) => object; $toString?: (obj: T) => string },
@@ -719,10 +722,15 @@ interface $NumericFilter<T> {
 }
 
 interface $NumericSchema<T> {
+  readonly datatype: NamedNode;
   readonly hasValues?: readonly Literal[];
   readonly in?: readonly T[];
   readonly kind: "BigDecimal" | "BigInt" | "Float" | "Int";
 }
+
+export type $ObjectTypeGuardFunction<ObjectT extends $Object> = (
+  object: $Object,
+) => object is ObjectT;
 
 export function $parseBlankNode(identifier: string): Either<Error, BlankNode> {
   return $parseIdentifier(identifier).chain((identifier) =>
@@ -883,6 +891,7 @@ function $stringFromRdfResourceValues<StringT extends string>(
 }
 
 interface $StringSchema<StringT extends string> {
+  readonly datatype: NamedNode;
   readonly hasValues?: readonly Literal[];
   readonly in?: readonly StringT[];
   readonly languageIn?: readonly string[];
@@ -1086,6 +1095,10 @@ const $xsd_double = dataFactory.namedNode(
   "http://www.w3.org/2001/XMLSchema#double",
 );
 
+const $xsd_string = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#string",
+);
+
 export type $DefaultPartial = {
   readonly $identifier: () => $DefaultPartial.Identifier;
 };
@@ -1175,7 +1188,7 @@ export namespace $DefaultPartial {
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     $DefaultPartial.Discriminated,
-    typeof $DefaultPartial.schema
+    $DefaultPartial.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
@@ -1190,9 +1203,9 @@ export namespace $DefaultPartial {
     export const parse = $parseIdentifier;
   }
 
-  export const is$DefaultPartial = (
-    object: $Object,
-  ): object is $DefaultPartial.Discriminated =>
+  export const is$DefaultPartial: $ObjectTypeGuardFunction<
+    $DefaultPartial.Discriminated
+  > = (object): object is $DefaultPartial.Discriminated =>
     object.$type === "DefaultPartial";
 
   export const schema = {
@@ -1322,7 +1335,7 @@ export namespace AnonymousObject {
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     AnonymousObject.Discriminated,
-    typeof AnonymousObject.schema
+    AnonymousObject.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
@@ -1354,9 +1367,9 @@ export namespace AnonymousObject {
     export const parse = $parseBlankNode;
   }
 
-  export const isAnonymousObject = (
-    object: $Object,
-  ): object is AnonymousObject.Discriminated =>
+  export const isAnonymousObject: $ObjectTypeGuardFunction<
+    AnonymousObject.Discriminated
+  > = (object): object is AnonymousObject.Discriminated =>
     object.$type === "AnonymousObject";
 
   export const schema = {
@@ -1366,7 +1379,7 @@ export namespace AnonymousObject {
         path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
-        type: { kind: "String" as const },
+        type: { kind: "String" as const, datatype: $xsd_string },
       },
     },
   } as const;
@@ -1622,7 +1635,7 @@ export namespace LazyObject {
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     LazyObject.Discriminated,
-    typeof LazyObject.schema
+    LazyObject.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
@@ -1675,9 +1688,10 @@ export namespace LazyObject {
     export const parse = $parseIdentifier;
   }
 
-  export const isLazyObject = (
-    object: $Object,
-  ): object is LazyObject.Discriminated => object.$type === "LazyObject";
+  export const isLazyObject: $ObjectTypeGuardFunction<
+    LazyObject.Discriminated
+  > = (object): object is LazyObject.Discriminated =>
+    object.$type === "LazyObject";
 
   export const schema = {
     properties: {
@@ -1695,7 +1709,10 @@ export namespace LazyObject {
         path: dataFactory.namedNode(
           "http://example.com/optionalNumberProperty",
         ),
-        type: { kind: "Option" as const, itemType: { kind: "Float" as const } },
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "Float" as const, datatype: $xsd_double },
+        },
       },
       optionalStringProperty: {
         kind: "Shacl",
@@ -1704,7 +1721,7 @@ export namespace LazyObject {
         ),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       requiredStringProperty: {
@@ -1712,7 +1729,7 @@ export namespace LazyObject {
         path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
-        type: { kind: "String" as const },
+        type: { kind: "String" as const, datatype: $xsd_string },
       },
     },
   } as const;
@@ -1798,7 +1815,7 @@ export namespace RootObject {
         $LazySet<$DefaultPartial, LazyObject>,
         {
           kind: "LazySet";
-          partialType: $CollectionSchema<typeof $DefaultPartial.schema>;
+          partialType: $CollectionSchema<$DefaultPartial.Schema>;
         }
       >({
         ...options,
@@ -1809,10 +1826,9 @@ export namespace RootObject {
           values,
           { objectSet, schema, ...otherOptions },
         ) =>
-          $setFromRdfResourceValues<
-            $DefaultPartial,
-            typeof $DefaultPartial.schema
-          >($DefaultPartial.fromRdfResourceValues)(values, {
+          $setFromRdfResourceValues<$DefaultPartial, $DefaultPartial.Schema>(
+            $DefaultPartial.fromRdfResourceValues,
+          )(values, {
             ...otherOptions,
             objectSet,
             schema: schema.partialType,
@@ -1836,7 +1852,7 @@ export namespace RootObject {
         $LazyOption<$DefaultPartial, LazyObject>,
         {
           kind: "LazyOption";
-          partialType: $MaybeSchema<typeof $DefaultPartial.schema>;
+          partialType: $MaybeSchema<$DefaultPartial.Schema>;
         }
       >({
         ...options,
@@ -1847,10 +1863,9 @@ export namespace RootObject {
           values,
           { objectSet, schema, ...otherOptions },
         ) =>
-          $maybeFromRdfResourceValues<
-            $DefaultPartial,
-            typeof $DefaultPartial.schema
-          >($DefaultPartial.fromRdfResourceValues)(values, {
+          $maybeFromRdfResourceValues<$DefaultPartial, $DefaultPartial.Schema>(
+            $DefaultPartial.fromRdfResourceValues,
+          )(values, {
             ...otherOptions,
             objectSet,
             schema: schema.partialType,
@@ -1867,7 +1882,7 @@ export namespace RootObject {
       }),
       optionalObjectProperty: $shaclPropertyFromRdf<
         Maybe<AnonymousObject>,
-        $MaybeSchema<typeof AnonymousObject.schema>
+        $MaybeSchema<AnonymousObject.Schema>
       >({
         ...options,
         focusResource: resource,
@@ -1875,7 +1890,7 @@ export namespace RootObject {
         propertySchema: RootObject.schema.properties.optionalObjectProperty,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           AnonymousObject,
-          typeof AnonymousObject.schema
+          AnonymousObject.Schema
         >(AnonymousObject.fromRdfResourceValues),
       }),
       optionalStringProperty: $shaclPropertyFromRdf<
@@ -2121,7 +2136,7 @@ export namespace RootObject {
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     RootObject.Discriminated,
-    typeof RootObject.schema
+    RootObject.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
@@ -2196,9 +2211,10 @@ export namespace RootObject {
     export const parse = $parseIri;
   }
 
-  export const isRootObject = (
-    object: $Object,
-  ): object is RootObject.Discriminated => object.$type === "RootObject";
+  export const isRootObject: $ObjectTypeGuardFunction<
+    RootObject.Discriminated
+  > = (object): object is RootObject.Discriminated =>
+    object.$type === "RootObject";
 
   export const schema = {
     properties: {
@@ -2263,7 +2279,7 @@ export namespace RootObject {
         ),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       requiredStringProperty: {
@@ -2271,7 +2287,7 @@ export namespace RootObject {
         path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
-        type: { kind: "String" as const },
+        type: { kind: "String" as const, datatype: $xsd_string },
       },
     },
   } as const;
@@ -2451,7 +2467,7 @@ export namespace UnionMember1 {
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     UnionMember1.Discriminated,
-    typeof UnionMember1.schema
+    UnionMember1.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
@@ -2489,9 +2505,10 @@ export namespace UnionMember1 {
     export const parse = $parseIdentifier;
   }
 
-  export const isUnionMember1 = (
-    object: $Object,
-  ): object is UnionMember1.Discriminated => object.$type === "UnionMember1";
+  export const isUnionMember1: $ObjectTypeGuardFunction<
+    UnionMember1.Discriminated
+  > = (object): object is UnionMember1.Discriminated =>
+    object.$type === "UnionMember1";
 
   export const schema = {
     properties: {
@@ -2509,7 +2526,10 @@ export namespace UnionMember1 {
         path: dataFactory.namedNode(
           "http://example.com/optionalNumberProperty",
         ),
-        type: { kind: "Option" as const, itemType: { kind: "Float" as const } },
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "Float" as const, datatype: $xsd_double },
+        },
       },
     },
   } as const;
@@ -2689,7 +2709,7 @@ export namespace UnionMember2 {
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     UnionMember2.Discriminated,
-    typeof UnionMember2.schema
+    UnionMember2.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
@@ -2727,9 +2747,10 @@ export namespace UnionMember2 {
     export const parse = $parseIdentifier;
   }
 
-  export const isUnionMember2 = (
-    object: $Object,
-  ): object is UnionMember2.Discriminated => object.$type === "UnionMember2";
+  export const isUnionMember2: $ObjectTypeGuardFunction<
+    UnionMember2.Discriminated
+  > = (object): object is UnionMember2.Discriminated =>
+    object.$type === "UnionMember2";
 
   export const schema = {
     properties: {
@@ -2749,7 +2770,7 @@ export namespace UnionMember2 {
         ),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
     },
@@ -2851,7 +2872,7 @@ export namespace Union {
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     Union,
-    typeof Union.schema
+    Union.Schema
   > = (inputValues, options) => {
     const memberInputValues: Resource.Values[] = Array.from({ length: 2 }).map(
       () =>
@@ -2943,11 +2964,10 @@ export namespace Union {
     export const parse = $parseIdentifier;
   }
 
-  export function isUnion(object: $Object): object is Union {
-    return (
-      UnionMember1.isUnionMember1(object) || UnionMember2.isUnionMember2(object)
-    );
-  }
+  export const isUnion: $ObjectTypeGuardFunction<Union> = (
+    object,
+  ): object is Union =>
+    UnionMember1.isUnionMember1(object) || UnionMember2.isUnionMember2(object);
 
   export const schema = {
     kind: "ObjectDiscriminatedUnion" as const,
@@ -2963,6 +2983,8 @@ export namespace Union {
     },
     properties: {},
   } as const;
+
+  export type Schema = typeof schema;
 
   export const toRdfResource: $ToRdfResourceFunction<
     Union.Identifier,

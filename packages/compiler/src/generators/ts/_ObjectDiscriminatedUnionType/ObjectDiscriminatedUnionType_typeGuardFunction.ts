@@ -13,8 +13,8 @@ export function ObjectDiscriminatedUnionType_typeGuardFunction(
 
   return Maybe.of(
     this._function({
-      type: code`(object: ${this.configuration.syntheticNamePrefix}Object): object is ${this.expression}`,
-      unannotatedExpression: code`(object) => ${joinCode(
+      type: code`${this.reusables.snippets.ObjectTypeGuardFunction}<${this.expression}>`,
+      unannotatedExpression: code`(object): object is ${this.expression} => ${joinCode(
         this.members.map(
           (member) =>
             code`${member.type.name.unsafeCoerce()}.is${member.type.name.unsafeCoerce()}(object)`,

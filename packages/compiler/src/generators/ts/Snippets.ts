@@ -46,6 +46,7 @@ import { snippets_MaybeSchema } from "./_snippets/snippets_MaybeSchema.js";
 import { snippets_NamespaceBuilder } from "./_snippets/snippets_NamespaceBuilder.js";
 import { snippets_NumericFilter } from "./_snippets/snippets_NumericFilter.js";
 import { snippets_NumericSchema } from "./_snippets/snippets_NumericSchema.js";
+import { snippets_ObjectTypeGuardFunction } from "./_snippets/snippets_ObjectTypeGuardFunction.js";
 import { snippets_Primitive } from "./_snippets/snippets_Primitive.js";
 import { snippets_ProblemDetailsJson } from "./_snippets/snippets_ProblemDetailsJson.js";
 import { snippets_PropertyPath } from "./_snippets/snippets_PropertyPath.js";
@@ -483,6 +484,11 @@ export class Snippets {
   @Memoize()
   get NumericSchema(): Snippet {
     return this.snippet(snippets_NumericSchema);
+  }
+
+  @Memoize()
+  get ObjectTypeGuardFunction(): Snippet {
+    return this.snippet(snippets_ObjectTypeGuardFunction);
   }
 
   @Memoize()

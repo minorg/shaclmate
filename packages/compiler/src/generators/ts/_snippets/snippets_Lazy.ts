@@ -27,7 +27,7 @@ export class ${syntheticNamePrefix}Lazy<PartialT, ResolvedT> {
   static fromPartial<PartialT, ResolvedT>(partial: PartialT): ${syntheticNamePrefix}Lazy<PartialT, ResolvedT> {
     return new ${syntheticNamePrefix}Lazy({
       partial,
-      resolver: ${snippets.missingResolver}
+      resolver: ${snippets.missingResolver}<ResolvedT>
     });
   }
 

@@ -27,7 +27,7 @@ export class ${syntheticNamePrefix}LazySet<PartialT, ResolvedT> {
   static fromPartials<PartialT, ResolvedT>(partials: readonly PartialT[]): ${syntheticNamePrefix}LazySet<PartialT, ResolvedT> {
     return new ${syntheticNamePrefix}LazySet({
       partials,
-      resolver: ${snippets.missingResolver}
+      resolver: ${snippets.missingResolver}<readonly ResolvedT[]>
     });
   }
 

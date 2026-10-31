@@ -19,8 +19,8 @@ export function ObjectType_typeGuardFunction(
 
   return Maybe.of(
     this._function({
-      type: code`(object: ${this.configuration.syntheticNamePrefix}Object) => object is ${this.discriminatedExpression}`,
-      unannotatedExpression: code`(object): object is ${this.discriminatedExpression} => object.${discriminantProperty.name} === ${literalOf(discriminantProperty.value)})`,
+      type: code`${this.reusables.snippets.ObjectTypeGuardFunction}<${this.discriminatedExpression}>`,
+      unannotatedExpression: code`(object): object is ${this.discriminatedExpression} => object.${discriminantProperty.name} === ${literalOf(discriminantProperty.value)}`,
       unqualifiedName: `is${name}`,
     }),
   );

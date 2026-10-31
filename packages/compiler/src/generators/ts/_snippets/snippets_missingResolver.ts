@@ -7,5 +7,5 @@ export const snippets_missingResolver: SnippetFactory = ({
 }) =>
   conditionalOutput(
     `${syntheticNamePrefix}missingResolver`,
-    code`async function missingResolver<ResolvedT>(): Promise<${imports.Either}<Error, ResolvedT>> { return ${imports.Left}(new Error("unable to resolve partial")); }`,
+    code`async function ${syntheticNamePrefix}missingResolver<ResolvedT>(): Promise<${imports.Either}<Error, ResolvedT>> { return ${imports.Left}(new Error("unable to resolve partial")); }`,
   );
