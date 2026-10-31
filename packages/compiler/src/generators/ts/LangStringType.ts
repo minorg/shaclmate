@@ -3,6 +3,7 @@ import type { Literal } from "@rdfjs/types";
 import { Maybe } from "purify-ts";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 export class LangStringType extends AbstractLiteralType {
@@ -21,19 +22,42 @@ export class LangStringType extends AbstractLiteralType {
         },
       ],
     });
-  override readonly filterFunction =
-    code`${this.reusables.snippets.filterLiteral}`;
+  override readonly jsonObjectType: AbstractLiteralType["jsonObjectType"] =
+    this.jsonTypeFactory.createJsonObjectType(
+      {
+        "@language": {
+          type: this.jsonTypeFactory.createJsonStringType({ minLength: 1n }),
+        },
+        "@value": { type: this.jsonTypeFactory.createJsonStringType() },
+      },
+      { snippet: this.reusables.snippets.LangStringJsonObject },
+    );
+  override readonly jsonValueType: AbstractLiteralType["jsonValueType"] =
+    this.jsonObjectType;
+  override readonly filterFunction = new ReferenceCallable(
+    this.reusables.snippets.filterLiteral,
+  );
   override readonly filterType = code`${this.reusables.snippets.LiteralFilter}`;
-  override readonly fromRdfResourceValuesFunction =
-    code`${this.reusables.snippets.langStringFromRdfResourceValues}`;
+  override readonly fromJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.langStringFromJsonObject,
+  );
+  override readonly fromJsonValueFunction = this.fromJsonObjectFunction;
+  override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
+    this.reusables.snippets.langStringFromRdfResourceValues,
+  );
   override readonly jsTypes = [
     { instanceof: "Object", typeof: "object" },
   ] as const;
   override readonly kind = "LangString";
   override readonly schemaType =
     code`${this.reusables.snippets.LangStringSchema}`;
-  override readonly valueSparqlWherePatternsFunction =
-    code`${this.reusables.snippets.langStringSparqlWherePatterns}`;
+  override readonly toJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.langStringToJsonObject,
+  );
+  override readonly toJsonValueFunction = this.toJsonObjectFunction;
+  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
+    this.reusables.snippets.langStringSparqlWherePatterns,
+  );
 
   constructor({
     languageIn,
@@ -59,47 +83,19 @@ export class LangStringType extends AbstractLiteralType {
     return initializers;
   }
 
-  override fromJsonExpression({
-    variables,
-  }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${this.reusables.imports.dataFactory}.literal(${variables.value}["@value"], ${variables.value}["@language"]))`;
-  }
-
   override graphqlResolveExpression(
     _parameters: Parameters<AbstractLiteralType["graphqlResolveExpression"]>[0],
   ): Code {
     throw new Error("not implemented");
   }
 
-  override jsonSchema({
-    includeDiscriminantProperty,
-  }: Parameters<AbstractLiteralType["jsonSchema"]>[0]): Code {
-    const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${this.reusables.imports.z}.literal("Literal")`
-      : "";
-
-    return code`${this.reusables.imports.z}.object({ "@language": ${this.reusables.imports.z}.string()${discriminantProperty}, "@value": ${this.reusables.imports.z}.string() })`;
-  }
-
-  override jsonType(
-    parameters?: Parameters<AbstractLiteralType["jsonType"]>[0],
-  ): AbstractLiteralType.JsonType {
-    const discriminantProperty = parameters?.includeDiscriminantProperty
-      ? `, readonly termType: "Literal"`
-      : "";
-    return new AbstractLiteralType.JsonType(
-      code`{ readonly "@language": string${discriminantProperty}, readonly "@value": string }`,
-    );
+  override toLoggableExpression({
+    variables,
+  }: Parameters<AbstractLiteralType["toLoggableExpression"]>[0]): Code {
+    return code`\`\${JSON.stringify(${variables.value}.value)}@\${${variables.value}.language}\``;
   }
 
   override valueExpression(literal: Literal): Code {
     return this.rdfjsTermExpression(literal);
-  }
-
-  override toJsonExpression({
-    includeDiscriminantProperty,
-    variables,
-  }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
-    return code`{ "@language": ${variables.value}.language${includeDiscriminantProperty ? `, "termType": "Literal" as const` : ""}, "@value": ${variables.value}.value }`;
   }
 }

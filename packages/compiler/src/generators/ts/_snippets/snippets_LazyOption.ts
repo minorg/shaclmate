@@ -23,6 +23,22 @@ export class ${syntheticNamePrefix}LazyOption<PartialT, ResolvedT> {
     this.resolver = resolver;
   }
 
+  static fromPartial<PartialT, ResolvedT>(partial: PartialT | ${imports.Maybe}<PartialT> | undefined): ${syntheticNamePrefix}LazyOption<PartialT, ResolvedT> {
+    let partialMaybe: ${imports.Maybe}<PartialT>;
+    if (typeof partial === "undefined") {
+      partialMaybe = ${imports.Maybe}.empty();
+    } else if (${imports.Maybe}.isMaybe(partial)) {
+      partialMaybe = partial;
+    } else {
+      partialMaybe = ${imports.Maybe}.of(partial);
+    }
+
+    return new ${syntheticNamePrefix}LazyOption({
+      partial: partialMaybe,
+      resolver: async () => ${imports.Left}(new Error("unable to resolve partial"))
+    });
+  }
+
   async resolve(options?: { preferredLanguages?: readonly string[] }): Promise<${imports.Either}<Error, ${imports.Maybe}<ResolvedT>>> {
     if (this.partial.isNothing()) {
       return ${imports.Right}(${imports.Maybe}.empty());

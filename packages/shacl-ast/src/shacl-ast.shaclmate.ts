@@ -11,7 +11,7 @@ import {
   PropertyPath as RdfxResourcePropertyPath,
   Resource,
 } from "@rdfx/resource";
-import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
+import { NTriplesIdentifier } from "@rdfx/string";
 import { Either, Left, Maybe, Right } from "purify-ts";
 
 type $_FromRdfResourceFunction<T> = (
@@ -283,7 +283,7 @@ function $ensureRdfResourceType(
   options: { graph: Exclude<Quad_Graph, Variable> | undefined },
 ): Either<Error, undefined> {
   return resource
-    .value($RdfVocabularies.rdf.type, options)
+    .value($rdf_type, options)
     .chain((actualRdfTypeValue) => actualRdfTypeValue.toIri())
     .chain((actualRdfType) => {
       // Check the expected type and its known subtypes
@@ -528,87 +528,38 @@ export namespace $PropertyPath {
   export const $toString = RdfxResourcePropertyPath.toString;
 }
 
+const $rdf_subject = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+);
+
+const $rdf_type = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+);
+
 function $rdfResourceIdentifierValues(resource: Resource): Resource.Values {
   return new Resource.Value({
     dataFactory: dataFactory,
     focusResource: resource,
-    propertyPath: $RdfVocabularies.rdf.subject,
+    propertyPath: $rdf_subject,
     term: resource.identifier,
   }).toValues();
 }
 
-namespace $RdfVocabularies {
-  export const rdf = {
-    first: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-    ),
-    langString: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString",
-    ),
-    nil: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-    ),
-    rest: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-    ),
-    subject: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-    ),
-    type: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-    ),
-  };
+const $rdfs_comment = dataFactory.namedNode(
+  "http://www.w3.org/2000/01/rdf-schema#comment",
+);
 
-  export const rdfs = {
-    subClassOf: dataFactory.namedNode(
-      "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-    ),
-  };
+const $rdfs_isDefinedBy = dataFactory.namedNode(
+  "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
+);
 
-  export const xsd = {
-    boolean: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean"),
-    byte: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#byte"),
-    date: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date"),
-    dateTime: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#dateTime",
-    ),
-    dateTimeStamp: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#dateTimeStamp",
-    ),
-    decimal: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal"),
-    double: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double"),
-    float: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#float"),
-    int: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#int"),
-    integer: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer"),
-    long: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#long"),
-    negativeInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#negativeInteger",
-    ),
-    nonNegativeInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
-    ),
-    nonPositiveInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
-    ),
-    positiveInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#positiveInteger",
-    ),
-    short: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#short"),
-    string: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#string"),
-    unsignedByte: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedByte",
-    ),
-    unsignedInt: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedInt",
-    ),
-    unsignedLong: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedLong",
-    ),
-    unsignedShort: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedShort",
-    ),
-  };
-}
+const $rdfs_label = dataFactory.namedNode(
+  "http://www.w3.org/2000/01/rdf-schema#label",
+);
+
+const $rdfs_subClassOf = dataFactory.namedNode(
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+);
 
 function $sequenceRecord<T extends Record<string, unknown>>(
   record: { [K in keyof T]: Either<Error, T[K]> },
@@ -884,6 +835,7 @@ function $wrap_FromRdfResourceFunction<T>(
     });
   };
 }
+
 export type NodeShape = {
   readonly $identifier: () => NodeShape.Identifier;
 
@@ -986,7 +938,7 @@ export namespace NodeShape {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: NodeShape.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -2197,7 +2149,6 @@ export namespace NodeShape {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isNodeShape = (object: $Object): object is NodeShape =>
@@ -2245,9 +2196,7 @@ export namespace NodeShape {
       },
       comment: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
+        path: $rdfs_comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -2311,9 +2260,7 @@ export namespace NodeShape {
       },
       isDefinedBy: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-        ),
+        path: $rdfs_isDefinedBy,
         type: {
           kind: "Option" as const,
           itemType: { kind: "Identifier" as const },
@@ -2321,9 +2268,7 @@ export namespace NodeShape {
       },
       label: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
+        path: $rdfs_label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -2475,7 +2420,7 @@ export namespace NodeShape {
       },
       subClassOf: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.subClassOf,
+        path: $rdfs_subClassOf,
         type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
       targetClasses: {
@@ -2507,7 +2452,7 @@ export namespace NodeShape {
       },
       types: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdf.type,
+        path: $rdf_type,
         type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
       xone: {
@@ -2534,6 +2479,7 @@ export namespace NodeShape {
       label: _nodeShape.label.map((item) => item.toString()).extract(),
     });
 }
+
 export type Ontology = {
   readonly $identifier: () => Ontology.Identifier;
 
@@ -2563,7 +2509,7 @@ export namespace Ontology {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: Ontology.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -2671,7 +2617,6 @@ export namespace Ontology {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isOntology = (object: $Object): object is Ontology =>
@@ -2695,9 +2640,7 @@ export namespace Ontology {
       $type: { kind: "Discriminant", value: "Ontology" },
       comment: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
+        path: $rdfs_comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -2705,9 +2648,7 @@ export namespace Ontology {
       },
       label: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
+        path: $rdfs_label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -2725,6 +2666,7 @@ export namespace Ontology {
         label: _ontology.label.map((item) => item.toString()).extract(),
       });
 }
+
 export type PropertyGroup = {
   readonly $identifier: () => PropertyGroup.Identifier;
 
@@ -2756,7 +2698,7 @@ export namespace PropertyGroup {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: PropertyGroup.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -2865,7 +2807,6 @@ export namespace PropertyGroup {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isPropertyGroup = (object: $Object): object is PropertyGroup =>
@@ -2889,9 +2830,7 @@ export namespace PropertyGroup {
       $type: { kind: "Discriminant", value: "PropertyGroup" },
       comment: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
+        path: $rdfs_comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -2899,9 +2838,7 @@ export namespace PropertyGroup {
       },
       label: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
+        path: $rdfs_label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -2920,6 +2857,7 @@ export namespace PropertyGroup {
       label: _propertyGroup.label.map((item) => item.toString()).extract(),
     });
 }
+
 export type PropertyShape = {
   readonly $identifier: () => PropertyShape.Identifier;
 
@@ -3048,7 +2986,7 @@ export namespace PropertyShape {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: PropertyShape.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -4549,7 +4487,6 @@ export namespace PropertyShape {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isPropertyShape = (object: $Object): object is PropertyShape =>
@@ -4589,9 +4526,7 @@ export namespace PropertyShape {
       },
       comment: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
+        path: $rdfs_comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -4676,9 +4611,7 @@ export namespace PropertyShape {
       },
       isDefinedBy: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-        ),
+        path: $rdfs_isDefinedBy,
         type: {
           kind: "Option" as const,
           itemType: { kind: "Identifier" as const },
@@ -4686,9 +4619,7 @@ export namespace PropertyShape {
       },
       label: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
+        path: $rdfs_label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -4979,6 +4910,7 @@ export namespace PropertyShape {
       path: $PropertyPath.$toString(_propertyShape.path),
     });
 }
+
 export type Severity = NamedNode<(typeof Severity.schema)["inValues"][number]>;
 
 export namespace Severity {
@@ -4994,6 +4926,7 @@ export namespace Severity {
     inValues,
   };
 }
+
 export type ValidationReport = {
   readonly $identifier: () => ValidationReport.Identifier;
 
@@ -5027,7 +4960,7 @@ export namespace ValidationReport {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: ValidationReport.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -5150,7 +5083,6 @@ export namespace ValidationReport {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isValidationReport = (
@@ -5210,6 +5142,7 @@ export namespace ValidationReport {
   ) => Record<string, string> = (_validationReport) =>
     $compactRecord({ $identifier: _validationReport.$identifier().toString() });
 }
+
 export type ValidationResult = {
   readonly $identifier: () => ValidationResult.Identifier;
 
@@ -5253,7 +5186,7 @@ export namespace ValidationResult {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: ValidationResult.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -5507,7 +5440,6 @@ export namespace ValidationResult {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isValidationResult = (
@@ -5614,6 +5546,7 @@ export namespace ValidationResult {
   ) => Record<string, string> = (_validationResult) =>
     $compactRecord({ $identifier: _validationResult.$identifier().toString() });
 }
+
 export type Shape = NodeShape | PropertyShape;
 
 export namespace Shape {
@@ -5730,7 +5663,6 @@ export namespace Shape {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export function isShape(object: $Object): object is Shape {
@@ -5767,9 +5699,7 @@ export namespace Shape {
       },
       comment: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
+        path: $rdfs_comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -5820,9 +5750,7 @@ export namespace Shape {
       },
       isDefinedBy: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-        ),
+        path: $rdfs_isDefinedBy,
         type: {
           kind: "Option" as const,
           itemType: { kind: "Identifier" as const },
@@ -5830,9 +5758,7 @@ export namespace Shape {
       },
       label: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
+        path: $rdfs_label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -6015,6 +5941,7 @@ export namespace Shape {
     },
   } as const;
 }
+
 export type $Object =
   | NodeShape
   | Ontology

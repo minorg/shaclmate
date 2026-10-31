@@ -3,7 +3,9 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
-import type { AbstractContainerType } from "./AbstractContainerType.js";
+import type { Callable } from "./Callable.js";
+import { InlineCallable } from "./InlineCallable.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import type { Snippet } from "./Snippet.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -33,13 +35,24 @@ export class SetType<
   }
 
   @Memoize()
+  override get jsonValueType(): AbstractCollectionType<ItemTypeT>["jsonValueType"] {
+    return this.jsonTypeFactory.createJsonArrayType(
+      this.itemType.jsonValueType,
+      {
+        minCount: this.minCount,
+        name: this.name.map((name) => [name, "Json"]).extract(),
+      },
+    );
+  }
+
+  @Memoize()
   override get conversionFunction(): Maybe<AbstractCollectionType.ConversionFunction> {
     const itemConversionFunction = this.itemType.conversionFunction.orDefault(
       this.itemConversionFunctionDefault,
     );
 
     let conversionFunction: Snippet;
-    const sourceTypes: AbstractContainerType.ConversionFunction["sourceTypes"] =
+    const sourceTypes: AbstractCollectionType.ConversionFunction["sourceTypes"] =
       [];
 
     if (
@@ -85,9 +98,37 @@ export class SetType<
     });
   }
 
+  override get jsonObjectType(): AbstractCollectionType<ItemTypeT>["jsonObjectType"] {
+    throw new Error("should never be called");
+  }
+
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return code`${this._mutable ? this.reusables.snippets.mutableSetFromRdfResourceValues : this.reusables.snippets.setFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
+  override get fromJsonValueFunction(): AbstractCollectionType<ItemTypeT>["fromJsonValueFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.arrayFromJsonArray}(${this.itemType.fromJsonValueFunction.annotatedUsage})`,
+    );
+  }
+
+  override get fromJsonObjectFunction(): AbstractCollectionType<ItemTypeT>["fromJsonObjectFunction"] {
+    throw new Error("should never be called");
+  }
+
+  @Memoize()
+  override get fromRdfResourceValuesFunction(): Callable {
+    return new InlineCallable(
+      code`${this._mutable ? this.reusables.snippets.mutableSetFromRdfResourceValues : this.reusables.snippets.setFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
+    );
+  }
+
+  @Memoize()
+  override get toJsonValueFunction(): AbstractCollectionType<ItemTypeT>["toJsonValueFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.arrayToJsonArray}(${this.itemType.toJsonValueFunction.annotatedUsage})`,
+    );
+  }
+
+  override get toJsonObjectFunction(): AbstractCollectionType<ItemTypeT>["toJsonObjectFunction"] {
+    throw new Error("should never be called");
   }
 
   override get toRdfResourceValueTypes(): AbstractCollectionType<ItemTypeT>["toRdfResourceValueTypes"] {
@@ -95,13 +136,17 @@ export class SetType<
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${this.reusables.snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
+  override get valueSparqlConstructTriplesFunction(): Callable {
+    return new InlineCallable(
+      code`${this.reusables.snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction.unannotatedUsage})`,
+    );
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.reusables.snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+  override get valueSparqlWherePatternsFunction(): Callable {
+    return new InlineCallable(
+      code`${this.reusables.snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
+    );
   }
 
   protected override get schemaInitializers() {
@@ -112,46 +157,6 @@ export class SetType<
       );
     }
     return schemaInitializers;
-  }
-
-  override fromJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractContainerType<ItemTypeT>["fromJsonExpression"]
-  >[0]): Code {
-    let expression = variables.value;
-    if (this.minCount === 0n) {
-      expression = code`(${expression} ?? [])`;
-    }
-    return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.expression}>(${expression}.map(item => (${this.itemType.fromJsonExpression(
-      {
-        variables: { value: code`item` },
-      },
-    )})))`;
-  }
-
-  override jsonSchema(
-    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
-  ): Code {
-    let schema = code`${this.itemType.jsonSchema(parameters)}.array()`;
-    if (this.minCount > 0n) {
-      schema = code`${schema}.nonempty().min(${this.minCount})`;
-    } else {
-      schema = code`${schema}.optional()`;
-    }
-    if (!this._mutable) {
-      schema = code`${schema}.readonly()`;
-    }
-    return schema;
-  }
-
-  @Memoize()
-  override jsonType(): AbstractCollectionType.JsonType {
-    const name = code`${!this.mutable ? "readonly " : ""}(${this.itemType.jsonType().expression})[]`;
-    if (this.minCount === 0n) {
-      return new AbstractCollectionType.JsonType(name, { optional: true });
-    }
-    return new AbstractCollectionType.JsonType(name);
   }
 
   override toRdfResourceValuesExpression({

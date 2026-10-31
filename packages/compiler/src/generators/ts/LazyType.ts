@@ -1,6 +1,7 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractLazyType } from "./AbstractLazyType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -8,6 +9,9 @@ export class LazyType extends AbstractLazyType<
   AbstractLazyType.ItemTypeConstraint,
   AbstractLazyType.ItemTypeConstraint
 > {
+  protected readonly partialItemType = this.partialType;
+  protected readonly resolveItemType = this.resolveType;
+
   override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.empty();
   override readonly kind = "Lazy";
 
@@ -22,17 +26,12 @@ ${this.reusables.snippets.convertToLazy}<
   ${this.partialType.expression},
   ${this.resolveType.expression}
 >(
-  ${this.partialType.typeGuardFunction.unsafeCoerce()},
   ${this.resolveToPartialFunction({ partialType: this.partialType, resolveType: this.resolveType })}
 )`,
       sourceTypes: [
         {
           expression: this.expression,
           jsType: this.jsTypes[0],
-        },
-        {
-          expression: this.partialType.expression,
-          jsType: this.partialType.jsTypes[0],
         },
         {
           expression: this.resolveType.expression,
@@ -51,28 +50,18 @@ ${this.reusables.snippets.convertToLazy}<
     };
   }
 
-  override fromJsonExpression(
-    parameters: Parameters<Super["fromJsonExpression"]>[0],
-  ): Code {
-    return code`${this.partialType.fromJsonExpression(parameters)}.map(partial => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: partial, resolver: (partial) => Promise.resolve(${this.reusables.imports.Left}(new Error(\`unable to resolve \${partial} deserialized from JSON\`))) }))`;
-  }
-
-  @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return code`\
-(
-    (
-      (values, { objectSet, schema, ...otherOptions }) =>
-        ${this.partialType.fromRdfResourceValuesFunction}(values, { ...otherOptions, objectSet, schema: schema.partialType })
-          .map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (partial, options) => objectSet.${this.resolveType.objectSetMethodNames.object}(partial.${this.configuration.syntheticNamePrefix}identifier(), options) })))
-    ) satisfies ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>
-)`;
-  }
-
   override graphqlResolveExpression({
     variables,
   }: Parameters<Super["graphqlResolveExpression"]>[0]): Code {
     return code`${variables.value}.resolve().then(either => either.unsafeCoerce())`;
+  }
+
+  protected override objectSetResolverFunctionExpressions({
+    variables,
+  }: {
+    variables: { objectSet: Code };
+  }): Code {
+    return code`(partial, options) => ${variables.objectSet}.${this.resolveItemType.objectSetMethodNames.object}(partial.${this.partialItemType.identifierProperty.unsafeCoerce().name}(), options)`;
   }
 }
 

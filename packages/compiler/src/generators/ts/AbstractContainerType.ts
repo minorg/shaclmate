@@ -5,6 +5,7 @@ import type { BigDecimalType } from "./BigDecimalType.js";
 import type { BigIntType } from "./BigIntType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { BooleanType } from "./BooleanType.js";
+import type { Callable } from "./Callable.js";
 import type { DateTimeType } from "./DateTimeType.js";
 import type { DateType } from "./DateType.js";
 import type { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
@@ -16,7 +17,9 @@ import type { LangStringType } from "./LangStringType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
+import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
@@ -69,8 +72,10 @@ export abstract class AbstractContainerType<
   }
 
   @Memoize()
-  protected get itemValidationFunctionDefault(): Code {
-    return code`${this.reusables.snippets.identityValidationFunction}`;
+  protected get itemValidationFunctionDefault(): Callable {
+    return new ReferenceCallable(
+      this.reusables.snippets.identityValidationFunction,
+    );
   }
 
   protected override get schemaInitializers(): readonly Code[] {
@@ -108,6 +113,7 @@ export namespace AbstractContainerType {
     | ListType<ListType.ItemType>
     | LiteralType
     | ObjectDiscriminatedUnionType
+    | ObjectIntersectionType
     | ObjectType
     | StringType
     | TermType;
@@ -130,6 +136,7 @@ export namespace AbstractContainerType {
       case "Literal":
       case "Object":
       case "ObjectDiscriminatedUnion":
+      case "ObjectIntersection":
       case "String":
       case "Term":
         return true;
@@ -143,6 +150,5 @@ export namespace AbstractContainerType {
     }
   }
 
-  export const JsonType = AbstractType.JsonType;
   export type JsonType = AbstractType.JsonType;
 }

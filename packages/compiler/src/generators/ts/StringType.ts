@@ -1,33 +1,52 @@
 import type { Literal } from "@rdfjs/types";
+import { LiteralDecoder } from "@rdfx/literal";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import type { Callable } from "./Callable.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
   private readonly languageIn: readonly string[];
 
+  protected override readonly decodedIn = this.in_.map((in_) =>
+    LiteralDecoder.decodeStringLiteral(in_).unsafeCoerce(),
+  );
+
   override readonly conversionFunction: Maybe<AbstractPrimitiveType.ConversionFunction> =
     Maybe.empty();
-  override readonly filterFunction =
-    code`${this.reusables.snippets.filterString}`;
+  override readonly filterFunction = new ReferenceCallable(
+    this.reusables.snippets.filterString,
+  );
   override readonly filterType = code`${this.reusables.snippets.StringFilter}`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${this.reusables.imports.GraphQLString}`,
     this.reusables,
   );
-  override readonly hashFunction = code`${this.reusables.snippets.hashString}`;
+  override readonly hashFunction = new ReferenceCallable(
+    this.reusables.snippets.hashString,
+  );
   override readonly jsTypes = [
     {
       typeof: "string",
     },
   ] as const;
+  override readonly jsonValueType: AbstractPrimitiveType.JsonType =
+    this.jsonTypeFactory.createJsonStringType({
+      in_: this.decodedIn,
+      inReference:
+        this.name.isJust() && this.configuration.features.has("Object.schema")
+          ? code`${this.name.extract()!}.schema.in`
+          : undefined,
+    });
   override readonly kind = "String";
-  override readonly valueSparqlWherePatternsFunction =
-    code`${this.reusables.snippets.stringSparqlWherePatterns}`;
+  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
+    this.reusables.snippets.stringSparqlWherePatterns,
+  );
 
   constructor({
     languageIn,
@@ -40,8 +59,24 @@ export class StringType extends AbstractPrimitiveType<string> {
   }
 
   @Memoize()
-  get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.stringFromRdfResourceValues}<${this.expression}>`;
+  get fromJsonObjectFunction(): Callable {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.stringFromJsonObject}<${this.expression}>`,
+    );
+  }
+
+  @Memoize()
+  override get fromJsonValueFunction(): Callable {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.stringFromJsonString}<${this.expression}>`,
+    );
+  }
+
+  @Memoize()
+  get fromRdfResourceValuesFunction(): Callable {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.stringFromRdfResourceValues}<${this.expression}>`,
+    );
   }
 
   @Memoize()
@@ -57,21 +92,6 @@ export class StringType extends AbstractPrimitiveType<string> {
       );
     }
     return initializers;
-  }
-
-  override jsonSchema(
-    parameters: Parameters<AbstractPrimitiveType<string>["jsonSchema"]>[0],
-  ): Code {
-    if (this.in_.length > 1) {
-      const name = this.name.extract();
-      if (name && this.configuration.features.has("Object.schema")) {
-        // Reuse the type from schema to cut down code
-        return code`${this.reusables.imports.z}.enum(${name}.schema.in)`;
-      } else {
-        return code`${this.reusables.imports.z}.enum(${arrayOf(...this.in_.map((value) => this.valueExpression(value)))})`;
-      }
-    }
-    return super.jsonSchema(parameters);
   }
 
   override toRdfResourceValuesExpression({

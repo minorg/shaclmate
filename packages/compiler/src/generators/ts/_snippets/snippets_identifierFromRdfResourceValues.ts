@@ -9,7 +9,6 @@ export const snippets_identifierFromRdfResourceValues: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}identifierFromRdfResourceValues`,
     code`\
-function ${syntheticNamePrefix}identifierFromRdfResourceValues(values: ${imports.Resource}.Values, options: Parameters<${snippets.FromRdfResourceValuesFunction}<${imports.BlankNode} | ${imports.NamedNode}, ${snippets.IdentifierSchema}>>[1]): ${imports.Either}<Error, ${imports.Resource}.Values<${imports.BlankNode} | ${imports.NamedNode}>> {
-  return ${snippets.termLikeFromRdfResourceValues}(values, options).chain(values => values.chainMap(value => value.toIdentifier()));
-}`,
+const ${syntheticNamePrefix}identifierFromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${imports.BlankNode} | ${imports.NamedNode}, ${snippets.IdentifierSchema}> =
+  (values, options) => ${snippets.termLikeFromRdfResourceValues}(values, options).chain(values => values.chainMap(value => value.toIdentifier()));`,
   );

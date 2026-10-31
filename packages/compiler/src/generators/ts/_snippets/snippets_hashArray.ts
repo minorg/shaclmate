@@ -8,12 +8,11 @@ export const snippets_hashArray: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}hashArray`,
     code`\
-function ${syntheticNamePrefix}hashArray<HasherT extends ${snippets.Hasher}, ItemT>(hashItem: ${snippets.HashFunction}<HasherT, ItemT>): ${snippets.HashFunction}<HasherT, readonly ItemT[]> {
+function ${syntheticNamePrefix}hashArray<ItemT>(hashItem: ${snippets.HashFunction}<ItemT>): ${snippets.HashFunction}<readonly ItemT[]> {
   return (hasher, value) => {
     for (const item of value) {
       hashItem(hasher, item);
     }
-    return hasher;
   }
 }`,
   );

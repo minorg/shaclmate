@@ -45,9 +45,7 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredTerm: dataFactory.namedNode(
-            "http://example.com/term",
-          ),
+          requiredTerm: dataFactory.namedNode("http://example.com/term"),
           requiredIriOrString: "test",
         }),
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
@@ -57,9 +55,7 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredTerm: dataFactory.namedNode(
-            "http://example.com/term",
-          ),
+          requiredTerm: dataFactory.namedNode("http://example.com/term"),
           requiredIriOrString: "test",
         }),
       ).extract(),
@@ -74,9 +70,7 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredTerm: dataFactory.namedNode(
-            "http://example.com/term",
-          ),
+          requiredTerm: dataFactory.namedNode("http://example.com/term"),
           requiredIriOrString: "test",
         }),
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
@@ -104,9 +98,7 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredTerm: dataFactory.namedNode(
-            "http://example.com/term",
-          ),
+          requiredTerm: dataFactory.namedNode("http://example.com/term"),
           requiredIriOrString: "test",
         }),
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
@@ -116,9 +108,7 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredTerm: dataFactory.namedNode(
-            "http://example.com/term",
-          ),
+          requiredTerm: dataFactory.namedNode("http://example.com/term"),
           requiredIriOrString: "test",
         }),
       ).extract(),
@@ -133,27 +123,23 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredTerm: dataFactory.namedNode(
-            "http://example.com/term",
-          ),
+          requiredTerm: dataFactory.namedNode("http://example.com/term"),
           requiredIriOrString: "test",
         }),
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
           $identifier,
           requiredNodeOrNodeOrString: {
-            $type: "DiscriminatedUnionMember1",
-            value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
+            $type: "StructDiscriminatedUnionMember1",
+            value: kitchenSink.StructDiscriminatedUnionMember1.createUnsafe({
               $identifier: dataFactory.namedNode(
                 "http://example.com/discriminatedUnionMember1",
               ),
-              discriminatedUnionMember1Distinct: "test",
-              discriminatedUnionMemberCommon: "test",
+              structDiscriminatedUnionMember1Distinct: "test",
+              structDiscriminatedUnionMemberCommon: "test",
             }),
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredTerm: dataFactory.namedNode(
-            "http://example.com/term",
-          ),
+          requiredTerm: dataFactory.namedNode("http://example.com/term"),
           requiredIriOrString: "test",
         }),
       ).extract(),
@@ -171,9 +157,7 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredTerm: dataFactory.namedNode(
-            "http://example.com/term",
-          ),
+          requiredTerm: dataFactory.namedNode("http://example.com/term"),
           requiredIriOrString: "test",
         }),
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
@@ -183,9 +167,7 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredTerm: dataFactory.namedNode(
-            "http://example.com/term",
-          ),
+          requiredTerm: dataFactory.namedNode("http://example.com/term"),
           requiredIriOrString: "test",
         }),
       ).extract(),
@@ -200,27 +182,23 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredTerm: dataFactory.namedNode(
-            "http://example.com/term",
-          ),
+          requiredTerm: dataFactory.namedNode("http://example.com/term"),
           requiredIriOrString: dataFactory.namedNode("http://example.com"),
         }),
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
           $identifier,
           requiredNodeOrNodeOrString: {
-            $type: "DiscriminatedUnionMember1",
-            value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
+            $type: "StructDiscriminatedUnionMember1",
+            value: kitchenSink.StructDiscriminatedUnionMember1.createUnsafe({
               $identifier: dataFactory.namedNode(
                 "http://example.com/discriminatedUnionMember1",
               ),
-              discriminatedUnionMember1Distinct: "test",
-              discriminatedUnionMemberCommon: "test",
+              structDiscriminatedUnionMember1Distinct: "test",
+              structDiscriminatedUnionMemberCommon: "test",
             }),
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredTerm: dataFactory.namedNode(
-            "http://example.com/term",
-          ),
+          requiredTerm: dataFactory.namedNode("http://example.com/term"),
           requiredIriOrString: "http://example.com",
         }),
       ).extract(),

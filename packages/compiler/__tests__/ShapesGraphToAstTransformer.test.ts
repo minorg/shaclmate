@@ -115,6 +115,7 @@ describe("ShapesGraphToAstTransformer", () => {
               expect(astStructType).toBeDefined();
               const recursiveProperty = astStructType.fields.find(
                 (field) =>
+                  field.kind === "Shacl" &&
                   field.path.termType === "NamedNode" &&
                   field.path.value === recursivePropertyIri,
               );
@@ -186,6 +187,7 @@ describe("ShapesGraphToAstTransformer", () => {
           case "objectDiscriminantProperty":
           case "propertyShapeNameConflicts":
           case "propertyShapesOnly":
+          case "restExample":
           case "shaclShacl":
           case "syntax":
             throw new RangeError(id);

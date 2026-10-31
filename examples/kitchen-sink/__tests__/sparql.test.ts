@@ -60,6 +60,9 @@ describe("sparql", () => {
 
   for (const [idString, harness] of Object.entries(harnesses)) {
     const id = idString as keyof typeof harnesses;
+    if (harness.instance.$type === "BlankNodeIdentifierStruct") {
+      continue;
+    }
     if (harness.instance.$identifier().termType !== "NamedNode") {
       continue;
     }
@@ -93,7 +96,7 @@ describe("sparql", () => {
         new ResourceSet({
           dataFactory,
           dataset: constructResultDataset,
-        }).resource(harness.instance.$identifier() as NamedNode),
+        }).resource((harness.instance as any).$identifier() as NamedNode),
         {
           context: {
             extra: 1,

@@ -4,62 +4,138 @@ import { camelCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import { ObjectType_createFunctionExpression } from "./_ObjectType/ObjectType_createFunctionExpression.js";
+import { ObjectType__fromRdfResourceFunction } from "./_ObjectType/ObjectType__fromRdfResourceFunction.js";
+import { ObjectType__toRdfResourceFunction } from "./_ObjectType/ObjectType__toRdfResourceFunction.js";
+import { ObjectType_conversionFunction } from "./_ObjectType/ObjectType_conversionFunction.js";
+import { ObjectType_createFunction } from "./_ObjectType/ObjectType_createFunction.js";
+import { ObjectType_createFunctionParameters } from "./_ObjectType/ObjectType_createFunctionParameters.js";
+import { ObjectType_createUnsafeFunction } from "./_ObjectType/ObjectType_createUnsafeFunction.js";
 import { ObjectType_DiscriminantProperty } from "./_ObjectType/ObjectType_DiscriminantProperty.js";
-import { ObjectType_equalsFunctionExpression } from "./_ObjectType/ObjectType_equalsFunctionExpression.js";
-import { ObjectType_filterFunctionExpression } from "./_ObjectType/ObjectType_filterFunctionExpression.js";
+import {
+  ObjectType_equalsFunctionExpression,
+  ObjectType_equalsFunctionType,
+} from "./_ObjectType/ObjectType_equalsFunction.js";
+import {
+  ObjectType_filterFunctionExpression,
+  ObjectType_filterFunctionType,
+} from "./_ObjectType/ObjectType_filterFunction.js";
 import { ObjectType_filterTypeExpression } from "./_ObjectType/ObjectType_filterTypeExpression.js";
-import { ObjectType_focusSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunctionExpression.js";
-import { ObjectType_focusSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunctionExpression.js";
-import { ObjectType_fromJsonFunctionExpression } from "./_ObjectType/ObjectType_fromJsonFunctionExpression.js";
-import { ObjectType_fromRdfResourceFunctionExpression } from "./_ObjectType/ObjectType_fromRdfResourceFunctionExpression.js";
+import { ObjectType_focusSparqlConstructTriplesFunction } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunction.js";
+import { ObjectType_focusSparqlWherePatternsFunction } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunction.js";
+import {
+  ObjectType_fromJsonObjectFunctionExpression,
+  ObjectType_fromJsonObjectFunctionType,
+} from "./_ObjectType/ObjectType_fromJsonObjectFunction.js";
+import { ObjectType_fromRdfResourceFunction } from "./_ObjectType/ObjectType_fromRdfResourceFunction.js";
+import {
+  ObjectType_fromRdfResourceValuesFunctionExpression,
+  ObjectType_fromRdfResourceValuesFunctionType,
+} from "./_ObjectType/ObjectType_fromRdfResourceValuesFunction.js";
 import { ObjectType_graphqlTypeExpression } from "./_ObjectType/ObjectType_graphqlTypeExpression.js";
-import { ObjectType_hashFunctionExpression } from "./_ObjectType/ObjectType_hashFunctionExpression.js";
+import {
+  ObjectType_hashFunctionExpression,
+  ObjectType_hashFunctionType,
+} from "./_ObjectType/ObjectType_hashFunction.js";
 import { ObjectType_IdentifierProperty } from "./_ObjectType/ObjectType_IdentifierProperty.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
-import { ObjectType_jsonParseFunctionDeclaration } from "./_ObjectType/ObjectType_jsonParseFunctionDeclaration.js";
-import { ObjectType_jsonSchemaExpression } from "./_ObjectType/ObjectType_jsonSchemaExpression.js";
-import { ObjectType_jsonTypeExpression } from "./_ObjectType/ObjectType_jsonTypeExpression.js";
-import { ObjectType_jsonUiSchemaFunctionExpression } from "./_ObjectType/ObjectType_jsonUiSchemaFunctionExpression.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import type { ObjectType_Property } from "./_ObjectType/ObjectType_Property.js";
 import { ObjectType_RdfTypeProperty } from "./_ObjectType/ObjectType_RdfTypeProperty.js";
 import { ObjectType_ShaclProperty } from "./_ObjectType/ObjectType_ShaclProperty.js";
 import { ObjectType_schemaExpression } from "./_ObjectType/ObjectType_schemaExpression.js";
 import { ObjectType_schemaTypeExpression } from "./_ObjectType/ObjectType_schemaTypeExpression.js";
-import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
-import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
-import { ObjectType_toJsonFunctionExpression } from "./_ObjectType/ObjectType_toJsonFunctionExpression.js";
-import { ObjectType_toRdfResourceFunctionExpression } from "./_ObjectType/ObjectType_toRdfResourceFunctionExpression.js";
-import { ObjectType_toStringFunctionExpression } from "./_ObjectType/ObjectType_toStringFunctionExpression.js";
-import { ObjectType_toStringRecordFunctionExpression } from "./_ObjectType/ObjectType_toStringRecordFunctionExpression.js";
-import { ObjectType_typeGuardFunctionExpression } from "./_ObjectType/ObjectType_typeGuardFunctionExpression.js";
-import { ObjectType_valueSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunctionExpression.js";
-import { ObjectType_valueSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunctionExpression.js";
-import { AbstractType } from "./AbstractType.js";
+import { ObjectType_sparqlConstructQueryFunction } from "./_ObjectType/ObjectType_sparqlConstructQueryFunction.js";
+import { ObjectType_sparqlConstructQueryStringFunction } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunction.js";
+import {
+  ObjectType_toJsonObjectFunctionExpression,
+  ObjectType_toJsonObjectFunctionType,
+} from "./_ObjectType/ObjectType_toJsonObjectFunction.js";
+import {
+  ObjectType_toLoggableFunctionExpression,
+  ObjectType_toLoggableFunctionType,
+} from "./_ObjectType/ObjectType_toLoggableFunction.js";
+import { ObjectType_toRdfResourceFunction } from "./_ObjectType/ObjectType_toRdfResourceFunction.js";
+import {
+  ObjectType_toRdfResourceValuesFunctionExpression,
+  ObjectType_toRdfResourceValuesFunctionType,
+} from "./_ObjectType/ObjectType_toRdfResourceValuesFunction.js";
+import {
+  ObjectType_toStringFunctionExpression,
+  ObjectType_toStringFunctionType,
+} from "./_ObjectType/ObjectType_toStringFunction.js";
+import { ObjectType_toStringRecordFunction } from "./_ObjectType/ObjectType_toStringRecordFunction.js";
+import { ObjectType_typeGuardFunction } from "./_ObjectType/ObjectType_typeGuardFunction.js";
+import { ObjectType_valueSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunction.js";
+import { ObjectType_valueSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunction.js";
+import { AbstractStructuredType } from "./AbstractStructuredType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
+import type { Callable } from "./Callable.js";
+import { DeclaredCallable } from "./DeclaredCallable.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import type { Type } from "./Type.js";
-import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
-export class ObjectType extends AbstractType {
+export class ObjectType extends AbstractStructuredType {
+  private readonly rdfTypeProperty: Maybe<ObjectType.RdfTypeProperty>;
+
+  protected override equalsFunctionExpression =
+    ObjectType_equalsFunctionExpression;
+  protected override equalsFunctionType = ObjectType_equalsFunctionType;
+  protected override filterFunctionExpression =
+    ObjectType_filterFunctionExpression;
+  protected override filterFunctionType = ObjectType_filterFunctionType;
+  protected override filterTypeExpression = ObjectType_filterTypeExpression;
+  protected override fromJsonObjectFunctionExpression =
+    ObjectType_fromJsonObjectFunctionExpression;
+  protected override fromJsonObjectFunctionType =
+    ObjectType_fromJsonObjectFunctionType;
+  protected override fromRdfResourceValuesFunctionExpression =
+    ObjectType_fromRdfResourceValuesFunctionExpression;
+  protected override fromRdfResourceValuesFunctionType =
+    ObjectType_fromRdfResourceValuesFunctionType;
+  protected override hashFunctionExpression = ObjectType_hashFunctionExpression;
+  protected override hashFunctionType = ObjectType_hashFunctionType;
+  protected override schemaExpression = ObjectType_schemaExpression;
+  protected override schemaTypeExpression = ObjectType_schemaTypeExpression;
+  protected override toJsonObjectFunctionExpression =
+    ObjectType_toJsonObjectFunctionExpression;
+  protected override toJsonObjectFunctionType =
+    ObjectType_toJsonObjectFunctionType;
+  protected override toLoggableFunctionExpression =
+    ObjectType_toLoggableFunctionExpression;
+  protected override toLoggableFunctionType = ObjectType_toLoggableFunctionType;
+  protected override toRdfResourceValuesFunctionExpression =
+    ObjectType_toRdfResourceValuesFunctionExpression;
+  protected override toRdfResourceValuesFunctionType =
+    ObjectType_toRdfResourceValuesFunctionType;
+  protected override toStringFunctionExpression =
+    ObjectType_toStringFunctionExpression;
+  protected override toStringFunctionType = ObjectType_toStringFunctionType;
+  protected override valueSparqlConstructTriplesFunctionExpression =
+    ObjectType_valueSparqlConstructTriplesFunctionExpression;
+  protected override valueSparqlWherePatternsFunctionExpression =
+    ObjectType_valueSparqlWherePatternsFunctionExpression;
+
   override readonly discriminantProperty: Maybe<ObjectType.DiscriminantProperty>;
   readonly extern: boolean;
-  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: AbstractStructuredType["graphqlArgs"] =
+    Maybe.empty();
+  readonly identifierProperty: Maybe<ObjectType.IdentifierProperty>;
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
   override readonly jsTypes = [
     { instanceof: "Object", typeof: "object" },
   ] as const;
   override readonly kind = "Object";
-  readonly rdfTypeProperty: Maybe<ObjectType.RdfTypeProperty>;
   override readonly recursive: boolean;
   readonly synthetic: boolean;
-  override readonly validationFunction: Maybe<Code> = Maybe.empty();
+  override readonly validationFunction: AbstractStructuredType["validationFunction"] =
+    Maybe.empty();
 
   constructor({
     discriminantProperty,
     extern,
+    identifierProperty,
     identifierType,
     lazyProperties,
     rdfTypeProperty,
@@ -70,16 +146,18 @@ export class ObjectType extends AbstractType {
     discriminantProperty: Maybe<ObjectType.DiscriminantProperty>;
     comment: Maybe<string>;
     extern: boolean;
+    identifierProperty: Maybe<ObjectType.IdentifierProperty>;
     identifierType: BlankNodeType | IdentifierType | IriType;
     label: Maybe<string>;
     lazyProperties: (objectType: ObjectType) => readonly ObjectType.Property[];
     rdfTypeProperty: Maybe<ObjectType.RdfTypeProperty>;
     recursive: boolean;
     synthetic: boolean;
-  } & ConstructorParameters<typeof AbstractType>[0]) {
+  } & ConstructorParameters<typeof AbstractStructuredType>[0]) {
     super(superParameters);
     this.discriminantProperty = discriminantProperty;
     this.extern = extern;
+    this.identifierProperty = identifierProperty;
     this.identifierType = identifierType;
     // Lazily initialize some members in getters to avoid recursive construction
     this.lazyProperties = lazyProperties;
@@ -89,250 +167,76 @@ export class ObjectType extends AbstractType {
   }
 
   @Memoize()
-  override get conversionFunction(): Maybe<AbstractType.ConversionFunction> {
-    if (this.name.isJust()) {
-      return Maybe.empty();
-    }
-
-    const sourceTypePropertySignatures: Code[] = [];
-    for (const property of this.properties) {
-      property.constructorParameter.ifJust((propertyConstructorParameter) => {
-        sourceTypePropertySignatures.push(
-          propertyConstructorParameter.signature,
-        );
-      });
-    }
-    const sourceTypeExpression = code`{ ${joinCode(sourceTypePropertySignatures)} }`;
-    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-    return Maybe.of({
-      code: code`(<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(value: ${sourceTypeExpression}, ${syntheticNamePrefix}defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT) => ${this.createFunction}({ ...value, ${syntheticNamePrefix}defaultNamespace }))`,
-      sourceTypes: [
-        {
-          expression: sourceTypeExpression,
-          jsType: {
-            instanceof: "Object",
-            typeof: "object",
-          },
-        },
-      ],
-    });
+  get _fromRdfResourceFunction(): Callable {
+    return ObjectType__fromRdfResourceFunction.call(this);
   }
 
-  protected override staticModuleDeclarations(
-    name: string,
-  ): Record<string, Code> {
-    let staticModuleDeclarations: Record<string, Code> = {
-      ...super.staticModuleDeclarations(name),
-    };
+  @Memoize()
+  get _toRdfResourceFunction(): Callable {
+    return ObjectType__toRdfResourceFunction.call(this);
+  }
 
-    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
+  get jsonValueType(): AbstractStructuredType["jsonObjectType"] {
+    return this.jsonObjectType;
+  }
 
-    // create
-    if (this.configuration.features.has("Object.create")) {
-      staticModuleDeclarations["create"] =
-        code`export const create = ${ObjectType_createFunctionExpression.call(this)};`;
-      staticModuleDeclarations["createUnsafe"] =
-        code`export function createUnsafe<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.constructorParameters.signature}): ${this.expression} {
-  return create(${this.constructorParameters.variable}).unsafeCoerce();
-}`;
-    }
+  @Memoize()
+  override get conversionFunction(): Maybe<AbstractStructuredType.ConversionFunction> {
+    return ObjectType_conversionFunction.call(this);
+  }
 
-    // equals
-    if (this.configuration.features.has("Object.equals")) {
-      staticModuleDeclarations["equals"] =
-        code`export const equals: (left: ${this.expression}, right: ${this.expression}) => ${this.reusables.snippets.EqualsResult} = ${ObjectType_equalsFunctionExpression.call(this)};`;
-    }
+  @Memoize()
+  get createFunction(): Callable {
+    return ObjectType_createFunction.call(this);
+  }
 
-    // Filter / filter
-    if (this.configuration.features.has("Object.filter")) {
-      staticModuleDeclarations["Filter"] =
-        code`export type Filter = ${ObjectType_filterTypeExpression.call(this)};`;
+  @Memoize()
+  get createFunctionParameters(): ObjectType.CreateFunctionParameters {
+    return ObjectType_createFunctionParameters.call(this);
+  }
 
-      staticModuleDeclarations["filter"] =
-        code`export const filter: (filter: ${this.filterType}, value: ${this.expression}) => boolean = ${ObjectType_filterFunctionExpression.call(this)};`;
-    }
-
-    // GraphQL
-    if (this.configuration.features.has("GraphQL") && !this.synthetic) {
-      staticModuleDeclarations["GraphQL"] =
-        code`export const GraphQL = ${ObjectType_graphqlTypeExpression.call(this)};`;
-    }
-
-    // focusSparqlConstructTriples / focusSparqlWherePatterns
-    if (this.configuration.features.has("Object.SPARQL")) {
-      staticModuleDeclarations["focusSparqlConstructTriples"] =
-        code`export const focusSparqlConstructTriples: ${this.reusables.snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}> = ${ObjectType_focusSparqlConstructTriplesFunctionExpression.call(this)};`;
-
-      staticModuleDeclarations["focusSparqlWherePatterns"] =
-        code`export const focusSparqlWherePatterns: ${this.reusables.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}> = ${ObjectType_focusSparqlWherePatternsFunctionExpression.call(this)};`;
-    }
-
-    // fromJson
-    if (this.configuration.features.has("Object.fromJson")) {
-      staticModuleDeclarations["fromJson"] =
-        code`export const fromJson: (json: ${this.jsonType().expression}) => ${this.reusables.imports.Either}<Error, ${this.expression}> = ${ObjectType_fromJsonFunctionExpression.call(this)};`;
-    }
-
-    // fromRdfResource / fromRdfResourceValues
-    if (this.configuration.features.has("Object.fromRdf")) {
-      staticModuleDeclarations["_fromRdfResource"] =
-        code`export const _fromRdfResource: ${this.reusables.snippets._FromRdfResourceFunction}<${this.expression}> = ${ObjectType_fromRdfResourceFunctionExpression.call(this)};`;
-
-      staticModuleDeclarations["fromRdfResource"] =
-        code`export const fromRdfResource = ${this.reusables.snippets.wrap_FromRdfResourceFunction}(_fromRdfResource);`;
-
-      staticModuleDeclarations["fromRdfResourceValues"] =
-        code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}> = 
-  (values, options) => values.chainMap(value => value.toResource().chain(resource => fromRdfResource(resource, options)));`;
-    }
-
-    // hash
-    if (this.configuration.features.has("Object.hash")) {
-      staticModuleDeclarations["hash"] =
-        code`export const hash = ${ObjectType_hashFunctionExpression.call(this)};`;
-    }
-
-    // Identifier
-    if (this.configuration.features.has("Object.type")) {
-      staticModuleDeclarations = {
-        ...staticModuleDeclarations,
-        ...ObjectType_identifierTypeDeclarations.call(this),
-      };
-    }
-
-    // Type guard
-    ObjectType_typeGuardFunctionExpression.call(this).ifJust(
-      (typeGuardFunctionExpression) => {
-        staticModuleDeclarations[`is${name}`] =
-          code`export const is${name} = ${typeGuardFunctionExpression};`;
-      },
-    );
-
-    // type Json
-    if (this.configuration.features.has("Object.JSON.type")) {
-      staticModuleDeclarations["JsonType"] =
-        code`export type Json = ${ObjectType_jsonTypeExpression.call(this)}`;
-    }
-
-    // namespace Json
-    {
-      const jsonModuleDeclarations: Code[] = [];
-      if (this.configuration.features.has("Object.JSON.parse")) {
-        jsonModuleDeclarations.push(
-          ObjectType_jsonParseFunctionDeclaration.call(this),
-        );
-      }
-      if (this.configuration.features.has("Object.JSON.schema")) {
-        jsonModuleDeclarations.push(
-          code`export function schema() { return ${ObjectType_jsonSchemaExpression.call(this)} satisfies ${this.reusables.imports.z}.ZodType<Json>; }`,
-        );
-      }
-      if (this.configuration.features.has("Object.JSON.uiSchema")) {
-        jsonModuleDeclarations.push(
-          code`export const uiSchema = ${ObjectType_jsonUiSchemaFunctionExpression.call(this)};`,
-        );
-      }
-      if (jsonModuleDeclarations.length > 0) {
-        staticModuleDeclarations["JsonNamespace"] =
-          code`export namespace Json { ${joinCode(jsonModuleDeclarations, { on: "\n\n" })} }`;
-      }
-    }
-
-    // schema / Schema
-    if (this.configuration.features.has("Object.schema")) {
-      staticModuleDeclarations["schema"] =
-        code`export const schema = ${ObjectType_schemaExpression.call(this)};`;
-      staticModuleDeclarations["Schema"] =
-        code`export type Schema = typeof schema;`;
-    }
-
-    // sparqlConstructQuery / sparqlConstructQueryString
-    if (this.configuration.features.has("Object.SPARQL")) {
-      staticModuleDeclarations["sparqlConstructQuery"] =
-        ObjectType_sparqlConstructQueryFunctionDeclaration.call({
-          name,
-          configuration: this.configuration,
-          filterType: this.filterType,
-          reusables: this.reusables,
-        });
-
-      staticModuleDeclarations["sparqlConstructQueryString"] =
-        ObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
-          name,
-          configuration: this.configuration,
-          filterType: this.filterType,
-          reusables: this.reusables,
-        });
-    }
-
-    // toJson
-    if (this.configuration.features.has("Object.toJson")) {
-      staticModuleDeclarations["toJson"] =
-        code`export const toJson: (${this.thisVariable}: ${this.expression}) => ${this.jsonType().expression} = ${ObjectType_toJsonFunctionExpression.call(this)};`;
-    }
-
-    // toRdfResource
-    if (this.configuration.features.has("Object.toRdf")) {
-      staticModuleDeclarations["_toRdfResource"] =
-        code`export const _toRdfResource: ${this.reusables.snippets._ToRdfResourceFunction}<${this.identifierTypeAlias}, ${this.expression}> = ${ObjectType_toRdfResourceFunctionExpression.call(this)};`;
-
-      staticModuleDeclarations["toRdfResource"] =
-        code`export const toRdfResource = ${this.reusables.snippets.wrap_ToRdfResourceFunction}(_toRdfResource);`;
-    }
-
-    // toString / toStringRecord
-    if (this.configuration.features.has("Object.toString")) {
-      staticModuleDeclarations[`${syntheticNamePrefix}toString`] =
-        code`export const ${syntheticNamePrefix}toString: (${this.thisVariable}: ${this.expression}) => string = ${ObjectType_toStringFunctionExpression.call(this)};`;
-
-      staticModuleDeclarations["toStringRecord"] =
-        code`export const toStringRecord: (${this.thisVariable}: ${this.expression}) => Record<string, string> = ${ObjectType_toStringRecordFunctionExpression.call(this)};`;
-    }
-
-    // valueSparqlConstructTriples / valueSparqlWherePatterns
-    if (this.configuration.features.has("Object.SPARQL")) {
-      staticModuleDeclarations["valueSparqlConstructTriples"] =
-        code`export const valueSparqlConstructTriples: ${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${ObjectType_valueSparqlConstructTriplesFunctionExpression.call(this)};`;
-      staticModuleDeclarations["valueSparqlWherePatterns"] =
-        code`export const valueSparqlWherePatterns: ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${ObjectType_valueSparqlWherePatternsFunctionExpression.call(this)};`;
-    }
-
-    return staticModuleDeclarations;
+  @Memoize()
+  get createUnsafeFunction(): Callable {
+    return ObjectType_createUnsafeFunction.call(this);
   }
 
   override get declaration(): Maybe<Code> {
     return !this.extern ? super.declaration : Maybe.empty();
   }
 
+  /**
+   * Expression of this type including the discriminant property, if available.
+   */
   @Memoize()
-  override get equalsFunction(): Code {
+  get discriminatedExpression(): Code {
     return this.name
-      .map((name) => code`${name}.equals`)
-      .orDefaultLazy(() => ObjectType_equalsFunctionExpression.call(this));
+      .map((name) => code`${name}.Discriminated`)
+      .orDefault(this.inlineExpression);
   }
 
   @Memoize()
-  get filterFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.filter`)
-      .orDefaultLazy(() => ObjectType_filterFunctionExpression.call(this));
+  override get jsonObjectType(): AbstractStructuredType["jsonObjectType"] {
+    return this.jsonTypeFactory.createJsonObjectType(
+      this.properties.flatMap((property) => property.jsonObjectMember.toList()),
+      {
+        name: this.name.map((name) => [name, "Json"]).extract(),
+      },
+    );
   }
 
   @Memoize()
-  get filterType(): Code {
-    return this.name
-      .map((name) => code`${name}.Filter`)
-      .orDefaultLazy(() => ObjectType_filterTypeExpression.call(this));
+  get focusSparqlConstructTriplesFunction(): Callable {
+    return ObjectType_focusSparqlConstructTriplesFunction.call(this);
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.fromRdfResourceValues`)
-      .orDefaultLazy(
-        () =>
-          code`((values, options) => values.chainMap(value => value.toResource().chain(resource => ${ObjectType_fromRdfResourceFunctionExpression.call(this)}(resource, options))))`,
-      );
+  get focusSparqlWherePatternsFunction(): Callable {
+    return ObjectType_focusSparqlWherePatternsFunction.call(this);
+  }
+
+  @Memoize()
+  get fromRdfResourceFunction(): Callable {
+    return ObjectType_fromRdfResourceFunction.call(this);
   }
 
   @Memoize()
@@ -350,20 +254,13 @@ export class ObjectType extends AbstractType {
   }
 
   @Memoize()
-  get graphqlType(): AbstractType.GraphqlType {
-    return new AbstractType.GraphqlType(
+  get graphqlType(): AbstractStructuredType.GraphqlType {
+    return new AbstractStructuredType.GraphqlType(
       this.name
         .map((name) => code`${name}.GraphQL`)
         .orDefaultLazy(() => ObjectType_graphqlTypeExpression.call(this)),
       this.reusables,
     );
-  }
-
-  @Memoize()
-  override get hashFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.hash`)
-      .orDefaultLazy(() => ObjectType_hashFunctionExpression.call(this));
   }
 
   @Memoize()
@@ -411,24 +308,37 @@ export class ObjectType extends AbstractType {
   }
 
   @Memoize()
-  override get schemaExpression(): Code {
-    return ObjectType_schemaExpression.call(this);
+  get sparqlConstructQueryFunction(): Callable {
+    return ObjectType_sparqlConstructQueryFunction.call({
+      configuration: this.configuration,
+      filterType: this.filterType,
+      _function: this._function.bind(this),
+      focusSparqlConstructTriplesFunction:
+        this.focusSparqlConstructTriplesFunction,
+      focusSparqlWherePatternsFunction: this.focusSparqlWherePatternsFunction,
+      name: this.name,
+      reusables: this.reusables,
+    });
   }
 
   @Memoize()
-  get schemaVariable(): Maybe<Code> {
-    return this.name.map((name) => code`${name}.schema`);
+  get sparqlConstructQueryStringFunction(): Callable {
+    return ObjectType_sparqlConstructQueryStringFunction.call({
+      configuration: this.configuration,
+      filterType: this.filterType,
+      _function: this._function.bind(this),
+      sparqlConstructQueryFunction: this.sparqlConstructQueryFunction,
+      reusables: this.reusables,
+    });
   }
 
   @Memoize()
-  override get schemaType(): Code {
-    return this.name
-      .map((name) => code`${name}.Schema`)
-      .orDefaultLazy(() => ObjectType_schemaTypeExpression.call(this));
+  get toRdfResourceFunction(): Callable {
+    return ObjectType_toRdfResourceFunction.call(this);
   }
 
   @Memoize()
-  get toRdfResourceValueTypes(): AbstractType["toRdfResourceValueTypes"] {
+  get toRdfResourceValueTypes(): AbstractStructuredType["toRdfResourceValueTypes"] {
     return new Set([...this.identifierType.nodeKinds].map(NodeKind.toTermType));
   }
 
@@ -438,108 +348,13 @@ export class ObjectType extends AbstractType {
   }
 
   @Memoize()
-  get typeGuardFunction(): Maybe<Code> {
-    return ObjectType_typeGuardFunctionExpression.call(this).map((expression) =>
-      this.name.map((name) => code`${name}.is${name}`).orDefault(expression),
-    );
+  get toStringRecordFunction(): Callable {
+    return ObjectType_toStringRecordFunction.call(this);
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.valueSparqlConstructTriples`)
-      .orDefaultLazy(() =>
-        ObjectType_valueSparqlConstructTriplesFunctionExpression.call(this),
-      );
-  }
-
-  @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.valueSparqlWherePatterns`)
-      .orDefaultLazy(() =>
-        ObjectType_valueSparqlWherePatternsFunctionExpression.call(this),
-      );
-  }
-
-  @Memoize()
-  protected get constructorParameters(): {
-    hasQuestionToken: boolean;
-    signature: Code;
-    type: {
-      expression: Code;
-    };
-    variable: Code;
-  } {
-    let hasQuestionToken: boolean = true;
-    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-    const propertySignatures: Code[] = [
-      code`readonly ${syntheticNamePrefix}defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT;`,
-    ];
-    for (const property of this.properties) {
-      property.constructorParameter.ifJust((propertyConstructorParameter) => {
-        hasQuestionToken =
-          hasQuestionToken && propertyConstructorParameter.hasQuestionToken;
-        propertySignatures.push(propertyConstructorParameter.signature);
-      });
-    }
-
-    const typeExpression = code`{ ${joinCode(propertySignatures)} }`;
-
-    return {
-      hasQuestionToken,
-      signature: code`parameters${hasQuestionToken ? "?" : ""}: ${typeExpression}`,
-      type: {
-        expression: typeExpression,
-      },
-      variable: code`parameters`,
-    };
-  }
-
-  @Memoize()
-  protected get createFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.create`)
-      .orDefaultLazy(() => ObjectType_createFunctionExpression.call(this));
-  }
-
-  @Memoize()
-  protected get thisVariable(): Code {
-    return this.name
-      .map((name) => code`_${camelCase(name)}`)
-      .orDefault(code`_object`);
-  }
-
-  @Memoize()
-  protected get toJsonFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.toJson`)
-      .orDefaultLazy(() => ObjectType_toJsonFunctionExpression.call(this));
-  }
-
-  @Memoize()
-  protected get toRdfTypesVariable(): Maybe<Code> {
-    return this.rdfTypeProperty.map((rdfTypeProperty) =>
-      this.schemaVariable
-        .map(
-          (schemaVariable) =>
-            code`${schemaVariable}.properties.${rdfTypeProperty.name}.toRdfTypes`,
-        )
-        .orDefaultLazy(
-          () =>
-            code`${arrayOf(...rdfTypeProperty.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)))}`,
-        ),
-    );
-  }
-
-  @Memoize()
-  protected get toStringFunction(): Code {
-    return this.name
-      .map(
-        (name) =>
-          code`${name}.${this.configuration.syntheticNamePrefix}toString`,
-      )
-      .orDefaultLazy(() => ObjectType_toStringFunctionExpression.call(this));
+  get typeGuardFunction(): Maybe<Callable> {
+    return ObjectType_typeGuardFunction.call(this);
   }
 
   protected override get inlineExpression(): Code {
@@ -549,109 +364,133 @@ export class ObjectType extends AbstractType {
     )} }`;
   }
 
-  override fromJsonExpression({
-    variables,
-  }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
-    // Assumes the JSON object has been recursively validated already.
-    return code`${this.name.map((name) => code`${name}.fromJson`).orDefaultLazy(() => ObjectType_fromJsonFunctionExpression.call(this))}(${variables.value})`;
+  @Memoize()
+  protected get thisVariable(): Code {
+    return this.name
+      .map((name) => code`_${camelCase(name)}`)
+      .orDefault(code`_object`);
   }
 
-  override graphqlResolveExpression({
-    variables,
-  }: {
-    variables: { value: Code };
-  }): Code {
-    return variables.value;
-  }
-
-  override jsonSchema({
-    context,
-  }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
+  protected propertySubsetExpression(
+    propertyFilter: (property: ObjectType.Property) => boolean,
+  ): Code {
     return this.name
       .map((name) => {
-        let expression = code`${name}.Json.schema()`;
-        if (
-          context === "property" &&
-          this.properties.some((property) => property.recursive)
-        ) {
-          expression = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${name}.Json> => ${expression})`;
+        const declaredProperties: ObjectType.Property[] = [];
+        const omitDeclaredProperties: ObjectType.Property[] = [];
+        const pickDeclaredProperties: ObjectType.Property[] = [];
+        for (const property of this.properties) {
+          if (property.declaration.isNothing()) {
+            continue;
+          }
+          declaredProperties.push(property);
+          if (propertyFilter(property)) {
+            pickDeclaredProperties.push(property);
+          } else {
+            omitDeclaredProperties.push(property);
+          }
         }
-        return expression;
+
+        if (pickDeclaredProperties.length === 0) {
+          return code`object`;
+        }
+
+        if (pickDeclaredProperties.length === declaredProperties.length) {
+          return this.expression;
+        }
+
+        if (pickDeclaredProperties.length <= declaredProperties.length / 2) {
+          const pickPropertyNames = pickDeclaredProperties.map(
+            (property) => code`${literalOf(property.name)}`,
+          );
+          if (pickPropertyNames.length === 0) {
+            return code`object`;
+          }
+          return code`Pick<${name}, ${joinCode(pickPropertyNames, {
+            on: " | ",
+          })}>`;
+        } else {
+          const omitPropertyNames = omitDeclaredProperties.flatMap(
+            (property) => code`${literalOf(property.name)}`,
+          );
+          if (omitPropertyNames.length === 0) {
+            return this.expression;
+          }
+          return code`Omit<${name}, ${joinCode(omitPropertyNames, {
+            on: " | ",
+          })}>`;
+        }
       })
-      .orDefaultLazy(() => ObjectType_jsonSchemaExpression.call(this));
+      .orDefaultLazy(() => {
+        const propertyDeclarations = this.properties.flatMap((property) =>
+          propertyFilter(property) ? property.declaration.toList() : [],
+        );
+        if (propertyDeclarations.length === 0) {
+          return code`object`;
+        }
+        return code`{ ${joinCode(propertyDeclarations, { on: "\n\n" })} }`;
+      });
   }
 
-  @Memoize()
-  override jsonType(): AbstractType.JsonType {
-    return new AbstractType.JsonType(
-      this.name
-        .map((name) => code`${name}.Json`)
-        .orDefaultLazy(() => ObjectType_jsonTypeExpression.call(this)),
-    );
-  }
+  protected override staticModuleDeclarations(
+    name: string,
+  ): Record<string, Code> {
+    let staticModuleDeclarations: Record<string, Code> = {
+      ...super.staticModuleDeclarations(name),
+    };
 
-  override jsonUiSchemaElement({
-    variables,
-  }: Parameters<AbstractType["jsonUiSchemaElement"]>[0]): Maybe<Code> {
-    return Maybe.of(
-      code`${this.name
-        .map((name) => code`${name}.Json.uiSchema`)
-        .orDefaultLazy(() =>
-          ObjectType_jsonUiSchemaFunctionExpression.call(this),
-        )}({ scopePrefix: ${variables.scopePrefix} })`,
-    );
-  }
+    function addFunctionDeclaration(function_: Callable) {
+      invariant(function_ instanceof DeclaredCallable);
+      staticModuleDeclarations[function_.unqualifiedName] =
+        code`export ${function_.declaration}`;
+    }
 
-  override toJsonExpression({
-    variables,
-  }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
-    const toJsonFunction = this.name
-      .map((name) => code`${name}.toJson`)
-      .orDefaultLazy(() => ObjectType_toJsonFunctionExpression.call(this));
-    return code`${toJsonFunction}(${variables.value})`;
-  }
+    if (this.configuration.features.has("Object.create")) {
+      staticModuleDeclarations["CreateParameters"] =
+        code`export type CreateParameters<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}> = ${this.createFunctionParameters.type.inlineExpression};`;
+      addFunctionDeclaration(this.createFunction);
+      addFunctionDeclaration(this.createUnsafeFunction);
+    }
 
-  override toRdfResourceValuesExpression({
-    variables,
-  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
-    const toRdfResourceFunction = this.name
-      .map((name) => code`${name}.toRdfResource`)
-      .orDefaultLazy(
-        () =>
-          code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${this.identifierType.expression}, ${this.expression}>(${ObjectType_toRdfResourceFunctionExpression.call(this)})`,
-      );
-    return code`[${toRdfResourceFunction}(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
-  }
+    if (this.configuration.features.has("GraphQL") && !this.synthetic) {
+      staticModuleDeclarations["GraphQL"] =
+        code`export const GraphQL = ${ObjectType_graphqlTypeExpression.call(this)};`;
+    }
 
-  override toStringExpression({
-    variables,
-  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return this.name
-      .map(
-        (name) =>
-          code`${name}.${this.configuration.syntheticNamePrefix}toString(${variables.value})`,
-      )
-      .orDefaultLazy(
-        () =>
-          code`JSON.stringify(${this.toStringRecordExpression({ variables })})`,
-      );
-  }
+    if (this.configuration.features.has("Object.fromRdf")) {
+      addFunctionDeclaration(this._fromRdfResourceFunction);
+      addFunctionDeclaration(this.fromRdfResourceFunction);
+    }
 
-  protected toStringRecordExpression({
-    variables,
-  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return code`${this.reusables.snippets.compactRecord}({${joinCode(
-      this.properties.flatMap((property) =>
-        property
-          .toStringInitializer({
-            variables: {
-              object: variables.value,
-            },
-          })
-          .toList(),
-      ),
-      { on: "," },
-    )}})`;
+    if (this.configuration.features.has("Object.SPARQL")) {
+      addFunctionDeclaration(this.focusSparqlConstructTriplesFunction);
+      addFunctionDeclaration(this.focusSparqlWherePatternsFunction);
+      addFunctionDeclaration(this.sparqlConstructQueryFunction);
+      addFunctionDeclaration(this.sparqlConstructQueryStringFunction);
+    }
+
+    if (this.configuration.features.has("Object.toRdf")) {
+      addFunctionDeclaration(this._toRdfResourceFunction);
+      addFunctionDeclaration(this.toRdfResourceFunction);
+    }
+
+    if (this.configuration.features.has("Object.toString")) {
+      addFunctionDeclaration(this.toStringRecordFunction);
+    }
+
+    if (this.configuration.features.has("Object.type")) {
+      staticModuleDeclarations = {
+        ...staticModuleDeclarations,
+        ...ObjectType_identifierTypeDeclarations.call(this),
+      };
+      this.discriminantProperty.ifJust((discriminantProperty) => {
+        staticModuleDeclarations["Discriminated"] =
+          code`export type Discriminated = ${name} & { readonly ${discriminantProperty.name}: ${literalOf(discriminantProperty.value)} };`;
+      });
+      ObjectType_typeGuardFunction.call(this).ifJust(addFunctionDeclaration);
+    }
+
+    return staticModuleDeclarations;
   }
 
   private readonly lazyProperties: (
@@ -660,6 +499,16 @@ export class ObjectType extends AbstractType {
 }
 
 export namespace ObjectType {
+  export interface CreateFunctionParameters {
+    readonly hasQuestionToken: boolean;
+    readonly signature: Code;
+    readonly type: {
+      readonly inlineExpression: Code;
+      readonly expression: Code;
+    };
+    readonly variable: Code;
+  }
+
   export const IdentifierProperty = ObjectType_IdentifierProperty;
   export type IdentifierProperty = ObjectType_IdentifierProperty;
   export type ObjectSetMethodNames = {

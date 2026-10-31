@@ -1,15 +1,25 @@
-import type { BlankNode, NamedNode, Quad_Graph, Variable } from "@rdfjs/types";
+import type {
+  BlankNode,
+  Literal,
+  NamedNode,
+  Quad_Graph,
+  Variable,
+} from "@rdfjs/types";
 import { datasetFactory } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { LiteralFactory } from "@rdfx/literal";
-import { type Resource, ResourceSet } from "@rdfx/resource";
-import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
+import {
+  PropertyPath as RdfxResourcePropertyPath,
+  type Resource,
+  ResourceSet,
+} from "@rdfx/resource";
+import { NTriplesIdentifier } from "@rdfx/string";
 import { Either, Left, Maybe, Right } from "purify-ts";
 import { z } from "zod";
 
 export type $_ToRdfResourceFunction<
   IdentifierT extends Resource.Identifier,
-  ObjectT extends { $identifier: () => IdentifierT },
+  ObjectT extends object,
 > = (parameters: {
   graph: Exclude<Quad_Graph, Variable> | undefined;
   ignoreRdfType: boolean;
@@ -17,6 +27,42 @@ export type $_ToRdfResourceFunction<
   resource: Resource<IdentifierT>;
   resourceSet: ResourceSet;
 }) => void;
+
+function $arrayFromJsonArray<ItemJsonValueT, ItemT, ItemSchemaT>(
+  itemFromJsonValue: $FromJsonValueFunction<ItemJsonValueT, ItemT, ItemSchemaT>,
+): $FromJsonValueFunction<
+  ItemJsonValueT[] | undefined,
+  ItemT[],
+  $CollectionSchema<ItemSchemaT>
+> {
+  return (arrayJsonValue, options) => {
+    if (arrayJsonValue === undefined) {
+      return Either.of([]);
+    }
+    const { schema, ...otherOptions } = options;
+    const itemFromJsonValueOptions = {
+      ...otherOptions,
+      schema: schema.itemType,
+    };
+    return Either.sequence(
+      arrayJsonValue.map((itemJsonValue) =>
+        itemFromJsonValue(itemJsonValue, itemFromJsonValueOptions),
+      ),
+    );
+  };
+}
+
+function $arrayToJsonArray<ItemT, ItemJsonValueT>(
+  itemToJsonValue: $ToJsonValueFunction<ItemT, ItemJsonValueT>,
+): $ToJsonValueFunction<readonly ItemT[], ItemJsonValueT[]> {
+  return (values) => values.map(itemToJsonValue);
+}
+
+const $blankNodeFromJsonString: $FromJsonValueFunction<
+  string,
+  BlankNode,
+  object
+> = (jsonValue) => Right(dataFactory.blankNode(jsonValue.substring(2)));
 
 interface $CollectionSchema<ItemSchemaT> {
   readonly itemType: ItemSchemaT;
@@ -144,6 +190,40 @@ function $convertToScalarSet<
   };
 }
 
+export type $FromJsonObjectFunction<
+  JsonObjectT extends object,
+  ValueT,
+  ValueSchemaT,
+> = (
+  jsonObject: JsonObjectT,
+  options: { context?: unknown; schema: ValueSchemaT },
+) => Either<Error, ValueT>;
+
+export type $FromJsonValueFunction<JsonValueT, ValueT, ValueSchemaT> = (
+  jsonValue: JsonValueT,
+  options: { context?: unknown; schema: ValueSchemaT },
+) => Either<Error, ValueT>;
+
+const $identifierFromJsonString: $FromJsonValueFunction<
+  string,
+  BlankNode | NamedNode,
+  $IdentifierSchema
+> = (jsonString, options) =>
+  jsonString.startsWith("_:")
+    ? ($blankNodeFromJsonString(jsonString, options) as Either<
+        Error,
+        BlankNode | NamedNode
+      >)
+    : ($iriFromJsonString(jsonString, options) as Either<
+        Error,
+        BlankNode | NamedNode
+      >);
+
+interface $IdentifierSchema {
+  readonly hasValues?: readonly NamedNode[];
+  readonly kind: "Identifier";
+}
+
 function $identityConversionFunction<T>(
   value: T,
   _defaultNamespace?: $NamespaceBuilder,
@@ -158,11 +238,54 @@ function $identityValidationFunction<T>(
   return Either.of(value);
 }
 
+function $intFromJsonNumber<IntT extends number>(
+  jsonNumber: IntT,
+  _options: Parameters<
+    $FromJsonValueFunction<IntT, IntT, $NumericSchema<IntT>>
+  >[1],
+): Either<Error, IntT> {
+  return Either.of(jsonNumber);
+}
+
+function $iriFromJsonString<IriT extends string = string>(
+  jsonValue: IriT,
+  _options: Parameters<
+    $FromJsonValueFunction<IriT, NamedNode<IriT>, object>
+  >[1],
+): Either<Error, NamedNode<IriT>> {
+  return Either.of(dataFactory.namedNode(jsonValue));
+}
+
 const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
+
+function $maybeFromJsonValue<ItemJsonValueT, ItemT, ItemSchemaT>(
+  itemFromJsonValue: $FromJsonValueFunction<ItemJsonValueT, ItemT, ItemSchemaT>,
+): $FromJsonValueFunction<
+  ItemJsonValueT | undefined,
+  Maybe<ItemT>,
+  $MaybeSchema<ItemSchemaT>
+> {
+  return (value, options) => {
+    if (value === undefined) {
+      return Either.of(Maybe.empty());
+    }
+    const { schema, ...otherOptions } = options;
+    return itemFromJsonValue(value, {
+      ...otherOptions,
+      schema: schema.itemType,
+    }).map((value) => Maybe.of(value));
+  };
+}
 
 interface $MaybeSchema<ItemSchemaT> {
   readonly itemType: ItemSchemaT;
   readonly kind: "Option";
+}
+
+function $maybeToJsonValue<ItemT, ItemJsonValueT>(
+  itemToJsonValue: $ToJsonValueFunction<ItemT, ItemJsonValueT>,
+): $ToJsonValueFunction<Maybe<ItemT>, ItemJsonValueT | undefined> {
+  return (value) => value.map((value) => itemToJsonValue(value)).extract();
 }
 
 function $monkeyPatchObject<T extends object>(
@@ -203,79 +326,34 @@ export type $NamespaceBuilder<TermNames extends string = any> = Record<
 > &
   ((property?: TemplateStringsArray | TermNames) => NamedNode);
 
+interface $NumericSchema<T> {
+  readonly datatype: NamedNode;
+  readonly hasValues?: readonly Literal[];
+  readonly in?: readonly T[];
+  readonly kind: "BigDecimal" | "BigInt" | "Float" | "Int";
+}
+
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
-namespace $RdfVocabularies {
-  export const rdf = {
-    first: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-    ),
-    langString: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString",
-    ),
-    nil: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-    ),
-    rest: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-    ),
-    subject: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-    ),
-    type: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-    ),
-  };
+function $primitiveToJsonValue<PrimitiveT extends boolean | number | string>(
+  primitive: PrimitiveT,
+): PrimitiveT {
+  return primitive;
+}
 
-  export const rdfs = {
-    subClassOf: dataFactory.namedNode(
-      "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-    ),
-  };
+export type $PropertyPath = RdfxResourcePropertyPath;
 
-  export const xsd = {
-    boolean: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean"),
-    byte: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#byte"),
-    date: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date"),
-    dateTime: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#dateTime",
-    ),
-    dateTimeStamp: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#dateTimeStamp",
-    ),
-    decimal: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal"),
-    double: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double"),
-    float: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#float"),
-    int: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#int"),
-    integer: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer"),
-    long: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#long"),
-    negativeInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#negativeInteger",
-    ),
-    nonNegativeInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
-    ),
-    nonPositiveInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
-    ),
-    positiveInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#positiveInteger",
-    ),
-    short: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#short"),
-    string: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#string"),
-    unsignedByte: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedByte",
-    ),
-    unsignedInt: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedInt",
-    ),
-    unsignedLong: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedLong",
-    ),
-    unsignedShort: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedShort",
-    ),
-  };
+export namespace $PropertyPath {
+  export const schema: Readonly<object> = {};
+
+  export type Schema = typeof schema;
+
+  export const toRdfResource: $ToRdfResourceFunction<
+    Resource.Identifier,
+    $PropertyPath
+  > = RdfxResourcePropertyPath.toResource;
+
+  export const $toString = RdfxResourcePropertyPath.toString;
 }
 
 function $sequenceRecord<T extends Record<string, unknown>>(
@@ -294,9 +372,32 @@ function $sequenceRecord<T extends Record<string, unknown>>(
   return Right(result as T);
 }
 
+function $stringFromJsonString<StringT extends string>(
+  jsonString: StringT,
+  _options: Parameters<
+    $FromJsonValueFunction<StringT, StringT, $StringSchema<StringT>>
+  >[1],
+): Either<Error, StringT> {
+  return Either.of(jsonString);
+}
+
+interface $StringSchema<StringT extends string> {
+  readonly datatype: NamedNode;
+  readonly hasValues?: readonly Literal[];
+  readonly in?: readonly StringT[];
+  readonly languageIn?: readonly string[];
+  readonly kind: "String";
+}
+
+export type $ToJsonObjectFunction<T, JsonT extends object> = (
+  value: T,
+) => JsonT;
+
+export type $ToJsonValueFunction<T, JsonValueT> = (value: T) => JsonValueT;
+
 export type $ToRdfResourceFunction<
-  ObjectT,
-  IdentifierT extends Resource.Identifier = Resource.Identifier,
+  IdentifierT extends Resource.Identifier,
+  ObjectT extends object,
 > = (
   object: ObjectT,
   options?: {
@@ -305,6 +406,27 @@ export type $ToRdfResourceFunction<
     resourceSet?: ResourceSet;
   },
 ) => Resource<IdentifierT>;
+
+export type $ToRdfResourceValuesFunction<
+  ValueT,
+  ReturnT extends BlankNode | Literal | NamedNode =
+    | BlankNode
+    | Literal
+    | NamedNode,
+> = (
+  value: ValueT,
+  options: {
+    graph?: Exclude<Quad_Graph, Variable>;
+    ignoreRdfType?: boolean;
+    propertyPath: $PropertyPath;
+    resource: Resource;
+    resourceSet: ResourceSet;
+  },
+) => ReturnT[];
+
+export type $ToStringFunction<T> = (value: T) => string;
+
+export type $ToStringRecordFunction<T> = (value: T) => Record<string, string>;
 
 function $validateArray<ItemSchemaT, ItemValueT>(
   validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
@@ -348,7 +470,19 @@ function $wrap_ToRdfResourceFunction<
   ObjectT extends { $identifier: () => IdentifierT },
 >(
   _toRdfResourceFunction: $_ToRdfResourceFunction<IdentifierT, ObjectT>,
-): $ToRdfResourceFunction<ObjectT, IdentifierT> {
+): $ToRdfResourceFunction<IdentifierT, ObjectT>;
+function $wrap_ToRdfResourceFunction<
+  _IdentifierT extends BlankNode,
+  ObjectT extends object,
+>(
+  _toRdfResourceFunction: $_ToRdfResourceFunction<BlankNode, ObjectT>,
+): $ToRdfResourceFunction<BlankNode, ObjectT>;
+function $wrap_ToRdfResourceFunction<
+  IdentifierT extends Resource.Identifier,
+  ObjectT extends object & { $identifier?: () => IdentifierT },
+>(
+  _toRdfResourceFunction: $_ToRdfResourceFunction<IdentifierT, ObjectT>,
+): $ToRdfResourceFunction<IdentifierT, ObjectT> {
   return (object, options) => {
     let { graph, ignoreRdfType = false, resourceSet } = options ?? {};
     if (!resourceSet) {
@@ -357,7 +491,11 @@ function $wrap_ToRdfResourceFunction<
         dataset: datasetFactory.dataset(),
       });
     }
-    const resource = resourceSet.resource(object.$identifier());
+    const resource = (
+      object.$identifier
+        ? resourceSet.resource(object.$identifier())
+        : resourceSet.resource(dataFactory.blankNode())
+    ) as Resource<IdentifierT>;
     _toRdfResourceFunction({
       graph,
       ignoreRdfType,
@@ -368,10 +506,15 @@ function $wrap_ToRdfResourceFunction<
     return resource;
   };
 }
+
+const $xsd_int = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#int");
+
+const $xsd_string = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#string",
+);
+
 export type FormStruct = {
   readonly $identifier: () => FormStruct.Identifier;
-
-  readonly $type: "FormStruct";
 
   /**
    * Empty string set
@@ -425,7 +568,7 @@ export namespace FormStruct {
     );
     parameters.resource.add(
       FormStruct.schema.properties.nestedStructProperty.path,
-      [
+      ((value, options) => [
         $wrap_ToRdfResourceFunction<
           BlankNode | NamedNode,
           {
@@ -436,18 +579,38 @@ export namespace FormStruct {
              */
             readonly requiredStringProperty: string;
           }
-        >((parameters) => {
+        >(((parameters) => {
           parameters.resource.add(
             dataFactory.namedNode("http://example.com/requiredStringProperty"),
             [$literalFactory.string(parameters.object.requiredStringProperty)],
             parameters.graph,
           );
           return parameters.resource;
-        })(parameters.object.nestedStructProperty, {
-          graph: parameters.graph,
-          resourceSet: parameters.resourceSet,
-        }).identifier,
-      ],
+        }) satisfies $_ToRdfResourceFunction<
+          BlankNode | NamedNode,
+          {
+            readonly $identifier: () => BlankNode | NamedNode;
+
+            /**
+             * Required string
+             */
+            readonly requiredStringProperty: string;
+          }
+        >)(value, { graph: options.graph, resourceSet: options.resourceSet })
+          .identifier,
+      ])(parameters.object.nestedStructProperty, {
+        ignoreRdfType: parameters.ignoreRdfType,
+        graph: parameters.graph,
+        objectSchema: {
+          literals: ["", ".schema"],
+          placeholders: ["FormStruct"],
+          trim: false,
+          oneline: false,
+        },
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
+        propertyPath: FormStruct.schema.properties.nestedStructProperty.path,
+      }),
       parameters.graph,
     );
     parameters.resource.add(
@@ -466,12 +629,7 @@ export namespace FormStruct {
     );
     parameters.resource.add(
       FormStruct.schema.properties.requiredIntProperty.path,
-      [
-        $literalFactory.number(
-          parameters.object.requiredIntProperty,
-          $RdfVocabularies.xsd.int,
-        ),
-      ],
+      [$literalFactory.number(parameters.object.requiredIntProperty, $xsd_int)],
       parameters.graph,
     );
     parameters.resource.add(
@@ -482,37 +640,21 @@ export namespace FormStruct {
     return parameters.resource;
   };
 
-  export const $toString: (_formStruct: FormStruct) => string = (_formStruct) =>
-    `FormStruct(${JSON.stringify(toStringRecord(_formStruct))})`;
+  export const $toString: $ToStringFunction<Pick<FormStruct, "$identifier">> = (
+    _formStruct,
+  ) => `FormStruct(${JSON.stringify(FormStruct.toStringRecord(_formStruct))})`;
 
-  export const create = <
+  export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => FormStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly emptyStringSetProperty?: string | readonly string[];
-    readonly nestedStructProperty: {
-      readonly $identifier?:
-        | (() => BlankNode | NamedNode)
-        | BlankNode
-        | NamedNode
-        | (keyof $DefaultNamespaceT & string);
-      readonly requiredStringProperty: string;
-    };
-    readonly nonEmptyStringSetProperty: string | readonly string[];
-    readonly optionalStringProperty?: string | Maybe<string>;
-    readonly requiredIntProperty: number;
-    readonly requiredStringProperty: string;
-  }): Either<Error, FormStruct> =>
+  >(
+    parameters: FormStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, FormStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
         parameters.$defaultNamespace,
       ),
+      $type: Right("FormStruct" as const),
       emptyStringSetProperty: $convertToScalarSet($identityConversionFunction)(
         parameters.emptyStringSetProperty,
         parameters.$defaultNamespace,
@@ -535,17 +677,7 @@ export namespace FormStruct {
         },
         $defaultNamespace?: $DefaultNamespaceT,
       ) =>
-        (<
-          $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-        >(parameters: {
-          readonly $defaultNamespace?: $DefaultNamespaceT;
-          readonly $identifier?:
-            | (() => BlankNode | NamedNode)
-            | BlankNode
-            | NamedNode
-            | (keyof $DefaultNamespaceT & string);
-          readonly requiredStringProperty: string;
-        }) =>
+        ((parameters) =>
           $sequenceRecord({
             $identifier: $convertToIdentifierProperty(
               parameters.$identifier,
@@ -556,25 +688,37 @@ export namespace FormStruct {
             ),
           }).map((object) =>
             $monkeyPatchObject(object, {
-              toJson: (_object) =>
+              toJson: ((_object) =>
                 JSON.parse(
                   JSON.stringify({
                     "@id":
                       _object.$identifier().termType === "BlankNode"
                         ? `_:${_object.$identifier().value}`
                         : _object.$identifier().value,
-                    requiredStringProperty: _object.requiredStringProperty,
-                  } satisfies {
-                    readonly "@id": string;
-                    readonly requiredStringProperty: string;
+                    requiredStringProperty: $primitiveToJsonValue<string>(
+                      _object.requiredStringProperty,
+                    ),
                   }),
-                ),
-              $toString: (_object) =>
+                )) satisfies $ToJsonObjectFunction<
+                {
+                  readonly $identifier: () => BlankNode | NamedNode;
+
+                  /**
+                   * Required string
+                   */
+                  readonly requiredStringProperty: string;
+                },
+                { "@id": string; requiredStringProperty: string }
+              >,
+              $toString: ((_object) =>
                 JSON.stringify(
-                  $compactRecord({
-                    $identifier: _object.$identifier().toString(),
-                  }),
-                ),
+                  ((_object) =>
+                    $compactRecord({
+                      $identifier: _object.$identifier().toString(),
+                    }))(_object),
+                )) satisfies $ToStringFunction<{
+                readonly $identifier: () => BlankNode | NamedNode;
+              }>,
             }),
           ))({ ...value, $defaultNamespace }))(
         parameters.nestedStructProperty,
@@ -602,18 +746,16 @@ export namespace FormStruct {
       ),
       requiredIntProperty: Either.of(parameters.requiredIntProperty),
       requiredStringProperty: Either.of(parameters.requiredStringProperty),
-    })
-      .map((properties) => ({ ...properties, $type: "FormStruct" as const }))
-      .map((object) =>
-        $monkeyPatchObject(object, {
-          toJson: FormStruct.toJson,
-          $toString: FormStruct.$toString,
-        }),
-      );
+    }).map((object) =>
+      $monkeyPatchObject(object, {
+        toJson: FormStruct.toJsonObject,
+        $toString: FormStruct.$toString,
+      }),
+    );
 
-  export function createUnsafe<
+  export type CreateParameters<
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
+  > = {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => FormStruct.Identifier)
@@ -633,103 +775,161 @@ export namespace FormStruct {
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredIntProperty: number;
     readonly requiredStringProperty: string;
-  }): FormStruct {
-    return create(parameters).unsafeCoerce();
-  }
+  };
 
-  export const fromJson: (json: FormStruct.Json) => Either<Error, FormStruct> =
-    ($json) =>
-      $sequenceRecord({
-        $identifier: Either.of<Error, BlankNode | NamedNode>(
-          $json["@id"].startsWith("_:")
-            ? dataFactory.blankNode($json["@id"].substring(2))
-            : dataFactory.namedNode($json["@id"]),
-        ),
-        emptyStringSetProperty: Either.sequence<Error, string>(
-          ($json["emptyStringSetProperty"] ?? []).map((item) =>
-            Either.of<Error, string>(item),
+  export const createUnsafe: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: FormStruct.CreateParameters<$DefaultNamespaceT>,
+  ) => FormStruct.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = FormStruct & { readonly $type: "FormStruct" };
+
+  export const fromJsonObject: $FromJsonObjectFunction<
+    FormStruct.Json,
+    FormStruct.Discriminated,
+    FormStruct.Schema
+  > = ($jsonObject, options) =>
+    $sequenceRecord({
+      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+        ...options,
+        schema: FormStruct.schema.properties.$identifier.type,
+      }),
+      emptyStringSetProperty: $arrayFromJsonArray(
+        $stringFromJsonString<string>,
+      )($jsonObject["emptyStringSetProperty"], {
+        ...options,
+        schema: FormStruct.schema.properties.emptyStringSetProperty.type,
+      }),
+      nestedStructProperty: (($jsonObject, options) =>
+        $sequenceRecord({
+          $identifier: $identifierFromJsonString($jsonObject["@id"], {
+            ...options,
+            schema: { kind: "Identifier" as const },
+          }),
+          requiredStringProperty: $stringFromJsonString<string>(
+            $jsonObject["requiredStringProperty"],
+            {
+              ...options,
+              schema: { kind: "String" as const, datatype: $xsd_string },
+            },
           ),
-        ),
-        nestedStructProperty: (($json) =>
+        }).chain(((parameters) =>
           $sequenceRecord({
-            $identifier: Either.of<Error, BlankNode | NamedNode>(
-              $json["@id"].startsWith("_:")
-                ? dataFactory.blankNode($json["@id"].substring(2))
-                : dataFactory.namedNode($json["@id"]),
+            $identifier: $convertToIdentifierProperty(
+              parameters.$identifier,
+              parameters.$defaultNamespace,
             ),
-            requiredStringProperty: Either.of<Error, string>(
-              $json["requiredStringProperty"],
+            requiredStringProperty: Either.of(
+              parameters.requiredStringProperty,
             ),
-          }).chain(
-            <
-              $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-            >(parameters: {
-              readonly $defaultNamespace?: $DefaultNamespaceT;
-              readonly $identifier?:
-                | (() => BlankNode | NamedNode)
-                | BlankNode
-                | NamedNode
-                | (keyof $DefaultNamespaceT & string);
-              readonly requiredStringProperty: string;
-            }) =>
-              $sequenceRecord({
-                $identifier: $convertToIdentifierProperty(
-                  parameters.$identifier,
-                  parameters.$defaultNamespace,
-                ),
-                requiredStringProperty: Either.of(
-                  parameters.requiredStringProperty,
-                ),
-              }).map((object) =>
-                $monkeyPatchObject(object, {
-                  toJson: (_object) =>
-                    JSON.parse(
-                      JSON.stringify({
-                        "@id":
-                          _object.$identifier().termType === "BlankNode"
-                            ? `_:${_object.$identifier().value}`
-                            : _object.$identifier().value,
-                        requiredStringProperty: _object.requiredStringProperty,
-                      } satisfies {
-                        readonly "@id": string;
-                        readonly requiredStringProperty: string;
-                      }),
+          }).map((object) =>
+            $monkeyPatchObject(object, {
+              toJson: ((_object) =>
+                JSON.parse(
+                  JSON.stringify({
+                    "@id":
+                      _object.$identifier().termType === "BlankNode"
+                        ? `_:${_object.$identifier().value}`
+                        : _object.$identifier().value,
+                    requiredStringProperty: $primitiveToJsonValue<string>(
+                      _object.requiredStringProperty,
                     ),
-                  $toString: (_object) =>
-                    JSON.stringify(
-                      $compactRecord({
-                        $identifier: _object.$identifier().toString(),
-                      }),
-                    ),
-                }),
-              ),
-          ))($json["nestedStructProperty"]),
-        nonEmptyStringSetProperty: Either.sequence<Error, string>(
-          $json["nonEmptyStringSetProperty"].map((item) =>
-            Either.of<Error, string>(item),
-          ),
-        ),
-        optionalStringProperty: Maybe.fromNullable(
-          $json["optionalStringProperty"],
-        )
-          .map((item) => Either.of<Error, string>(item).map(Maybe.of))
-          .orDefault(Either.of(Maybe.empty())),
-        requiredIntProperty: Either.of<Error, number>(
-          $json["requiredIntProperty"],
-        ),
-        requiredStringProperty: Either.of<Error, string>(
-          $json["requiredStringProperty"],
-        ),
-      }).chain(FormStruct.create);
+                  }),
+                )) satisfies $ToJsonObjectFunction<
+                {
+                  readonly $identifier: () => BlankNode | NamedNode;
+
+                  /**
+                   * Required string
+                   */
+                  readonly requiredStringProperty: string;
+                },
+                { "@id": string; requiredStringProperty: string }
+              >,
+              $toString: ((_object) =>
+                JSON.stringify(
+                  ((_object) =>
+                    $compactRecord({
+                      $identifier: _object.$identifier().toString(),
+                    }))(_object),
+                )) satisfies $ToStringFunction<{
+                readonly $identifier: () => BlankNode | NamedNode;
+              }>,
+            }),
+          )) satisfies <
+          $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+        >(parameters: {
+          readonly $defaultNamespace?: $DefaultNamespaceT;
+          readonly $identifier?:
+            | (() => BlankNode | NamedNode)
+            | BlankNode
+            | NamedNode
+            | (keyof $DefaultNamespaceT & string);
+          readonly requiredStringProperty: string;
+        }) => Either<
+          Error,
+          {
+            readonly $identifier: () => BlankNode | NamedNode;
+
+            /**
+             * Required string
+             */
+            readonly requiredStringProperty: string;
+          }
+        >))($jsonObject["nestedStructProperty"], {
+        ...options,
+        schema: FormStruct.schema.properties.nestedStructProperty.type,
+      }),
+      nonEmptyStringSetProperty: $arrayFromJsonArray(
+        $stringFromJsonString<string>,
+      )($jsonObject["nonEmptyStringSetProperty"], {
+        ...options,
+        schema: FormStruct.schema.properties.nonEmptyStringSetProperty.type,
+      }),
+      optionalStringProperty: $maybeFromJsonValue(
+        $stringFromJsonString<string>,
+      )($jsonObject["optionalStringProperty"], {
+        ...options,
+        schema: FormStruct.schema.properties.optionalStringProperty.type,
+      }),
+      requiredIntProperty: $intFromJsonNumber<number>(
+        $jsonObject["requiredIntProperty"],
+        {
+          ...options,
+          schema: FormStruct.schema.properties.requiredIntProperty.type,
+        },
+      ),
+      requiredStringProperty: $stringFromJsonString<string>(
+        $jsonObject["requiredStringProperty"],
+        {
+          ...options,
+          schema: FormStruct.schema.properties.requiredStringProperty.type,
+        },
+      ),
+    }).chain(FormStruct.create);
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
-  export const isFormStruct = (object: $Object): object is FormStruct =>
-    object.$type === "FormStruct";
+  export const isFormStruct: (
+    object: $Object,
+  ) => object is FormStruct.Discriminated = (
+    object,
+  ): object is FormStruct.Discriminated => object.$type === "FormStruct";
+
+  export type Json = {
+    "@id": string;
+    emptyStringSetProperty?: string[];
+    nestedStructProperty: { "@id": string; requiredStringProperty: string };
+    nonEmptyStringSetProperty: string[];
+    optionalStringProperty?: string;
+    requiredIntProperty: number;
+    requiredStringProperty: string;
+  };
 
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
@@ -743,12 +943,9 @@ export namespace FormStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        $type: z.literal("FormStruct"),
         emptyStringSetProperty: z
-          .string()
-          .array()
+          .array(z.string())
           .optional()
-          .readonly()
           .meta({ title: "Empty string set" }),
         nestedStructProperty: z
           .object({
@@ -759,14 +956,9 @@ export namespace FormStruct {
           })
           .meta({ title: "Nested object" }),
         nonEmptyStringSetProperty: z
-          .string()
-          .array()
-          .nonempty()
+          .array(z.string())
           .min(1)
-          .readonly()
-          .meta({
-            title: "Non-empty string set",
-          }),
+          .meta({ title: "Non-empty string set" }),
         optionalStringProperty: z
           .string()
           .optional()
@@ -776,67 +968,54 @@ export namespace FormStruct {
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_options?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
-            rule: {
-              condition: {
-                schema: { const: "FormStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
-              },
-              effect: "HIDE",
-            },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_options?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             label: "Empty string set",
-            scope: `${scopePrefix}/properties/emptyStringSetProperty`,
+            scope: `${_options?.scopePrefix ?? "#"}/properties/emptyStringSetProperty`,
             type: "Control",
           },
-          ((parameters?: { scopePrefix?: string }): any => {
-            const scopePrefix = parameters?.scopePrefix ?? "#";
+          ((_options?: { scopePrefix?: string }): any => {
             return {
               elements: [
                 {
                   label: "Identifier",
-                  scope: `${scopePrefix}/properties/@id`,
+                  scope: `${_options?.scopePrefix ?? "#"}/properties/@id`,
                   type: "Control",
                 },
                 {
                   label: "Required string",
-                  scope: `${scopePrefix}/properties/requiredStringProperty`,
+                  scope: `${_options?.scopePrefix ?? "#"}/properties/requiredStringProperty`,
                   type: "Control",
                 },
               ],
               type: "Group",
             };
-          })({ scopePrefix: `${scopePrefix}/properties/nestedStructProperty` }),
+          })({ scopePrefix: _options?.scopePrefix ?? "#" }),
           {
             label: "Non-empty string set",
-            scope: `${scopePrefix}/properties/nonEmptyStringSetProperty`,
+            scope: `${_options?.scopePrefix ?? "#"}/properties/nonEmptyStringSetProperty`,
             type: "Control",
           },
           {
             label: "Optional string",
-            scope: `${scopePrefix}/properties/optionalStringProperty`,
+            scope: `${_options?.scopePrefix ?? "#"}/properties/optionalStringProperty`,
             type: "Control",
           },
           {
             label: "Required int",
-            scope: `${scopePrefix}/properties/requiredIntProperty`,
+            scope: `${_options?.scopePrefix ?? "#"}/properties/requiredIntProperty`,
             type: "Control",
           },
           {
             label: "Required string",
-            scope: `${scopePrefix}/properties/requiredStringProperty`,
+            scope: `${_options?.scopePrefix ?? "#"}/properties/requiredStringProperty`,
             type: "Control",
           },
         ],
@@ -846,33 +1025,21 @@ export namespace FormStruct {
     };
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "FormStruct";
-    readonly emptyStringSetProperty?: readonly string[];
-    readonly nestedStructProperty: {
-      readonly "@id": string;
-      readonly requiredStringProperty: string;
-    };
-    readonly nonEmptyStringSetProperty: readonly string[];
-    readonly optionalStringProperty?: string;
-    readonly requiredIntProperty: number;
-    readonly requiredStringProperty: string;
-  };
-
   export const schema = {
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      $type: { kind: "Discriminant", value: "FormStruct" },
       emptyStringSetProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/emptyStringSetProperty",
         ),
-        type: { kind: "Set" as const, itemType: { kind: "String" as const } },
+        type: {
+          kind: "Set" as const,
+          itemType: { kind: "String" as const, datatype: $xsd_string },
+        },
       },
       nestedStructProperty: {
         kind: "Shacl",
@@ -888,7 +1055,7 @@ export namespace FormStruct {
               path: dataFactory.namedNode(
                 "http://example.com/requiredStringProperty",
               ),
-              type: { kind: "String" as const },
+              type: { kind: "String" as const, datatype: $xsd_string },
             },
           },
         } as const,
@@ -900,7 +1067,7 @@ export namespace FormStruct {
         ),
         type: {
           kind: "Set" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
           minCount: 1,
         },
       },
@@ -911,39 +1078,39 @@ export namespace FormStruct {
         ),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       requiredIntProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/requiredIntProperty"),
-        type: { kind: "Int" as const },
+        type: { kind: "Int" as const, datatype: $xsd_int },
       },
       requiredStringProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
-        type: { kind: "String" as const },
+        type: { kind: "String" as const, datatype: $xsd_string },
       },
     },
   } as const;
 
   export type Schema = typeof schema;
 
-  export const toJson: (_formStruct: FormStruct) => FormStruct.Json = (
-    _formStruct,
-  ) =>
+  export const toJsonObject: $ToJsonObjectFunction<
+    FormStruct,
+    FormStruct.Json
+  > = (_formStruct) =>
     JSON.parse(
       JSON.stringify({
         "@id":
           _formStruct.$identifier().termType === "BlankNode"
             ? `_:${_formStruct.$identifier().value}`
             : _formStruct.$identifier().value,
-        $type: _formStruct.$type,
-        emptyStringSetProperty: _formStruct.emptyStringSetProperty.map(
-          (item) => item,
-        ),
+        emptyStringSetProperty: $arrayToJsonArray(
+          $primitiveToJsonValue<string>,
+        )(_formStruct.emptyStringSetProperty),
         nestedStructProperty: ((_object) =>
           JSON.parse(
             JSON.stringify({
@@ -951,34 +1118,53 @@ export namespace FormStruct {
                 _object.$identifier().termType === "BlankNode"
                   ? `_:${_object.$identifier().value}`
                   : _object.$identifier().value,
-              requiredStringProperty: _object.requiredStringProperty,
-            } satisfies {
-              readonly "@id": string;
-              readonly requiredStringProperty: string;
+              requiredStringProperty: $primitiveToJsonValue<string>(
+                _object.requiredStringProperty,
+              ),
             }),
           ))(_formStruct.nestedStructProperty),
-        nonEmptyStringSetProperty: _formStruct.nonEmptyStringSetProperty.map(
-          (item) => item,
+        nonEmptyStringSetProperty: $arrayToJsonArray(
+          $primitiveToJsonValue<string>,
+        )(_formStruct.nonEmptyStringSetProperty),
+        optionalStringProperty: $maybeToJsonValue(
+          $primitiveToJsonValue<string>,
+        )(_formStruct.optionalStringProperty),
+        requiredIntProperty: $primitiveToJsonValue<number>(
+          _formStruct.requiredIntProperty,
         ),
-        optionalStringProperty: _formStruct.optionalStringProperty
-          .map((item) => item)
-          .extract(),
-        requiredIntProperty: _formStruct.requiredIntProperty,
-        requiredStringProperty: _formStruct.requiredStringProperty,
-      } satisfies FormStruct.Json),
+        requiredStringProperty: $primitiveToJsonValue<string>(
+          _formStruct.requiredStringProperty,
+        ),
+      }),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource: $ToRdfResourceFunction<
+    FormStruct.Identifier,
+    FormStruct
+  > = $wrap_ToRdfResourceFunction<FormStruct.Identifier, FormStruct>(
+    FormStruct._toRdfResource,
+  );
 
-  export const toStringRecord: (
-    _formStruct: FormStruct,
-  ) => Record<string, string> = (_formStruct) =>
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    FormStruct,
+    BlankNode | NamedNode
+  > = (value, options) => [
+    FormStruct.toRdfResource(value, {
+      graph: options.graph,
+      resourceSet: options.resourceSet,
+    }).identifier,
+  ];
+
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<FormStruct, "$identifier">
+  > = (_formStruct) =>
     $compactRecord({ $identifier: _formStruct.$identifier().toString() });
 }
-export type $Object = FormStruct;
+
+export type $Object = FormStruct.Discriminated;
 
 export namespace $Object {
-  export const toJson = FormStruct.toJson;
+  export const toJsonObject = FormStruct.toJsonObject;
 
   export const toRdfResource = FormStruct.toRdfResource;
 

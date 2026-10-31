@@ -1,21 +1,29 @@
 import { Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 
 import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
-import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
   protected override readonly inlineExpression = code`Date`;
+  protected abstract readonly jsonStringFormat: "date" | "datetime";
 
   /**
    * Date has no conversion function to avoid source type overlap with other types (e.g., string).
    */
   override readonly conversionFunction: Maybe<AbstractTypedLiteralType.ConversionFunction> =
     Maybe.empty();
-  override readonly equalsFunction =
-    code`${this.reusables.snippets.dateEquals}`;
-  override readonly filterFunction =
-    code`${this.reusables.snippets.filterDate}`;
+  override readonly equalsFunction = new ReferenceCallable(
+    this.reusables.snippets.dateEquals,
+  );
+  override readonly filterFunction = new ReferenceCallable(
+    this.reusables.snippets.filterDate,
+  );
   override readonly filterType = code`${this.reusables.snippets.DateFilter}`;
+  override readonly fromJsonValueFunction = new ReferenceCallable(
+    this.reusables.snippets.dateFromJsonString,
+  );
   override readonly jsTypes = [
     {
       instanceof: "Date",
@@ -23,21 +31,23 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
     },
   ] as const;
   override readonly schemaType = code`${this.reusables.snippets.DateSchema}`;
-  override readonly valueSparqlWherePatternsFunction =
-    code`${this.reusables.snippets.dateSparqlWherePatterns}`;
+  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
+    this.reusables.snippets.dateSparqlWherePatterns,
+  );
 
-  override fromJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractTypedLiteralType<Date>["fromJsonExpression"]
-  >[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, Date>(new Date(${variables.value}["@value"]))`;
+  @Memoize()
+  override get jsonValueType(): AbstractTypedLiteralType.JsonType {
+    return this.jsonTypeFactory.createJsonStringType({
+      format: this.jsonStringFormat,
+    });
   }
 
-  override jsonType(): AbstractTypedLiteralType.JsonType {
-    return new AbstractTypedLiteralType.JsonType(
-      code`{ readonly "@type": ${literalOf(this.datatype.value)}, readonly "@value": string }`,
-    );
+  override toLoggableExpression({
+    variables,
+  }: Parameters<
+    AbstractTypedLiteralType<Date>["toLoggableExpression"]
+  >[0]): Code {
+    return code`${variables.value}.toISOString()`;
   }
 
   override toRdfResourceValuesExpression({

@@ -4,7 +4,8 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
-import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class of typed literals whose datatype corresponds to a JavaScript primitive type.
@@ -12,65 +13,45 @@ import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 export abstract class AbstractPrimitiveType<
   ValueT extends Primitive,
 > extends AbstractTypedLiteralType<ValueT> {
-  override readonly equalsFunction =
-    code`${this.reusables.snippets.strictEquals}`;
+  protected abstract readonly decodedIn: readonly ValueT[];
+
+  override readonly equalsFunction = new ReferenceCallable(
+    this.reusables.snippets.strictEquals,
+  );
+
+  @Memoize()
+  override get toJsonValueFunction(): AbstractTypedLiteralType<ValueT>["toJsonValueFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.primitiveToJsonValue}<${this.expression}>`,
+    );
+  }
+
+  @Memoize()
+  override get toJsonObjectFunction(): AbstractTypedLiteralType<ValueT>["toJsonObjectFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.primitiveToJsonObject}<${this.expression}>(${this.rdfjsTermExpression(this.datatype)})`,
+    );
+  }
 
   @Memoize()
   protected override get inlineExpression(): Code {
     if (this.in_.length > 0) {
-      const name = this.name.extract();
-      if (name && this.configuration.features.has("Object.schema")) {
-        // Reuse the type from schema to cut down code
-        return code`(typeof ${name}.schema)["in"][number]`;
-      }
-
-      return code`${joinCode(
-        this.in_.map((value) => this.valueExpression(value)),
-        { on: " | " },
-      )}`;
+      return this.schemaVariable
+        .map((schemaVariable) => code`${schemaVariable}["in"][number]`)
+        .orDefault(
+          code`${joinCode(
+            this.in_.map((value) => this.valueExpression(value)),
+            { on: " | " },
+          )}`,
+        );
     }
+
     return code`${this.jsTypes[0].typeof}`;
   }
 
-  override fromJsonExpression({
+  override toLoggableExpression({
     variables,
-  }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${variables.value})`;
-  }
-
-  override jsonSchema(
-    _parameters: Parameters<AbstractTypedLiteralType<ValueT>["jsonSchema"]>[0],
-  ): Code {
-    switch (this.in_.length) {
-      case 0:
-        return code`${this.reusables.imports.z}.${this.jsTypes[0].typeof}()`;
-      case 1:
-        return code`${this.reusables.imports.z}.literal(${this.valueExpression(this.in_[0])})`;
-      default: {
-        const name = this.name.extract();
-        if (name && this.configuration.features.has("Object.schema")) {
-          // Reuse the type from schema to cut down code
-          return code`${this.reusables.imports.z}.union(${name}.schema.in.map(_ => ${this.reusables.imports.z}.literal(_)))`;
-        } else {
-          return code`${this.reusables.imports.z}.union(${arrayOf(
-            ...this.in_.map(
-              (value) =>
-                code`${this.reusables.imports.z}.literal(${this.valueExpression(value)})`,
-            ),
-          )})`;
-        }
-      }
-    }
-  }
-
-  @Memoize()
-  override jsonType(): AbstractLiteralType.JsonType {
-    return new AbstractLiteralType.JsonType(this.expression);
-  }
-
-  override toJsonExpression({
-    variables,
-  }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
+  }: Parameters<AbstractLiteralType["toLoggableExpression"]>[0]): Code {
     return variables.value;
   }
 }
@@ -81,6 +62,5 @@ export namespace AbstractPrimitiveType {
   export type JsType = AbstractLiteralType.JsType;
   export const GraphqlType = AbstractLiteralType.GraphqlType;
   export type GraphqlType = AbstractLiteralType.GraphqlType;
-  export const JsonType = AbstractLiteralType.JsonType;
   export type JsonType = AbstractLiteralType.JsonType;
 }

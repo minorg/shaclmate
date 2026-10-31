@@ -5,6 +5,9 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
+import type { Callable } from "./Callable.js";
+import { InlineCallable } from "./InlineCallable.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 /**
@@ -22,15 +25,20 @@ export abstract class AbstractTermType<
     | Literal
     | NamedNode,
 > extends AbstractType {
-  readonly equalsFunction = code`${this.reusables.snippets.booleanEquals}`;
+  readonly equalsFunction = new ReferenceCallable(
+    this.reusables.snippets.booleanEquals,
+  );
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
-  override readonly hashFunction = code`${this.reusables.snippets.hashTerm}`;
+  override readonly hashFunction = new ReferenceCallable(
+    this.reusables.snippets.hashTerm,
+  );
   readonly in_: readonly ConstantTermT[];
   override readonly mutable: boolean = false;
   abstract readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly recursive = false;
-  override readonly validationFunction: Maybe<Code> = Maybe.empty();
+  override readonly validationFunction: AbstractType["validationFunction"] =
+    Maybe.empty();
 
   constructor({
     hasValues,
@@ -50,7 +58,7 @@ export abstract class AbstractTermType<
     return Maybe.of({
       jsonName: "termType",
       name: "termType",
-      values: [...this.nodeKinds].map(NodeKind.toTermType),
+      values: [...this.termTypes],
     });
   }
 
@@ -65,12 +73,12 @@ export abstract class AbstractTermType<
 
   @Memoize()
   override get toRdfResourceValueTypes() {
-    return new Set([...this.nodeKinds].map(NodeKind.toTermType));
+    return this.termTypes;
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
-    return code`((_: object) => [])`;
+  override get valueSparqlConstructTriplesFunction(): Callable {
+    return new InlineCallable(code`((_: object) => [])`);
   }
 
   protected override get schemaInitializers() {
@@ -86,10 +94,6 @@ export abstract class AbstractTermType<
       );
     }
     return initializers;
-  }
-
-  override jsonUiSchemaElement(): Maybe<Code> {
-    return Maybe.empty();
   }
 
   override toRdfResourceValuesExpression({
@@ -120,6 +124,5 @@ export namespace AbstractTermType {
   export const GraphqlType = AbstractType.GraphqlType;
   export type GraphqlType = AbstractType.GraphqlType;
   export type JsType = AbstractType.JsType;
-  export const JsonType = AbstractType.JsonType;
   export type JsonType = AbstractType.JsonType;
 }

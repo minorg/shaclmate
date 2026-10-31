@@ -26,7 +26,7 @@ const nodePropertyShape = PropertyShape.createUnsafe({
   path: ex("nodeProperty"),
 });
 
-export const shapesGraph = ShapesGraph.fromShapes(
+export const shapesGraph = ShapesGraph.fromObjects(
   ExampleNodeShape1,
   NodeShape.createUnsafe({
     $identifier: ex("ExampleNodeShape2"),

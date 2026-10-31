@@ -38,10 +38,7 @@ export class ${syntheticNamePrefix}SparqlObjectSet implements ${syntheticNamePre
   }
 
 ${joinCode(
-  [
-    ...this.namedObjectTypes,
-    ...this.namedObjectDiscriminatedUnionTypes,
-  ].flatMap((namedObjectType): readonly Code[] => {
+  this.namedObjectTypes.flatMap((namedObjectType): readonly Code[] => {
     const methodSignatures = this.methodSignatures(namedObjectType, {
       queryT: `${syntheticNamePrefix}SparqlObjectSet.Query`,
     });

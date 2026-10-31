@@ -57,7 +57,7 @@ export const fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${
 
   if (configuration.features.has("Object.toRdf")) {
     companionDeclarations.push(code`\
-export const toRdfResource: ${snippets.ToRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.toResource;`);
+export const toRdfResource: ${snippets.ToRdfResourceFunction}<${imports.Resource}.Identifier, ${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.toResource;`);
   }
 
   if (configuration.features.has("Object.toString")) {

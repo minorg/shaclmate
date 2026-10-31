@@ -482,15 +482,15 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
             i === 0
-              ? kitchenSink.DiscriminatedUnionMember1.createUnsafe({
+              ? kitchenSink.StructDiscriminatedUnionMember1.createUnsafe({
                   $identifier: identifiers[i],
-                  discriminatedUnionMember1Distinct: `test${i}`,
-                  discriminatedUnionMemberCommon: `test${i}`,
+                  structDiscriminatedUnionMember1Distinct: `test${i}`,
+                  structDiscriminatedUnionMemberCommon: `test${i}`,
                 })
-              : kitchenSink.DiscriminatedUnionMember2.createUnsafe({
+              : kitchenSink.StructDiscriminatedUnionMember2.createUnsafe({
                   $identifier: identifiers[i],
-                  discriminatedUnionMember2Distinct: `test${i}`,
-                  discriminatedUnionMemberCommon: `test${i}`,
+                  structDiscriminatedUnionMember2Distinct: `test${i}`,
+                  structDiscriminatedUnionMemberCommon: `test${i}`,
                 }),
           ),
           kitchenSink.TermsStruct.createUnsafe({
@@ -509,11 +509,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         onBothMembersPositive: [
           {
             on: {
-              DiscriminatedUnionMember1: {
-                discriminatedUnionMemberCommon: { in: ["test0"] },
+              StructDiscriminatedUnionMember1: {
+                structDiscriminatedUnionMemberCommon: { in: ["test0"] },
               },
-              DiscriminatedUnionMember2: {
-                discriminatedUnionMemberCommon: { in: ["test1"] },
+              StructDiscriminatedUnionMember2: {
+                structDiscriminatedUnionMemberCommon: { in: ["test1"] },
               },
             },
           },
@@ -522,8 +522,8 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         onMember1Negative: [
           {
             on: {
-              DiscriminatedUnionMember1: {
-                discriminatedUnionMemberCommon: { in: ["test1"] },
+              StructDiscriminatedUnionMember1: {
+                structDiscriminatedUnionMemberCommon: { in: ["test1"] },
               },
             },
           },
@@ -532,8 +532,8 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         onMember1Positive: [
           {
             on: {
-              DiscriminatedUnionMember1: {
-                discriminatedUnionMemberCommon: { in: ["test0"] },
+              StructDiscriminatedUnionMember1: {
+                structDiscriminatedUnionMemberCommon: { in: ["test0"] },
               },
             },
           },
@@ -542,8 +542,8 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         onMember2Negative: [
           {
             on: {
-              DiscriminatedUnionMember2: {
-                discriminatedUnionMemberCommon: { in: ["test0"] },
+              StructDiscriminatedUnionMember2: {
+                structDiscriminatedUnionMemberCommon: { in: ["test0"] },
               },
             },
           },
@@ -552,8 +552,8 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         onMember2Positive: [
           {
             on: {
-              DiscriminatedUnionMember2: {
-                discriminatedUnionMemberCommon: { in: ["test1"] },
+              StructDiscriminatedUnionMember2: {
+                structDiscriminatedUnionMemberCommon: { in: ["test1"] },
               },
             },
           },
@@ -561,11 +561,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.DiscriminatedUnion.Filter, readonly NamedNode[]]
+        [kitchenSink.StructDiscriminatedUnion.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
-            await objectSet.discriminatedUnionIdentifiers({
+            await objectSet.structDiscriminatedUnionIdentifiers({
               filter,
             })
           ).unsafeCoerce();
@@ -740,23 +740,27 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           kitchenSink.UnionDiscriminantsStruct.createUnsafe({
             $identifier: identifiers[0],
             requiredNodeOrNodeOrString: {
-              $type: "DiscriminatedUnionMember1",
-              value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
+              $type: "StructDiscriminatedUnionMember1",
+              value: kitchenSink.StructDiscriminatedUnionMember1.createUnsafe({
                 $identifier: dataFactory.namedNode(
                   "http://example.com/discriminatedUnionMember1",
                 ),
-                discriminatedUnionMember1Distinct: "http://example.com/test0",
-                discriminatedUnionMemberCommon: "http://example.com/test0",
+                structDiscriminatedUnionMember1Distinct:
+                  "http://example.com/test0",
+                structDiscriminatedUnionMemberCommon:
+                  "http://example.com/test0",
               }),
             },
             requiredNodeOrLiteral: {
-              termType: "DiscriminatedUnionMember1",
-              value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
+              termType: "StructDiscriminatedUnionMember1",
+              value: kitchenSink.StructDiscriminatedUnionMember1.createUnsafe({
                 $identifier: dataFactory.namedNode(
                   "http://example.com/discriminatedUnionMember1",
                 ),
-                discriminatedUnionMember1Distinct: "http://example.com/test0",
-                discriminatedUnionMemberCommon: "http://example.com/test0",
+                structDiscriminatedUnionMember1Distinct:
+                  "http://example.com/test0",
+                structDiscriminatedUnionMemberCommon:
+                  "http://example.com/test0",
               }),
             },
             requiredTerm: dataFactory.namedNode("http://example.com/test0"),
@@ -784,13 +788,13 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           {
             requiredNodeOrNodeOrString: {
               on: {
-                DiscriminatedUnionMember1: {
-                  discriminatedUnionMember1Distinct: {
+                StructDiscriminatedUnionMember1: {
+                  structDiscriminatedUnionMember1Distinct: {
                     in: ["http://example.com/test0"],
                   },
                 },
-                DiscriminatedUnionMember2: {
-                  discriminatedUnionMember2Distinct: {
+                StructDiscriminatedUnionMember2: {
+                  structDiscriminatedUnionMember2Distinct: {
                     in: ["http://example.com/test0"],
                   },
                 },
@@ -804,13 +808,13 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           {
             requiredNodeOrNodeOrString: {
               on: {
-                DiscriminatedUnionMember1: {
-                  discriminatedUnionMember1Distinct: {
+                StructDiscriminatedUnionMember1: {
+                  structDiscriminatedUnionMember1Distinct: {
                     in: ["http://example.com/testx"],
                   },
                 },
-                DiscriminatedUnionMember2: {
-                  discriminatedUnionMember2Distinct: {
+                StructDiscriminatedUnionMember2: {
+                  structDiscriminatedUnionMember2Distinct: {
                     in: ["http://example.com/testx"],
                   },
                 },
@@ -824,8 +828,8 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           {
             requiredNodeOrLiteral: {
               on: {
-                DiscriminatedUnionMember1: {
-                  discriminatedUnionMember1Distinct: {
+                StructDiscriminatedUnionMember1: {
+                  structDiscriminatedUnionMember1Distinct: {
                     in: ["http://example.com/test0"],
                   },
                 },
@@ -841,8 +845,8 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           {
             requiredNodeOrLiteral: {
               on: {
-                DiscriminatedUnionMember1: {
-                  discriminatedUnionMember1Distinct: {
+                StructDiscriminatedUnionMember1: {
+                  structDiscriminatedUnionMember1Distinct: {
                     in: ["http://example.com/testx"],
                   },
                 },

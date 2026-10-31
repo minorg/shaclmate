@@ -9,7 +9,7 @@ export const snippets_bigDecimalFromRdfResourceValues: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}bigDecimalFromRdfResourceValues`,
     code`\
-function ${syntheticNamePrefix}bigDecimalFromRdfResourceValues(values: ${imports.Resource}.Values, options: Parameters<${snippets.FromRdfResourceValuesFunction}<${imports.BigDecimal}, ${snippets.NumericSchema}<${imports.BigDecimal}>>>[1]): ${imports.Either}<Error, ${imports.Resource}.Values<${imports.BigDecimal}>> {
-  return ${snippets.termLikeFromRdfResourceValues}(values, options).chain(values => values.chainMap(value => value.toBigDecimal(options.schema.in)));
-}`,
+const ${syntheticNamePrefix}bigDecimalFromRdfResourceValues = ${snippets.FromRdfResourceValuesFunction}<${imports.BigDecimal}, ${snippets.NumericSchema}<${imports.BigDecimal}>> =
+  (values, options) =>
+    ${snippets.termLikeFromRdfResourceValues}(values, options).chain(values => values.chainMap(value => value.toBigDecimal(options.schema.in)));`,
   );

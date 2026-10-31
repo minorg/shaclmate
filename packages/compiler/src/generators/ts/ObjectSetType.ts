@@ -14,14 +14,6 @@ export interface ${syntheticNamePrefix}ObjectSet {
       .flatMap((namedObjectType) =>
         Object.values(this.methodSignatures(namedObjectType)),
       )
-      .concat(
-        this.namedObjectDiscriminatedUnionTypes.flatMap(
-          (namedObjectDiscriminatedUnionType) =>
-            Object.values(
-              this.methodSignatures(namedObjectDiscriminatedUnionType),
-            ),
-        ),
-      )
       .map(
         (methodSignature) =>
           code`${methodSignature.name}(${methodSignature.parameters}): ${methodSignature.returnType};`,

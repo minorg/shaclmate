@@ -5,10 +5,9 @@ import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 export function AbstractDiscriminatedUnionType_filterTypeExpression<
   MemberTypeT extends Type,
 >(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
-  const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
   return code`\
   {
-   ${this.identifierType.map((identifierType) => code`readonly ${syntheticNamePrefix}identifier?: ${identifierType.filterType};`).orDefault(code``)}
+   ${this.identifierProperty.map((identifierProperty) => code`readonly ${identifierProperty.name}?: ${identifierProperty.type.filterType};`).orDefault(code``)}
    readonly on?: { ${joinCode(
      this.members.map(
        ({ type, primaryDiscriminantValue }) =>

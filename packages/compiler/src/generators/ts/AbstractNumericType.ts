@@ -1,6 +1,8 @@
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import type { Callable } from "./Callable.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
@@ -9,12 +11,16 @@ import { type Code, code } from "./ts-poet-wrapper.js";
 export abstract class AbstractNumericType<
   ValueT extends bigint | number,
 > extends AbstractPrimitiveType<ValueT> {
-  override readonly hashFunction = code`${this.reusables.snippets.hashNumeric}`;
+  override readonly hashFunction = new ReferenceCallable(
+    this.reusables.snippets.hashNumeric,
+  );
   abstract override readonly kind: "BigInt" | "Float" | "Int";
 
   @Memoize()
-  override get filterFunction(): Code {
-    return code`${this.reusables.snippets.filterNumeric}<${this.expression}>`;
+  override get filterFunction(): Callable {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.filterNumeric}<${this.expression}>`,
+    );
   }
 
   @Memoize()
@@ -28,8 +34,10 @@ export abstract class AbstractNumericType<
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction() {
-    return code`${this.reusables.snippets.numericSparqlWherePatterns}<${this.expression}>`;
+  override get valueSparqlWherePatternsFunction(): Callable {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.numericSparqlWherePatterns}<${this.expression}>`,
+    );
   }
 
   override toRdfResourceValuesExpression({
@@ -43,6 +51,5 @@ export abstract class AbstractNumericType<
 
 export namespace AbstractNumericType {
   export type ConversionFunction = AbstractPrimitiveType.ConversionFunction;
-  export const JsonType = AbstractPrimitiveType.JsonType;
   export type JsonType = AbstractPrimitiveType.JsonType;
 }

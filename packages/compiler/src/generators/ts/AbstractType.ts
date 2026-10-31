@@ -1,15 +1,17 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import type { Logger } from "@rdfx/logger";
+
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractType_ConversionFunction } from "./_AbstractType/AbstractType_ConversionFunction.js";
 import type { AbstractType_DiscriminantProperty } from "./_AbstractType/AbstractType_DiscriminantProperty.js";
 import { AbstractType_GraphqlType } from "./_AbstractType/AbstractType_GraphqlType.js";
-import { AbstractType_JsonType } from "./_AbstractType/AbstractType_JsonType.js";
+import type {
+  AbstractType_JsonType,
+  AbstractType_JsonTypeFactory,
+} from "./_AbstractType/AbstractType_JsonType.js";
 import { AbstractType_JsType } from "./_AbstractType/AbstractType_JsType.js";
-import type { Reusables } from "./Reusables.js";
-import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import type { TsGenerator } from "./TsGenerator.js";
+import { AbstractConstruct } from "./AbstractConstruct.js";
+import type { Callable } from "./Callable.js";
 import {
   type Code,
   code,
@@ -22,21 +24,16 @@ import { tsComment } from "./tsComment.js";
 /**
  * Abstract base class all types.
  */
-export abstract class AbstractType {
-  protected readonly configuration: TsGenerator.Configuration;
-
+export abstract class AbstractType extends AbstractConstruct {
   /**
    * Inline TypeScript type expression.
    */
   protected abstract readonly inlineExpression: Code;
 
-  protected readonly logger: Logger;
-  protected readonly reusables: Reusables;
-
   /**
-   * Comment from rdfs:comment.
+   * Factory for AbstractType.JsonType.
    */
-  readonly comment: Maybe<string>;
+  protected readonly jsonTypeFactory: AbstractType.JsonTypeFactory;
 
   /**
    * Function that takes a value of one or more source types to this type and returns Either<Error, ThisType>.
@@ -58,18 +55,28 @@ export abstract class AbstractType {
    * A function (reference or literal) that compares two property values of this type, returning a
    * $EqualsResult.
    */
-  abstract readonly equalsFunction: Code;
+  abstract readonly equalsFunction: Callable;
 
   /**
    * A function (reference or literal) that takes a filter of filterType (below) and a value of this type
    * and returns true if the value passes the filter.
    */
-  abstract readonly filterFunction: Code;
+  abstract readonly filterFunction: Callable;
 
   /**
    * Composite type for filtering instances of this type e.g., SomeObject.Filter with filters for each property.
    */
   abstract readonly filterType: Code;
+
+  /**
+   * A function (reference or literal) that converts an instance of jsonObjectType to an Either<Error, ThisType>.
+   */
+  abstract readonly fromJsonObjectFunction: Callable;
+
+  /**
+   * A function (reference or literal) that converts an instance of jsonValueType to an Either<Error, ThisType>.
+   */
+  abstract readonly fromJsonValueFunction: Callable;
 
   /**
    * A FromRdfResourceValuesFunction (reference or literal) that converts a Either<Error, rdfjsResource.Resource.Values> to a
@@ -91,7 +98,7 @@ export abstract class AbstractType {
    *   preferredLanguages: the preferred languages array (e.g., ["en"]) passed to Object.fromRdf
    *   propertyPath: the PropertyPath of the object's property
    */
-  abstract readonly fromRdfResourceValuesFunction: Code;
+  abstract readonly fromRdfResourceValuesFunction: Callable;
 
   /**
    * Declarations for GraphQL arguments to pass to this the graphqlResolveExpression.
@@ -113,7 +120,7 @@ export abstract class AbstractType {
   /**
    * A function (reference or literal) that takes a  Hasher and a value of this type, calls hasher.update on the value, and returns the Hasher.
    */
-  abstract readonly hashFunction: Code;
+  abstract readonly hashFunction: Callable;
 
   /**
    * JavaScript type(s) the type.
@@ -121,14 +128,21 @@ export abstract class AbstractType {
   abstract readonly jsTypes: readonly AbstractType.JsType[];
 
   /**
+   * JSON object form of this type.
+   */
+  abstract readonly jsonObjectType: AbstractType.JsonType & {
+    readonly kind: "JsonDiscriminatedUnion" | "JsonIntersection" | "JsonObject";
+  };
+
+  /**
+   * JSON value form of this type. May be the same as the JSON object form.
+   */
+  abstract readonly jsonValueType: AbstractType.JsonType;
+
+  /**
    * Type discriminant.
    */
   abstract readonly kind: string;
-
-  /**
-   * Label from rdfs:label.
-   */
-  readonly label: Maybe<string>;
 
   /**
    * Is a value of this type mutable?
@@ -161,6 +175,16 @@ export abstract class AbstractType {
   readonly shapeIdentifier: BlankNode | NamedNode;
 
   /**
+   * A function (reference or literal) that converts an instance of this type to the jsonObjectType.
+   */
+  abstract readonly toJsonObjectFunction: Callable;
+
+  /**
+   * A function (reference or literal) that converts an instance of this type to the jsonValueType.
+   */
+  abstract readonly toJsonValueFunction: Callable;
+
+  /**
    * The type(s) of the array elements produced by the toRdfResourceValuesExpression.
    */
   abstract readonly toRdfResourceValueTypes: ReadonlySet<
@@ -178,7 +202,7 @@ export abstract class AbstractType {
    *
    * If unspecified, uses an identity function (i.e., function identity(schema: unknown, value: ThisType): Either<Error, ThisType>).
    */
-  abstract readonly validationFunction: Maybe<Code>;
+  abstract readonly validationFunction: Maybe<Callable>;
 
   /**
    * A ValueSparqlConstructTriplesFunction (reference or literal) that returns an array of sparqljs.Triple's for a property value of this type.
@@ -190,7 +214,7 @@ export abstract class AbstractType {
    * - valueVariable: rdfjs.Variable of the value of this type
    * - variablePrefix: string prefix to use for new variables
    */
-  abstract readonly valueSparqlConstructTriplesFunction: Code;
+  abstract readonly valueSparqlConstructTriplesFunction: Callable;
 
   /**
    * A ValueSparqlWherePatternsFunction (reference or literal) that returns an array of SparqlPattern's for a property value of this type.
@@ -203,36 +227,21 @@ export abstract class AbstractType {
    * - valueVariable: rdfjs.Variable of the value of this type
    * - variablePrefix: string prefix to use for new variables
    */
-  abstract readonly valueSparqlWherePatternsFunction: Code;
+  abstract readonly valueSparqlWherePatternsFunction: Callable;
 
   constructor({
-    comment,
-    configuration,
-    label,
-    logger,
+    jsonTypeFactory,
     name,
-    reusables,
     shapeIdentifier,
+    ...superParameters
   }: {
+    jsonTypeFactory: AbstractType.JsonTypeFactory;
     name: Maybe<string>;
-    comment: Maybe<string>;
-    configuration: TsGenerator.Configuration;
-    label: Maybe<string>;
-    logger: Logger;
-    reusables: Reusables;
     shapeIdentifier: BlankNode | NamedNode;
-  }) {
-    this.comment = comment;
-    this.configuration = configuration;
-    this.label = label;
-    this.logger = logger;
+  } & ConstructorParameters<typeof AbstractConstruct>[0]) {
+    super(superParameters);
+    this.jsonTypeFactory = jsonTypeFactory;
     this.name = name;
-    this.reusables = reusables;
-    this.rdfjsTermExpression = rdfjsTermExpression.bind({
-      imports: this.reusables.imports,
-      logger: this.logger,
-      snippets: this.reusables.snippets,
-    });
     this.shapeIdentifier = shapeIdentifier;
   }
 
@@ -275,6 +284,9 @@ ${joinCode(
     return Maybe.of(joinCode(declarations, { on: "\n\n" }));
   }
 
+  /**
+   * Expression of this type. If the type has a name it will be that name (a reference). Otherwise it will be the .inlineExpression.
+   */
   @Memoize()
   get expression(): Code {
     return this.name
@@ -289,12 +301,15 @@ ${joinCode(
   get schema(): Code {
     return this.name
       .map((name) => code`${name}.schema`)
-      .orDefaultLazy(() => this.schemaExpression);
+      .orDefaultLazy(() => this.schemaExpression());
   }
 
   @Memoize()
-  protected get schemaExpression(): Code {
-    return code`{ ${joinCode(this.schemaInitializers.concat(), { on: ", " })} }`;
+  get schemaVariable(): Maybe<Code> {
+    if (!this.configuration.features.has("Object.schema")) {
+      return Maybe.empty();
+    }
+    return this.name.map((name) => code`${name}.schema`);
   }
 
   /**
@@ -303,15 +318,6 @@ ${joinCode(
   protected get schemaInitializers(): readonly Code[] {
     return [code`kind: ${literalOf(this.kind)} as const`];
   }
-
-  /**
-   * An expression that converts this type's JSON type to an Either<Error, ThisType>.
-   */
-  abstract fromJsonExpression(parameters: {
-    variables: {
-      value: Code;
-    };
-  }): Code;
 
   /**
    * An expression that resolves a value of this type in the GraphQL server.
@@ -324,42 +330,10 @@ ${joinCode(
   }): Code;
 
   /**
-   * Zod schema for the JSON type of this type.
-   *
-   * This method is called in two contexts:
-   * "property": from a ShaclProperty, while generating the z.object properties of an ObjectType
-   * "type": from another Type e.g., an OptionType or DiscriminatedUnionType
-   *
-   * z.lazy() should only be returned for "property".
+   * An expression that converts a value of this type to a value that can be logged.
    */
-  abstract jsonSchema(parameters: {
-    includeDiscriminantProperty?: boolean;
-    context: "property" | "type";
-  }): Code;
-
-  /**
-   * JSON-compatible version of the type.
-   */
-  abstract jsonType(parameters?: {
-    includeDiscriminantProperty?: boolean;
-  }): AbstractType.JsonType;
-
-  /**
-   * Element object for a JSON Forms UI schema.
-   */
-  abstract jsonUiSchemaElement(parameters: {
-    variables: { scopePrefix: Code };
-  }): Maybe<Code>;
-
-  /**
-   * An expression that converts a value of this type to a JSON-LD compatible value. It can assume the presence
-   * of the correct JSON-LD context.
-   */
-  abstract toJsonExpression(parameters: {
-    includeDiscriminantProperty?: boolean;
-    variables: {
-      value: Code;
-    };
+  abstract toLoggableExpression(parameters: {
+    variables: { value: Code };
   }): Code;
 
   /**
@@ -388,16 +362,19 @@ ${joinCode(
    */
   abstract toStringExpression(parameters: { variables: { value: Code } }): Code;
 
-  protected readonly rdfjsTermExpression: (
-    parameters: Parameters<typeof rdfjsTermExpression>[0],
-  ) => Code;
+  @Memoize()
+  protected schemaExpression(): Code {
+    return code`{ ${joinCode(this.schemaInitializers.concat(), { on: ", " })} }`;
+  }
 
   protected staticModuleDeclarations(_name: string): Record<string, Code> {
     const staticModuleDeclarations: Record<string, Code> = {};
 
     if (this.configuration.features.has("Object.schema")) {
       staticModuleDeclarations["schema"] =
-        code`export const schema = ${this.schemaExpression}`;
+        code`export const schema = ${this.schemaExpression()}`;
+      staticModuleDeclarations["Schema"] =
+        code`export type Schema = typeof schema;`;
     }
 
     return staticModuleDeclarations;
@@ -418,6 +395,6 @@ export namespace AbstractType {
   export type GraphqlType = AbstractType_GraphqlType;
   export type JsType = AbstractType_JsType;
   export const JsType = AbstractType_JsType;
-  export const JsonType = AbstractType_JsonType;
   export type JsonType = AbstractType_JsonType;
+  export type JsonTypeFactory = AbstractType_JsonTypeFactory;
 }

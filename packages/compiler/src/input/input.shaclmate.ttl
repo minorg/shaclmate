@@ -1,6 +1,7 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -10,6 +11,28 @@ shaclmate:NodeShape
 
 shaclmate:NodeShape-discriminantValue
     a sh:PropertyShape ;
+    rdfs:comment """The type discriminant value to use when a type in a discriminated union needs to be wrapped in a discriminant envelope.
+
+Example:
+
+    sh:xone ([
+            shaclmate:discriminantValue \"date\" ;
+            sh:datatype xsd:date
+        ]
+        [
+            shaclmate:discriminantValue \"dateTime\" ;
+            sh:datatype xsd:dateTime
+        ]
+    )
+
+Because xsd:date and xsd:dateTime are both Date in JavaScript, the generated discriminated union needs to be wrapped in an envelope like:
+
+{ $type: 'type1'; value: Date } | { $type: 'type2'; value: Date }
+
+in order to discriminate values at runtime. With shaclmate:discriminantValue from the example above, the generated type would be:
+
+{ $type: 'date'; value: Date } | { $type: 'dateTime'; value: Date }
+""" ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
     sh:path shaclmate:discriminantValue .
@@ -43,6 +66,207 @@ shaclmate:NodeShape-tsImports
     sh:name "tsImports" ;
     sh:path shaclmate:tsImport .
 
+shaclmate:Operation
+    a rdfs:Class, sh:NodeShape ;
+    rdfs:comment "Service operation" ;
+    sh:property shaclmate:Operation-bindings, shaclmate:Operation-error, shaclmate:Operation-name, shaclmate:Operation-parameter, shaclmate:Operation-result, shaclmate:comment, shaclmate:label .
+
+shaclmate:Operation-bindings
+    a sh:PropertyShape ;
+    rdfs:comment "Transport bindings for the operation, loosely modeled after WSDL. If no bindings are specified the operation will be excluded from transport client and server generation." ;
+    sh:node shaclmate:OperationHttpBinding ;
+    sh:path shaclmate:binding .
+
+shaclmate:Operation-error
+    a sh:PropertyShape ;
+    rdfs:comment "Error types associated with the operation" ;
+    sh:node shaclmate:OperationError ;
+    sh:path shaclmate:error .
+
+shaclmate:Operation-name
+    shaclmate:display true ;
+    a sh:PropertyShape ;
+    rdfs:comment "Identifier-safe name of the operation, incorporated into generated code." ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:path shaclmate:name .
+
+shaclmate:Operation-parameter
+    a sh:PropertyShape ;
+    rdfs:comment "Optional parameter type. This must be a node shape with properties (a 'struct')." ;
+    sh:maxCount 1 ;
+    sh:node shaclmate:OperationParameter ;
+    sh:path shaclmate:parameter .
+
+shaclmate:Operation-result
+    a sh:PropertyShape ;
+    rdfs:comment "Optional result type. The type is a property shape in order to incorporate cardinality." ;
+    sh:maxCount 1 ;
+    sh:node shaclmate:OperationResult ;
+    sh:path shaclmate:result .
+
+shaclmate:OperationError
+    a sh:NodeShape ;
+    rdfs:comment "Error type associated with an operation. Must be a struct type (i.e., have at least one sh:property)." ;
+    sh:property shaclmate:NodeShape-closed, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-ignoredProperties, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-subClassOf, shaclmate:NodeShape-toRdfTypes, shaclmate:NodeShape-tsImports, shaclmate:NodeShape-types, shaclmate:OperationError-properties, shaclmate:Shape-classes, shaclmate:Shape-deactivated, shaclmate:Shape-isDefinedBy, shaclmate:Shape-message, shaclmate:Shape-nodeKind, shaclmate:Shape-severity, shaclmate:Shape-shaclmateName, shaclmate:comment, shaclmate:label .
+
+shaclmate:OperationError-bindings
+    a sh:PropertyShape ;
+    rdfs:comment "Transport bindings for the operation error." ;
+    sh:node shaclmate:OperationErrorHttpBinding ;
+    sh:path shaclmate:binding .
+
+shaclmate:OperationError-properties
+    a sh:PropertyShape ;
+    sh:minCount 1 ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:path sh:property .
+
+shaclmate:OperationErrorHttpBinding
+    a sh:NodeShape ;
+    rdfs:comment "HTTP binding for an operation error" ;
+    sh:property shaclmate:OperationErrorHttpBinding-statusCode .
+
+shaclmate:OperationErrorHttpBinding-statusCode
+    a sh:PropertyShape ;
+    rdfs:comment "HTTP client/server error code for the bound error." ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:name "statusCode" ;
+    sh:node shaclmate:OperationErrorHttpBindingStatusCode ;
+    sh:path shaclmate:httpStatusCode .
+
+shaclmate:OperationErrorHttpBindingStatusCode
+    a sh:NodeShape ;
+    rdfs:comment "Enumeration of both client error (4xx) and server error (5xx) response codes" ;
+    sh:datatype xsd:int ;
+    sh:in (400
+        401
+        402
+        403
+        404
+        405
+        406
+        407
+        408
+        409
+        410
+        411
+        412
+        413
+        414
+        415
+        416
+        417
+        418
+        421
+        422
+        423
+        424
+        425
+        426
+        428
+        429
+        431
+        451
+        500
+        501
+        502
+        503
+        504
+        505
+        506
+        507
+        508
+        510
+        511
+    ) .
+
+shaclmate:OperationHttpBinding
+    a sh:NodeShape ;
+    rdfs:comment "HTTP binding for an operation" ;
+    sh:property shaclmate:OperationHttpBinding-method, shaclmate:OperationHttpBinding-urlTemplate .
+
+shaclmate:OperationHttpBinding-method
+    a sh:PropertyShape ;
+    rdfs:comment "HTTP request body method. If this is not specified, it's inferred from the existence of path, query, and/or body parameters" ;
+    sh:maxCount 1 ;
+    sh:node shaclmate:OperationHttpBindingMethod ;
+    sh:path schema:httpMethod .
+
+shaclmate:OperationHttpBinding-statusCode
+    a sh:PropertyShape ;
+    rdfs:comment "HTTP result response status code. If not specified, it defaults to 200 if there is a result, 204 if not." ;
+    sh:maxCount 1 ;
+    sh:name "statusCode" ;
+    sh:node shaclmate:OperationHttpBindingStatusCode ;
+    sh:path shaclmate:httpStatusCode .
+
+shaclmate:OperationHttpBinding-urlTemplate
+    a sh:PropertyShape ;
+    rdfs:comment "RFC 6570 URI template for the HTTP request. Variables in the template must correspond to properties of the parameter. Any other properties of the parameter are serialized into the HTTP requets body following the given/inferred content type." ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:path schema:urlTemplate .
+
+shaclmate:OperationHttpBindingMethod
+    a sh:NodeShape ;
+    rdfs:comment "Enumeration of common HTTP request methods" ;
+    sh:in ("DELETE"
+        "GET"
+        "POST"
+        "PUT"
+    ) .
+
+shaclmate:OperationHttpBindingStatusCode
+    a sh:NodeShape ;
+    rdfs:comment "Enumeration of HTTP successful (2xx) status codes" ;
+    sh:datatype xsd:int ;
+    sh:in (200
+        201
+        202
+        203
+        204
+        205
+        206
+        207
+        208
+        226
+    ) .
+
+shaclmate:OperationParameter
+    a rdfs:Class, sh:NodeShape ;
+    rdfs:comment "Parameter associated with an operation. Can be any node shape." .
+
+shaclmate:OperationParameterHttpBinding-contentType
+    a sh:PropertyShape ;
+    rdfs:comment "HTTP request body content type. This should be specified if the operation has parameters that are not bound to its request URI template. If it's not specified it defaults to JSON." ;
+    sh:maxCount 1 ;
+    sh:node shaclmate:OperationParameterHttpBindingContentType ;
+    sh:path schema:encodingType .
+
+shaclmate:OperationParameterHttpBindingContentType
+    a sh:NodeShape ;
+    sh:in ("application/json"
+    ) .
+
+shaclmate:OperationResult
+    a rdfs:Class, sh:NodeShape ;
+    rdfs:comment "Result associated with an operation. Can be any node shape." .
+
+shaclmate:OperationResultHttpBinding-contentType
+    a sh:PropertyShape ;
+    rdfs:comment "HTTP result response body content type. If not specified, it's inferred from the request method and content type." ;
+    sh:maxCount 1 ;
+    sh:node shaclmate:OperationResultHttpBindingContentType ;
+    sh:path schema:contentType .
+
+shaclmate:OperationResultHttpBindingContentType
+    a sh:NodeShape ;
+    sh:in ("application/json"
+    ) .
+
 shaclmate:PropertyShape
     sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve, shaclmate:Shape-ignore, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
 
@@ -61,6 +285,25 @@ shaclmate:PropertyShape-resolve
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path shaclmate:resolve .
 
+shaclmate:Service
+    a rdfs:Class, sh:NodeShape ;
+    rdfs:comment "Service with operations" ;
+    sh:property shaclmate:Service-name, shaclmate:Service-operations, shaclmate:comment, shaclmate:label .
+
+shaclmate:Service-name
+    shaclmate:display true ;
+    a sh:PropertyShape ;
+    rdfs:comment "Identifier-safe name of the service" ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:path shaclmate:name .
+
+shaclmate:Service-operations
+    a sh:PropertyShape ;
+    rdfs:comment "Set of operations associated with the service" ;
+    sh:node shaclmate:Operation ;
+    sh:path shaclmate:operation .
+
 shaclmate:Shape-ignore
     a sh:PropertyShape ;
     rdfs:comment "Whether to ignore this shape in code generation, defaults to false" ;
@@ -71,6 +314,7 @@ shaclmate:Shape-ignore
 
 shaclmate:Shape-mutable
     a sh:PropertyShape ;
+    rdfs:comment "Whether the code generated from the shape should be mutable e.g., a mutable property, a mutable array, etc." ;
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
     sh:path shaclmate:mutable .
@@ -78,6 +322,7 @@ shaclmate:Shape-mutable
 shaclmate:Shape-shaclmateName
     shaclmate:display true ;
     a sh:PropertyShape ;
+    rdfs:comment "Name to use in generated code. Used on node shapes (which don't permit sh:name) and to override sh:name in property shapes." ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
     sh:name "shaclmateName" ;

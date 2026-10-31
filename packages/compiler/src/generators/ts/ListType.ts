@@ -10,17 +10,21 @@ import type { BigDecimalType } from "./BigDecimalType.js";
 import type { BigIntType } from "./BigIntType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { BooleanType } from "./BooleanType.js";
+import type { Callable } from "./Callable.js";
 import type { DateTimeType } from "./DateTimeType.js";
 import type { DateType } from "./DateType.js";
 import type { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
+import { InlineCallable } from "./InlineCallable.js";
 import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
 import type { LangStringType } from "./LangStringType.js";
 import type { LiteralType } from "./LiteralType.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
+import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
@@ -51,6 +55,13 @@ export class ListType<
   }
 
   @Memoize()
+  override get jsonValueType(): AbstractCollectionType<ItemTypeT>["jsonValueType"] {
+    return this.jsonTypeFactory.createJsonArrayType(
+      this.itemType.jsonValueType,
+    );
+  }
+
+  @Memoize()
   override get conversionFunction(): Maybe<AbstractCollectionType.ConversionFunction> {
     const itemConversionFunction = this.itemType.conversionFunction.orDefault(
       this.itemConversionFunctionDefault,
@@ -73,8 +84,45 @@ export class ListType<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return code`${this._mutable ? this.reusables.snippets.mutableListFromRdfResourceValues : this.reusables.snippets.listFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
+  override get jsonObjectType(): AbstractCollectionType<ItemTypeT>["jsonObjectType"] {
+    return this.jsonTypeFactory.createJsonObjectType({
+      "@list": { type: this.jsonValueType },
+    });
+  }
+
+  @Memoize()
+  override get fromJsonValueFunction(): AbstractCollectionType<ItemTypeT>["fromJsonValueFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.arrayFromJsonArray}(${this.itemType.fromJsonValueFunction.annotatedUsage})`,
+    );
+  }
+
+  @Memoize()
+  override get fromJsonObjectFunction(): AbstractCollectionType<ItemTypeT>["fromJsonObjectFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.arrayFromJsonObject}(${this.itemType.fromJsonObjectFunction.annotatedUsage})`,
+    );
+  }
+
+  @Memoize()
+  override get fromRdfResourceValuesFunction(): Callable {
+    return new InlineCallable(
+      code`${this._mutable ? this.reusables.snippets.mutableListFromRdfResourceValues : this.reusables.snippets.listFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
+    );
+  }
+
+  @Memoize()
+  override get toJsonValueFunction(): AbstractCollectionType<ItemTypeT>["toJsonValueFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.arrayToJsonArray}(${this.itemType.toJsonValueFunction.annotatedUsage})`,
+    );
+  }
+
+  @Memoize()
+  override get toJsonObjectFunction(): AbstractCollectionType<ItemTypeT>["toJsonObjectFunction"] {
+    return new InlineCallable(
+      code`${this.reusables.snippets.arrayToJsonObject}(${this.itemType.toJsonObjectFunction.annotatedUsage}, "@list")`,
+    );
   }
 
   @Memoize()
@@ -83,41 +131,16 @@ export class ListType<
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${this.reusables.snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
+  override get valueSparqlConstructTriplesFunction(): Callable {
+    return new InlineCallable(
+      code`${this.reusables.snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction.unannotatedUsage})`,
+    );
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.reusables.snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
-  }
-
-  override fromJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractCollectionType<ItemTypeT>["fromJsonExpression"]
-  >[0]): Code {
-    return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.expression}>(${variables.value}.map(item => (${this.itemType.fromJsonExpression(
-      {
-        variables: { value: code`item` },
-      },
-    )})))`;
-  }
-
-  override jsonSchema(
-    parameters: Parameters<AbstractCollectionType<ItemTypeT>["jsonSchema"]>[0],
-  ): Code {
-    let schema = code`${this.itemType.jsonSchema(parameters)}.array()`;
-    if (!this._mutable) {
-      schema = code`${schema}.readonly()`;
-    }
-    return schema;
-  }
-
-  @Memoize()
-  override jsonType(): AbstractCollectionType.JsonType {
-    return new AbstractCollectionType.JsonType(
-      code`${!this.mutable ? "readonly " : ""}(${this.itemType.jsonType().expression})[]`,
+  override get valueSparqlWherePatternsFunction(): Callable {
+    return new InlineCallable(
+      code`${this.reusables.snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
     );
   }
 
@@ -197,6 +220,7 @@ export namespace ListType {
     | ListType<ListType.ItemType>
     | LiteralType
     | ObjectDiscriminatedUnionType
+    | ObjectIntersectionType
     | ObjectType
     | StringType
     | TermType;
@@ -212,12 +236,13 @@ export namespace ListType {
       case "DiscriminatedUnion":
       case "Float":
       case "Identifier":
-      case "Iri":
       case "Int":
+      case "Iri":
       case "LangString":
       case "List":
       case "Literal":
       case "ObjectDiscriminatedUnion":
+      case "ObjectIntersection":
       case "Object":
       case "String":
       case "Term":

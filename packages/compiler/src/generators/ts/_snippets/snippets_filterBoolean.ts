@@ -8,7 +8,7 @@ export const snippets_filterBoolean: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}filterBoolean`,
     code`\
-function ${syntheticNamePrefix}filterBoolean(filter: ${snippets.BooleanFilter}, value: boolean) {
+const ${syntheticNamePrefix}filterBoolean: ${snippets.FilterFunction}<${snippets.BooleanFilter}, boolean> = (filter, value) => {
   if (filter.value !== undefined && value !== filter.value) {
     return false;
   }

@@ -1,6 +1,7 @@
-import type { Maybe } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractObjectSetType } from "./AbstractObjectSetType.js";
+import type { Callable } from "./Callable.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class RdfjsDatasetObjectSetType extends AbstractObjectSetType {
@@ -48,10 +49,7 @@ export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticN
 
   ${joinCode(
     [
-      ...[
-        ...this.namedObjectTypes,
-        ...this.namedObjectDiscriminatedUnionTypes,
-      ].flatMap((namedObjectType): readonly Code[] => {
+      ...this.namedObjectTypes.flatMap((namedObjectType): readonly Code[] => {
         const methodSignatures = this.methodSignatures(namedObjectType);
 
         const delegatingMethods: Code[] = [
@@ -97,13 +95,13 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
         ];
 
         const runtimeObjectType = (
-          filterFunction: Code,
+          filterFunction: Callable,
           namedObjectType: {
             expression: Code;
             fromRdfTypeVariable: Maybe<Code>;
           },
         ): Code => {
-          return code`{ filter: ${filterFunction}, fromRdfResource: ${namedObjectType.expression}.fromRdfResource, fromRdfTypes: ${namedObjectType.fromRdfTypeVariable.map((fromRdfTypeVariable) => code`[${fromRdfTypeVariable}]`).orDefault(code`[]`)} }`;
+          return code`{ filter: ${filterFunction.annotatedUsage}, fromRdfResource: ${namedObjectType.expression}.fromRdfResource, fromRdfTypes: ${namedObjectType.fromRdfTypeVariable.map((fromRdfTypeVariable) => code`[${fromRdfTypeVariable}]`).orDefault(code`[]`)} }`;
         };
 
         switch (namedObjectType.kind) {
@@ -125,13 +123,28 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
     )}
   ], query);
 }`);
+          case "ObjectIntersection":
+            return delegatingMethods.concat(code`\
+${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.expression}[]> {
+  return this.#objectsSync<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType(
+    namedObjectType.filterFunction,
+    {
+      expression: namedObjectType.expression,
+      fromRdfTypeVariable: Maybe.empty(),
+    },
+  )}, query);
+}`);
           default:
             namedObjectType satisfies never;
             return [];
         }
       }),
 
-      ...(this.namedObjectTypes.length > 0
+      ...(this.namedObjectTypes.some(
+        (namedObjectType) =>
+          namedObjectType.kind === "Object" ||
+          namedObjectType.kind === "ObjectIntersection",
+      )
         ? [
             code`\
 #objectsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectType: ${namedObjectTypeType}, ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {
@@ -224,7 +237,10 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
           ]
         : []),
 
-      ...(this.namedObjectDiscriminatedUnionTypes.length > 0
+      ...(this.namedObjectTypes.some(
+        (namedObjectType) =>
+          namedObjectType.kind === "ObjectDiscriminatedUnion",
+      )
         ? [
             code`\
 #objectDiscriminatedUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectTypes: readonly ${namedObjectTypeType}[], ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {

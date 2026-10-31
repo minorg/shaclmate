@@ -7,6 +7,7 @@ import {
 } from "@shaclmate/compiler";
 import { describe, expect, it } from "vitest";
 import { testShapesGraphs } from "../../../test-shapes-graphs/index.js";
+import type { TsFeature } from "../dist/generators/ts/TsFeature.js";
 import { TS_FEATURES } from "../src/generators/ts/TsFeature.js";
 import { compileTs } from "./compileTs.js";
 import { logger } from "./logger.js";
@@ -81,6 +82,17 @@ describe("TsGenerator", () => {
             "src",
           );
           break;
+        case "restExample":
+          configuration = {
+            ...TsGenerator.Configuration.default_,
+            features: new Set<TsFeature>([
+              "Object.create",
+              "LoggingService",
+              "ServiceHttpApi",
+              "ServiceHttpClient",
+            ]),
+          };
+          break;
         case "shaclShacl":
           configuration = {
             ...TsGenerator.Configuration.default_,
@@ -96,7 +108,7 @@ describe("TsGenerator", () => {
           break;
       }
 
-      // if (id !== "externalProject") {
+      // if (id !== "restExample") {
       //   return;
       // }
 
