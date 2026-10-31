@@ -24,5 +24,5 @@ export function ObjectType_fromJsonObjectFunctionExpression(
 }
 
 export function ObjectType_fromJsonObjectFunctionType(this: ObjectType): Code {
-  return code`${this.reusables.snippets.FromJsonObjectFunction}<${this.jsonObjectType.expression}, ${this.discriminatedExpression}, ${this.schemaType}>`;
+  return code`${this.reusables.snippets.FromJsonObjectFunction}<${this.jsonObjectType.expression}, ${this.discriminatedExpression}, undefined>`;
 }

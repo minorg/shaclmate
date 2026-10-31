@@ -221,7 +221,7 @@ export abstract class AbstractStructuredType extends AbstractType {
   protected abstract fromJsonObjectFunctionExpression(): Code;
 
   protected fromJsonObjectFunctionType(): Code {
-    return code`${this.reusables.snippets.FromJsonObjectFunction}<${this.expression}, ${this.jsonObjectType.expression}>`;
+    return code`${this.reusables.snippets.FromJsonObjectFunction}<${this.expression}, ${this.jsonObjectType.expression}, undefined>`;
   }
 
   protected abstract fromRdfResourceValuesFunctionExpression(): Code;

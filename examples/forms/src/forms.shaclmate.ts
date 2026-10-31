@@ -194,10 +194,15 @@ export type $FromJsonObjectFunction<
   JsonObjectT extends object,
   ValueT,
   ValueSchemaT,
-> = (
-  jsonObject: JsonObjectT,
-  options: { context?: unknown; schema: ValueSchemaT },
-) => Either<Error, ValueT>;
+> = [ValueSchemaT] extends [undefined]
+  ? (
+      jsonObject: JsonObjectT,
+      options?: { context?: unknown },
+    ) => Either<Error, ValueT>
+  : (
+      jsonObject: JsonObjectT,
+      options: { context?: unknown; schema: ValueSchemaT },
+    ) => Either<Error, ValueT>;
 
 export type $FromJsonValueFunction<JsonValueT, ValueT, ValueSchemaT> = (
   jsonValue: JsonValueT,
@@ -783,7 +788,7 @@ export namespace FormStruct {
   export const fromJsonObject: $FromJsonObjectFunction<
     FormStruct.Json,
     FormStruct.Discriminated,
-    FormStruct.Schema
+    undefined
   > = ($jsonObject, options) =>
     $sequenceRecord({
       $identifier: $identifierFromJsonString($jsonObject["@id"], {
