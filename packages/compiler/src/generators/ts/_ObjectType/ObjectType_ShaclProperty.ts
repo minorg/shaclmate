@@ -2,6 +2,7 @@ import type { PropertyPath } from "@rdfx/resource";
 
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import type { Type } from "../Type.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
@@ -182,12 +183,6 @@ export class ObjectType_ShaclProperty<
   }
 
   @Memoize()
-  private get schemaVariable(): Code {
-    return this.objectType.name
-      .map((name) => code`${name}.schema.properties.${this.name}`)
-      .orDefaultLazy(() => this.schema.unsafeCoerce());
-  }
-
   private get typeSchemaVariable(): Code {
     return this.objectType.name
       .map((name) => code`${name}.schema.properties.${this.name}.type`)
@@ -247,7 +242,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["fromJsonObjectInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: (${this.type.fromJsonValueFunction.unannotatedUsage})(${variables.jsonObject}["${this.name}"])`,
+      code`${this.name}: (${this.type.fromJsonValueFunction.unannotatedUsage})(${variables.jsonObject}["${this.name}"], { ...${variables.options}, schema: ${this.typeSchemaVariable} })`,
     );
   }
 
@@ -333,6 +328,17 @@ export class ObjectType_ShaclProperty<
     );
   }
 
+  override toLoggableInitializer({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["toLoggableInitializer"]
+  >[0]): Maybe<Code> {
+    const { object: objectVariable, ...otherVariables } = variables;
+    return Maybe.of(
+      code`${literalOf(this.name)}: ${this.type.toLoggableExpression({ variables: { ...otherVariables, value: code`${objectVariable}.${this.name}` } })}`,
+    );
+  }
+
   override toRdfResourceValuesStatements({
     variables,
   }: Parameters<
@@ -354,11 +360,7 @@ export class ObjectType_ShaclProperty<
       .map(() => code`${this.schemaVariable}.path`)
       .orDefault(this.propertyPathToCode(this.path));
 
-    const {
-      object: objectVariable,
-      objectSchema: _objectSchema,
-      ...otherVariables
-    } = variables;
+    const { object: objectVariable, ...otherVariables } = variables;
 
     return [
       code`${variables.resource}.add(${propertyPath}, ${this.type.toRdfResourceValuesExpression(
@@ -371,17 +373,6 @@ export class ObjectType_ShaclProperty<
         },
       )}, ${variables.graph});`,
     ];
-  }
-
-  override toLoggableInitializer({
-    variables,
-  }: Parameters<
-    ObjectType_AbstractProperty["toLoggableInitializer"]
-  >[0]): Maybe<Code> {
-    const { object: objectVariable, ...otherVariables } = variables;
-    return Maybe.of(
-      code`${literalOf(this.name)}: ${this.type.toLoggableExpression({ variables: { ...otherVariables, value: code`${objectVariable}.${this.name}` } })}`,
-    );
   }
 
   override toStringInitializer({

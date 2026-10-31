@@ -10,5 +10,5 @@ export const snippets_identifierFromJsonObject: SnippetFactory = ({
     `${syntheticNamePrefix}identifierFromJsonObject`,
     code`\
 const ${syntheticNamePrefix}identifierFromJsonObject: ${snippets.FromJsonObjectFunction}<${snippets.IdentifierJsonObject}, ${imports.BlankNode} | ${imports.NamedNode}, ${snippets.IdentifierSchema}> = 
-  (jsonObject, options) => jsonObject["@id"].startsWith("_:") ? ${snippets.blankNodeFromJsonObject}(jsonObject, options) : ${snippets.iriFromJsonObject}(jsonObject, options);`,
+  (jsonObject, options) => ${snippets.identifierFromJsonString}(jsonObject["@id"], options);`,
   );

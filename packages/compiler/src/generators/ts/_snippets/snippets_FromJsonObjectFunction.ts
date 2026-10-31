@@ -9,7 +9,7 @@ export const snippets_FromJsonObjectFunction: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}FromJsonObjectFunction`,
     code`\
-export type ${syntheticNamePrefix}FromJsonObjectFunction<JsonObjectT, ValueT, ValueSchemaT> = (
+export type ${syntheticNamePrefix}FromJsonObjectFunction<JsonObjectT extends object, ValueT, ValueSchemaT> = (
   jsonObject: JsonObjectT,
   options: {
     context?: unknown;

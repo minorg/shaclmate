@@ -111,12 +111,7 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.name}: !${variables.ignoreRdfType} ? ${this.reusables.snippets.ensureRdfResourceType}(${variables.focusResource}, ${arrayOf(
-        variables.objectSchema
-          .map(
-            (schemaVariable) =>
-              code`${schemaVariable}.properties.${this.name}.fromRdfType`,
-          )
-          .orDefaultLazy(() => this.rdfjsTermExpression(this.fromRdfType)),
+        code`(${this.schemaVariable}).fromRdfType`,
       )}, ${{ graph: variables.graph }}) : ${this.reusables.imports.Right}(true as const)`,
     );
   }
@@ -208,15 +203,10 @@ type: "optional" as const
     ObjectType_AbstractProperty["toRdfResourceValuesStatements"]
   >[0]): readonly Code[] {
     return [
-      code`if (!${variables.ignoreRdfType}) { ${variables.resource}.add(${this.rdfjsTermExpression(rdf.type)}, ${variables.objectSchema
-        .map(
-          (schemaVariable) =>
-            code`${schemaVariable}.properties.${this.name}.toRdfTypes`,
-        )
-        .orDefaultLazy(
-          () =>
-            code`${arrayOf(...this.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)))}`,
-        )}, ${variables.graph}); }`,
+      code`\
+if (!${variables.ignoreRdfType}) {
+  ${variables.resource}.add(${this.rdfjsTermExpression(rdf.type)}, ${this.schemaVariable}.toRdfTypes, ${variables.graph});
+}`,
     ];
   }
 

@@ -9,7 +9,7 @@ export const snippets_iriFromJsonString: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}iriFromJsonString`,
     code`\
-function ${syntheticNamePrefix}iriFromJsonString<IriT extends string = string>(jsonValue: IriT, options: Parameters<${snippets.FromJsonValueFunction}<IriT, ${imports.NamedNode}<IriT>, ${snippets.IriSchema}<IriT>>>[1]) {
-  return ${imports.dataFactory}.namedNode(jsonValue);
+function ${syntheticNamePrefix}iriFromJsonString<IriT extends string = string>(jsonValue: IriT, options: Parameters<${snippets.FromJsonValueFunction}<IriT, ${imports.NamedNode}<IriT>, object>>[1]): ${imports.Either}<Error, ${imports.NamedNode}<IriT>> {
+  return ${imports.Either}.of(${imports.dataFactory}.namedNode(jsonValue));
 }`,
   );

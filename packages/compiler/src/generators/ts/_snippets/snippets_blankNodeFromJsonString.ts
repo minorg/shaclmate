@@ -9,6 +9,6 @@ export const snippets_blankNodeFromJsonString: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}blankNodeFromJsonString`,
     code`\
-const ${syntheticNamePrefix}blankNodeFromJsonString: ${snippets.FromJsonValueFunction}<string, ${imports.BlankNode}, ${snippets.BlankNodeSchema}> = 
+const ${syntheticNamePrefix}blankNodeFromJsonString: ${snippets.FromJsonValueFunction}<string, ${imports.BlankNode}, object> = 
   (jsonValue) => ${imports.Right}(${imports.dataFactory}.blankNode(jsonValue.substring(2)));`,
   );

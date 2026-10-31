@@ -1,12 +1,13 @@
 import type { Logger } from "@rdfx/logger";
 
 import type { Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 import type { AbstractType } from "../AbstractType.js";
 import type { Reusables } from "../Reusables.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { TsGenerator } from "../TsGenerator.js";
 import type { Type } from "../Type.js";
-import type { Code } from "../ts-poet-wrapper.js";
+import { type Code, code } from "../ts-poet-wrapper.js";
 
 export abstract class ObjectType_AbstractProperty {
   protected readonly configuration: TsGenerator.Configuration;
@@ -182,7 +183,6 @@ export abstract class ObjectType_AbstractProperty {
       focusResource: Code;
       graph: Code;
       ignoreRdfType: Code;
-      objectSchema: Maybe<Code>;
       options: Code;
     };
   }): Maybe<Code>;
@@ -263,7 +263,7 @@ export abstract class ObjectType_AbstractProperty {
     variables: Omit<
       Parameters<Type["toRdfResourceValuesExpression"]>[0]["variables"],
       "propertyPath" | "value"
-    > & { ignoreRdfType: Code; object: Code; objectSchema: Maybe<Code> };
+    > & { ignoreRdfType: Code; object: Code };
   }): readonly Code[];
 
   /**
@@ -276,4 +276,11 @@ export abstract class ObjectType_AbstractProperty {
   protected readonly rdfjsTermExpression: (
     parameters: Parameters<typeof rdfjsTermExpression>[0],
   ) => Code;
+
+  @Memoize()
+  protected get schemaVariable(): Code {
+    return this.objectType.name
+      .map((name) => code`${name}.schema.properties.${this.name}`)
+      .orDefaultLazy(() => this.schema.unsafeCoerce());
+  }
 }

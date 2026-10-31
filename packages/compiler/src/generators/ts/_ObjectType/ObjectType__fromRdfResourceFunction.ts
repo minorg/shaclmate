@@ -10,7 +10,6 @@ function ObjectType__fromRdfResourceFunctionExpression(this: ObjectType): Code {
     context: code`${optionsVariable}.context`,
     graph: code`${optionsVariable}.graph`,
     ignoreRdfType: code`${optionsVariable}.ignoreRdfType`,
-    objectSchema: this.schemaVariable,
     objectSet: code`${optionsVariable}.objectSet`,
     preferredLanguages: code`${optionsVariable}.preferredLanguages`,
     resource: code`resource`,
@@ -26,7 +25,6 @@ function ObjectType__fromRdfResourceFunctionExpression(this: ObjectType): Code {
             focusResource: variables.resource,
             graph: variables.graph,
             ignoreRdfType: variables.ignoreRdfType,
-            objectSchema: variables.objectSchema,
             options: optionsVariable,
           },
         })

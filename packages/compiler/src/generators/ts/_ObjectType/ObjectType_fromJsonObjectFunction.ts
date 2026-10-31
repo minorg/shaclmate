@@ -11,6 +11,7 @@ export function ObjectType_fromJsonObjectFunctionExpression(
     context: code`${optionsVariable}.context`,
     jsonObject: code`${this.configuration.syntheticNamePrefix}jsonObject`,
     objectSet: code`${optionsVariable}.objectSet`,
+    objectSchema: this.schemaVariable,
     options: optionsVariable,
   };
 

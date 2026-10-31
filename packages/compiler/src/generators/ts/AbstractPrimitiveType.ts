@@ -22,7 +22,7 @@ export abstract class AbstractPrimitiveType<
   @Memoize()
   override get fromJsonValueFunction(): AbstractTypedLiteralType<ValueT>["fromJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.primitiveFromJsonValue}<${this.expression}>`,
+      code`${this.reusables.snippets.primitiveFromJsonValue}<${this.expression}, ${this.schemaType}>`,
     );
   }
 

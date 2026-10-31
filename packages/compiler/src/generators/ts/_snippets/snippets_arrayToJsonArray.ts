@@ -8,7 +8,7 @@ export const snippets_arrayToJsonArray: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}arrayToJsonArray`,
     code`\
-function ${syntheticNamePrefix}arrayToJsonArray<ItemT, ItemJsonValueT>(itemToJsonValue: ${snippets.ToJsonValueFunction}<ItemJsonValueT, ItemT, ItemSchemaT>): ${snippets.ToJsonValueFunction}<ItemT[], ItemJsonValueT[]> {
+function ${syntheticNamePrefix}arrayToJsonArray<ItemT, ItemJsonValueT>(itemToJsonValue: ${snippets.ToJsonValueFunction}<ItemT, ItemJsonValueT>): ${snippets.ToJsonValueFunction}<ItemT[], ItemJsonValueT[]> {
   return (values) => values.map(itemToJsonValue);
 }`,
   );
