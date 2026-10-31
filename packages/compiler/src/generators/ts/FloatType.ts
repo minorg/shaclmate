@@ -14,8 +14,6 @@ export class FloatType extends AbstractNumericType<number> {
     LiteralDecoder.decodeFloatLiteral(in_).unsafeCoerce(),
   );
 
-  override readonly jsonValueType: AbstractNumericType.JsonType =
-    this.jsonTypeFactory.createJsonNumberType({ in_: this.decodedIn });
   override readonly conversionFunction: Maybe<AbstractNumericType.ConversionFunction> =
     Maybe.empty();
   override readonly graphqlType = new AbstractNumericType.GraphqlType(
@@ -23,12 +21,21 @@ export class FloatType extends AbstractNumericType<number> {
     this.reusables,
   );
   override readonly jsTypes = [{ typeof: "number" }] as const;
+  override readonly jsonValueType: AbstractNumericType.JsonType =
+    this.jsonTypeFactory.createJsonNumberType({ in_: this.decodedIn });
   override readonly kind = "Float";
 
   @Memoize()
   get fromJsonObjectFunction(): Callable {
     return new ReferenceCallable(
       code`${this.reusables.snippets.floatFromJsonObject}<${this.expression}>`,
+    );
+  }
+
+  @Memoize()
+  override get fromJsonValueFunction(): Callable {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.floatFromJsonNumber}<${this.expression}>`,
     );
   }
 

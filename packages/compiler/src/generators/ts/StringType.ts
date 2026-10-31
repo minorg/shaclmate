@@ -17,14 +17,6 @@ export class StringType extends AbstractPrimitiveType<string> {
     LiteralDecoder.decodeStringLiteral(in_).unsafeCoerce(),
   );
 
-  override readonly jsonValueType: AbstractPrimitiveType.JsonType =
-    this.jsonTypeFactory.createJsonStringType({
-      in_: this.decodedIn,
-      inReference:
-        this.name.isJust() && this.configuration.features.has("Object.schema")
-          ? code`${this.name.extract()!}.schema.in`
-          : undefined,
-    });
   override readonly conversionFunction: Maybe<AbstractPrimitiveType.ConversionFunction> =
     Maybe.empty();
   override readonly filterFunction = new ReferenceCallable(
@@ -43,17 +35,18 @@ export class StringType extends AbstractPrimitiveType<string> {
       typeof: "string",
     },
   ] as const;
+  override readonly jsonValueType: AbstractPrimitiveType.JsonType =
+    this.jsonTypeFactory.createJsonStringType({
+      in_: this.decodedIn,
+      inReference:
+        this.name.isJust() && this.configuration.features.has("Object.schema")
+          ? code`${this.name.extract()!}.schema.in`
+          : undefined,
+    });
   override readonly kind = "String";
   override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.stringSparqlWherePatterns,
   );
-
-  @Memoize()
-  get fromJsonObjectFunction(): Callable {
-    return new ReferenceCallable(
-      code`${this.reusables.snippets.stringFromJsonObject}<${this.expression}>`,
-    );
-  }
 
   constructor({
     languageIn,
@@ -63,6 +56,20 @@ export class StringType extends AbstractPrimitiveType<string> {
   >[0]) {
     super(superParameters);
     this.languageIn = languageIn;
+  }
+
+  @Memoize()
+  get fromJsonObjectFunction(): Callable {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.stringFromJsonObject}<${this.expression}>`,
+    );
+  }
+
+  @Memoize()
+  override get fromJsonValueFunction(): Callable {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.stringFromJsonString}<${this.expression}>`,
+    );
   }
 
   @Memoize()

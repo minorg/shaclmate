@@ -20,13 +20,6 @@ export abstract class AbstractPrimitiveType<
   );
 
   @Memoize()
-  override get fromJsonValueFunction(): AbstractTypedLiteralType<ValueT>["fromJsonValueFunction"] {
-    return new ReferenceCallable(
-      code`${this.reusables.snippets.primitiveFromJsonValue}<${this.expression}, ${this.schemaType}>`,
-    );
-  }
-
-  @Memoize()
   override get toJsonValueFunction(): AbstractTypedLiteralType<ValueT>["toJsonValueFunction"] {
     return new ReferenceCallable(
       code`${this.reusables.snippets.primitiveToJsonValue}<${this.expression}>`,
