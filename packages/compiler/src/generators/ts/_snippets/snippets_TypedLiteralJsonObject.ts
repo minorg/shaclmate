@@ -9,11 +9,11 @@ export const snippets_TypedLiteralJsonObject: SnippetFactory = ({
     `${syntheticNamePrefix}TypedLiteralJsonObject`,
     code`\
 interface ${syntheticNamePrefix}TypedLiteralJsonObject {
-  readonly "@type": string;
-  readonly "@value": string;
+  "@type": string;
+  "@value": string;
 }
   
-namespace TypedLiteralJsonObject {
+namespace ${syntheticNamePrefix}TypedLiteralJsonObject {
   export const schema = () => ${imports.z}.object({
     "@type": ${imports.z}.string().min(1),
     "@value": ${imports.z}.string().min(1)

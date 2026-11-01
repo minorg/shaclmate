@@ -13,6 +13,6 @@ function ${syntheticNamePrefix}intFromJsonObject<IntT extends number>(jsonObject
   const { schema } = options;
   return ${snippets.literalFromJsonObject}(jsonObject)
     .chain(${imports.LiteralDecoder}.decodeIntLiteral)
-    .chain(value => ${snippets.constrainPrimitive}(value, schema.in));
+    .chain(value => ${snippets.constrainPrimitive}<IntT, number>(value, schema.in)) as ${imports.Either}<Error, IntT>;
 }`,
   );

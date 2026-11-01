@@ -15,7 +15,7 @@ function ${syntheticNamePrefix}arrayFromJsonArray<ItemJsonValueT, ItemT, ItemSch
       return ${imports.Either}.of([]);
     }
     const { schema, ...otherOptions } = options;
-    const itemFromJsonValueOptions = { ...otherOptions, schema: schema.itemType };
+    const itemFromJsonValueOptions = { schema: schema.itemType, ...otherOptions };
     return ${imports.Either}.sequence(arrayJsonValue.map(itemJsonValue => itemFromJsonValue(itemJsonValue, itemFromJsonValueOptions)));
   }
 }`,

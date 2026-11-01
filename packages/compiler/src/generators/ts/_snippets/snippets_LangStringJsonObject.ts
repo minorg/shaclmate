@@ -9,11 +9,11 @@ export const snippets_LangStringJsonObject: SnippetFactory = ({
     `${syntheticNamePrefix}LangStringJsonObject`,
     code`\
 interface ${syntheticNamePrefix}LangStringJsonObject {
-  readonly "@language": string;
-  readonly "@value": string;
+  "@language": string;
+  "@value": string;
 }
   
-namespace LangStringJsonObject {
+namespace ${syntheticNamePrefix}LangStringJsonObject {
   export const schema = () => ${imports.z}.object({
     "@language": ${imports.z}.string().min(1),
     "@value": ${imports.z}.string().min(1)

@@ -13,6 +13,6 @@ function ${syntheticNamePrefix}booleanFromJsonObject<BooleanT extends boolean>(j
   const { schema } = options;
   return ${snippets.literalFromJsonObject}(jsonObject)
     .chain(${imports.LiteralDecoder}.decodeBooleanLiteral)
-    .chain(value => ${snippets.constrainPrimitive}(value, schema.in));
+    .chain(value => ${snippets.constrainPrimitive}<BooleanT, boolean>(value, schema.in)) as ${imports.Either}<Error, BooleanT>;
 }`,
   );

@@ -32,28 +32,28 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   @Memoize()
   override get fromJsonValueFunction(): AbstractIdentifierType<NamedNode>["fromJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.iriFromJsonString}<${this.expression}>`,
+      code`${this.reusables.snippets.iriFromJsonString}<${this.valueTypeExpression}>`,
     );
   }
 
   @Memoize()
   override get fromJsonObjectFunction(): AbstractIdentifierType<NamedNode>["fromJsonObjectFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.iriFromJsonObject}<${this.expression}>`,
+      code`${this.reusables.snippets.iriFromJsonObject}<${this.valueTypeExpression}>`,
     );
   }
 
   @Memoize()
   override get toJsonValueFunction(): AbstractIdentifierType<NamedNode>["toJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.iriToJsonString}<${this.expression}>`,
+      code`${this.reusables.snippets.iriToJsonString}<${this.valueTypeExpression}>`,
     );
   }
 
   @Memoize()
   override get toJsonObjectFunction(): AbstractIdentifierType<NamedNode>["toJsonObjectFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.iriToJsonObject}<${this.expression}>`,
+      code`${this.reusables.snippets.iriToJsonObject}<${this.valueTypeExpression}>`,
     );
   }
 

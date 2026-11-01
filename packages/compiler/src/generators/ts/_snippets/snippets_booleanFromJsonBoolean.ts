@@ -9,7 +9,7 @@ export const snippets_booleanFromJsonBoolean: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}booleanFromJsonBoolean`,
     code`\
-function ${syntheticNamePrefix}booleanFromJsonBoolean<BooleanT extends boolean>(jsonBoolean: BooleanT, options: Parameters<${snippets.FromJsonValueFunction}<BooleanT, BooleanT, ${snippets.BooleanSchema}<BooleanT>>>[1]): ${imports.Either}<Error, BooleanT> {
-  return jsonBoolean;
+function ${syntheticNamePrefix}booleanFromJsonBoolean<BooleanT extends boolean>(jsonBoolean: BooleanT, _options: Parameters<${snippets.FromJsonValueFunction}<BooleanT, BooleanT, ${snippets.BooleanSchema}<BooleanT>>>[1]): ${imports.Either}<Error, BooleanT> {
+  return ${imports.Either}.of(jsonBoolean);
 }`,
   );

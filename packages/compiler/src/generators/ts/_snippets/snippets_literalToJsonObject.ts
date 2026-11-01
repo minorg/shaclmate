@@ -12,12 +12,12 @@ export const snippets_literalToJsonObject: SnippetFactory = ({
     code`\
 const ${syntheticNamePrefix}literalToJsonObject: ${snippets.ToJsonObjectFunction}<${imports.Literal}, ${snippets.LiteralJsonObject}> =
   (literal) => {
-    const jsonObject: Partial<${snippets.LiteralJsonObject}> = { "@value": term.value };
-    if (term.language.length > 0) {
-      jsonObject["@language"] = term.language;
+    const jsonObject: ${snippets.LiteralJsonObject} = { "@value": literal.value };
+    if (literal.language.length > 0) {
+      jsonObject["@language"] = literal.language;
     }
-    if (term.datatype.value !== "${xsd.string.value}") {
-      jsonObject["@type"] = term.datatype.value;
+    if (literal.datatype.value !== "${xsd.string.value}") {
+      jsonObject["@type"] = literal.datatype.value;
     }
     return jsonObject;
   }`,

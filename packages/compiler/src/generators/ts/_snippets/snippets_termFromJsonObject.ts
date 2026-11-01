@@ -13,23 +13,25 @@ function ${syntheticNamePrefix}termFromJsonObject<TermT extends ${imports.BlankN
   const { schema } = options;
 
   for (const termType of schema.types) {
-    switch "BlankNode": {
-      if ("@id" in jsonObject && jsonObject["@id"].startsWith("_:")) {
-        return ${snippets.blankNodeFromJsonObject}(jsonObject) as ${imports.Either}<Error, TermT>;
+    switch (termType) {
+      case "BlankNode": {
+        if ("@id" in jsonObject && jsonObject["@id"].startsWith("_:")) {
+          return ${snippets.blankNodeFromJsonObject}(jsonObject) as ${imports.Either}<Error, TermT>;
+        }
+        break;
       }
-      break;
-    }
-    case "Literal": {
-      if ("@value" in jsonObject) {
-        return ${snippets.literalFromJsonObject}(jsonObject) as ${imports.Either}<Error, TermT>;
+      case "Literal": {
+        if ("@value" in jsonObject) {
+          return ${snippets.literalFromJsonObject}(jsonObject) as ${imports.Either}<Error, TermT>;
+        }
+        break;
       }
-      break;
-    }
-    case "NamedNode": {
-      if ("@id" in jsonObject && !jsonObject["@id"].startsWith("_:")) {
-        return ${snippets.iriFromJsonObject}(jsonObject) as ${imports.Either}<Error, TermT>;
+      case "NamedNode": {
+        if ("@id" in jsonObject && !jsonObject["@id"].startsWith("_:")) {
+          return ${snippets.iriFromJsonObject}(jsonObject, { ...options, schema: { kind: "Iri" } }) as ${imports.Either}<Error, TermT>;
+        }
+        break;
       }
-      break;
     }
   }
 

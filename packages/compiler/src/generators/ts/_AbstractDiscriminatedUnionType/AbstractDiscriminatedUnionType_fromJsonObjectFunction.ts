@@ -6,11 +6,11 @@ export function AbstractDiscriminatedUnionType_fromJsonObjectFunctionExpression<
   MemberTypeT extends Type,
 >(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
   return code`\
-(value) => {
+(value, options) => {
 ${joinCode(
   this.members.map(
     ({ primaryDiscriminantValue, type, wrap }) =>
-      code`if (value.${this.configuration.objectDiscriminantProperty.jsonName} === ${literalOf(primaryDiscriminantValue)}) { return ${type.fromJsonObjectFunction.unannotatedUsage}(value).map(value => (${wrap(code`value`)})); }`,
+      code`if (value.${this.configuration.objectDiscriminantProperty.jsonName} === ${literalOf(primaryDiscriminantValue)}) { return ${type.fromJsonObjectFunction.unannotatedUsage}(value, { ...options, schema: options.schema.members[${literalOf(primaryDiscriminantValue)}].type }).map(value => (${wrap(code`value`)})); }`,
   ),
 )}
 

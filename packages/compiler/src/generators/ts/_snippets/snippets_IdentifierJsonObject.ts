@@ -9,10 +9,10 @@ export const snippets_IdentifierJsonObject: SnippetFactory = ({
     `${syntheticNamePrefix}IdentifierJsonObject`,
     code`\
 interface ${syntheticNamePrefix}IdentifierJsonObject<IdT extends string = string> {
-  readonly "@id": IdT;
+  "@id": IdT;
 }
   
-namespace IdentifierJsonObject {
+namespace ${syntheticNamePrefix}IdentifierJsonObject {
   export const schema = () => ${imports.z}.object({
     "@id": ${imports.z}.string().min(1)
   });

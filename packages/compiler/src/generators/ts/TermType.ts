@@ -64,7 +64,7 @@ export class TermType<
   @Memoize()
   override get fromJsonObjectFunction(): Callable {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.termFromJsonObject}<${this.jsonObjectType.expression}, ${this.expression}>`,
+      code`${this.reusables.snippets.termFromJsonObject}<${this.expression}>`,
     );
   }
 

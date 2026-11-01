@@ -10,5 +10,5 @@ export const snippets_langStringFromJsonObject: SnippetFactory = ({
     `${syntheticNamePrefix}langStringFromJsonObject`,
     code`\
 const ${syntheticNamePrefix}langStringFromJsonObject: ${snippets.FromJsonObjectFunction}<${snippets.LangStringJsonObject}, ${imports.Literal}, ${snippets.LangStringSchema}> = 
-  (jsonObject, options) => ${imports.Either}.of<Error, ${imports.Literal}>(${imports.dataFactory}.literal(jsonObject["@value"], jsonObject["@language"]))`,
+  (jsonObject) => ${imports.Either}.of<Error, ${imports.Literal}>(${imports.dataFactory}.literal(jsonObject["@value"], jsonObject["@language"]))`,
   );

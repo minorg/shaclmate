@@ -79,7 +79,7 @@ export abstract class AbstractLazyType<
 
   override get fromJsonValueFunction(): AbstractType["fromJsonValueFunction"] {
     return new InlineCallable(
-      code`(jsonValue, { ...otherOptions, objectSet, schema }) => ${this.partialType.fromJsonValueFunction.annotatedUsage}(jsonValue, { ...otherOptions, objectSet, schema: schema.partialType })
+      code`(jsonValue, { objectSet, schema, ...otherOptions }) => ${this.partialType.fromJsonValueFunction.annotatedUsage}(jsonValue, { objectSet, schema: schema.partialType, ...otherOptions })
         .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: objectSet ? ${this.objectSetResolverFunctionExpressions({ variables: { objectSet: code`objectSet` } })} : ${this.reusables.snippets.missingResolver} }))`,
       {
         type: code`${this.reusables.snippets.FromJsonValueFunction}<${this.jsonValueType.expression}, ${this.expression}, ${this.schema}>`,
@@ -89,7 +89,7 @@ export abstract class AbstractLazyType<
 
   override get fromJsonObjectFunction(): AbstractType["fromJsonObjectFunction"] {
     return new InlineCallable(
-      code`(jsonObject, { ...otherOptions, objectSet, schema }) => ${this.partialType.fromJsonObjectFunction.annotatedUsage}(jsonObject, { ...otherOptions, objectSet, schema: schema.partialType })
+      code`(jsonObject, { objectSet, schema, ...otherOptions }) => ${this.partialType.fromJsonObjectFunction.annotatedUsage}(jsonObject, { objectSet, schema: schema.partialType, ...otherOptions })
         .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: objectSet ? ${this.objectSetResolverFunctionExpressions({ variables: { objectSet: code`objectSet` } })} : ${this.reusables.snippets.missingResolver} }))`,
       {
         type: code`${this.reusables.snippets.FromJsonObjectFunction}<${this.jsonObjectType.expression}, ${this.expression}, ${this.schema}>`,
@@ -102,7 +102,7 @@ export abstract class AbstractLazyType<
     return new InlineCallable(
       code`\
   (values, { objectSet, schema, ...otherOptions }) =>
-    ${this.partialType.fromRdfResourceValuesFunction.annotatedUsage}(values, { ...otherOptions, objectSet, schema: schema.partialType })
+    ${this.partialType.fromRdfResourceValuesFunction.annotatedUsage}(values, { objectSet, schema: schema.partialType, ...otherOptions })
       .map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.objectSetResolverFunctionExpressions({ variables: { objectSet: code`objectSet` } })} })))`,
       {
         type: code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`,

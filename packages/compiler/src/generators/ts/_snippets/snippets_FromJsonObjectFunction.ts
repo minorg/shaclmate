@@ -16,6 +16,7 @@ export type ${syntheticNamePrefix}FromJsonObjectFunction<JsonObjectT extends obj
       options?: {
         context?: unknown;
         ${configuration.features.has("ObjectSet") ? code`objectSet?: ${syntheticNamePrefix}ObjectSet;` : ""}
+        schema?: unknown;
       },
     ) => ${imports.Either}<Error, ValueT>
   : (

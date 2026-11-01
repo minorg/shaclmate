@@ -10,5 +10,5 @@ export const snippets_bigDecimalFromJsonObject: SnippetFactory = ({
     `${syntheticNamePrefix}bigDecimalFromJsonObject`,
     code`\
 const ${syntheticNamePrefix}bigDecimalFromJsonObject: ${snippets.FromJsonObjectFunction}<${snippets.TypedLiteralJsonObject}, ${imports.BigDecimal}, ${snippets.NumericSchema}<${imports.BigDecimal}>> = 
-  (jsonObject) => ${snippets.literalFromJsonObject}(jsonObject).chain(${imports.LiteralDecoder}.decodeBigDecimalLiteral);`,
+  (jsonObject, options) => ${snippets.literalFromJsonObject}(jsonObject, options).chain(${imports.LiteralDecoder}.decodeBigDecimalLiteral);`,
   );

@@ -13,6 +13,6 @@ function ${syntheticNamePrefix}bigIntFromJsonObject<BigIntT extends bigint>(json
   const { schema } = options;
   return ${snippets.literalFromJsonObject}(jsonObject)
     .chain(${imports.LiteralDecoder}.decodeBigIntLiteral)
-    .chain(value => ${snippets.constrainPrimitive}(value, schema.in));
+    .chain(value => ${snippets.constrainPrimitive}<BigIntT, bigint>(value, schema.in)) as ${imports.Either}<Error, BigIntT>;
 }`,
   );

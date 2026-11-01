@@ -12,6 +12,6 @@ export const snippets_bigIntFromJsonString: SnippetFactory = ({
 function ${syntheticNamePrefix}bigIntFromJsonString<JsonValueT extends string, BigIntT extends bigint>(jsonValue: JsonValueT, options: Parameters<${snippets.FromJsonValueFunction}<string, BigIntT, ${snippets.NumericSchema}<BigIntT>>>[1]): ${imports.Either}<Error, BigIntT> {
   const { schema } = options;
   return ${imports.Either}.encase(() => BigInt(jsonValue) as BigIntT)
-    .chain(value => ${snippets.constrainPrimitive}(value, schema.in));
+    .chain(value => ${snippets.constrainPrimitive}<BigIntT, bigint>(value, schema.in)) as ${imports.Either}<Error, BigIntT>;
 }`,
   );

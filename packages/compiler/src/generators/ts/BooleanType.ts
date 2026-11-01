@@ -20,9 +20,6 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     this.reusables.snippets.filterBoolean,
   );
   override readonly filterType = code`${this.reusables.snippets.BooleanFilter}`;
-  override readonly fromJsonObjectFunction = new ReferenceCallable(
-    code`${this.reusables.snippets.booleanFromJsonObject}<${this.expression}>`,
-  );
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${this.reusables.imports.GraphQLBoolean}`,
     this.reusables,
@@ -39,6 +36,13 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.booleanSparqlWherePatterns,
   );
+
+  @Memoize()
+  override get fromJsonObjectFunction(): Callable {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.booleanFromJsonObject}<${this.expression}>`,
+    );
+  }
 
   @Memoize()
   override get fromJsonValueFunction(): Callable {

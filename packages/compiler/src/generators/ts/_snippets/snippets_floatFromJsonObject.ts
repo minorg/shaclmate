@@ -13,6 +13,6 @@ function ${syntheticNamePrefix}floatFromJsonObject<FloatT extends number>(jsonOb
   const { schema } = options;
   return ${snippets.literalFromJsonObject}(jsonObject)
     .chain(${imports.LiteralDecoder}.decodeFloatLiteral)
-    .chain(value => ${snippets.constrainPrimitive}(value, schema.in));
+    .chain(value => ${snippets.constrainPrimitive}<FloatT, number>(value, schema.in)) as ${imports.Either}<Error, FloatT>;
 }`,
   );

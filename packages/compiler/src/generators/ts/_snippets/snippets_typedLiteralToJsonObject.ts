@@ -10,5 +10,5 @@ export const snippets_typedLiteralToJsonObject: SnippetFactory = ({
     `${syntheticNamePrefix}typedLiteralToJsonObject`,
     code`\
 const ${syntheticNamePrefix}typedLiteralToJsonObject: ${snippets.ToJsonObjectFunction}<${imports.Literal}, ${snippets.TypedLiteralJsonObject}> =
-  (literal) => ({ "@type": term.datatype.value, "@value": term.value });`,
+  (literal) => ({ "@type": literal.datatype.value, "@value": literal.value });`,
   );

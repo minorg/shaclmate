@@ -15,7 +15,7 @@ function ${syntheticNamePrefix}maybeFromJsonValue<ItemJsonValueT, ItemT, ItemSch
       return ${imports.Either}.of(${imports.Maybe}.empty());
     }
     const { schema, ...otherOptions } = options;
-    return itemFromJsonValue(value, { ...otherOptions, schema: schema.itemType }).map(value => ${imports.Maybe}.of(value));
+    return itemFromJsonValue(value, { schema: schema.itemType, ...otherOptions }).map(value => ${imports.Maybe}.of(value));
   };
 }`,
   );

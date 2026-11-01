@@ -9,12 +9,22 @@ export const snippets_FromJsonValueFunction: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}FromJsonValueFunction`,
     code`\
-export type ${syntheticNamePrefix}FromJsonValueFunction<JsonValueT, ValueT, ValueSchemaT> = (
-  jsonValue: JsonValueT,
-  options: {
-    context?: unknown;
-    ${configuration.features.has("ObjectSet") ? code`objectSet?: ${syntheticNamePrefix}ObjectSet;` : ""}
-    schema: ValueSchemaT;
-  }
-) => ${imports.Either}<Error, ValueT>;`,
+export type ${syntheticNamePrefix}FromJsonValueFunction<JsonValueT, ValueT, ValueSchemaT> = 
+  [ValueSchemaT] extends [undefined]
+  ? (
+      jsonValue: JsonValueT,
+      options?: {
+        context?: unknown;
+        ${configuration.features.has("ObjectSet") ? code`objectSet?: ${syntheticNamePrefix}ObjectSet;` : ""}
+        schema?: unknown;
+      },
+    ) => ${imports.Either}<Error, ValueT>
+  : (
+      jsonValue: JsonValueT,
+      options: {
+        context?: unknown;
+        ${configuration.features.has("ObjectSet") ? code`objectSet?: ${syntheticNamePrefix}ObjectSet;` : ""}
+        schema: ValueSchemaT;
+      },
+    ) => ${imports.Either}<Error, ValueT>;`,
   );

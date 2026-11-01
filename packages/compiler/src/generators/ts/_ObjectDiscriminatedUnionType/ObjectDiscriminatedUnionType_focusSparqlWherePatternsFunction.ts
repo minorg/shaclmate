@@ -7,7 +7,7 @@ export function ObjectDiscriminatedUnionType_focusSparqlWherePatternsFunction(
   this: ObjectDiscriminatedUnionType,
 ): Callable {
   return this._function({
-    type: code`${this.reusables.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}`,
+    type: code`${this.reusables.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}>`,
     unannotatedExpression: code`\
 ({ filter, focusIdentifier, preferredLanguages, variablePrefix }) => {
 ${joinCode([
