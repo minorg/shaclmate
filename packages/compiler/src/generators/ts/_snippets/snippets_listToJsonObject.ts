@@ -8,7 +8,7 @@ export const snippets_listToJsonObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}listToJsonObject`,
     code`\
-function ${syntheticNamePrefix}listToJsonObject<ItemT, ItemJsonObjectT extends object>(itemToJsonObject: ${snippets.ToJsonObjectFunction}<ItemT, ItemJsonObjectT>): ${snippets.ToJsonObjectFunction}<ItemT[], { "@list": ItemJsonObjectT[] }> {
-  return (values) => ({ "@list": values.map(itemToJsonObject) });
+function ${syntheticNamePrefix}listToJsonObject<ItemT, ItemJsonValueT>(itemToJsonValue: ${snippets.ToJsonValueFunction}<ItemT, ItemJsonValueT>): ${snippets.ToJsonObjectFunction}<readonly ItemT[], { "@list": ItemJsonValueT[] }> {
+  return (values) => ({ "@list": values.map(itemToJsonValue) });
 }`,
   );

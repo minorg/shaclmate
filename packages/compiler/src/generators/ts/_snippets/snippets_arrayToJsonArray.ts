@@ -9,6 +9,6 @@ export const snippets_arrayToJsonArray: SnippetFactory = ({
     `${syntheticNamePrefix}arrayToJsonArray`,
     code`\
 function ${syntheticNamePrefix}arrayToJsonArray<ItemT, ItemJsonValueT>(itemToJsonValue: ${snippets.ToJsonValueFunction}<ItemT, ItemJsonValueT>): ${snippets.ToJsonValueFunction}<readonly ItemT[], ItemJsonValueT[]> {
-  return (values) => values.map(itemToJsonValue);
+  return (array) => array.map(itemToJsonValue);
 }`,
   );

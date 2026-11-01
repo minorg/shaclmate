@@ -15,8 +15,7 @@ function ${syntheticNamePrefix}maybeFromJsonObject<ItemJsonObjectT extends objec
       return ${imports.Either}.of(${imports.Maybe}.empty());
     }
     const { schema, ...otherOptions } = options;
-    const itemFromJsonObjectOptions = { schema: schema.itemType, ...otherOptions };
-    return itemFromJsonObject(value).map(value => ${imports.Maybe}.of(value));
+    return itemFromJsonObject(value, { schema: schema.itemType, ...otherOptions }).map(value => ${imports.Maybe}.of(value));
   };
 }`,
   );

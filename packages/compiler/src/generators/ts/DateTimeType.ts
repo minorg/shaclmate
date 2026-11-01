@@ -25,7 +25,7 @@ export class DateTimeType extends AbstractDateType {
     this.reusables.snippets.dateTimeToJsonString,
   );
   override readonly toJsonObjectFunction = new ReferenceCallable(
-    this.reusables.snippets.dateToJsonObject,
+    code`${this.reusables.snippets.dateToJsonObject}(${this.rdfjsTermExpression(this.datatype)})`,
   );
 
   override valueExpression(literal: Date | Literal): Code {

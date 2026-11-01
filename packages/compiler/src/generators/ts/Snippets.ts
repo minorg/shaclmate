@@ -138,6 +138,8 @@ import { snippets_dateTimeToJsonString } from "./_snippets/snippets_dateTimeToJs
 import { snippets_dateToJsonObject } from "./_snippets/snippets_dateToJsonObject.js";
 import { snippets_dateToJsonString } from "./_snippets/snippets_dateToJsonString.js";
 import { snippets_deduplicateSparqlPatterns } from "./_snippets/snippets_deduplicateSparqlPatterns.js";
+import { snippets_defaultValueFromJsonObject } from "./_snippets/snippets_defaultValueFromJsonObject.js";
+import { snippets_defaultValueFromJsonValue } from "./_snippets/snippets_defaultValueFromJsonValue.js";
 import { snippets_defaultValueFromRdfResourceValues } from "./_snippets/snippets_defaultValueFromRdfResourceValues.js";
 import { snippets_defaultValueSparqlWherePatterns } from "./_snippets/snippets_defaultValueSparqlWherePatterns.js";
 import { snippets_ensureRdfResourceType } from "./_snippets/snippets_ensureRdfResourceType.js";
@@ -944,6 +946,16 @@ export class Snippets {
   @Memoize()
   get deduplicateSparqlPatterns(): Snippet {
     return this.snippet(snippets_deduplicateSparqlPatterns);
+  }
+
+  @Memoize()
+  get defaultValueFromJsonObject(): Snippet {
+    return this.snippet(snippets_defaultValueFromJsonObject);
+  }
+
+  @Memoize()
+  get defaultValueFromJsonValue(): Snippet {
+    return this.snippet(snippets_defaultValueFromJsonValue);
   }
 
   @Memoize()

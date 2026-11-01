@@ -9,11 +9,11 @@ export const snippets_listFromJsonObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}listFromJsonObject`,
     code`\
-function ${syntheticNamePrefix}listFromJsonObject<ItemJsonObjectT extends object, ItemT, ItemSchemaT>(itemFromJsonObject: ${snippets.FromJsonObjectFunction}<ItemJsonObjectT, ItemT, ItemSchemaT>): ${snippets.FromJsonObjectFunction}<{ "@list": ItemJsonObjectT[] }, ItemT[], ${snippets.CollectionSchema}<ItemSchemaT>> {
+function ${syntheticNamePrefix}listFromJsonObject<ItemJsonValueT, ItemT, ItemSchemaT>(itemFromJsonValue: ${snippets.FromJsonValueFunction}<ItemJsonValueT, ItemT, ItemSchemaT>): ${snippets.FromJsonObjectFunction}<{ "@list": ItemJsonValueT[] }, ItemT[], ${snippets.CollectionSchema}<ItemSchemaT>> {
   return (jsonObject, options) => {
     const { schema, ...otherOptions } = options;
-    const itemFromJsonObjectOptions = { schema: schema.itemType, ...otherOptions };
-    return ${imports.Either}.sequence(jsonObject["@list"].map(itemJsonObject => itemFromJsonObject(itemJsonObject, itemFromJsonObjectOptions)));
+    const itemFromJsonValueOptions = { schema: schema.itemType, ...otherOptions };
+    return ${imports.Either}.sequence(jsonObject["@list"].map(itemJsonValue => itemFromJsonValue(itemJsonValue, itemFromJsonValueOptions)));
   }
 }`,
   );

@@ -9,7 +9,7 @@ export const snippets_stringFromJsonObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}stringFromJsonObject`,
     code`\
-function ${syntheticNamePrefix}stringFromJsonObject<StringT extends string>(jsonObject: ${snippets.TypedLiteralJsonObject}, options: Parameters<${snippets.FromJsonObjectFunction}<${snippets.LiteralJsonObject}, StringT, ${snippets.StringSchema}<StringT>>>[1]): ${imports.Either}<Error, StringT> {
+function ${syntheticNamePrefix}stringFromJsonObject<StringT extends string>(jsonObject: ${snippets.LiteralJsonObject}, options: Parameters<${snippets.FromJsonObjectFunction}<${snippets.LiteralJsonObject}, StringT, ${snippets.StringSchema}<StringT>>>[1]): ${imports.Either}<Error, StringT> {
   const { schema } = options;
   return ${snippets.literalFromJsonObject}(jsonObject)
     .chain(${imports.LiteralDecoder}.decodeStringLiteral)

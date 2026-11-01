@@ -229,10 +229,12 @@ class JsonDiscriminatedUnionType extends AbstractJsonType {
 
   @Memoize()
   protected get schemaExpression(): Code {
+    // z.discriminatedUnion can't handle an array of z.intersection(member, z.object({ discriminant: z.literal("value") })),
+    // it can only handle arrays of z.object's
     return code`${this.reusables.imports.z}.discriminatedUnion(${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}, [${joinCode(
       this.members.map(
         (member) =>
-          code`${this.reusables.imports.z}.intersection(${member.type.schema}, ${this.reusables.imports.z}.object({ ${this.configuration.objectDiscriminantProperty.jsonName}: ${this.reusables.imports.z}.literal(${literalOf(member.discriminantValue)}) }))`,
+          code`${member.type.schema}.extend({ ${this.configuration.objectDiscriminantProperty.jsonName}: ${this.reusables.imports.z}.literal(${literalOf(member.discriminantValue)}) })`,
       ),
       { on: ", " },
     )}])`;

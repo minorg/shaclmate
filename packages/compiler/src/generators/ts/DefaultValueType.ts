@@ -8,39 +8,37 @@ import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import { InlineCallable } from "./InlineCallable.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import type { Type } from "./Type.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class DefaultValueType<
   ItemTypeT extends DefaultValueType.ItemType,
 > extends AbstractContainerType<ItemTypeT> {
-  override readonly jsonValueType: AbstractContainerType<ItemTypeT>["jsonValueType"] =
-    this.itemType.jsonValueType;
   readonly defaultValue: Literal | NamedNode;
   override readonly discriminantProperty: Maybe<AbstractType.DiscriminantProperty> =
     Maybe.empty();
   override readonly equalsFunction = this.itemType.equalsFunction;
-  override readonly jsonObjectType: AbstractContainerType<ItemTypeT>["jsonObjectType"] =
-    this.itemType.jsonObjectType;
   override readonly filterFunction = this.itemType.filterFunction;
   override readonly filterType = this.itemType.filterType;
-  override readonly fromJsonValueFunction = this.itemType.fromJsonValueFunction;
-  override readonly fromJsonObjectFunction =
-    this.itemType.fromJsonObjectFunction;
+  override readonly schemaType =
+    code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.schemaType}>`;
   override readonly fromRdfResourceValuesFunction = new InlineCallable(
     code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
   );
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   override readonly graphqlType = this.itemType.graphqlType;
-  override readonly inlineExpression = this.itemType.expression;
   override readonly hashFunction = this.itemType.hashFunction;
+  override readonly inlineExpression = this.itemType.expression;
   override readonly jsTypes = this.itemType.jsTypes;
+  override readonly jsonObjectType: AbstractContainerType<ItemTypeT>["jsonObjectType"] =
+    this.itemType.jsonObjectType;
+  override readonly jsonValueType: AbstractContainerType<ItemTypeT>["jsonValueType"] =
+    this.itemType.jsonValueType;
   override readonly kind = "DefaultValue";
   override readonly mutable = this.itemType.mutable;
-  override readonly schemaType =
-    code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.schemaType}>`;
-  override readonly toJsonValueFunction = this.itemType.toJsonValueFunction;
   override readonly toJsonObjectFunction = this.itemType.toJsonObjectFunction;
+  override readonly toJsonValueFunction = this.itemType.toJsonValueFunction;
   override readonly toRdfResourceValueTypes =
     this.itemType.toRdfResourceValueTypes;
   override readonly validationFunction: AbstractType["validationFunction"] =
@@ -75,6 +73,20 @@ export class DefaultValueType<
           jsType: { typeof: "undefined" },
         }),
     });
+  }
+
+  @Memoize()
+  override get fromJsonObjectFunction(): AbstractContainerType<ItemTypeT>["fromJsonObjectFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.defaultValueFromJsonObject}(${this.itemType.fromJsonObjectFunction.annotatedUsage})`,
+    );
+  }
+
+  @Memoize()
+  override get fromJsonValueFunction(): AbstractContainerType<ItemTypeT>["fromJsonValueFunction"] {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.defaultValueFromJsonValue}(${this.itemType.fromJsonValueFunction.annotatedUsage})`,
+    );
   }
 
   protected override get schemaInitializers() {

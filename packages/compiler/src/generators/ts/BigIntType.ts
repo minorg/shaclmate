@@ -14,10 +14,6 @@ export class BigIntType extends AbstractNumericType<bigint> {
     LiteralDecoder.decodeBigIntLiteral(in_).unsafeCoerce(),
   );
 
-  override readonly jsonValueType: AbstractNumericType.JsonType =
-    this.jsonTypeFactory.createJsonStringType({
-      in_: this.decodedIn.map((in_) => in_.toString()),
-    });
   override readonly jsTypes = [{ typeof: "bigint" } as const];
   readonly conversionFunction: Maybe<AbstractNumericType.ConversionFunction> =
     this.in_.length > 0
@@ -43,14 +39,11 @@ export class BigIntType extends AbstractNumericType<bigint> {
     code`${this.reusables.imports.GraphQLBigInt}`,
     this.reusables,
   );
+  override readonly jsonValueType: AbstractNumericType.JsonType =
+    this.jsonTypeFactory.createJsonStringType({
+      in_: this.decodedIn.map((in_) => in_.toString()),
+    });
   override readonly kind = "BigInt";
-
-  @Memoize()
-  override get fromJsonValueFunction(): Callable {
-    return new ReferenceCallable(
-      code`${this.reusables.snippets.bigIntFromJsonString}<${this.jsonValueType.expression}, ${this.expression}>`,
-    );
-  }
 
   @Memoize()
   override get fromJsonObjectFunction(): Callable {
@@ -60,9 +53,30 @@ export class BigIntType extends AbstractNumericType<bigint> {
   }
 
   @Memoize()
+  override get fromJsonValueFunction(): Callable {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.bigIntFromJsonString}<${this.jsonValueType.expression}, ${this.expression}>`,
+    );
+  }
+
+  @Memoize()
   override get fromRdfResourceValuesFunction(): Callable {
     return new ReferenceCallable(
       code`${this.reusables.snippets.bigIntFromRdfResourceValues}<${this.expression}>`,
+    );
+  }
+
+  @Memoize()
+  override get toJsonObjectFunction(): Callable {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.bigIntToJsonObject}(${this.rdfjsTermExpression(this.datatype)})`,
+    );
+  }
+
+  @Memoize()
+  override get toJsonValueFunction(): Callable {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.bigIntToJsonString}`,
     );
   }
 

@@ -10,13 +10,13 @@ export const snippets_arrayFromJsonArray: SnippetFactory = ({
     `${syntheticNamePrefix}arrayFromJsonArray`,
     code`\
 function ${syntheticNamePrefix}arrayFromJsonArray<ItemJsonValueT, ItemT, ItemSchemaT>(itemFromJsonValue: ${snippets.FromJsonValueFunction}<ItemJsonValueT, ItemT, ItemSchemaT>): ${snippets.FromJsonValueFunction}<ItemJsonValueT[] | undefined, ItemT[], ${snippets.CollectionSchema}<ItemSchemaT>> {
-  return (arrayJsonValue, options) => {
-    if (arrayJsonValue === undefined) {
+  return (jsonArray, options) => {
+    if (jsonArray === undefined) {
       return ${imports.Either}.of([]);
     }
     const { schema, ...otherOptions } = options;
     const itemFromJsonValueOptions = { schema: schema.itemType, ...otherOptions };
-    return ${imports.Either}.sequence(arrayJsonValue.map(itemJsonValue => itemFromJsonValue(itemJsonValue, itemFromJsonValueOptions)));
+    return ${imports.Either}.sequence(jsonArray.map(itemJsonValue => itemFromJsonValue(itemJsonValue, itemFromJsonValueOptions)));
   }
 }`,
   );
