@@ -37,7 +37,7 @@ export abstract class AbstractStructuredType extends AbstractType {
       .orDefaultLazy(() => this.filterTypeExpression());
   }
 
-  override get fromJsonValueFunction(): AbstractType["fromJsonValueFunction"] {
+  override get fromJsonValueFunction(): Callable {
     return this.fromJsonObjectFunction;
   }
 
@@ -46,7 +46,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     return this._function({
       type: () => this.fromJsonObjectFunctionType(),
       unannotatedExpression: () => this.fromJsonObjectFunctionExpression(),
-      unqualifiedName: "fromJsonObject",
+      unqualifiedName: "fromJson",
     });
   }
 
@@ -76,7 +76,7 @@ export abstract class AbstractStructuredType extends AbstractType {
       .orDefaultLazy(() => this.schemaTypeExpression());
   }
 
-  override get toJsonValueFunction(): AbstractType["toJsonValueFunction"] {
+  override get toJsonValueFunction(): Callable {
     return this.toJsonObjectFunction;
   }
 
@@ -85,7 +85,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     return this._function({
       type: () => this.toJsonObjectFunctionType(),
       unannotatedExpression: () => this.toJsonObjectFunctionExpression(),
-      unqualifiedName: "toJsonObject",
+      unqualifiedName: "toJson",
     });
   }
 

@@ -4544,7 +4544,7 @@ export namespace $DefaultPartial {
       $type: Right("DefaultPartial" as const),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: $DefaultPartial.toJsonObject,
+        toJson: $DefaultPartial.toJson,
         $toString: $DefaultPartial.$toString,
       }),
     );
@@ -4619,7 +4619,7 @@ export namespace $DefaultPartial {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     $DefaultPartial.Json,
     $DefaultPartial.Discriminated,
     undefined
@@ -4754,7 +4754,7 @@ export namespace $DefaultPartial {
       $DefaultPartial.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     $DefaultPartial,
     $DefaultPartial.Json
   > = (_defaultPartial) =>
@@ -4871,7 +4871,7 @@ export namespace $NamedDefaultPartial {
       $type: Right("NamedDefaultPartial" as const),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: $NamedDefaultPartial.toJsonObject,
+        toJson: $NamedDefaultPartial.toJson,
         $toString: $NamedDefaultPartial.$toString,
       }),
     );
@@ -4945,7 +4945,7 @@ export namespace $NamedDefaultPartial {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     $NamedDefaultPartial.Json,
     $NamedDefaultPartial.Discriminated,
     undefined
@@ -5077,7 +5077,7 @@ export namespace $NamedDefaultPartial {
       $NamedDefaultPartial.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     $NamedDefaultPartial,
     $NamedDefaultPartial.Json
   > = (_namedDefaultPartial) =>
@@ -5470,7 +5470,7 @@ export namespace AnonymousTypesStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: AnonymousTypesStruct.toJsonObject,
+        toJson: AnonymousTypesStruct.toJson,
         $toString: AnonymousTypesStruct.$toString,
       }),
     );
@@ -5830,7 +5830,7 @@ export namespace AnonymousTypesStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     AnonymousTypesStruct.Json,
     AnonymousTypesStruct.Discriminated,
     undefined
@@ -6119,7 +6119,7 @@ export namespace AnonymousTypesStruct {
       AnonymousTypesStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     AnonymousTypesStruct,
     AnonymousTypesStruct.Json
   > = (_anonymousTypesStruct) =>
@@ -6312,7 +6312,7 @@ export namespace BlankNodeIdentifierStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: BlankNodeIdentifierStruct.toJsonObject,
+        toJson: BlankNodeIdentifierStruct.toJson,
         $toString: BlankNodeIdentifierStruct.$toString,
       }),
     );
@@ -6483,7 +6483,7 @@ export namespace BlankNodeIdentifierStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     BlankNodeIdentifierStruct.Json,
     BlankNodeIdentifierStruct.Discriminated,
     undefined
@@ -6641,7 +6641,7 @@ export namespace BlankNodeIdentifierStruct {
       BlankNodeIdentifierStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     BlankNodeIdentifierStruct,
     BlankNodeIdentifierStruct.Json
   > = (_blankNodeIdentifierStruct) =>
@@ -6830,7 +6830,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: BlankNodeOrIriIdentifierStruct.toJsonObject,
+        toJson: BlankNodeOrIriIdentifierStruct.toJson,
         $toString: BlankNodeOrIriIdentifierStruct.$toString,
       }),
     );
@@ -7035,7 +7035,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     BlankNodeOrIriIdentifierStruct.Json,
     BlankNodeOrIriIdentifierStruct.Discriminated,
     undefined
@@ -7220,7 +7220,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
       BlankNodeOrIriIdentifierStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     BlankNodeOrIriIdentifierStruct,
     BlankNodeOrIriIdentifierStruct.Json
   > = (_blankNodeOrIriIdentifierStruct) =>
@@ -7550,7 +7550,7 @@ export namespace ClassConstraintsStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: ClassConstraintsStruct.toJsonObject,
+        toJson: ClassConstraintsStruct.toJson,
         $toString: ClassConstraintsStruct.$toString,
       }),
     );
@@ -7962,7 +7962,7 @@ export namespace ClassConstraintsStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     ClassConstraintsStruct.Json,
     ClassConstraintsStruct.Discriminated,
     undefined
@@ -7986,14 +7986,14 @@ export namespace ClassConstraintsStruct {
           schema: ClassConstraintsStruct.schema.properties.multiClass.type,
         },
       ),
-      nodeClass1: $maybeFromJsonValue(NonClassStruct.fromJsonObject)(
+      nodeClass1: $maybeFromJsonValue(NonClassStruct.fromJson)(
         $jsonObject["nodeClass1"],
         {
           ...options,
           schema: ClassConstraintsStruct.schema.properties.nodeClass1.type,
         },
       ),
-      nodeClass2: $maybeFromJsonValue(PartialStruct.fromJsonObject)(
+      nodeClass2: $maybeFromJsonValue(PartialStruct.fromJson)(
         $jsonObject["nodeClass2"],
         {
           ...options,
@@ -8242,7 +8242,7 @@ export namespace ClassConstraintsStruct {
       ClassConstraintsStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     ClassConstraintsStruct,
     ClassConstraintsStruct.Json
   > = (_classConstraintsStruct) =>
@@ -8259,10 +8259,10 @@ export namespace ClassConstraintsStruct {
         multiClass: $maybeToJsonValue($identifierToJsonString)(
           _classConstraintsStruct.multiClass,
         ),
-        nodeClass1: $maybeToJsonValue(NonClassStruct.toJsonObject)(
+        nodeClass1: $maybeToJsonValue(NonClassStruct.toJson)(
           _classConstraintsStruct.nodeClass1,
         ),
-        nodeClass2: $maybeToJsonValue(PartialStruct.toJsonObject)(
+        nodeClass2: $maybeToJsonValue(PartialStruct.toJson)(
           _classConstraintsStruct.nodeClass2,
         ),
         singleClass: $maybeToJsonValue($identifierToJsonString)(
@@ -8755,7 +8755,7 @@ export namespace ConvertibleTypesStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: ConvertibleTypesStruct.toJsonObject,
+        toJson: ConvertibleTypesStruct.toJson,
         $toString: ConvertibleTypesStruct.$toString,
       }),
     );
@@ -9552,7 +9552,7 @@ export namespace ConvertibleTypesStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     ConvertibleTypesStruct.Json,
     ConvertibleTypesStruct.Discriminated,
     undefined
@@ -9998,7 +9998,7 @@ export namespace ConvertibleTypesStruct {
       ConvertibleTypesStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     ConvertibleTypesStruct,
     ConvertibleTypesStruct.Json
   > = (_convertibleTypesStruct) =>
@@ -11950,7 +11950,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: DatatypeDiscriminatedUnionsStruct.toJsonObject,
+        toJson: DatatypeDiscriminatedUnionsStruct.toJson,
         $toString: DatatypeDiscriminatedUnionsStruct.$toString,
       }),
     );
@@ -13696,7 +13696,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     DatatypeDiscriminatedUnionsStruct.Json,
     DatatypeDiscriminatedUnionsStruct.Discriminated,
     undefined
@@ -14112,26 +14112,24 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           DatatypeDiscriminatedUnionsStruct.schema.properties.langStringOrString
             .type,
       }),
-      namedDatatypeDiscriminatedUnion1:
-        DatatypeDiscriminatedUnion1.fromJsonObject(
-          $jsonObject["namedDatatypeDiscriminatedUnion1"],
-          {
-            ...options,
-            schema:
-              DatatypeDiscriminatedUnionsStruct.schema.properties
-                .namedDatatypeDiscriminatedUnion1.type,
-          },
-        ),
-      namedDatatypeDiscriminatedUnion2:
-        DatatypeDiscriminatedUnion2.fromJsonObject(
-          $jsonObject["namedDatatypeDiscriminatedUnion2"],
-          {
-            ...options,
-            schema:
-              DatatypeDiscriminatedUnionsStruct.schema.properties
-                .namedDatatypeDiscriminatedUnion2.type,
-          },
-        ),
+      namedDatatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.fromJson(
+        $jsonObject["namedDatatypeDiscriminatedUnion1"],
+        {
+          ...options,
+          schema:
+            DatatypeDiscriminatedUnionsStruct.schema.properties
+              .namedDatatypeDiscriminatedUnion1.type,
+        },
+      ),
+      namedDatatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2.fromJson(
+        $jsonObject["namedDatatypeDiscriminatedUnion2"],
+        {
+          ...options,
+          schema:
+            DatatypeDiscriminatedUnionsStruct.schema.properties
+              .namedDatatypeDiscriminatedUnion2.type,
+        },
+      ),
       stringOrDate: ((value, options) => {
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
@@ -15068,7 +15066,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       DatatypeDiscriminatedUnionsStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     DatatypeDiscriminatedUnionsStruct,
     DatatypeDiscriminatedUnionsStruct.Json
   > = (_datatypeDiscriminatedUnionsStruct) =>
@@ -15198,14 +15196,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
 
           throw new Error("unable to serialize to JSON");
         })(_datatypeDiscriminatedUnionsStruct.langStringOrString),
-        namedDatatypeDiscriminatedUnion1:
-          DatatypeDiscriminatedUnion1.toJsonObject(
-            _datatypeDiscriminatedUnionsStruct.namedDatatypeDiscriminatedUnion1,
-          ),
-        namedDatatypeDiscriminatedUnion2:
-          DatatypeDiscriminatedUnion2.toJsonObject(
-            _datatypeDiscriminatedUnionsStruct.namedDatatypeDiscriminatedUnion2,
-          ),
+        namedDatatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.toJson(
+          _datatypeDiscriminatedUnionsStruct.namedDatatypeDiscriminatedUnion1,
+        ),
+        namedDatatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2.toJson(
+          _datatypeDiscriminatedUnionsStruct.namedDatatypeDiscriminatedUnion2,
+        ),
         stringOrDate: ((value) => {
           if (typeof value === "string") {
             return {
@@ -15564,7 +15560,7 @@ export namespace DatesStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: DatesStruct.toJsonObject,
+        toJson: DatesStruct.toJson,
         $toString: DatesStruct.$toString,
       }),
     );
@@ -15857,7 +15853,7 @@ export namespace DatesStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     DatesStruct.Json,
     DatesStruct.Discriminated,
     undefined
@@ -16064,10 +16060,9 @@ export namespace DatesStruct {
       DatesStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
-    DatesStruct,
-    DatesStruct.Json
-  > = (_datesStruct) =>
+  export const toJson: $ToJsonObjectFunction<DatesStruct, DatesStruct.Json> = (
+    _datesStruct,
+  ) =>
     JSON.parse(
       JSON.stringify({
         "@id":
@@ -16403,7 +16398,7 @@ export namespace DefaultValuesStruct {
       )(parameters.trueBooleanDefaultValue, parameters.$defaultNamespace),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: DefaultValuesStruct.toJsonObject,
+        toJson: DefaultValuesStruct.toJson,
         $toString: DefaultValuesStruct.$toString,
       }),
     );
@@ -16814,7 +16809,7 @@ export namespace DefaultValuesStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     DefaultValuesStruct.Json,
     DefaultValuesStruct.Discriminated,
     undefined
@@ -17108,7 +17103,7 @@ export namespace DefaultValuesStruct {
       DefaultValuesStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     DefaultValuesStruct,
     DefaultValuesStruct.Json
   > = (_defaultValuesStruct) =>
@@ -17311,7 +17306,7 @@ export namespace DirectRecursiveStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: DirectRecursiveStruct.toJsonObject,
+        toJson: DirectRecursiveStruct.toJson,
         $toString: DirectRecursiveStruct.$toString,
       }),
     );
@@ -17479,7 +17474,7 @@ export namespace DirectRecursiveStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     DirectRecursiveStruct.Json,
     DirectRecursiveStruct.Discriminated,
     undefined
@@ -17489,12 +17484,13 @@ export namespace DirectRecursiveStruct {
         ...options,
         schema: DirectRecursiveStruct.schema.properties.$identifier.type,
       }),
-      directRecursive: $maybeFromJsonValue(
-        DirectRecursiveStruct.fromJsonObject,
-      )($jsonObject["directRecursive"], {
-        ...options,
-        schema: DirectRecursiveStruct.schema.properties.directRecursive.type,
-      }),
+      directRecursive: $maybeFromJsonValue(DirectRecursiveStruct.fromJson)(
+        $jsonObject["directRecursive"],
+        {
+          ...options,
+          schema: DirectRecursiveStruct.schema.properties.directRecursive.type,
+        },
+      ),
     }).chain(DirectRecursiveStruct.create);
 
   export const fromRdfResource: $FromRdfResourceFunction<DirectRecursiveStruct.Discriminated> =
@@ -17661,7 +17657,7 @@ export namespace DirectRecursiveStruct {
       DirectRecursiveStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     DirectRecursiveStruct,
     DirectRecursiveStruct.Json
   > = (_directRecursiveStruct) =>
@@ -17672,7 +17668,7 @@ export namespace DirectRecursiveStruct {
             ? `_:${_directRecursiveStruct.$identifier().value}`
             : _directRecursiveStruct.$identifier().value,
         "@type": "http://example.com/DirectRecursiveStruct",
-        directRecursive: $maybeToJsonValue(DirectRecursiveStruct.toJsonObject)(
+        directRecursive: $maybeToJsonValue(DirectRecursiveStruct.toJson)(
           _directRecursiveStruct.directRecursive,
         ),
       }),
@@ -17872,7 +17868,7 @@ export namespace DisplayStruct {
       implicitFalseDisplay: Either.of(parameters.implicitFalseDisplay),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: DisplayStruct.toJsonObject,
+        toJson: DisplayStruct.toJson,
         $toString: DisplayStruct.$toString,
       }),
     );
@@ -18131,7 +18127,7 @@ export namespace DisplayStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     DisplayStruct.Json,
     DisplayStruct.Discriminated,
     undefined
@@ -18338,7 +18334,7 @@ export namespace DisplayStruct {
       DisplayStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     DisplayStruct,
     DisplayStruct.Json
   > = (_displayStruct) =>
@@ -18529,7 +18525,7 @@ export namespace ExplicitFromToRdfTypesStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: ExplicitFromToRdfTypesStruct.toJsonObject,
+        toJson: ExplicitFromToRdfTypesStruct.toJson,
         $toString: ExplicitFromToRdfTypesStruct.$toString,
       }),
     );
@@ -18724,7 +18720,7 @@ export namespace ExplicitFromToRdfTypesStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     ExplicitFromToRdfTypesStruct.Json,
     ExplicitFromToRdfTypesStruct.Discriminated,
     undefined
@@ -18903,7 +18899,7 @@ export namespace ExplicitFromToRdfTypesStruct {
       ExplicitFromToRdfTypesStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     ExplicitFromToRdfTypesStruct,
     ExplicitFromToRdfTypesStruct.Json
   > = (_explicitFromToRdfTypesStruct) =>
@@ -19075,7 +19071,7 @@ export namespace ExplicitRdfTypeStruct {
       explicitRdfTypeString: Either.of(parameters.explicitRdfTypeString),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: ExplicitRdfTypeStruct.toJsonObject,
+        toJson: ExplicitRdfTypeStruct.toJson,
         $toString: ExplicitRdfTypeStruct.$toString,
       }),
     );
@@ -19260,7 +19256,7 @@ export namespace ExplicitRdfTypeStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     ExplicitRdfTypeStruct.Json,
     ExplicitRdfTypeStruct.Discriminated,
     undefined
@@ -19426,7 +19422,7 @@ export namespace ExplicitRdfTypeStruct {
       ExplicitRdfTypeStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     ExplicitRdfTypeStruct,
     ExplicitRdfTypeStruct.Json
   > = (_explicitRdfTypeStruct) =>
@@ -19609,7 +19605,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: FlattenDiscriminatedUnionMember3.toJsonObject,
+        toJson: FlattenDiscriminatedUnionMember3.toJson,
         $toString: FlattenDiscriminatedUnionMember3.$toString,
       }),
     );
@@ -19807,7 +19803,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     FlattenDiscriminatedUnionMember3.Json,
     FlattenDiscriminatedUnionMember3.Discriminated,
     undefined
@@ -19990,7 +19986,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
       FlattenDiscriminatedUnionMember3.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     FlattenDiscriminatedUnionMember3,
     FlattenDiscriminatedUnionMember3.Json
   > = (_flattenDiscriminatedUnionMember3) =>
@@ -20156,7 +20152,7 @@ export namespace HasValuesStruct {
       hasLiteralValue: Either.of(parameters.hasLiteralValue),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: HasValuesStruct.toJsonObject,
+        toJson: HasValuesStruct.toJson,
         $toString: HasValuesStruct.$toString,
       }),
     );
@@ -20310,7 +20306,7 @@ export namespace HasValuesStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     HasValuesStruct.Json,
     HasValuesStruct.Discriminated,
     undefined
@@ -20493,7 +20489,7 @@ export namespace HasValuesStruct {
       HasValuesStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     HasValuesStruct,
     HasValuesStruct.Json
   > = (_hasValuesStruct) =>
@@ -20694,7 +20690,7 @@ export namespace IgnoredPropertiesStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: IgnoredPropertiesStruct.toJsonObject,
+        toJson: IgnoredPropertiesStruct.toJson,
         $toString: IgnoredPropertiesStruct.$toString,
       }),
     );
@@ -20909,7 +20905,7 @@ export namespace IgnoredPropertiesStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     IgnoredPropertiesStruct.Json,
     IgnoredPropertiesStruct.Discriminated,
     undefined
@@ -21128,7 +21124,7 @@ export namespace IgnoredPropertiesStruct {
       IgnoredPropertiesStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     IgnoredPropertiesStruct,
     IgnoredPropertiesStruct.Json
   > = (_ignoredPropertiesStruct) =>
@@ -21324,7 +21320,7 @@ export namespace IndirectRecursiveStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: IndirectRecursiveStruct.toJsonObject,
+        toJson: IndirectRecursiveStruct.toJson,
         $toString: IndirectRecursiveStruct.$toString,
       }),
     );
@@ -21499,7 +21495,7 @@ export namespace IndirectRecursiveStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     IndirectRecursiveStruct.Json,
     IndirectRecursiveStruct.Discriminated,
     undefined
@@ -21510,7 +21506,7 @@ export namespace IndirectRecursiveStruct {
         schema: IndirectRecursiveStruct.schema.properties.$identifier.type,
       }),
       indirectRecursiveHelper: $maybeFromJsonValue(
-        IndirectRecursiveStructHelper.fromJsonObject,
+        IndirectRecursiveStructHelper.fromJson,
       )($jsonObject["indirectRecursiveHelper"], {
         ...options,
         schema:
@@ -21687,7 +21683,7 @@ export namespace IndirectRecursiveStruct {
       IndirectRecursiveStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     IndirectRecursiveStruct,
     IndirectRecursiveStruct.Json
   > = (_indirectRecursiveStruct) =>
@@ -21699,7 +21695,7 @@ export namespace IndirectRecursiveStruct {
             : _indirectRecursiveStruct.$identifier().value,
         "@type": "http://example.com/IndirectRecursiveStruct",
         indirectRecursiveHelper: $maybeToJsonValue(
-          IndirectRecursiveStructHelper.toJsonObject,
+          IndirectRecursiveStructHelper.toJson,
         )(_indirectRecursiveStruct.indirectRecursiveHelper),
       }),
     );
@@ -21884,7 +21880,7 @@ export namespace IndirectRecursiveStructHelper {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: IndirectRecursiveStructHelper.toJsonObject,
+        toJson: IndirectRecursiveStructHelper.toJson,
         $toString: IndirectRecursiveStructHelper.$toString,
       }),
     );
@@ -22057,7 +22053,7 @@ export namespace IndirectRecursiveStructHelper {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     IndirectRecursiveStructHelper.Json,
     IndirectRecursiveStructHelper.Discriminated,
     undefined
@@ -22068,14 +22064,15 @@ export namespace IndirectRecursiveStructHelper {
         schema:
           IndirectRecursiveStructHelper.schema.properties.$identifier.type,
       }),
-      indirectRecursive: $maybeFromJsonValue(
-        IndirectRecursiveStruct.fromJsonObject,
-      )($jsonObject["indirectRecursive"], {
-        ...options,
-        schema:
-          IndirectRecursiveStructHelper.schema.properties.indirectRecursive
-            .type,
-      }),
+      indirectRecursive: $maybeFromJsonValue(IndirectRecursiveStruct.fromJson)(
+        $jsonObject["indirectRecursive"],
+        {
+          ...options,
+          schema:
+            IndirectRecursiveStructHelper.schema.properties.indirectRecursive
+              .type,
+        },
+      ),
     }).chain(IndirectRecursiveStructHelper.create);
 
   export const fromRdfResource: $FromRdfResourceFunction<IndirectRecursiveStructHelper.Discriminated> =
@@ -22248,7 +22245,7 @@ export namespace IndirectRecursiveStructHelper {
       IndirectRecursiveStructHelper.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     IndirectRecursiveStructHelper,
     IndirectRecursiveStructHelper.Json
   > = (_indirectRecursiveStructHelper) =>
@@ -22259,9 +22256,9 @@ export namespace IndirectRecursiveStructHelper {
             ? `_:${_indirectRecursiveStructHelper.$identifier().value}`
             : _indirectRecursiveStructHelper.$identifier().value,
         "@type": "http://example.com/IndirectRecursiveStructHelper",
-        indirectRecursive: $maybeToJsonValue(
-          IndirectRecursiveStruct.toJsonObject,
-        )(_indirectRecursiveStructHelper.indirectRecursive),
+        indirectRecursive: $maybeToJsonValue(IndirectRecursiveStruct.toJson)(
+          _indirectRecursiveStructHelper.indirectRecursive,
+        ),
       }),
     );
 
@@ -22428,7 +22425,7 @@ export namespace InIdentifierStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: InIdentifierStruct.toJsonObject,
+        toJson: InIdentifierStruct.toJson,
         $toString: InIdentifierStruct.$toString,
       }),
     );
@@ -22629,7 +22626,7 @@ export namespace InIdentifierStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     InIdentifierStruct.Json,
     InIdentifierStruct.Discriminated,
     undefined
@@ -22846,7 +22843,7 @@ export namespace InIdentifierStruct {
       InIdentifierStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     InIdentifierStruct,
     InIdentifierStruct.Json
   > = (_inIdentifierStruct) =>
@@ -23216,7 +23213,7 @@ export namespace InPropertiesStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: InPropertiesStruct.toJsonObject,
+        toJson: InPropertiesStruct.toJson,
         $toString: InPropertiesStruct.$toString,
       }),
     );
@@ -23673,7 +23670,7 @@ export namespace InPropertiesStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     InPropertiesStruct.Json,
     InPropertiesStruct.Discriminated,
     undefined
@@ -23983,7 +23980,7 @@ export namespace InPropertiesStruct {
       InPropertiesStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     InPropertiesStruct,
     InPropertiesStruct.Json
   > = (_inPropertiesStruct) =>
@@ -24174,7 +24171,7 @@ export namespace IntersectionPropertiesStruct {
       namedStructIntersection: Either.of(parameters.namedStructIntersection),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: IntersectionPropertiesStruct.toJsonObject,
+        toJson: IntersectionPropertiesStruct.toJson,
         $toString: IntersectionPropertiesStruct.$toString,
       }),
     );
@@ -24304,7 +24301,7 @@ export namespace IntersectionPropertiesStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     IntersectionPropertiesStruct.Json,
     IntersectionPropertiesStruct.Discriminated,
     undefined
@@ -24314,7 +24311,7 @@ export namespace IntersectionPropertiesStruct {
         ...options,
         schema: IntersectionPropertiesStruct.schema.properties.$identifier.type,
       }),
-      namedStructIntersection: StructIntersection.fromJsonObject(
+      namedStructIntersection: StructIntersection.fromJson(
         $jsonObject["namedStructIntersection"],
         {
           ...options,
@@ -24475,7 +24472,7 @@ export namespace IntersectionPropertiesStruct {
       IntersectionPropertiesStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     IntersectionPropertiesStruct,
     IntersectionPropertiesStruct.Json
   > = (_intersectionPropertiesStruct) =>
@@ -24485,7 +24482,7 @@ export namespace IntersectionPropertiesStruct {
           _intersectionPropertiesStruct.$identifier().termType === "BlankNode"
             ? `_:${_intersectionPropertiesStruct.$identifier().value}`
             : _intersectionPropertiesStruct.$identifier().value,
-        namedStructIntersection: StructIntersection.toJsonObject(
+        namedStructIntersection: StructIntersection.toJson(
           _intersectionPropertiesStruct.namedStructIntersection,
         ),
       }),
@@ -24655,7 +24652,7 @@ export namespace IriIdentifierStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: IriIdentifierStruct.toJsonObject,
+        toJson: IriIdentifierStruct.toJson,
         $toString: IriIdentifierStruct.$toString,
       }),
     );
@@ -24852,7 +24849,7 @@ export namespace IriIdentifierStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     IriIdentifierStruct.Json,
     IriIdentifierStruct.Discriminated,
     undefined
@@ -25022,7 +25019,7 @@ export namespace IriIdentifierStruct {
       IriIdentifierStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     IriIdentifierStruct,
     IriIdentifierStruct.Json
   > = (_iriIdentifierStruct) =>
@@ -25509,7 +25506,7 @@ export namespace LangStringStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: LangStringStruct.toJsonObject,
+        toJson: LangStringStruct.toJson,
         $toString: LangStringStruct.$toString,
       }),
     );
@@ -26047,7 +26044,7 @@ export namespace LangStringStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     LangStringStruct.Json,
     LangStringStruct.Discriminated,
     undefined
@@ -26414,7 +26411,7 @@ export namespace LangStringStruct {
       LangStringStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     LangStringStruct,
     LangStringStruct.Json
   > = (_langStringStruct) =>
@@ -26636,7 +26633,7 @@ export namespace LanguageInStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: LanguageInStruct.toJsonObject,
+        toJson: LanguageInStruct.toJson,
         $toString: LanguageInStruct.$toString,
       }),
     );
@@ -26764,7 +26761,7 @@ export namespace LanguageInStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     LanguageInStruct.Json,
     LanguageInStruct.Discriminated,
     undefined
@@ -26923,7 +26920,7 @@ export namespace LanguageInStruct {
       LanguageInStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     LanguageInStruct,
     LanguageInStruct.Json
   > = (_languageInStruct) =>
@@ -27100,7 +27097,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
       lazilyResolved: Either.of(parameters.lazilyResolved),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: LazilyResolvedBlankNodeOrIriIdentifierStruct.toJsonObject,
+        toJson: LazilyResolvedBlankNodeOrIriIdentifierStruct.toJson,
         $toString: LazilyResolvedBlankNodeOrIriIdentifierStruct.$toString,
       }),
     );
@@ -27293,7 +27290,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     LazilyResolvedBlankNodeOrIriIdentifierStruct.Json,
     LazilyResolvedBlankNodeOrIriIdentifierStruct.Discriminated,
     undefined
@@ -27484,7 +27481,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
       ),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     LazilyResolvedBlankNodeOrIriIdentifierStruct,
     LazilyResolvedBlankNodeOrIriIdentifierStruct.Json
   > = (_lazilyResolvedBlankNodeOrIriIdentifierStruct) =>
@@ -27664,7 +27661,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
       lazilyResolved: Either.of(parameters.lazilyResolved),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: LazilyResolvedDiscriminatedUnionMember1.toJsonObject,
+        toJson: LazilyResolvedDiscriminatedUnionMember1.toJson,
         $toString: LazilyResolvedDiscriminatedUnionMember1.$toString,
       }),
     );
@@ -27856,7 +27853,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     LazilyResolvedDiscriminatedUnionMember1.Json,
     LazilyResolvedDiscriminatedUnionMember1.Discriminated,
     undefined
@@ -28041,7 +28038,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
       LazilyResolvedDiscriminatedUnionMember1.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     LazilyResolvedDiscriminatedUnionMember1,
     LazilyResolvedDiscriminatedUnionMember1.Json
   > = (_lazilyResolvedDiscriminatedUnionMember1) =>
@@ -28218,7 +28215,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
       lazilyResolved: Either.of(parameters.lazilyResolved),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: LazilyResolvedDiscriminatedUnionMember2.toJsonObject,
+        toJson: LazilyResolvedDiscriminatedUnionMember2.toJson,
         $toString: LazilyResolvedDiscriminatedUnionMember2.$toString,
       }),
     );
@@ -28410,7 +28407,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     LazilyResolvedDiscriminatedUnionMember2.Json,
     LazilyResolvedDiscriminatedUnionMember2.Discriminated,
     undefined
@@ -28595,7 +28592,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
       LazilyResolvedDiscriminatedUnionMember2.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     LazilyResolvedDiscriminatedUnionMember2,
     LazilyResolvedDiscriminatedUnionMember2.Json
   > = (_lazilyResolvedDiscriminatedUnionMember2) =>
@@ -28755,7 +28752,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
       lazilyResolved: Either.of(parameters.lazilyResolved),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: LazilyResolvedIriIdentifierStruct.toJsonObject,
+        toJson: LazilyResolvedIriIdentifierStruct.toJson,
         $toString: LazilyResolvedIriIdentifierStruct.$toString,
       }),
     );
@@ -28876,7 +28873,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     LazilyResolvedIriIdentifierStruct.Json,
     LazilyResolvedIriIdentifierStruct.Discriminated,
     undefined
@@ -29035,7 +29032,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
       LazilyResolvedIriIdentifierStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     LazilyResolvedIriIdentifierStruct,
     LazilyResolvedIriIdentifierStruct.Json
   > = (_lazilyResolvedIriIdentifierStruct) =>
@@ -29874,7 +29871,7 @@ export namespace LazyPropertiesStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: LazyPropertiesStruct.toJsonObject,
+        toJson: LazyPropertiesStruct.toJson,
         $toString: LazyPropertiesStruct.$toString,
       }),
     );
@@ -30679,7 +30676,7 @@ export namespace LazyPropertiesStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     LazyPropertiesStruct.Json,
     LazyPropertiesStruct.Discriminated,
     undefined
@@ -30693,7 +30690,7 @@ export namespace LazyPropertiesStruct {
         jsonValue,
         { objectSet, schema, ...otherOptions },
       ) =>
-        $maybeFromJsonValue($DefaultPartial.fromJsonObject)(jsonValue, {
+        $maybeFromJsonValue($DefaultPartial.fromJson)(jsonValue, {
           objectSet,
           schema: schema.partialType,
           ...otherOptions,
@@ -30722,7 +30719,7 @@ export namespace LazyPropertiesStruct {
         jsonValue,
         { objectSet, schema, ...otherOptions },
       ) =>
-        $maybeFromJsonValue($DefaultPartial.fromJsonObject)(jsonValue, {
+        $maybeFromJsonValue($DefaultPartial.fromJson)(jsonValue, {
           objectSet,
           schema: schema.partialType,
           ...otherOptions,
@@ -30748,7 +30745,7 @@ export namespace LazyPropertiesStruct {
         jsonValue,
         { objectSet, schema, ...otherOptions },
       ) =>
-        $maybeFromJsonValue($NamedDefaultPartial.fromJsonObject)(jsonValue, {
+        $maybeFromJsonValue($NamedDefaultPartial.fromJson)(jsonValue, {
           objectSet,
           schema: schema.partialType,
           ...otherOptions,
@@ -30777,14 +30774,11 @@ export namespace LazyPropertiesStruct {
         jsonValue,
         { objectSet, schema, ...otherOptions },
       ) =>
-        $maybeFromJsonValue(PartialDiscriminatedUnion.fromJsonObject)(
-          jsonValue,
-          {
-            objectSet,
-            schema: schema.partialType,
-            ...otherOptions,
-          },
-        ).map(
+        $maybeFromJsonValue(PartialDiscriminatedUnion.fromJson)(jsonValue, {
+          objectSet,
+          schema: schema.partialType,
+          ...otherOptions,
+        }).map(
           (partial) =>
             new $LazyOption<
               PartialDiscriminatedUnion,
@@ -30815,7 +30809,7 @@ export namespace LazyPropertiesStruct {
         jsonValue,
         { objectSet, schema, ...otherOptions },
       ) =>
-        $maybeFromJsonValue(PartialStruct.fromJsonObject)(jsonValue, {
+        $maybeFromJsonValue(PartialStruct.fromJson)(jsonValue, {
           objectSet,
           schema: schema.partialType,
           ...otherOptions,
@@ -30844,7 +30838,7 @@ export namespace LazyPropertiesStruct {
         jsonValue,
         { objectSet, schema, ...otherOptions },
       ) =>
-        $maybeFromJsonValue(PartialStruct.fromJsonObject)(jsonValue, {
+        $maybeFromJsonValue(PartialStruct.fromJson)(jsonValue, {
           objectSet,
           schema: schema.partialType,
           ...otherOptions,
@@ -30871,7 +30865,7 @@ export namespace LazyPropertiesStruct {
         { objectSet, schema, ...otherOptions },
       ) =>
         $DefaultPartial
-          .fromJsonObject(jsonValue, {
+          .fromJson(jsonValue, {
             objectSet,
             schema: schema.partialType,
             ...otherOptions,
@@ -30901,7 +30895,7 @@ export namespace LazyPropertiesStruct {
         jsonValue,
         { objectSet, schema, ...otherOptions },
       ) =>
-        PartialStruct.fromJsonObject(jsonValue, {
+        PartialStruct.fromJson(jsonValue, {
           objectSet,
           schema: schema.partialType,
           ...otherOptions,
@@ -30930,7 +30924,7 @@ export namespace LazyPropertiesStruct {
         jsonValue,
         { objectSet, schema, ...otherOptions },
       ) =>
-        $arrayFromJsonArray($DefaultPartial.fromJsonObject)(jsonValue, {
+        $arrayFromJsonArray($DefaultPartial.fromJson)(jsonValue, {
           objectSet,
           schema: schema.partialType,
           ...otherOptions,
@@ -30961,7 +30955,7 @@ export namespace LazyPropertiesStruct {
         jsonValue,
         { objectSet, schema, ...otherOptions },
       ) =>
-        $arrayFromJsonArray(PartialStruct.fromJsonObject)(jsonValue, {
+        $arrayFromJsonArray(PartialStruct.fromJson)(jsonValue, {
           objectSet,
           schema: schema.partialType,
           ...otherOptions,
@@ -31409,7 +31403,7 @@ export namespace LazyPropertiesStruct {
       LazyPropertiesStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     LazyPropertiesStruct,
     LazyPropertiesStruct.Json
   > = (_lazyPropertiesStruct) =>
@@ -31420,47 +31414,45 @@ export namespace LazyPropertiesStruct {
             ? `_:${_lazyPropertiesStruct.$identifier().value}`
             : _lazyPropertiesStruct.$identifier().value,
         optionalLazyToResolvedBlankNodeOrIriIdentifier: ((value) =>
-          $maybeToJsonValue($DefaultPartial.toJsonObject)(value.partial))(
+          $maybeToJsonValue($DefaultPartial.toJson)(value.partial))(
           _lazyPropertiesStruct.optionalLazyToResolvedBlankNodeOrIriIdentifier,
         ),
         optionalLazyToResolvedDiscriminatedUnion: ((value) =>
-          $maybeToJsonValue($DefaultPartial.toJsonObject)(value.partial))(
+          $maybeToJsonValue($DefaultPartial.toJson)(value.partial))(
           _lazyPropertiesStruct.optionalLazyToResolvedDiscriminatedUnion,
         ),
         optionalLazyToResolvedIriIdentifier: ((value) =>
-          $maybeToJsonValue($NamedDefaultPartial.toJsonObject)(value.partial))(
+          $maybeToJsonValue($NamedDefaultPartial.toJson)(value.partial))(
           _lazyPropertiesStruct.optionalLazyToResolvedIriIdentifier,
         ),
         optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion: ((
           value,
         ) =>
-          $maybeToJsonValue(PartialDiscriminatedUnion.toJsonObject)(
-            value.partial,
-          ))(
+          $maybeToJsonValue(PartialDiscriminatedUnion.toJson)(value.partial))(
           _lazyPropertiesStruct.optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion,
         ),
         optionalPartialToResolvedBlankNodeOrIriIdentifier: ((value) =>
-          $maybeToJsonValue(PartialStruct.toJsonObject)(value.partial))(
+          $maybeToJsonValue(PartialStruct.toJson)(value.partial))(
           _lazyPropertiesStruct.optionalPartialToResolvedBlankNodeOrIriIdentifier,
         ),
         optionalPartialToResolvedDiscriminatedUnion: ((value) =>
-          $maybeToJsonValue(PartialStruct.toJsonObject)(value.partial))(
+          $maybeToJsonValue(PartialStruct.toJson)(value.partial))(
           _lazyPropertiesStruct.optionalPartialToResolvedDiscriminatedUnion,
         ),
         requiredLazyToResolvedBlankNodeOrIriIdentifier: ((value) =>
-          $DefaultPartial.toJsonObject(value.partial))(
+          $DefaultPartial.toJson(value.partial))(
           _lazyPropertiesStruct.requiredLazyToResolvedBlankNodeOrIriIdentifier,
         ),
         requiredPartialToResolvedBlankNodeOrIriIdentifier: ((value) =>
-          PartialStruct.toJsonObject(value.partial))(
+          PartialStruct.toJson(value.partial))(
           _lazyPropertiesStruct.requiredPartialToResolvedBlankNodeOrIriIdentifier,
         ),
         setLazyToResolvedBlankNodeOrIriIdentifier: ((value) =>
-          $arrayToJsonArray($DefaultPartial.toJsonObject)(value.partials))(
+          $arrayToJsonArray($DefaultPartial.toJson)(value.partials))(
           _lazyPropertiesStruct.setLazyToResolvedBlankNodeOrIriIdentifier,
         ),
         setPartialToResolvedBlankNodeOrIriIdentifier: ((value) =>
-          $arrayToJsonArray(PartialStruct.toJsonObject)(value.partials))(
+          $arrayToJsonArray(PartialStruct.toJson)(value.partials))(
           _lazyPropertiesStruct.setPartialToResolvedBlankNodeOrIriIdentifier,
         ),
       }),
@@ -32075,7 +32067,7 @@ export namespace ListSetsStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: ListSetsStruct.toJsonObject,
+        toJson: ListSetsStruct.toJson,
         $toString: ListSetsStruct.$toString,
       }),
     );
@@ -32552,7 +32544,7 @@ export namespace ListSetsStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     ListSetsStruct.Json,
     ListSetsStruct.Discriminated,
     undefined
@@ -32879,7 +32871,7 @@ export namespace ListSetsStruct {
       ListSetsStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     ListSetsStruct,
     ListSetsStruct.Json
   > = (_listSetsStruct) =>
@@ -33456,7 +33448,7 @@ export namespace ListsStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: ListsStruct.toJsonObject,
+        toJson: ListsStruct.toJson,
         $toString: ListsStruct.$toString,
       }),
     );
@@ -33881,7 +33873,7 @@ export namespace ListsStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     ListsStruct.Json,
     ListsStruct.Discriminated,
     undefined
@@ -33910,7 +33902,7 @@ export namespace ListsStruct {
         schema: ListsStruct.schema.properties.stringListList.type,
       }),
       structList: $maybeFromJsonValue(
-        $arrayFromJsonArray(NonClassStruct.fromJsonObject),
+        $arrayFromJsonArray(NonClassStruct.fromJson),
       )($jsonObject["structList"], {
         ...options,
         schema: ListsStruct.schema.properties.structList.type,
@@ -34136,10 +34128,9 @@ export namespace ListsStruct {
       ListsStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
-    ListsStruct,
-    ListsStruct.Json
-  > = (_listsStruct) =>
+  export const toJson: $ToJsonObjectFunction<ListsStruct, ListsStruct.Json> = (
+    _listsStruct,
+  ) =>
     JSON.parse(
       JSON.stringify({
         "@id":
@@ -34156,9 +34147,9 @@ export namespace ListsStruct {
         stringListList: $maybeToJsonValue(
           $arrayToJsonArray($arrayToJsonArray($primitiveToJsonValue<string>)),
         )(_listsStruct.stringListList),
-        structList: $maybeToJsonValue(
-          $arrayToJsonArray(NonClassStruct.toJsonObject),
-        )(_listsStruct.structList),
+        structList: $maybeToJsonValue($arrayToJsonArray(NonClassStruct.toJson))(
+          _listsStruct.structList,
+        ),
       }),
     );
 
@@ -34453,7 +34444,7 @@ export namespace MutablePropertiesStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: MutablePropertiesStruct.toJsonObject,
+        toJson: MutablePropertiesStruct.toJson,
         $toString: MutablePropertiesStruct.$toString,
       }),
     );
@@ -34767,7 +34758,7 @@ export namespace MutablePropertiesStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     MutablePropertiesStruct.Json,
     MutablePropertiesStruct.Discriminated,
     undefined
@@ -34998,7 +34989,7 @@ export namespace MutablePropertiesStruct {
       MutablePropertiesStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     MutablePropertiesStruct,
     MutablePropertiesStruct.Json
   > = (_mutablePropertiesStruct) =>
@@ -35216,7 +35207,7 @@ export namespace NamedTypesStruct {
       namedDatatype: Either.of(parameters.namedDatatype),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: NamedTypesStruct.toJsonObject,
+        toJson: NamedTypesStruct.toJson,
         $toString: NamedTypesStruct.$toString,
       }),
     );
@@ -35472,7 +35463,7 @@ export namespace NamedTypesStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     NamedTypesStruct.Json,
     NamedTypesStruct.Discriminated,
     undefined
@@ -35679,7 +35670,7 @@ export namespace NamedTypesStruct {
       NamedTypesStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     NamedTypesStruct,
     NamedTypesStruct.Json
   > = (_namedTypesStruct) =>
@@ -35857,7 +35848,7 @@ export namespace NewName {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: NewName.toJsonObject,
+        toJson: NewName.toJson,
         $toString: NewName.$toString,
       }),
     );
@@ -36050,7 +36041,7 @@ export namespace NewName {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     NewName.Json,
     NewName.Discriminated,
     undefined
@@ -36215,7 +36206,7 @@ export namespace NewName {
       NewName.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<NewName, NewName.Json> = (
+  export const toJson: $ToJsonObjectFunction<NewName, NewName.Json> = (
     _newName,
   ) =>
     JSON.parse(
@@ -36475,7 +36466,7 @@ export namespace NodeKindsStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: NodeKindsStruct.toJsonObject,
+        toJson: NodeKindsStruct.toJson,
         $toString: NodeKindsStruct.$toString,
       }),
     );
@@ -36870,7 +36861,7 @@ export namespace NodeKindsStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     NodeKindsStruct.Json,
     NodeKindsStruct.Discriminated,
     undefined
@@ -37127,7 +37118,7 @@ export namespace NodeKindsStruct {
       NodeKindsStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     NodeKindsStruct,
     NodeKindsStruct.Json
   > = (_nodeKindsStruct) =>
@@ -37294,7 +37285,7 @@ export namespace NonClassStruct {
       nonClassString: Either.of(parameters.nonClassString),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: NonClassStruct.toJsonObject,
+        toJson: NonClassStruct.toJson,
         $toString: NonClassStruct.$toString,
       }),
     );
@@ -37409,7 +37400,7 @@ export namespace NonClassStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     NonClassStruct.Json,
     NonClassStruct.Discriminated,
     undefined
@@ -37562,7 +37553,7 @@ export namespace NonClassStruct {
       NonClassStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     NonClassStruct,
     NonClassStruct.Json
   > = (_nonClassStruct) =>
@@ -37723,7 +37714,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: NoRdfTypeDiscriminatedUnionMember1.toJsonObject,
+        toJson: NoRdfTypeDiscriminatedUnionMember1.toJson,
         $toString: NoRdfTypeDiscriminatedUnionMember1.$toString,
       }),
     );
@@ -37853,7 +37844,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     NoRdfTypeDiscriminatedUnionMember1.Json,
     NoRdfTypeDiscriminatedUnionMember1.Discriminated,
     undefined
@@ -38023,7 +38014,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
       NoRdfTypeDiscriminatedUnionMember1.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     NoRdfTypeDiscriminatedUnionMember1,
     NoRdfTypeDiscriminatedUnionMember1.Json
   > = (_noRdfTypeDiscriminatedUnionMember1) =>
@@ -38189,7 +38180,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: NoRdfTypeDiscriminatedUnionMember2.toJsonObject,
+        toJson: NoRdfTypeDiscriminatedUnionMember2.toJson,
         $toString: NoRdfTypeDiscriminatedUnionMember2.$toString,
       }),
     );
@@ -38319,7 +38310,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     NoRdfTypeDiscriminatedUnionMember2.Json,
     NoRdfTypeDiscriminatedUnionMember2.Discriminated,
     undefined
@@ -38489,7 +38480,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
       NoRdfTypeDiscriminatedUnionMember2.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     NoRdfTypeDiscriminatedUnionMember2,
     NoRdfTypeDiscriminatedUnionMember2.Json
   > = (_noRdfTypeDiscriminatedUnionMember2) =>
@@ -39145,7 +39136,7 @@ export namespace NumericsStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: NumericsStruct.toJsonObject,
+        toJson: NumericsStruct.toJson,
         $toString: NumericsStruct.$toString,
       }),
     );
@@ -40118,7 +40109,7 @@ export namespace NumericsStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     NumericsStruct.Json,
     NumericsStruct.Discriminated,
     undefined
@@ -40624,7 +40615,7 @@ export namespace NumericsStruct {
       NumericsStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     NumericsStruct,
     NumericsStruct.Json
   > = (_numericsStruct) =>
@@ -40879,7 +40870,7 @@ export namespace OrderedStruct {
       orderedA: Either.of(parameters.orderedA),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: OrderedStruct.toJsonObject,
+        toJson: OrderedStruct.toJson,
         $toString: OrderedStruct.$toString,
       }),
     );
@@ -41071,7 +41062,7 @@ export namespace OrderedStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     OrderedStruct.Json,
     OrderedStruct.Discriminated,
     undefined
@@ -41256,7 +41247,7 @@ export namespace OrderedStruct {
       OrderedStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     OrderedStruct,
     OrderedStruct.Json
   > = (_orderedStruct) =>
@@ -41426,7 +41417,7 @@ export namespace PartialDiscriminatedUnionMember1 {
       lazilyResolved: Either.of(parameters.lazilyResolved),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: PartialDiscriminatedUnionMember1.toJsonObject,
+        toJson: PartialDiscriminatedUnionMember1.toJson,
         $toString: PartialDiscriminatedUnionMember1.$toString,
       }),
     );
@@ -41616,7 +41607,7 @@ export namespace PartialDiscriminatedUnionMember1 {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     PartialDiscriminatedUnionMember1.Json,
     PartialDiscriminatedUnionMember1.Discriminated,
     undefined
@@ -41790,7 +41781,7 @@ export namespace PartialDiscriminatedUnionMember1 {
       PartialDiscriminatedUnionMember1.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     PartialDiscriminatedUnionMember1,
     PartialDiscriminatedUnionMember1.Json
   > = (_partialDiscriminatedUnionMember1) =>
@@ -41963,7 +41954,7 @@ export namespace PartialDiscriminatedUnionMember2 {
       lazilyResolved: Either.of(parameters.lazilyResolved),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: PartialDiscriminatedUnionMember2.toJsonObject,
+        toJson: PartialDiscriminatedUnionMember2.toJson,
         $toString: PartialDiscriminatedUnionMember2.$toString,
       }),
     );
@@ -42153,7 +42144,7 @@ export namespace PartialDiscriminatedUnionMember2 {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     PartialDiscriminatedUnionMember2.Json,
     PartialDiscriminatedUnionMember2.Discriminated,
     undefined
@@ -42327,7 +42318,7 @@ export namespace PartialDiscriminatedUnionMember2 {
       PartialDiscriminatedUnionMember2.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     PartialDiscriminatedUnionMember2,
     PartialDiscriminatedUnionMember2.Json
   > = (_partialDiscriminatedUnionMember2) =>
@@ -42473,7 +42464,7 @@ export namespace PartialStruct {
       lazilyResolved: Either.of(parameters.lazilyResolved),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: PartialStruct.toJsonObject,
+        toJson: PartialStruct.toJson,
         $toString: PartialStruct.$toString,
       }),
     );
@@ -42588,7 +42579,7 @@ export namespace PartialStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     PartialStruct.Json,
     PartialStruct.Discriminated,
     undefined
@@ -42741,7 +42732,7 @@ export namespace PartialStruct {
       PartialStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     PartialStruct,
     PartialStruct.Json
   > = (_partialStruct) =>
@@ -42994,7 +42985,7 @@ export namespace PropertyCardinalitiesStruct {
       required: Either.of(parameters.required),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: PropertyCardinalitiesStruct.toJsonObject,
+        toJson: PropertyCardinalitiesStruct.toJson,
         $toString: PropertyCardinalitiesStruct.$toString,
       }),
     );
@@ -43269,7 +43260,7 @@ export namespace PropertyCardinalitiesStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     PropertyCardinalitiesStruct.Json,
     PropertyCardinalitiesStruct.Discriminated,
     undefined
@@ -43505,7 +43496,7 @@ export namespace PropertyCardinalitiesStruct {
       PropertyCardinalitiesStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     PropertyCardinalitiesStruct,
     PropertyCardinalitiesStruct.Json
   > = (_propertyCardinalitiesStruct) =>
@@ -43755,7 +43746,7 @@ export namespace PropertyNamesStruct {
       actualName5: Either.of(parameters.actualName5),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: PropertyNamesStruct.toJsonObject,
+        toJson: PropertyNamesStruct.toJson,
         $toString: PropertyNamesStruct.$toString,
       }),
     );
@@ -44091,7 +44082,7 @@ export namespace PropertyNamesStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     PropertyNamesStruct.Json,
     PropertyNamesStruct.Discriminated,
     undefined
@@ -44337,7 +44328,7 @@ export namespace PropertyNamesStruct {
       PropertyNamesStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     PropertyNamesStruct,
     PropertyNamesStruct.Json
   > = (_propertyNamesStruct) =>
@@ -44560,7 +44551,7 @@ export namespace PropertyPathsStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: PropertyPathsStruct.toJsonObject,
+        toJson: PropertyPathsStruct.toJson,
         $toString: PropertyPathsStruct.$toString,
       }),
     );
@@ -44811,7 +44802,7 @@ export namespace PropertyPathsStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     PropertyPathsStruct.Json,
     PropertyPathsStruct.Discriminated,
     undefined
@@ -45005,7 +44996,7 @@ export namespace PropertyPathsStruct {
       PropertyPathsStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     PropertyPathsStruct,
     PropertyPathsStruct.Json
   > = (_propertyPathsStruct) =>
@@ -45216,7 +45207,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: RecursiveDiscriminatedUnionMember1.toJsonObject,
+        toJson: RecursiveDiscriminatedUnionMember1.toJson,
         $toString: RecursiveDiscriminatedUnionMember1.$toString,
       }),
     );
@@ -45394,7 +45385,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     RecursiveDiscriminatedUnionMember1.Json,
     RecursiveDiscriminatedUnionMember1.Discriminated,
     undefined
@@ -45406,7 +45397,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
           RecursiveDiscriminatedUnionMember1.schema.properties.$identifier.type,
       }),
       recursiveDiscriminatedUnionMember1Property: $maybeFromJsonValue(
-        RecursiveDiscriminatedUnion.fromJsonObject,
+        RecursiveDiscriminatedUnion.fromJson,
       )($jsonObject["recursiveDiscriminatedUnionMember1Property"], {
         ...options,
         schema:
@@ -45588,7 +45579,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
       RecursiveDiscriminatedUnionMember1.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     RecursiveDiscriminatedUnionMember1,
     RecursiveDiscriminatedUnionMember1.Json
   > = (_recursiveDiscriminatedUnionMember1) =>
@@ -45601,7 +45592,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
             : _recursiveDiscriminatedUnionMember1.$identifier().value,
         "@type": "http://example.com/RecursiveDiscriminatedUnionMember1",
         recursiveDiscriminatedUnionMember1Property: $maybeToJsonValue(
-          RecursiveDiscriminatedUnion.toJsonObject,
+          RecursiveDiscriminatedUnion.toJson,
         )(
           _recursiveDiscriminatedUnionMember1.recursiveDiscriminatedUnionMember1Property,
         ),
@@ -45797,7 +45788,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: RecursiveDiscriminatedUnionMember2.toJsonObject,
+        toJson: RecursiveDiscriminatedUnionMember2.toJson,
         $toString: RecursiveDiscriminatedUnionMember2.$toString,
       }),
     );
@@ -45975,7 +45966,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     RecursiveDiscriminatedUnionMember2.Json,
     RecursiveDiscriminatedUnionMember2.Discriminated,
     undefined
@@ -45987,7 +45978,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
           RecursiveDiscriminatedUnionMember2.schema.properties.$identifier.type,
       }),
       recursiveDiscriminatedUnionMember2Property: $maybeFromJsonValue(
-        RecursiveDiscriminatedUnion.fromJsonObject,
+        RecursiveDiscriminatedUnion.fromJson,
       )($jsonObject["recursiveDiscriminatedUnionMember2Property"], {
         ...options,
         schema:
@@ -46169,7 +46160,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
       RecursiveDiscriminatedUnionMember2.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     RecursiveDiscriminatedUnionMember2,
     RecursiveDiscriminatedUnionMember2.Json
   > = (_recursiveDiscriminatedUnionMember2) =>
@@ -46182,7 +46173,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
             : _recursiveDiscriminatedUnionMember2.$identifier().value,
         "@type": "http://example.com/RecursiveDiscriminatedUnionMember2",
         recursiveDiscriminatedUnionMember2Property: $maybeToJsonValue(
-          RecursiveDiscriminatedUnion.toJsonObject,
+          RecursiveDiscriminatedUnion.toJson,
         )(
           _recursiveDiscriminatedUnionMember2.recursiveDiscriminatedUnionMember2Property,
         ),
@@ -46385,7 +46376,7 @@ export namespace StructDiscriminatedUnionMember1 {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: StructDiscriminatedUnionMember1.toJsonObject,
+        toJson: StructDiscriminatedUnionMember1.toJson,
         $toString: StructDiscriminatedUnionMember1.$toString,
       }),
     );
@@ -46632,7 +46623,7 @@ export namespace StructDiscriminatedUnionMember1 {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     StructDiscriminatedUnionMember1.Json,
     StructDiscriminatedUnionMember1.Discriminated,
     undefined
@@ -46841,7 +46832,7 @@ export namespace StructDiscriminatedUnionMember1 {
       StructDiscriminatedUnionMember1.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     StructDiscriminatedUnionMember1,
     StructDiscriminatedUnionMember1.Json
   > = (_structDiscriminatedUnionMember1) =>
@@ -47058,7 +47049,7 @@ export namespace StructDiscriminatedUnionMember2 {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: StructDiscriminatedUnionMember2.toJsonObject,
+        toJson: StructDiscriminatedUnionMember2.toJson,
         $toString: StructDiscriminatedUnionMember2.$toString,
       }),
     );
@@ -47305,7 +47296,7 @@ export namespace StructDiscriminatedUnionMember2 {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     StructDiscriminatedUnionMember2.Json,
     StructDiscriminatedUnionMember2.Discriminated,
     undefined
@@ -47514,7 +47505,7 @@ export namespace StructDiscriminatedUnionMember2 {
       StructDiscriminatedUnionMember2.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     StructDiscriminatedUnionMember2,
     StructDiscriminatedUnionMember2.Json
   > = (_structDiscriminatedUnionMember2) =>
@@ -47721,7 +47712,7 @@ export namespace StructIntersectionMember1 {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: StructIntersectionMember1.toJsonObject,
+        toJson: StructIntersectionMember1.toJson,
         $toString: StructIntersectionMember1.$toString,
       }),
     );
@@ -47967,7 +47958,7 @@ export namespace StructIntersectionMember1 {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     StructIntersectionMember1.Json,
     StructIntersectionMember1.Discriminated,
     undefined
@@ -48171,7 +48162,7 @@ export namespace StructIntersectionMember1 {
       StructIntersectionMember1.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     StructIntersectionMember1,
     StructIntersectionMember1.Json
   > = (_structIntersectionMember1) =>
@@ -48377,7 +48368,7 @@ export namespace StructIntersectionMember2 {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: StructIntersectionMember2.toJsonObject,
+        toJson: StructIntersectionMember2.toJson,
         $toString: StructIntersectionMember2.$toString,
       }),
     );
@@ -48623,7 +48614,7 @@ export namespace StructIntersectionMember2 {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     StructIntersectionMember2.Json,
     StructIntersectionMember2.Discriminated,
     undefined
@@ -48827,7 +48818,7 @@ export namespace StructIntersectionMember2 {
       StructIntersectionMember2.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     StructIntersectionMember2,
     StructIntersectionMember2.Json
   > = (_structIntersectionMember2) =>
@@ -48997,7 +48988,7 @@ export namespace TargetClassStruct {
       targetClassString: Either.of(parameters.targetClassString),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: TargetClassStruct.toJsonObject,
+        toJson: TargetClassStruct.toJson,
         $toString: TargetClassStruct.$toString,
       }),
     );
@@ -49179,7 +49170,7 @@ export namespace TargetClassStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     TargetClassStruct.Json,
     TargetClassStruct.Discriminated,
     undefined
@@ -49344,7 +49335,7 @@ export namespace TargetClassStruct {
       TargetClassStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     TargetClassStruct,
     TargetClassStruct.Json
   > = (_targetClassStruct) =>
@@ -49817,7 +49808,7 @@ export namespace TermsStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: TermsStruct.toJsonObject,
+        toJson: TermsStruct.toJson,
         $toString: TermsStruct.$toString,
       }),
     );
@@ -50536,7 +50527,7 @@ export namespace TermsStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     TermsStruct.Json,
     TermsStruct.Discriminated,
     undefined
@@ -50918,10 +50909,9 @@ export namespace TermsStruct {
       TermsStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
-    TermsStruct,
-    TermsStruct.Json
-  > = (_termsStruct) =>
+  export const toJson: $ToJsonObjectFunction<TermsStruct, TermsStruct.Json> = (
+    _termsStruct,
+  ) =>
     JSON.parse(
       JSON.stringify({
         "@id":
@@ -53535,7 +53525,7 @@ export namespace UnionDiscriminantsStruct {
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: UnionDiscriminantsStruct.toJsonObject,
+        toJson: UnionDiscriminantsStruct.toJson,
         $toString: UnionDiscriminantsStruct.$toString,
       }),
     );
@@ -55962,7 +55952,7 @@ export namespace UnionDiscriminantsStruct {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     UnionDiscriminantsStruct.Json,
     UnionDiscriminantsStruct.Discriminated,
     undefined
@@ -56023,7 +56013,7 @@ export namespace UnionDiscriminantsStruct {
       }),
       optionalNodeOrLiteral: $maybeFromJsonValue(((value, options) => {
         if (value.$type === "StructDiscriminatedUnionMember1") {
-          return StructDiscriminatedUnionMember1.fromJsonObject(value, {
+          return StructDiscriminatedUnionMember1.fromJson(value, {
             ...options,
             schema: {
               kind: "DiscriminatedUnion" as const,
@@ -56095,7 +56085,7 @@ export namespace UnionDiscriminantsStruct {
       }),
       optionalNodeOrNodeOrString: $maybeFromJsonValue(((value, options) => {
         if (value.$type === "StructDiscriminatedUnionMember1") {
-          return StructDiscriminatedUnionMember1.fromJsonObject(value, {
+          return StructDiscriminatedUnionMember1.fromJson(value, {
             ...options,
             schema: {
               kind: "DiscriminatedUnion" as const,
@@ -56131,7 +56121,7 @@ export namespace UnionDiscriminantsStruct {
           >;
         }
         if (value.$type === "StructDiscriminatedUnionMember2") {
-          return StructDiscriminatedUnionMember2.fromJsonObject(value, {
+          return StructDiscriminatedUnionMember2.fromJson(value, {
             ...options,
             schema: {
               kind: "DiscriminatedUnion" as const,
@@ -56322,7 +56312,7 @@ export namespace UnionDiscriminantsStruct {
       }),
       requiredNodeOrLiteral: ((value, options) => {
         if (value.$type === "StructDiscriminatedUnionMember1") {
-          return StructDiscriminatedUnionMember1.fromJsonObject(value, {
+          return StructDiscriminatedUnionMember1.fromJson(value, {
             ...options,
             schema: {
               kind: "DiscriminatedUnion" as const,
@@ -56383,7 +56373,7 @@ export namespace UnionDiscriminantsStruct {
       }),
       requiredNodeOrNodeOrString: ((value, options) => {
         if (value.$type === "StructDiscriminatedUnionMember1") {
-          return StructDiscriminatedUnionMember1.fromJsonObject(value, {
+          return StructDiscriminatedUnionMember1.fromJson(value, {
             ...options,
             schema: {
               kind: "DiscriminatedUnion" as const,
@@ -56419,7 +56409,7 @@ export namespace UnionDiscriminantsStruct {
           >;
         }
         if (value.$type === "StructDiscriminatedUnionMember2") {
-          return StructDiscriminatedUnionMember2.fromJsonObject(value, {
+          return StructDiscriminatedUnionMember2.fromJson(value, {
             ...options,
             schema: {
               kind: "DiscriminatedUnion" as const,
@@ -56591,7 +56581,7 @@ export namespace UnionDiscriminantsStruct {
       }),
       setNodeOrLiteral: $arrayFromJsonArray(((value, options) => {
         if (value.$type === "StructDiscriminatedUnionMember1") {
-          return StructDiscriminatedUnionMember1.fromJsonObject(value, {
+          return StructDiscriminatedUnionMember1.fromJson(value, {
             ...options,
             schema: {
               kind: "DiscriminatedUnion" as const,
@@ -56663,7 +56653,7 @@ export namespace UnionDiscriminantsStruct {
       }),
       setNodeOrNodeOrString: $arrayFromJsonArray(((value, options) => {
         if (value.$type === "StructDiscriminatedUnionMember1") {
-          return StructDiscriminatedUnionMember1.fromJsonObject(value, {
+          return StructDiscriminatedUnionMember1.fromJson(value, {
             ...options,
             schema: {
               kind: "DiscriminatedUnion" as const,
@@ -56699,7 +56689,7 @@ export namespace UnionDiscriminantsStruct {
           >;
         }
         if (value.$type === "StructDiscriminatedUnionMember2") {
-          return StructDiscriminatedUnionMember2.fromJsonObject(value, {
+          return StructDiscriminatedUnionMember2.fromJson(value, {
             ...options,
             schema: {
               kind: "DiscriminatedUnion" as const,
@@ -57729,7 +57719,7 @@ export namespace UnionDiscriminantsStruct {
       UnionDiscriminantsStruct.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     UnionDiscriminantsStruct,
     UnionDiscriminantsStruct.Json
   > = (_unionDiscriminantsStruct) =>
@@ -57759,7 +57749,7 @@ export namespace UnionDiscriminantsStruct {
         optionalNodeOrLiteral: $maybeToJsonValue(((value) => {
           if (value["termType"] === "StructDiscriminatedUnionMember1") {
             return {
-              ...StructDiscriminatedUnionMember1.toJsonObject(value.value),
+              ...StructDiscriminatedUnionMember1.toJson(value.value),
               $type: "StructDiscriminatedUnionMember1",
             };
           }
@@ -57782,13 +57772,13 @@ export namespace UnionDiscriminantsStruct {
         optionalNodeOrNodeOrString: $maybeToJsonValue(((value) => {
           if (value["$type"] === "StructDiscriminatedUnionMember1") {
             return {
-              ...StructDiscriminatedUnionMember1.toJsonObject(value.value),
+              ...StructDiscriminatedUnionMember1.toJson(value.value),
               $type: "StructDiscriminatedUnionMember1",
             };
           }
           if (value["$type"] === "StructDiscriminatedUnionMember2") {
             return {
-              ...StructDiscriminatedUnionMember2.toJsonObject(value.value),
+              ...StructDiscriminatedUnionMember2.toJson(value.value),
               $type: "StructDiscriminatedUnionMember2",
             };
           }
@@ -57851,7 +57841,7 @@ export namespace UnionDiscriminantsStruct {
         requiredNodeOrLiteral: ((value) => {
           if (value["termType"] === "StructDiscriminatedUnionMember1") {
             return {
-              ...StructDiscriminatedUnionMember1.toJsonObject(value.value),
+              ...StructDiscriminatedUnionMember1.toJson(value.value),
               $type: "StructDiscriminatedUnionMember1",
             };
           }
@@ -57864,13 +57854,13 @@ export namespace UnionDiscriminantsStruct {
         requiredNodeOrNodeOrString: ((value) => {
           if (value["$type"] === "StructDiscriminatedUnionMember1") {
             return {
-              ...StructDiscriminatedUnionMember1.toJsonObject(value.value),
+              ...StructDiscriminatedUnionMember1.toJson(value.value),
               $type: "StructDiscriminatedUnionMember1",
             };
           }
           if (value["$type"] === "StructDiscriminatedUnionMember2") {
             return {
-              ...StructDiscriminatedUnionMember2.toJsonObject(value.value),
+              ...StructDiscriminatedUnionMember2.toJson(value.value),
               $type: "StructDiscriminatedUnionMember2",
             };
           }
@@ -57916,7 +57906,7 @@ export namespace UnionDiscriminantsStruct {
         setNodeOrLiteral: $arrayToJsonArray(((value) => {
           if (value["termType"] === "StructDiscriminatedUnionMember1") {
             return {
-              ...StructDiscriminatedUnionMember1.toJsonObject(value.value),
+              ...StructDiscriminatedUnionMember1.toJson(value.value),
               $type: "StructDiscriminatedUnionMember1",
             };
           }
@@ -57939,13 +57929,13 @@ export namespace UnionDiscriminantsStruct {
         setNodeOrNodeOrString: $arrayToJsonArray(((value) => {
           if (value["$type"] === "StructDiscriminatedUnionMember1") {
             return {
-              ...StructDiscriminatedUnionMember1.toJsonObject(value.value),
+              ...StructDiscriminatedUnionMember1.toJson(value.value),
               $type: "StructDiscriminatedUnionMember1",
             };
           }
           if (value["$type"] === "StructDiscriminatedUnionMember2") {
             return {
-              ...StructDiscriminatedUnionMember2.toJsonObject(value.value),
+              ...StructDiscriminatedUnionMember2.toJson(value.value),
               $type: "StructDiscriminatedUnionMember2",
             };
           }
@@ -58320,7 +58310,7 @@ export namespace DatatypeDiscriminatedUnion1 {
     };
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     DatatypeDiscriminatedUnion1.Json,
     DatatypeDiscriminatedUnion1,
     undefined
@@ -58478,7 +58468,7 @@ export namespace DatatypeDiscriminatedUnion1 {
 
   export type Schema = typeof schema;
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     DatatypeDiscriminatedUnion1,
     DatatypeDiscriminatedUnion1.Json
   > = (value) => {
@@ -58650,7 +58640,7 @@ export namespace DatatypeDiscriminatedUnion2 {
     };
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     DatatypeDiscriminatedUnion2.Json,
     DatatypeDiscriminatedUnion2,
     undefined
@@ -58833,7 +58823,7 @@ export namespace DatatypeDiscriminatedUnion2 {
 
   export type Schema = typeof schema;
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     DatatypeDiscriminatedUnion2,
     DatatypeDiscriminatedUnion2.Json
   > = (value) => {
@@ -59133,13 +59123,13 @@ export namespace FlattenDiscriminatedUnion {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     FlattenDiscriminatedUnion.Json,
     FlattenDiscriminatedUnion,
     undefined
   > = (value, options) => {
     if (value.$type === "StructDiscriminatedUnionMember1") {
-      return StructDiscriminatedUnionMember1.fromJsonObject(value, {
+      return StructDiscriminatedUnionMember1.fromJson(value, {
         ...options,
         schema:
           FlattenDiscriminatedUnion.schema.members[
@@ -59148,7 +59138,7 @@ export namespace FlattenDiscriminatedUnion {
       }) as Either<Error, FlattenDiscriminatedUnion>;
     }
     if (value.$type === "StructDiscriminatedUnionMember2") {
-      return StructDiscriminatedUnionMember2.fromJsonObject(value, {
+      return StructDiscriminatedUnionMember2.fromJson(value, {
         ...options,
         schema:
           FlattenDiscriminatedUnion.schema.members[
@@ -59157,7 +59147,7 @@ export namespace FlattenDiscriminatedUnion {
       }) as Either<Error, FlattenDiscriminatedUnion>;
     }
     if (value.$type === "FlattenDiscriminatedUnionMember3") {
-      return FlattenDiscriminatedUnionMember3.fromJsonObject(value, {
+      return FlattenDiscriminatedUnionMember3.fromJson(value, {
         ...options,
         schema:
           FlattenDiscriminatedUnion.schema.members[
@@ -59458,25 +59448,25 @@ export namespace FlattenDiscriminatedUnion {
       FlattenDiscriminatedUnion.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     FlattenDiscriminatedUnion,
     FlattenDiscriminatedUnion.Json
   > = (value) => {
     if (value["$type"] === "StructDiscriminatedUnionMember1") {
       return {
-        ...StructDiscriminatedUnionMember1.toJsonObject(value),
+        ...StructDiscriminatedUnionMember1.toJson(value),
         $type: "StructDiscriminatedUnionMember1",
       };
     }
     if (value["$type"] === "StructDiscriminatedUnionMember2") {
       return {
-        ...StructDiscriminatedUnionMember2.toJsonObject(value),
+        ...StructDiscriminatedUnionMember2.toJson(value),
         $type: "StructDiscriminatedUnionMember2",
       };
     }
     if (value["$type"] === "FlattenDiscriminatedUnionMember3") {
       return {
-        ...FlattenDiscriminatedUnionMember3.toJsonObject(value),
+        ...FlattenDiscriminatedUnionMember3.toJson(value),
         $type: "FlattenDiscriminatedUnionMember3",
       };
     }
@@ -59797,13 +59787,13 @@ export namespace LazilyResolvedDiscriminatedUnion {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     LazilyResolvedDiscriminatedUnion.Json,
     LazilyResolvedDiscriminatedUnion,
     undefined
   > = (value, options) => {
     if (value.$type === "LazilyResolvedDiscriminatedUnionMember1") {
-      return LazilyResolvedDiscriminatedUnionMember1.fromJsonObject(value, {
+      return LazilyResolvedDiscriminatedUnionMember1.fromJson(value, {
         ...options,
         schema:
           LazilyResolvedDiscriminatedUnion.schema.members[
@@ -59812,7 +59802,7 @@ export namespace LazilyResolvedDiscriminatedUnion {
       }) as Either<Error, LazilyResolvedDiscriminatedUnion>;
     }
     if (value.$type === "LazilyResolvedDiscriminatedUnionMember2") {
-      return LazilyResolvedDiscriminatedUnionMember2.fromJsonObject(value, {
+      return LazilyResolvedDiscriminatedUnionMember2.fromJson(value, {
         ...options,
         schema:
           LazilyResolvedDiscriminatedUnion.schema.members[
@@ -60073,19 +60063,19 @@ export namespace LazilyResolvedDiscriminatedUnion {
       LazilyResolvedDiscriminatedUnion.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     LazilyResolvedDiscriminatedUnion,
     LazilyResolvedDiscriminatedUnion.Json
   > = (value) => {
     if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember1") {
       return {
-        ...LazilyResolvedDiscriminatedUnionMember1.toJsonObject(value),
+        ...LazilyResolvedDiscriminatedUnionMember1.toJson(value),
         $type: "LazilyResolvedDiscriminatedUnionMember1",
       };
     }
     if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember2") {
       return {
-        ...LazilyResolvedDiscriminatedUnionMember2.toJsonObject(value),
+        ...LazilyResolvedDiscriminatedUnionMember2.toJson(value),
         $type: "LazilyResolvedDiscriminatedUnionMember2",
       };
     }
@@ -60393,13 +60383,13 @@ export namespace NoRdfTypeDiscriminatedUnion {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     NoRdfTypeDiscriminatedUnion.Json,
     NoRdfTypeDiscriminatedUnion,
     undefined
   > = (value, options) => {
     if (value.$type === "NoRdfTypeDiscriminatedUnionMember1") {
-      return NoRdfTypeDiscriminatedUnionMember1.fromJsonObject(value, {
+      return NoRdfTypeDiscriminatedUnionMember1.fromJson(value, {
         ...options,
         schema:
           NoRdfTypeDiscriminatedUnion.schema.members[
@@ -60408,7 +60398,7 @@ export namespace NoRdfTypeDiscriminatedUnion {
       }) as Either<Error, NoRdfTypeDiscriminatedUnion>;
     }
     if (value.$type === "NoRdfTypeDiscriminatedUnionMember2") {
-      return NoRdfTypeDiscriminatedUnionMember2.fromJsonObject(value, {
+      return NoRdfTypeDiscriminatedUnionMember2.fromJson(value, {
         ...options,
         schema:
           NoRdfTypeDiscriminatedUnion.schema.members[
@@ -60659,19 +60649,19 @@ export namespace NoRdfTypeDiscriminatedUnion {
       NoRdfTypeDiscriminatedUnion.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     NoRdfTypeDiscriminatedUnion,
     NoRdfTypeDiscriminatedUnion.Json
   > = (value) => {
     if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember1") {
       return {
-        ...NoRdfTypeDiscriminatedUnionMember1.toJsonObject(value),
+        ...NoRdfTypeDiscriminatedUnionMember1.toJson(value),
         $type: "NoRdfTypeDiscriminatedUnionMember1",
       };
     }
     if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember2") {
       return {
-        ...NoRdfTypeDiscriminatedUnionMember2.toJsonObject(value),
+        ...NoRdfTypeDiscriminatedUnionMember2.toJson(value),
         $type: "NoRdfTypeDiscriminatedUnionMember2",
       };
     }
@@ -60959,13 +60949,13 @@ export namespace PartialDiscriminatedUnion {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     PartialDiscriminatedUnion.Json,
     PartialDiscriminatedUnion,
     undefined
   > = (value, options) => {
     if (value.$type === "PartialDiscriminatedUnionMember1") {
-      return PartialDiscriminatedUnionMember1.fromJsonObject(value, {
+      return PartialDiscriminatedUnionMember1.fromJson(value, {
         ...options,
         schema:
           PartialDiscriminatedUnion.schema.members[
@@ -60974,7 +60964,7 @@ export namespace PartialDiscriminatedUnion {
       }) as Either<Error, PartialDiscriminatedUnion>;
     }
     if (value.$type === "PartialDiscriminatedUnionMember2") {
-      return PartialDiscriminatedUnionMember2.fromJsonObject(value, {
+      return PartialDiscriminatedUnionMember2.fromJson(value, {
         ...options,
         schema:
           PartialDiscriminatedUnion.schema.members[
@@ -61229,19 +61219,19 @@ export namespace PartialDiscriminatedUnion {
       PartialDiscriminatedUnion.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     PartialDiscriminatedUnion,
     PartialDiscriminatedUnion.Json
   > = (value) => {
     if (value["$type"] === "PartialDiscriminatedUnionMember1") {
       return {
-        ...PartialDiscriminatedUnionMember1.toJsonObject(value),
+        ...PartialDiscriminatedUnionMember1.toJson(value),
         $type: "PartialDiscriminatedUnionMember1",
       };
     }
     if (value["$type"] === "PartialDiscriminatedUnionMember2") {
       return {
-        ...PartialDiscriminatedUnionMember2.toJsonObject(value),
+        ...PartialDiscriminatedUnionMember2.toJson(value),
         $type: "PartialDiscriminatedUnionMember2",
       };
     }
@@ -61533,13 +61523,13 @@ export namespace RecursiveDiscriminatedUnion {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     RecursiveDiscriminatedUnion.Json,
     RecursiveDiscriminatedUnion,
     undefined
   > = (value, options) => {
     if (value.$type === "RecursiveDiscriminatedUnionMember1") {
-      return RecursiveDiscriminatedUnionMember1.fromJsonObject(value, {
+      return RecursiveDiscriminatedUnionMember1.fromJson(value, {
         ...options,
         schema:
           RecursiveDiscriminatedUnion.schema.members[
@@ -61548,7 +61538,7 @@ export namespace RecursiveDiscriminatedUnion {
       }) as Either<Error, RecursiveDiscriminatedUnion>;
     }
     if (value.$type === "RecursiveDiscriminatedUnionMember2") {
-      return RecursiveDiscriminatedUnionMember2.fromJsonObject(value, {
+      return RecursiveDiscriminatedUnionMember2.fromJson(value, {
         ...options,
         schema:
           RecursiveDiscriminatedUnion.schema.members[
@@ -61799,19 +61789,19 @@ export namespace RecursiveDiscriminatedUnion {
       RecursiveDiscriminatedUnion.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     RecursiveDiscriminatedUnion,
     RecursiveDiscriminatedUnion.Json
   > = (value) => {
     if (value["$type"] === "RecursiveDiscriminatedUnionMember1") {
       return {
-        ...RecursiveDiscriminatedUnionMember1.toJsonObject(value),
+        ...RecursiveDiscriminatedUnionMember1.toJson(value),
         $type: "RecursiveDiscriminatedUnionMember1",
       };
     }
     if (value["$type"] === "RecursiveDiscriminatedUnionMember2") {
       return {
-        ...RecursiveDiscriminatedUnionMember2.toJsonObject(value),
+        ...RecursiveDiscriminatedUnionMember2.toJson(value),
         $type: "RecursiveDiscriminatedUnionMember2",
       };
     }
@@ -62099,13 +62089,13 @@ export namespace StructDiscriminatedUnion {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     StructDiscriminatedUnion.Json,
     StructDiscriminatedUnion,
     undefined
   > = (value, options) => {
     if (value.$type === "StructDiscriminatedUnionMember1") {
-      return StructDiscriminatedUnionMember1.fromJsonObject(value, {
+      return StructDiscriminatedUnionMember1.fromJson(value, {
         ...options,
         schema:
           StructDiscriminatedUnion.schema.members[
@@ -62114,7 +62104,7 @@ export namespace StructDiscriminatedUnion {
       }) as Either<Error, StructDiscriminatedUnion>;
     }
     if (value.$type === "StructDiscriminatedUnionMember2") {
-      return StructDiscriminatedUnionMember2.fromJsonObject(value, {
+      return StructDiscriminatedUnionMember2.fromJson(value, {
         ...options,
         schema:
           StructDiscriminatedUnion.schema.members[
@@ -62369,19 +62359,19 @@ export namespace StructDiscriminatedUnion {
       StructDiscriminatedUnion.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     StructDiscriminatedUnion,
     StructDiscriminatedUnion.Json
   > = (value) => {
     if (value["$type"] === "StructDiscriminatedUnionMember1") {
       return {
-        ...StructDiscriminatedUnionMember1.toJsonObject(value),
+        ...StructDiscriminatedUnionMember1.toJson(value),
         $type: "StructDiscriminatedUnionMember1",
       };
     }
     if (value["$type"] === "StructDiscriminatedUnionMember2") {
       return {
-        ...StructDiscriminatedUnionMember2.toJsonObject(value),
+        ...StructDiscriminatedUnionMember2.toJson(value),
         $type: "StructDiscriminatedUnionMember2",
       };
     }
@@ -62543,7 +62533,7 @@ export namespace StructIntersection {
       )
       .map((object) =>
         $monkeyPatchObject(object, {
-          toJson: StructIntersection.toJsonObject,
+          toJson: StructIntersection.toJson,
           $toString: StructIntersection.$toString,
         }),
       );
@@ -62599,13 +62589,13 @@ export namespace StructIntersection {
     return patterns;
   };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     StructIntersection.Json,
     StructIntersection,
     undefined
   > = (value) =>
-    StructIntersectionMember1.fromJsonObject(value).chain((member0) =>
-      StructIntersectionMember2.fromJsonObject(value).map((member1) => ({
+    StructIntersectionMember1.fromJson(value).chain((member0) =>
+      StructIntersectionMember2.fromJson(value).map((member1) => ({
         ...member0,
         ...member1,
       })),
@@ -62713,12 +62703,12 @@ export namespace StructIntersection {
       StructIntersection.sparqlConstructQuery(parameters),
     );
 
-  export const toJsonObject: $ToJsonObjectFunction<
+  export const toJson: $ToJsonObjectFunction<
     StructIntersection,
     StructIntersection.Json
   > = (value) => ({
-    ...StructIntersectionMember1.toJsonObject(value),
-    ...StructIntersectionMember2.toJsonObject(value),
+    ...StructIntersectionMember1.toJson(value),
+    ...StructIntersectionMember2.toJson(value),
   });
 
   export const toLoggable: $ToLoggableFunction<StructIntersection> = (
@@ -63261,271 +63251,244 @@ export namespace $Object {
   export function toJsonObject(object: $Object) {
     switch (object.$type) {
       case "DefaultPartial":
-        return {
-          ...$DefaultPartial.toJsonObject(object),
-          $type: "DefaultPartial",
-        };
+        return { ...$DefaultPartial.toJson(object), $type: "DefaultPartial" };
       case "NamedDefaultPartial":
         return {
-          ...$NamedDefaultPartial.toJsonObject(object),
+          ...$NamedDefaultPartial.toJson(object),
           $type: "NamedDefaultPartial",
         };
       case "AnonymousTypesStruct":
         return {
-          ...AnonymousTypesStruct.toJsonObject(object),
+          ...AnonymousTypesStruct.toJson(object),
           $type: "AnonymousTypesStruct",
         };
       case "BlankNodeIdentifierStruct":
         return {
-          ...BlankNodeIdentifierStruct.toJsonObject(object),
+          ...BlankNodeIdentifierStruct.toJson(object),
           $type: "BlankNodeIdentifierStruct",
         };
       case "BlankNodeOrIriIdentifierStruct":
         return {
-          ...BlankNodeOrIriIdentifierStruct.toJsonObject(object),
+          ...BlankNodeOrIriIdentifierStruct.toJson(object),
           $type: "BlankNodeOrIriIdentifierStruct",
         };
       case "ClassConstraintsStruct":
         return {
-          ...ClassConstraintsStruct.toJsonObject(object),
+          ...ClassConstraintsStruct.toJson(object),
           $type: "ClassConstraintsStruct",
         };
       case "ConvertibleTypesStruct":
         return {
-          ...ConvertibleTypesStruct.toJsonObject(object),
+          ...ConvertibleTypesStruct.toJson(object),
           $type: "ConvertibleTypesStruct",
         };
       case "DatatypeDiscriminatedUnionsStruct":
         return {
-          ...DatatypeDiscriminatedUnionsStruct.toJsonObject(object),
+          ...DatatypeDiscriminatedUnionsStruct.toJson(object),
           $type: "DatatypeDiscriminatedUnionsStruct",
         };
       case "DatesStruct":
-        return { ...DatesStruct.toJsonObject(object), $type: "DatesStruct" };
+        return { ...DatesStruct.toJson(object), $type: "DatesStruct" };
       case "DefaultValuesStruct":
         return {
-          ...DefaultValuesStruct.toJsonObject(object),
+          ...DefaultValuesStruct.toJson(object),
           $type: "DefaultValuesStruct",
         };
       case "DirectRecursiveStruct":
         return {
-          ...DirectRecursiveStruct.toJsonObject(object),
+          ...DirectRecursiveStruct.toJson(object),
           $type: "DirectRecursiveStruct",
         };
       case "DisplayStruct":
-        return {
-          ...DisplayStruct.toJsonObject(object),
-          $type: "DisplayStruct",
-        };
+        return { ...DisplayStruct.toJson(object), $type: "DisplayStruct" };
       case "ExplicitFromToRdfTypesStruct":
         return {
-          ...ExplicitFromToRdfTypesStruct.toJsonObject(object),
+          ...ExplicitFromToRdfTypesStruct.toJson(object),
           $type: "ExplicitFromToRdfTypesStruct",
         };
       case "ExplicitRdfTypeStruct":
         return {
-          ...ExplicitRdfTypeStruct.toJsonObject(object),
+          ...ExplicitRdfTypeStruct.toJson(object),
           $type: "ExplicitRdfTypeStruct",
         };
       case "FlattenDiscriminatedUnionMember3":
         return {
-          ...FlattenDiscriminatedUnionMember3.toJsonObject(object),
+          ...FlattenDiscriminatedUnionMember3.toJson(object),
           $type: "FlattenDiscriminatedUnionMember3",
         };
       case "HasValuesStruct":
-        return {
-          ...HasValuesStruct.toJsonObject(object),
-          $type: "HasValuesStruct",
-        };
+        return { ...HasValuesStruct.toJson(object), $type: "HasValuesStruct" };
       case "IgnoredPropertiesStruct":
         return {
-          ...IgnoredPropertiesStruct.toJsonObject(object),
+          ...IgnoredPropertiesStruct.toJson(object),
           $type: "IgnoredPropertiesStruct",
         };
       case "IndirectRecursiveStruct":
         return {
-          ...IndirectRecursiveStruct.toJsonObject(object),
+          ...IndirectRecursiveStruct.toJson(object),
           $type: "IndirectRecursiveStruct",
         };
       case "IndirectRecursiveStructHelper":
         return {
-          ...IndirectRecursiveStructHelper.toJsonObject(object),
+          ...IndirectRecursiveStructHelper.toJson(object),
           $type: "IndirectRecursiveStructHelper",
         };
       case "InIdentifierStruct":
         return {
-          ...InIdentifierStruct.toJsonObject(object),
+          ...InIdentifierStruct.toJson(object),
           $type: "InIdentifierStruct",
         };
       case "InPropertiesStruct":
         return {
-          ...InPropertiesStruct.toJsonObject(object),
+          ...InPropertiesStruct.toJson(object),
           $type: "InPropertiesStruct",
         };
       case "IntersectionPropertiesStruct":
         return {
-          ...IntersectionPropertiesStruct.toJsonObject(object),
+          ...IntersectionPropertiesStruct.toJson(object),
           $type: "IntersectionPropertiesStruct",
         };
       case "IriIdentifierStruct":
         return {
-          ...IriIdentifierStruct.toJsonObject(object),
+          ...IriIdentifierStruct.toJson(object),
           $type: "IriIdentifierStruct",
         };
       case "LangStringStruct":
         return {
-          ...LangStringStruct.toJsonObject(object),
+          ...LangStringStruct.toJson(object),
           $type: "LangStringStruct",
         };
       case "LanguageInStruct":
         return {
-          ...LanguageInStruct.toJsonObject(object),
+          ...LanguageInStruct.toJson(object),
           $type: "LanguageInStruct",
         };
       case "LazilyResolvedBlankNodeOrIriIdentifierStruct":
         return {
-          ...LazilyResolvedBlankNodeOrIriIdentifierStruct.toJsonObject(object),
+          ...LazilyResolvedBlankNodeOrIriIdentifierStruct.toJson(object),
           $type: "LazilyResolvedBlankNodeOrIriIdentifierStruct",
         };
       case "LazilyResolvedDiscriminatedUnionMember1":
         return {
-          ...LazilyResolvedDiscriminatedUnionMember1.toJsonObject(object),
+          ...LazilyResolvedDiscriminatedUnionMember1.toJson(object),
           $type: "LazilyResolvedDiscriminatedUnionMember1",
         };
       case "LazilyResolvedDiscriminatedUnionMember2":
         return {
-          ...LazilyResolvedDiscriminatedUnionMember2.toJsonObject(object),
+          ...LazilyResolvedDiscriminatedUnionMember2.toJson(object),
           $type: "LazilyResolvedDiscriminatedUnionMember2",
         };
       case "LazilyResolvedIriIdentifierStruct":
         return {
-          ...LazilyResolvedIriIdentifierStruct.toJsonObject(object),
+          ...LazilyResolvedIriIdentifierStruct.toJson(object),
           $type: "LazilyResolvedIriIdentifierStruct",
         };
       case "LazyPropertiesStruct":
         return {
-          ...LazyPropertiesStruct.toJsonObject(object),
+          ...LazyPropertiesStruct.toJson(object),
           $type: "LazyPropertiesStruct",
         };
       case "ListSetsStruct":
-        return {
-          ...ListSetsStruct.toJsonObject(object),
-          $type: "ListSetsStruct",
-        };
+        return { ...ListSetsStruct.toJson(object), $type: "ListSetsStruct" };
       case "ListsStruct":
-        return { ...ListsStruct.toJsonObject(object), $type: "ListsStruct" };
+        return { ...ListsStruct.toJson(object), $type: "ListsStruct" };
       case "MutablePropertiesStruct":
         return {
-          ...MutablePropertiesStruct.toJsonObject(object),
+          ...MutablePropertiesStruct.toJson(object),
           $type: "MutablePropertiesStruct",
         };
       case "NamedTypesStruct":
         return {
-          ...NamedTypesStruct.toJsonObject(object),
+          ...NamedTypesStruct.toJson(object),
           $type: "NamedTypesStruct",
         };
       case "NewName":
-        return { ...NewName.toJsonObject(object), $type: "NewName" };
+        return { ...NewName.toJson(object), $type: "NewName" };
       case "NodeKindsStruct":
-        return {
-          ...NodeKindsStruct.toJsonObject(object),
-          $type: "NodeKindsStruct",
-        };
+        return { ...NodeKindsStruct.toJson(object), $type: "NodeKindsStruct" };
       case "NonClassStruct":
-        return {
-          ...NonClassStruct.toJsonObject(object),
-          $type: "NonClassStruct",
-        };
+        return { ...NonClassStruct.toJson(object), $type: "NonClassStruct" };
       case "NoRdfTypeDiscriminatedUnionMember1":
         return {
-          ...NoRdfTypeDiscriminatedUnionMember1.toJsonObject(object),
+          ...NoRdfTypeDiscriminatedUnionMember1.toJson(object),
           $type: "NoRdfTypeDiscriminatedUnionMember1",
         };
       case "NoRdfTypeDiscriminatedUnionMember2":
         return {
-          ...NoRdfTypeDiscriminatedUnionMember2.toJsonObject(object),
+          ...NoRdfTypeDiscriminatedUnionMember2.toJson(object),
           $type: "NoRdfTypeDiscriminatedUnionMember2",
         };
       case "NumericsStruct":
-        return {
-          ...NumericsStruct.toJsonObject(object),
-          $type: "NumericsStruct",
-        };
+        return { ...NumericsStruct.toJson(object), $type: "NumericsStruct" };
       case "OrderedStruct":
-        return {
-          ...OrderedStruct.toJsonObject(object),
-          $type: "OrderedStruct",
-        };
+        return { ...OrderedStruct.toJson(object), $type: "OrderedStruct" };
       case "PartialDiscriminatedUnionMember1":
         return {
-          ...PartialDiscriminatedUnionMember1.toJsonObject(object),
+          ...PartialDiscriminatedUnionMember1.toJson(object),
           $type: "PartialDiscriminatedUnionMember1",
         };
       case "PartialDiscriminatedUnionMember2":
         return {
-          ...PartialDiscriminatedUnionMember2.toJsonObject(object),
+          ...PartialDiscriminatedUnionMember2.toJson(object),
           $type: "PartialDiscriminatedUnionMember2",
         };
       case "PartialStruct":
-        return {
-          ...PartialStruct.toJsonObject(object),
-          $type: "PartialStruct",
-        };
+        return { ...PartialStruct.toJson(object), $type: "PartialStruct" };
       case "PropertyCardinalitiesStruct":
         return {
-          ...PropertyCardinalitiesStruct.toJsonObject(object),
+          ...PropertyCardinalitiesStruct.toJson(object),
           $type: "PropertyCardinalitiesStruct",
         };
       case "PropertyNamesStruct":
         return {
-          ...PropertyNamesStruct.toJsonObject(object),
+          ...PropertyNamesStruct.toJson(object),
           $type: "PropertyNamesStruct",
         };
       case "PropertyPathsStruct":
         return {
-          ...PropertyPathsStruct.toJsonObject(object),
+          ...PropertyPathsStruct.toJson(object),
           $type: "PropertyPathsStruct",
         };
       case "RecursiveDiscriminatedUnionMember1":
         return {
-          ...RecursiveDiscriminatedUnionMember1.toJsonObject(object),
+          ...RecursiveDiscriminatedUnionMember1.toJson(object),
           $type: "RecursiveDiscriminatedUnionMember1",
         };
       case "RecursiveDiscriminatedUnionMember2":
         return {
-          ...RecursiveDiscriminatedUnionMember2.toJsonObject(object),
+          ...RecursiveDiscriminatedUnionMember2.toJson(object),
           $type: "RecursiveDiscriminatedUnionMember2",
         };
       case "StructDiscriminatedUnionMember1":
         return {
-          ...StructDiscriminatedUnionMember1.toJsonObject(object),
+          ...StructDiscriminatedUnionMember1.toJson(object),
           $type: "StructDiscriminatedUnionMember1",
         };
       case "StructDiscriminatedUnionMember2":
         return {
-          ...StructDiscriminatedUnionMember2.toJsonObject(object),
+          ...StructDiscriminatedUnionMember2.toJson(object),
           $type: "StructDiscriminatedUnionMember2",
         };
       case "StructIntersectionMember1":
         return {
-          ...StructIntersectionMember1.toJsonObject(object),
+          ...StructIntersectionMember1.toJson(object),
           $type: "StructIntersectionMember1",
         };
       case "StructIntersectionMember2":
         return {
-          ...StructIntersectionMember2.toJsonObject(object),
+          ...StructIntersectionMember2.toJson(object),
           $type: "StructIntersectionMember2",
         };
       case "TargetClassStruct":
         return {
-          ...TargetClassStruct.toJsonObject(object),
+          ...TargetClassStruct.toJson(object),
           $type: "TargetClassStruct",
         };
       case "TermsStruct":
-        return { ...TermsStruct.toJsonObject(object), $type: "TermsStruct" };
+        return { ...TermsStruct.toJson(object), $type: "TermsStruct" };
       case "UnionDiscriminantsStruct":
         return {
-          ...UnionDiscriminantsStruct.toJsonObject(object),
+          ...UnionDiscriminantsStruct.toJson(object),
           $type: "UnionDiscriminantsStruct",
         };
       default:

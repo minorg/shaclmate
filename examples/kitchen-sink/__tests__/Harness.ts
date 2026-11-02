@@ -2,10 +2,10 @@ import type { NamedNode, Variable } from "@rdfjs/types";
 import type { Resource } from "@rdfx/resource";
 import type {
   $EqualsFunction,
-  $FromJsonFunction,
+  $FromJsonObjectFunction,
   $FromRdfResourceFunction,
   $HashFunction,
-  $ToJsonFunction,
+  $ToJsonObjectFunction,
   $ToRdfResourceFunction,
   $ToStringFunction,
 } from "../src/index.js";
@@ -22,13 +22,13 @@ export class Harness<
     readonly instance: T,
     readonly staticSide: Readonly<{
       equals: $EqualsFunction<T>;
-      fromJson: $FromJsonFunction<T, any>;
+      fromJson: $FromJsonObjectFunction<any, T, undefined>;
       fromRdfResource: $FromRdfResourceFunction<T>;
       hash: $HashFunction<T>;
       sparqlConstructQueryString: (parameters: {
         subject: NamedNode | Variable;
       }) => string;
-      toJson: $ToJsonFunction<T, any>;
+      toJson: $ToJsonObjectFunction<T, any>;
       toRdfResource: $ToRdfResourceFunction<Resource.Identifier, T>;
       $toString: $ToStringFunction<T>;
     }>,

@@ -458,7 +458,6 @@ describe("fromRdf", () => {
           propertyNameString as keyof typeof kitchenSink.LangStringStruct.schema.properties;
         switch (propertyName) {
           case "$identifier":
-          case "$type":
             break;
           case "$rdfType":
             resource.add(

@@ -10,7 +10,6 @@ function $identifier(this: kitchenSink.MutablePropertiesStruct) {
   kitchenSink.MutablePropertiesStruct.hash(hasher, {
     ...this,
     $identifier: undefined,
-    $type: undefined,
   });
   return dataFactory.namedNode(
     `urn:shaclmate:MutablePropertiesStruct:${hasher.hex()}`,
