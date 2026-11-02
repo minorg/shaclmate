@@ -42,7 +42,7 @@ function ObjectType__fromRdfResourceFunctionExpression(this: ObjectType): Code {
     .reduce(
       (acc, { expression, variable }) =>
         code`(${expression}).chain(${variable} => ${acc})`,
-      code`(${this.createFunction.unannotatedUsage}(properties))`,
+      code`(${this.createFunction.annotatedUsage}(properties))`,
     )}`;
 }
 
