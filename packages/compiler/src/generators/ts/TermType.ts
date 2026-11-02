@@ -53,12 +53,17 @@ export class TermType<
   }
 
   @Memoize()
-  override get filterType(): Code {
-    return code`${this.reusables.snippets.TermFilter}<${this.expression}>`;
+  override get discriminantProperty(): Maybe<AbstractTermType.DiscriminantProperty> {
+    return Maybe.of({
+      jsonName: "termType",
+      name: "termType",
+      values: [...this.termTypes],
+    });
   }
 
-  get fromJsonValueFunction(): Callable {
-    return this.fromJsonObjectFunction;
+  @Memoize()
+  override get filterType(): Code {
+    return code`${this.reusables.snippets.TermFilter}<${this.expression}>`;
   }
 
   @Memoize()
@@ -66,6 +71,10 @@ export class TermType<
     return new ReferenceCallable(
       code`${this.reusables.snippets.termFromJsonObject}<${this.expression}>`,
     );
+  }
+
+  get fromJsonValueFunction(): Callable {
+    return this.fromJsonObjectFunction;
   }
 
   @Memoize()
@@ -77,6 +86,38 @@ export class TermType<
 
   override get graphqlType(): AbstractTermType.GraphqlType {
     throw new Error("not implemented");
+  }
+
+  @Memoize()
+  override get jsonObjectType(): AbstractTermType["jsonObjectType"] {
+    // This is a z.union in the snippet but an object here so a discriminant can be added if necessary.
+    return this.jsonTypeFactory.createJsonObjectType(
+      {
+        "@id": {
+          type: this.jsonTypeFactory.createJsonStringType({
+            minLength: 1n,
+          }),
+        },
+        "@language": {
+          optional: true,
+          type: this.jsonTypeFactory.createJsonStringType(),
+        },
+        "@type": {
+          optional: true,
+          type: this.jsonTypeFactory.createJsonStringType(),
+        },
+        "@value": {
+          type: this.jsonTypeFactory.createJsonStringType(),
+        },
+      },
+      {
+        snippet: this.reusables.snippets.TermJsonObject,
+      },
+    );
+  }
+
+  get jsonValueType(): AbstractTermType["jsonValueType"] {
+    return this.jsonObjectType;
   }
 
   @Memoize()
@@ -116,38 +157,6 @@ export class TermType<
     _parameters: Parameters<AbstractTermType["graphqlResolveExpression"]>[0],
   ): Code {
     throw new Error("not implemented");
-  }
-
-  get jsonValueType(): AbstractTermType["jsonValueType"] {
-    return this.jsonObjectType;
-  }
-
-  @Memoize()
-  override get jsonObjectType(): AbstractTermType["jsonObjectType"] {
-    // This is a z.union in the snippet but an object here so a discriminant can be added if necessary.
-    return this.jsonTypeFactory.createJsonObjectType(
-      {
-        "@id": {
-          type: this.jsonTypeFactory.createJsonStringType({
-            minLength: 1n,
-          }),
-        },
-        "@language": {
-          optional: true,
-          type: this.jsonTypeFactory.createJsonStringType(),
-        },
-        "@type": {
-          optional: true,
-          type: this.jsonTypeFactory.createJsonStringType(),
-        },
-        "@value": {
-          type: this.jsonTypeFactory.createJsonStringType(),
-        },
-      },
-      {
-        snippet: this.reusables.snippets.TermJsonObject,
-      },
-    );
   }
 
   override toLoggableExpression({

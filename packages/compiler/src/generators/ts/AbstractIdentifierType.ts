@@ -1,6 +1,9 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
+
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractTermType } from "./AbstractTermType.js";
 import type { Callable } from "./Callable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
@@ -20,9 +23,11 @@ export abstract class AbstractIdentifierType<
   abstract readonly parseFunction: Callable;
 
   @Memoize()
-  get jsonValueType(): AbstractTermType["jsonValueType"] {
-    return this.jsonTypeFactory.createJsonStringType({
-      minLength: 1n,
+  override get discriminantProperty(): Maybe<AbstractTermType.DiscriminantProperty> {
+    return Maybe.of({
+      jsonName: "termType",
+      name: "termType",
+      values: [...this.termTypes],
     });
   }
 
@@ -36,6 +41,13 @@ export abstract class AbstractIdentifierType<
         snippet: this.reusables.snippets.IdentifierJsonObject,
       },
     );
+  }
+
+  @Memoize()
+  get jsonValueType(): AbstractTermType["jsonValueType"] {
+    return this.jsonTypeFactory.createJsonStringType({
+      minLength: 1n,
+    });
   }
 
   override graphqlResolveExpression({

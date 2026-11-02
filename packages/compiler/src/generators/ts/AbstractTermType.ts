@@ -53,15 +53,6 @@ export abstract class AbstractTermType<
     this.in_ = in_;
   }
 
-  @Memoize()
-  override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
-    return Maybe.of({
-      jsonName: "termType",
-      name: "termType",
-      values: [...this.termTypes],
-    });
-  }
-
   get referencesNamedType(): boolean {
     return this.name.isJust();
   }

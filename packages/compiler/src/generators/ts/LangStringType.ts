@@ -1,6 +1,7 @@
 import type { Literal } from "@rdfjs/types";
 
 import { Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { ReferenceCallable } from "./ReferenceCallable.js";
@@ -22,18 +23,6 @@ export class LangStringType extends AbstractLiteralType {
         },
       ],
     });
-  override readonly jsonObjectType: AbstractLiteralType["jsonObjectType"] =
-    this.jsonTypeFactory.createJsonObjectType(
-      {
-        "@language": {
-          type: this.jsonTypeFactory.createJsonStringType({ minLength: 1n }),
-        },
-        "@value": { type: this.jsonTypeFactory.createJsonStringType() },
-      },
-      { snippet: this.reusables.snippets.LangStringJsonObject },
-    );
-  override readonly jsonValueType: AbstractLiteralType["jsonValueType"] =
-    this.jsonObjectType;
   override readonly filterFunction = new ReferenceCallable(
     this.reusables.snippets.filterLiteral,
   );
@@ -48,6 +37,18 @@ export class LangStringType extends AbstractLiteralType {
   override readonly jsTypes = [
     { instanceof: "Object", typeof: "object" },
   ] as const;
+  override readonly jsonObjectType: AbstractLiteralType["jsonObjectType"] =
+    this.jsonTypeFactory.createJsonObjectType(
+      {
+        "@language": {
+          type: this.jsonTypeFactory.createJsonStringType({ minLength: 1n }),
+        },
+        "@value": { type: this.jsonTypeFactory.createJsonStringType() },
+      },
+      { snippet: this.reusables.snippets.LangStringJsonObject },
+    );
+  override readonly jsonValueType: AbstractLiteralType["jsonValueType"] =
+    this.jsonObjectType;
   override readonly kind = "LangString";
   override readonly schemaType =
     code`${this.reusables.snippets.LangStringSchema}`;
@@ -67,6 +68,15 @@ export class LangStringType extends AbstractLiteralType {
   >[0]) {
     super(superParameters);
     this.languageIn = languageIn;
+  }
+
+  @Memoize()
+  override get discriminantProperty(): Maybe<AbstractLiteralType.DiscriminantProperty> {
+    return Maybe.of({
+      jsonName: "termType",
+      name: "termType",
+      values: [...this.termTypes],
+    });
   }
 
   get graphqlType(): AbstractLiteralType.GraphqlType {

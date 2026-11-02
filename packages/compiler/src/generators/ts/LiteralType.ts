@@ -1,6 +1,7 @@
 import type { Literal } from "@rdfjs/types";
 
 import { Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { ReferenceCallable } from "./ReferenceCallable.js";
@@ -13,8 +14,6 @@ export class LiteralType extends AbstractLiteralType {
   protected override readonly inlineExpression =
     code`${this.reusables.imports.Literal}`;
 
-  override readonly jsonValueType: AbstractLiteralType["jsonValueType"] =
-    this.jsonObjectType;
   override readonly conversionFunction: Maybe<AbstractLiteralType.ConversionFunction> =
     Maybe.of({
       code: code`${this.reusables.snippets.convertToLiteral}`,
@@ -49,6 +48,8 @@ export class LiteralType extends AbstractLiteralType {
   override readonly jsTypes = [
     { instanceof: "Object", typeof: "object" },
   ] as const;
+  override readonly jsonValueType: AbstractLiteralType["jsonValueType"] =
+    this.jsonObjectType;
   override readonly kind = "Literal";
   override readonly schemaType = code`${this.reusables.snippets.LiteralSchema}`;
   override readonly toJsonObjectFunction = new ReferenceCallable(
@@ -67,6 +68,15 @@ export class LiteralType extends AbstractLiteralType {
   >[0]) {
     super(superParameters);
     this.languageIn = languageIn;
+  }
+
+  @Memoize()
+  override get discriminantProperty(): Maybe<AbstractLiteralType.DiscriminantProperty> {
+    return Maybe.of({
+      jsonName: "termType",
+      name: "termType",
+      values: [...this.termTypes],
+    });
   }
 
   get graphqlType(): AbstractLiteralType.GraphqlType {
