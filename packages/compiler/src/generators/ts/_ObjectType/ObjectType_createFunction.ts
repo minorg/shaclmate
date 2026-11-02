@@ -4,12 +4,10 @@ import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 function ObjectType_createFunctionExpression(this: ObjectType): Code {
-  const parametersVariable = code`${this.createFunctionParameters.variable}${this.createFunctionParameters.hasQuestionToken ? "?" : ""}`;
-
   const propertyInitializers = this.properties.flatMap((property) =>
     property
       .createInitializer({
-        variables: { parameters: parametersVariable },
+        variables: { parameters: this.createFunctionParameters.variable },
       })
       .toList(),
   );
@@ -29,7 +27,7 @@ function ObjectType_createFunctionExpression(this: ObjectType): Code {
     returnExpression = code`${returnExpression}.map(object => ${this.reusables.snippets.monkeyPatchObject}(object, ${monkeyPatchMethods}))`;
   }
 
-  return code`(${parametersVariable}) => ${returnExpression}`;
+  return code`(${this.createFunctionParameters.variable}${this.createFunctionParameters.hasQuestionToken ? code` = {}` : code``}) => ${returnExpression}`;
 }
 
 export function ObjectType_createFunction(this: ObjectType): Callable {
