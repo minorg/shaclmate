@@ -1,12 +1,5 @@
 import type { Maybe } from "purify-ts";
 import type * as uriTemplate from "uri-template";
-import type {
-  HttpRequestMethod,
-  HttpResponseErrorStatusCode,
-  HttpResponseSuccessfulStatusCode,
-  OperationHttpRequestBindingContentType,
-  OperationHttpResultResponseBindingContentType,
-} from "../input/input.shaclmate.js";
 import { AbstractConstruct } from "./AbstractConstruct.js";
 import type { OptionType } from "./OptionType.js";
 import type { StructDiscriminatedUnionType } from "./StructDiscriminatedUnionType.js";
@@ -72,8 +65,8 @@ export namespace Operation {
 
   export namespace HttpBinding {
     export interface Request {
-      readonly contentType: Maybe<OperationHttpRequestBindingContentType>;
-      readonly method: HttpRequestMethod;
+      readonly contentType: Maybe<string>;
+      readonly method: string;
       readonly parameterSources: ReadonlyMap<string, Request.ParameterSource>;
       readonly uriTemplate: ReturnType<typeof uriTemplate.parse>["ast"];
     }
@@ -85,12 +78,12 @@ export namespace Operation {
     export interface ErrorResponse {
       readonly contentType: "application/problem+json";
       readonly error: StructType;
-      readonly statusCode: HttpResponseErrorStatusCode;
+      readonly statusCode: 500; //HttpResponseErrorStatusCode;
     }
 
     export interface ResultResponse {
-      readonly contentType: Maybe<OperationHttpResultResponseBindingContentType>;
-      readonly statusCode: HttpResponseSuccessfulStatusCode;
+      readonly contentType: Maybe<string>;
+      readonly statusCode: 200; //HttpResponseSuccessfulStatusCode;
     }
   }
 

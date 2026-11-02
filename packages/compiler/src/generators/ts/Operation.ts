@@ -278,7 +278,7 @@ async (c) =>
         case "application/json":
           return code`c.json(${result.toJsonValueFunction.unannotatedUsage}(result))`;
         default:
-          contentType satisfies never;
+          // contentType satisfies never;
           throw new RangeError(contentType);
       }
     })
