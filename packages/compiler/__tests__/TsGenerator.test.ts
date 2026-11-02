@@ -92,7 +92,7 @@ describe("TsGenerator", () => {
               "ServiceHttpClient",
             ]),
           };
-          break;
+          return;
         case "shaclShacl":
           configuration = {
             ...TsGenerator.Configuration.default_,
