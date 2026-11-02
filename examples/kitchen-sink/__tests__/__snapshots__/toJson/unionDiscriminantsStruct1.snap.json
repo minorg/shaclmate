@@ -1,5 +1,4 @@
 {
-  "$type": "UnionDiscriminantsStruct",
   "@id": "http://example.com/instance",
   "optionalIriOrString": {
     "$type": "object",

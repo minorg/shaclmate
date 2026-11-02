@@ -10,7 +10,7 @@ describe("hash", () => {
       harnesses.nonClassStruct.instance,
     );
     expect(hasher.hex()).toStrictEqual(
-      "7fec181bb9c77561646fbcb60e9b3ba1b51b2a3a87922fec568acb4d463cd9ec",
+      "6a95d767e58335664a3c003286250ef462e09ed2b4b0b76c598a0ae16ff0cb37",
     );
   });
 });
