@@ -2,6 +2,7 @@ import type { Logger } from "@rdfx/logger";
 import type * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { Reusables } from "./Reusables.js";
+import type { TsFeature } from "./TsFeature.js";
 import { TsGenerator } from "./TsGenerator.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
@@ -14,10 +15,10 @@ export class ZodGenerator implements Generator {
   }
 
   generate(ast_: ast.Ast): string {
-    const configuration = TsGenerator.Configuration.finalize(
-      ast_,
-      TsGenerator.Configuration.default_,
-    );
+    const configuration = TsGenerator.Configuration.finalize(ast_, {
+      ...TsGenerator.Configuration.default_,
+      features: new Set<TsFeature>(["Object.JSON.schema", "Object.JSON.type"]),
+    });
     const reusables = new Reusables({ configuration, logger: this.logger });
     const typeFactory = new TypeFactory({
       configuration,
