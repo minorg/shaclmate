@@ -32,7 +32,7 @@ export const harnesses = {
     }),
     kitchenSink.BlankNodeOrIriIdentifierStruct,
   ),
-  blankNodeIdentifierStructWithoutExplicitIdentifier: new Harness(
+  blankNodeIdentifierStruct: new Harness(
     kitchenSink.BlankNodeIdentifierStruct.createUnsafe({}),
     kitchenSink.BlankNodeIdentifierStruct,
   ),
@@ -95,11 +95,16 @@ export const harnesses = {
       dateOrString: new Date("2025-12-08"),
       decimalOrString: new Decimal("1.0"),
       jsPrimitive: true,
-      // integerOrString: 1n,
+      integerOrString: 1n,
       langStringOrString: dataFactory.literal("test", "en"),
+      namedDatatypeDiscriminatedUnion1: "test",
+      namedDatatypeDiscriminatedUnion2: {
+        $type: "date",
+        value: new Date("2025-12-08"),
+      },
       stringOrDate: "2025-12-08", // Shouldn't parse as a Date
       stringOrDecimal: "test",
-      // stringOrInteger: "test",
+      stringOrInteger: "test",
       stringOrLangString: "test",
     }),
     kitchenSink.DatatypeDiscriminatedUnionsStruct,
@@ -115,11 +120,17 @@ export const harnesses = {
       dateOrString: "2025-12-08", // Shouldn't parse as a Date
       decimalOrString: "test",
       jsPrimitive: "test",
-      // integerOrString: "test",
+      integerOrString: "test",
       langStringOrString: "test",
+      namedDatatypeDiscriminatedUnion1:
+        dataFactory.namedNode("http://example.com"),
+      namedDatatypeDiscriminatedUnion2: {
+        $type: "dateTime",
+        value: new Date("2025-12-08T21:17:27+00:00"),
+      },
       stringOrDate: new Date("2025-12-08"),
       stringOrDecimal: new Decimal("1.0"),
-      // stringOrInteger: 1n,
+      stringOrInteger: 1n,
       stringOrLangString: dataFactory.literal("test", "en"),
     }),
     kitchenSink.DatatypeDiscriminatedUnionsStruct,
@@ -191,19 +202,19 @@ export const harnesses = {
     kitchenSink.ExplicitRdfTypeStruct,
   ),
   flattenDiscriminatedUnionMember1: new Harness(
-    kitchenSink.DiscriminatedUnionMember1.createUnsafe({
+    kitchenSink.StructDiscriminatedUnionMember1.createUnsafe({
       $identifier,
-      discriminatedUnionMemberCommon: "test common property",
-      discriminatedUnionMember1Distinct: "test member 1",
+      structDiscriminatedUnionMemberCommon: "test common property",
+      structDiscriminatedUnionMember1Distinct: "test member 1",
     }),
     kitchenSink.FlattenDiscriminatedUnion,
     "FlattenDiscriminatedUnion",
   ),
   flattenDiscriminatedUnionMember2: new Harness(
-    kitchenSink.DiscriminatedUnionMember2.createUnsafe({
+    kitchenSink.StructDiscriminatedUnionMember2.createUnsafe({
       $identifier,
-      discriminatedUnionMemberCommon: "test common property",
-      discriminatedUnionMember2Distinct: "test member 2",
+      structDiscriminatedUnionMemberCommon: "test common property",
+      structDiscriminatedUnionMember2Distinct: "test member 2",
     }),
     kitchenSink.FlattenDiscriminatedUnion,
     "FlattenDiscriminatedUnion",
@@ -453,13 +464,8 @@ export const harnesses = {
     kitchenSink.NamedTypesStruct.createUnsafe({
       $identifier,
       namedDatatype: "test",
-      namedDiscriminatedUnion1: "test",
-      namedDiscriminatedUnion2: {
-        $type: "date",
-        value: new Date("2025-12-08"),
-      },
-      namedInIri: "http://example.com/NamedInIri1",
-      namedInLiteral: "test1",
+      inIri: "http://example.com/InIri1",
+      inLiteral: "test1",
     }),
     kitchenSink.NamedTypesStruct,
   ),
@@ -467,13 +473,8 @@ export const harnesses = {
     kitchenSink.NamedTypesStruct.createUnsafe({
       $identifier,
       namedDatatype: "test",
-      namedDiscriminatedUnion1: dataFactory.namedNode("http://example.com"),
-      namedDiscriminatedUnion2: {
-        $type: "dateTime",
-        value: new Date("2025-12-08T21:17:27+00:00"),
-      },
-      namedInIri: "http://example.com/NamedInIri2",
-      namedInLiteral: "test2",
+      inIri: "http://example.com/InIri2",
+      inLiteral: "test2",
     }),
     kitchenSink.NamedTypesStruct,
   ),
@@ -513,6 +514,13 @@ export const harnesses = {
       literalNodeKind: dataFactory.literal("literalNodeKindPropertyValue"),
     }),
     kitchenSink.NodeKindsStruct,
+  ),
+  nonClassStruct: new Harness(
+    kitchenSink.NonClassStruct.createUnsafe({
+      $identifier,
+      nonClassString: "Test",
+    }),
+    kitchenSink.NonClassStruct,
   ),
   noRdfTypeDiscriminatedUnionMember1: new Harness(
     kitchenSink.NoRdfTypeDiscriminatedUnionMember1.createUnsafe({
@@ -621,12 +629,23 @@ export const harnesses = {
     }),
     kitchenSink.PropertyPathsStruct,
   ),
-  nonClassStruct: new Harness(
-    kitchenSink.NonClassStruct.createUnsafe({
+  structDiscriminatedUnionMember1: new Harness(
+    kitchenSink.StructDiscriminatedUnionMember1.createUnsafe({
       $identifier,
-      nonClassString: "Test",
+      structDiscriminatedUnionMemberCommon: "test common parent",
+      structDiscriminatedUnionMember1Distinct: "test",
     }),
-    kitchenSink.NonClassStruct,
+    kitchenSink.StructDiscriminatedUnion,
+    "StructDiscriminatedUnion",
+  ),
+  structDiscriminatedUnionMember2: new Harness(
+    kitchenSink.StructDiscriminatedUnionMember2.createUnsafe({
+      $identifier,
+      structDiscriminatedUnionMemberCommon: "test common parent",
+      structDiscriminatedUnionMember2Distinct: "test",
+    }),
+    kitchenSink.StructDiscriminatedUnion,
+    "StructDiscriminatedUnion",
   ),
   targetClassStruct: new Harness(
     kitchenSink.TargetClassStruct.createUnsafe({
@@ -656,35 +675,35 @@ export const harnesses = {
     kitchenSink.UnionDiscriminantsStruct.createUnsafe({
       $identifier,
       optionalNodeOrNodeOrString: {
-        $type: "DiscriminatedUnionMember1",
-        value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
+        $type: "StructDiscriminatedUnionMember1",
+        value: kitchenSink.StructDiscriminatedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(
             "http://example.com/discriminatedUnionMember1a",
           ),
-          discriminatedUnionMember1Distinct: "test",
-          discriminatedUnionMemberCommon: "test",
+          structDiscriminatedUnionMember1Distinct: "test",
+          structDiscriminatedUnionMemberCommon: "test",
         }),
       },
       optionalIriOrString: dataFactory.namedNode("http://example.com"),
       optionalTerm: dataFactory.namedNode("http://example.com"),
       requiredNodeOrNodeOrString: {
-        $type: "DiscriminatedUnionMember1",
-        value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
+        $type: "StructDiscriminatedUnionMember1",
+        value: kitchenSink.StructDiscriminatedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(
             "http://example.com/discriminatedUnionMember1b",
           ),
-          discriminatedUnionMember1Distinct: "test",
-          discriminatedUnionMemberCommon: "test",
+          structDiscriminatedUnionMember1Distinct: "test",
+          structDiscriminatedUnionMemberCommon: "test",
         }),
       },
       requiredNodeOrLiteral: {
-        termType: "DiscriminatedUnionMember1",
-        value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
+        termType: "StructDiscriminatedUnionMember1",
+        value: kitchenSink.StructDiscriminatedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(
             "http://example.com/discriminatedUnionMember1c",
           ),
-          discriminatedUnionMember1Distinct: "test",
-          discriminatedUnionMemberCommon: "test",
+          structDiscriminatedUnionMember1Distinct: "test",
+          structDiscriminatedUnionMemberCommon: "test",
         }),
       },
       requiredIriOrString: dataFactory.namedNode("http://example.com"),
@@ -697,13 +716,13 @@ export const harnesses = {
     kitchenSink.UnionDiscriminantsStruct.createUnsafe({
       $identifier,
       optionalNodeOrNodeOrString: {
-        $type: "DiscriminatedUnionMember2",
-        value: kitchenSink.DiscriminatedUnionMember2.createUnsafe({
+        $type: "StructDiscriminatedUnionMember2",
+        value: kitchenSink.StructDiscriminatedUnionMember2.createUnsafe({
           $identifier: dataFactory.namedNode(
             "http://example.com/discriminatedUnionMember2a",
           ),
-          discriminatedUnionMember2Distinct: "test",
-          discriminatedUnionMemberCommon: "test",
+          structDiscriminatedUnionMember2Distinct: "test",
+          structDiscriminatedUnionMemberCommon: "test",
         }),
       },
       optionalNodeOrLiteral: dataFactory.literal("test"),
@@ -723,23 +742,23 @@ export const harnesses = {
           value: "test",
         },
         {
-          $type: "DiscriminatedUnionMember2",
-          value: kitchenSink.DiscriminatedUnionMember2.createUnsafe({
+          $type: "StructDiscriminatedUnionMember2",
+          value: kitchenSink.StructDiscriminatedUnionMember2.createUnsafe({
             $identifier: dataFactory.namedNode(
               "http://example.com/discriminatedUnionMember2b",
             ),
-            discriminatedUnionMember2Distinct: "test",
-            discriminatedUnionMemberCommon: "test",
+            structDiscriminatedUnionMember2Distinct: "test",
+            structDiscriminatedUnionMemberCommon: "test",
           }),
         },
         {
-          $type: "DiscriminatedUnionMember1",
-          value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
+          $type: "StructDiscriminatedUnionMember1",
+          value: kitchenSink.StructDiscriminatedUnionMember1.createUnsafe({
             $identifier: dataFactory.namedNode(
               "http://example.com/discriminatedUnionMember1b",
             ),
-            discriminatedUnionMember1Distinct: "test",
-            discriminatedUnionMemberCommon: "test",
+            structDiscriminatedUnionMember1Distinct: "test",
+            structDiscriminatedUnionMemberCommon: "test",
           }),
         },
       ],
@@ -747,13 +766,13 @@ export const harnesses = {
         // Opposite order
         dataFactory.literal("test"),
         {
-          termType: "DiscriminatedUnionMember1",
-          value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
+          termType: "StructDiscriminatedUnionMember1",
+          value: kitchenSink.StructDiscriminatedUnionMember1.createUnsafe({
             $identifier: dataFactory.namedNode(
               "http://example.com/discriminatedUnionMember1c",
             ),
-            discriminatedUnionMember1Distinct: "test",
-            discriminatedUnionMemberCommon: "test",
+            structDiscriminatedUnionMember1Distinct: "test",
+            structDiscriminatedUnionMemberCommon: "test",
           }),
         },
       ],
@@ -764,23 +783,5 @@ export const harnesses = {
       ],
     }),
     kitchenSink.UnionDiscriminantsStruct,
-  ),
-  discriminatedUnionMember1: new Harness(
-    kitchenSink.DiscriminatedUnionMember1.createUnsafe({
-      $identifier,
-      discriminatedUnionMemberCommon: "test common parent",
-      discriminatedUnionMember1Distinct: "test",
-    }),
-    kitchenSink.DiscriminatedUnion,
-    "DiscriminatedUnion",
-  ),
-  discriminatedUnionMember2: new Harness(
-    kitchenSink.DiscriminatedUnionMember2.createUnsafe({
-      $identifier,
-      discriminatedUnionMemberCommon: "test common parent",
-      discriminatedUnionMember2Distinct: "test",
-    }),
-    kitchenSink.DiscriminatedUnion,
-    "DiscriminatedUnion",
   ),
 };

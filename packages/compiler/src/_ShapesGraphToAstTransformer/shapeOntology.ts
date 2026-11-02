@@ -4,7 +4,7 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 
 export function shapeOntology(
   this: ShapesGraphToAstTransformer,
-  shape: input.Shape,
+  shape: input.UndiscriminatedShape,
 ): Either<Error, Maybe<input.Ontology>> {
   if (shape.isDefinedBy.isJust()) {
     // If there's an rdfs:isDefinedBy statement on the shape then don't fall back to anything else

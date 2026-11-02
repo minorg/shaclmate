@@ -21,9 +21,11 @@ export function testObjectMethods(createObjectSet: ObjectSetFactory) {
         const objectSet = createObjectSet(objectDataset(data.unionObjects));
         for (const expectedUnion of data.unionObjects) {
           expect(
-            kitchenSink.DiscriminatedUnion.equals(
+            kitchenSink.StructDiscriminatedUnion.equals(
               (
-                await objectSet.discriminatedUnion(expectedUnion.$identifier())
+                await objectSet.structDiscriminatedUnion(
+                  expectedUnion.$identifier(),
+                )
               ).unsafeCoerce(),
               expectedUnion as any,
             ).unsafeCoerce(),

@@ -16,11 +16,11 @@ export type StructCompoundType =
 
 export namespace StructCompoundType {
   export function identifierType(
-    objectCompoundType: StructCompoundType,
+    structCompoundType: StructCompoundType,
   ): BlankNodeType | IdentifierType | IriType {
     const memberIdentifierTypeNodeKinds = new Set<IdentifierNodeKind>();
     const memberIdentifierTypesIn = new TermSet<NamedNode>();
-    for (const memberType of memberStructTypes(objectCompoundType)) {
+    for (const memberType of memberStructTypes(structCompoundType)) {
       for (const nodeKind of memberType.identifierType.nodeKinds) {
         memberIdentifierTypeNodeKinds.add(nodeKind);
       }
@@ -38,7 +38,7 @@ export namespace StructCompoundType {
         comment: Maybe.empty(),
         label: Maybe.empty(),
         name: Maybe.empty(),
-        shapeIdentifier: objectCompoundType.shapeIdentifier,
+        shapeIdentifier: structCompoundType.shapeIdentifier,
       });
     }
 
@@ -49,7 +49,7 @@ export namespace StructCompoundType {
           comment: Maybe.empty(),
           label: Maybe.empty(),
           name: Maybe.empty(),
-          shapeIdentifier: objectCompoundType.shapeIdentifier,
+          shapeIdentifier: structCompoundType.shapeIdentifier,
         });
       case "IRI":
         return new IriType({
@@ -58,7 +58,7 @@ export namespace StructCompoundType {
           in_: [...memberIdentifierTypesIn],
           label: Maybe.empty(),
           name: Maybe.empty(),
-          shapeIdentifier: objectCompoundType.shapeIdentifier,
+          shapeIdentifier: structCompoundType.shapeIdentifier,
         });
       default:
         memberIdentifierTypeNodeKind satisfies never;

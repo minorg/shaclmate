@@ -6,6 +6,11 @@
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
+:AnonymousObject
+    a sh:NodeShape ;
+    sh:nodeKind sh:BlankNode ;
+    sh:property :requiredStringProperty .
+
 :LazyObject
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
@@ -57,12 +62,9 @@
 
 :optionalObjectProperty
     a sh:PropertyShape ;
-    rdfs:comment "Optional object property with 'anonymous' object" ;
+    rdfs:comment "Optional object property with anonymous object" ;
     sh:maxCount 1 ;
-    sh:node [
-        sh:nodeKind sh:BlankNodeOrIRI ;
-        sh:property :requiredStringProperty
-    ] ;
+    sh:node :AnonymousObject ;
     sh:path :optionalObjectProperty .
 
 :optionalStringProperty

@@ -9,8 +9,7 @@ export const snippets_hashBigDecimal: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}hashBigDecimal`,
     code`\
-function ${syntheticNamePrefix}hashBigDecimal<HasherT extends ${snippets.Hasher}>(hasher: HasherT, value: ${imports.BigDecimal}): HasherT {
+const ${syntheticNamePrefix}hashBigDecimal: ${snippets.HashFunction}<${imports.BigDecimal}> = (hasher, value) => {
   hasher.update(value.toFixed());
-  return hasher;
 }`,
   );

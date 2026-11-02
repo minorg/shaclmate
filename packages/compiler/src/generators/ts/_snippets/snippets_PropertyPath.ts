@@ -12,15 +12,14 @@ import {
 export const snippets_PropertyPath: SnippetFactory = ({
   configuration,
   imports,
-  snippets,
   syntheticNamePrefix,
 }) => {
   const companionDeclarations: Code[] = [];
 
   if (configuration.features.has("Object.equals")) {
     companionDeclarations.push(code`\
-export function equals(left: ${syntheticNamePrefix}PropertyPath, right: ${syntheticNamePrefix}PropertyPath): ${snippets.EqualsResult} {
-  return ${snippets.EqualsResult}.fromBooleanEqualsResult(left, right, ${imports.RdfxResourcePropertyPath}.equals(left, right));
+export function equals(left: ${syntheticNamePrefix}PropertyPath, right: ${syntheticNamePrefix}PropertyPath): ${syntheticNamePrefix}EqualsResult {
+  return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(left, right, ${imports.RdfxResourcePropertyPath}.equals(left, right));
 }`);
   }
 
@@ -37,9 +36,9 @@ export function filter(_filter: Filter, _value: ${syntheticNamePrefix}PropertyPa
   if (configuration.features.has("Object.fromRdf")) {
     companionDeclarations.push(
       code`\
-export const fromRdfResource: ${snippets.FromRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.fromResource;`,
+export const fromRdfResource: ${syntheticNamePrefix}FromRdfResourceFunction<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.fromResource;`,
       code`\
-export const fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${syntheticNamePrefix}PropertyPath, object> = (values, options) =>
+export const fromRdfResourceValues: ${syntheticNamePrefix}FromRdfResourceValuesFunction<${syntheticNamePrefix}PropertyPath, object> = (values, options) =>
   values.chainMap((value) =>
     value
       .toResource()
@@ -57,7 +56,13 @@ export const fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${
 
   if (configuration.features.has("Object.toRdf")) {
     companionDeclarations.push(code`\
-export const toRdfResource: ${snippets.ToRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.toResource;`);
+export const toRdfResource: ${syntheticNamePrefix}ToRdfResourceFunction<${imports.Resource}.Identifier, ${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.toResource;`);
+
+    companionDeclarations.push(code`
+export const toRdfResourceValues: ${syntheticNamePrefix}ToRdfResourceValuesFunction<${syntheticNamePrefix}PropertyPath, ${imports.Resource}.Identifier> = (
+  value,
+  options,
+) => [toRdfResource(value, { graph: options.graph, resourceSet: options.resourceSet }).identifier];`);
   }
 
   if (configuration.features.has("Object.toString")) {

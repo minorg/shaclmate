@@ -6,7 +6,13 @@ import { Memoize } from "typescript-memoize";
 import type { ObjectType } from "./ObjectType.js";
 import type { Reusables } from "./Reusables.js";
 import type { TsGenerator } from "./TsGenerator.js";
-import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
+import {
+  type Code,
+  code,
+  def,
+  joinCode,
+  literalOf,
+} from "./ts-poet-wrapper.js";
 
 /**
  * The $Object discriminated union used in type guard functions (isSomeObjectType(object: $Object)) and some convenience methods.
@@ -41,14 +47,14 @@ export class UberObjectDiscriminatedUnionType {
 
     if (this.configuration.features.has("Object.type")) {
       declarations.push(
-        code`export type ${def(this.name)} = ${this.members.map((member) => member.name.unsafeCoerce()).join(" | ")};`,
+        code`export type ${def(this.name)} = ${this.members.map((member) => `${member.name.unsafeCoerce()}.Discriminated`).join(" | ")};`,
       );
     }
 
     const staticModuleDeclarations: Code[] = [
       ...this.equalsFunctionDeclaration.toList(),
       ...this.hashFunctionDeclaration.toList(),
-      ...this.toJsonFunctionDeclaration.toList(),
+      ...this.toJsonObjectFunctionDeclaration.toList(),
       ...this.toRdfResourceFunctionDeclaration.toList(),
       ...this.toStringFunctionDeclaration.toList(),
     ];
@@ -86,7 +92,7 @@ export function equals(left: ${this.name}, right: ${this.name}): ${this.reusable
 
 ${this.memberTypeSwitch({
   caseBlock: (member) =>
-    code`return ${member.equalsFunction}(left, right as ${member.name.unsafeCoerce()});`,
+    code`return ${member.equalsFunction.annotatedUsage}(left, right as ${member.name.unsafeCoerce()});`,
   variables: { value: code`left` },
 })}
 }`);
@@ -97,7 +103,7 @@ ${this.memberTypeSwitch({
     return `${this.configuration.syntheticNamePrefix}Object`;
   }
 
-  private get toJsonFunctionDeclaration(): Maybe<Code> {
+  private get toJsonObjectFunctionDeclaration(): Maybe<Code> {
     if (!this.configuration.features.has("Object.toJson")) {
       return Maybe.empty();
     }
@@ -112,7 +118,11 @@ ${this.memberTypeSwitch({
 export function toJson(object: ${this.name}) {
 ${this.memberTypeSwitch({
   caseBlock: (member) =>
-    code`return ${member.toJsonExpression({ variables: { value: code`object` } })};`,
+    code`\
+return {
+  ...(${member.toJsonObjectFunction.annotatedUsage})(object),
+  ${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}: ${literalOf(member.discriminatedType.unsafeCoerce().discriminantProperty.values[0])}
+};`,
   variables: { value: code`object` },
 })}
 }`);
@@ -130,7 +140,7 @@ ${this.memberTypeSwitch({
     }
 
     return Maybe.of(code`\
-export const toRdfResource: ${this.reusables.snippets.ToRdfResourceFunction}<${this.name}> = (object, options) => {
+export const toRdfResource: ${this.reusables.snippets.ToRdfResourceFunction}<${this.reusables.imports.Resource}.Identifier, ${this.name}> = (object, options) => {
 ${this.memberTypeSwitch({
   caseBlock: (member) =>
     code`return ${member.name.unsafeCoerce()}.toRdfResource(object, options);`,
@@ -151,9 +161,10 @@ ${this.memberTypeSwitch({
     }
 
     return Maybe.of(code`\
-export function hash<HasherT extends ${this.reusables.snippets.Hasher}>(hasher: HasherT, object: ${this.name}): HasherT {
+export const hash: ${this.reusables.snippets.HashFunction}<${this.name}> = (hasher, object) => {
 ${this.memberTypeSwitch({
-  caseBlock: (member) => code`return ${member.hashFunction}(hasher, object);`,
+  caseBlock: (member) =>
+    code`${member.hashFunction.annotatedUsage}(hasher, object); break;`,
   variables: { value: code`object` },
 })}
 }`);
@@ -194,7 +205,7 @@ switch (${variables.value}.${this.configuration.objectDiscriminantProperty.name}
 ${joinCode(
   this.members.map(
     (member) =>
-      code`case "${member.discriminantProperty.unsafeCoerce().value}": ${caseBlock(member)}`,
+      code`case "${member.discriminatedType.unsafeCoerce().discriminantProperty.values[0]}": ${caseBlock(member)}`,
   ),
   { on: "\n" },
 )}

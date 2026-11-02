@@ -1,3 +1,4 @@
+import type { NodeKind } from "@shaclmate/shacl-ast";
 import { owl, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
@@ -6,6 +7,7 @@ import { Eithers } from "../Eithers.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
+import { isNodeShape } from "./isNodeShape.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
@@ -13,43 +15,89 @@ import { transformPropertyShapeToAstStructTypeField } from "./transformPropertyS
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 function isStructTypeFieldRequired(field: {
+  kind: ast.StructType.Field["kind"];
   type: ast.StructType.Field["type"];
 }): boolean {
-  switch (field.type.kind) {
-    case "DefaultValue":
-      return false;
-    case "LazyOption":
-      return false;
-    case "LazySet":
-      return field.type.partialType.minCount > 0n;
-    case "Option":
-      return false;
-    case "Set":
-      return field.type.minCount > 0;
-    case "DiscriminatedUnion":
-      return field.type.members.every((member) =>
-        isStructTypeFieldRequired({ type: member.type }),
-      );
-    case "BlankNode":
+  switch (field.kind) {
     case "Identifier":
-    case "Iri":
-    case "Lazy":
-    case "List":
-    case "Literal":
-    case "Struct":
-    case "Term":
-      return true;
-    case "Intersection":
-      throw new Error("unsupported");
+      return field.type.kind === "Iri";
+    case "Shacl": {
+      switch (field.type.kind) {
+        case "DiscriminatedUnion":
+          return field.type.members.every((member) =>
+            isStructTypeFieldRequired({ kind: "Shacl", type: member.type }),
+          );
+        case "DefaultValue":
+          return false;
+        case "Intersection":
+          return field.type.members.every((member) =>
+            isStructTypeFieldRequired({ kind: "Shacl", type: member.type }),
+          );
+        case "LazyOption":
+          return false;
+        case "LazySet":
+          return field.type.partialType.minCount > 0n;
+        case "Option":
+          return false;
+        case "Set":
+          return field.type.minCount > 0;
+        case "BlankNode":
+        case "Identifier":
+        case "Iri":
+        case "Lazy":
+        case "List":
+        case "Literal":
+        case "Struct":
+        case "Term":
+          return true;
+        default:
+          field.type satisfies never;
+          throw new Error("should never reach this point");
+      }
+    }
     default:
-      field.type satisfies never;
+      field.kind satisfies never;
       throw new Error("should never reach this point");
+  }
+}
+
+function transformNodeShapeNodeKindsToAstIdentifierType(
+  this: ShapesGraphToAstTransformer,
+  nodeKinds: ReadonlySet<NodeKind>,
+  nodeShape: input.NodeShape,
+): ast.BlankNodeType | ast.IdentifierType | ast.IriType {
+  const identifierTypeProperties = {
+    comment: Maybe.empty(),
+    label: Maybe.empty(),
+    name: Maybe.empty(),
+    shapeIdentifier: nodeShape.$identifier(),
+  };
+  if (nodeKinds.size === 2) {
+    invariant(nodeShape.in_.isNothing());
+    return new ast.IdentifierType(identifierTypeProperties);
+  }
+
+  const nodeKind = [...nodeKinds][0];
+  switch (nodeKind) {
+    case "BlankNode":
+      invariant(nodeShape.in_.isNothing());
+      return new ast.BlankNodeType(identifierTypeProperties);
+    case "IRI":
+      return new ast.IriType({
+        ...identifierTypeProperties,
+        hasValues: [],
+        in_: nodeShape.in_
+          .orDefault([])
+          .filter((_) => _.termType === "NamedNode"),
+      });
+    default:
+      throw new Error("should never happen");
   }
 }
 
 export function transformShapeToAstStructType(
   this: ShapesGraphToAstTransformer,
-  shape: input.Shape,
+  shape: input.UndiscriminatedShape,
   shapeStack: ShapeStack,
 ): Either<Error, Maybe<ast.Type>> {
   shapeStack.push(shape);
@@ -64,7 +112,7 @@ export function transformShapeToAstStructType(
         .map(Maybe.of);
     }
 
-    if (shape.$type !== "NodeShape") {
+    if (!isNodeShape(shape)) {
       return Either.of(Maybe.empty());
     }
 
@@ -125,36 +173,12 @@ export function transformShapeToAstStructType(
         );
       }
 
-      let identifierType: ast.BlankNodeType | ast.IdentifierType | ast.IriType;
-      const identifierTypeProperties = {
-        comment: Maybe.empty(),
-        label: Maybe.empty(),
-        name: Maybe.empty(),
-        shapeIdentifier: nodeShape.$identifier(),
-      };
-      if (nodeKinds.size === 2) {
-        invariant(nodeShape.in_.isNothing());
-        identifierType = new ast.IdentifierType(identifierTypeProperties);
-      } else {
-        switch ([...nodeKinds][0]) {
-          case "BlankNode":
-            invariant(nodeShape.in_.isNothing());
-            identifierType = new ast.BlankNodeType(identifierTypeProperties);
-            break;
-          case "IRI":
-            identifierType = new ast.IriType({
-              ...identifierTypeProperties,
-              hasValues: [],
-              in_: nodeShape.in_
-                .orDefault([])
-                .filter((_) => _.termType === "NamedNode"),
-            });
-            break;
-          default:
-            throw new Error("should never happen");
-        }
-      }
-      invariant(identifierType);
+      const identifierType =
+        transformNodeShapeNodeKindsToAstIdentifierType.call(
+          this,
+          nodeKinds,
+          nodeShape,
+        );
 
       // Put a placeholder in the cache to deal with cyclic references
       // Remove the placeholder if the transformation fails.
@@ -164,8 +188,8 @@ export function transformShapeToAstStructType(
         comment: nodeShape.comment,
         extern: nodeShape.extern.orDefault(false),
         fromRdfType,
-        label: nodeShape.label,
         identifierType,
+        label: nodeShape.label,
         name: shapeAstTypeName(nodeShape),
         shapeIdentifier: nodeShape.$identifier(),
         synthetic: false,
@@ -173,29 +197,46 @@ export function transformShapeToAstStructType(
         tsImports: nodeShape.tsImports,
       });
 
+      if (identifierType.kind !== "BlankNode") {
+        structType.addField(
+          new ast.StructType.IdentifierField({
+            structType,
+            type: identifierType,
+          }),
+        );
+      }
+
       this.cachedAstTypesByShapeIdentifier.set(
         nodeShape.$identifier(),
         structType,
       );
 
       return (() => {
-        // Populate properties
+        // Populate fields
+        const fieldNames = new Set<string>();
         for (const propertyShape of propertyShapes) {
-          const fieldEither = transformPropertyShapeToAstStructTypeField.call(
-            this,
-            {
+          const fieldEither = transformPropertyShapeToAstStructTypeField
+            .call(this, {
               propertyShape,
               structType,
-            },
-          );
+            })
+            .chain((fieldMaybe) => {
+              const field = fieldMaybe.extract();
+              if (field) {
+                if (fieldNames.has(field.name)) {
+                  return Left(
+                    new Error(
+                      `${nodeShape} has duplicate property name: ${field.name}`,
+                    ),
+                  );
+                }
+                structType.addField(field);
+              }
+              return Either.of<Error, void>(undefined);
+            });
           if (fieldEither.isLeft()) {
             return fieldEither;
           }
-          fieldEither.ifRight((property) => {
-            property.ifJust((property) => {
-              structType.addFields(property);
-            });
-          });
         }
 
         if (

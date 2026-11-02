@@ -20,7 +20,7 @@ const tryTransformShapeToAstTypeMethods = [
  */
 export function transformShapeToAstType(
   this: ShapesGraphToAstTransformer,
-  shape: input.Shape,
+  shape: input.UndiscriminatedShape,
   shapeStack: ShapeStack,
 ): Either<Error, ast.Type> {
   if (shape.ignore) {

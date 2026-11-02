@@ -26,6 +26,8 @@
     "dist/NodeKind.js",
     "dist/ShapesGraph.d.ts",
     "dist/ShapesGraph.js",
+    "dist/curieDataset.d.ts",
+    "dist/curieDataset.js",
     "dist/index.d.ts",
     "dist/index.js",
     "dist/shacl-ast.shaclmate.d.ts",

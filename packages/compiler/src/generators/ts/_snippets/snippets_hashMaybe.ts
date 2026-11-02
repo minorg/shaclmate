@@ -9,12 +9,11 @@ export const snippets_hashMaybe: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}hashMaybe`,
     code`\
-function ${syntheticNamePrefix}hashMaybe<HasherT extends ${snippets.Hasher}, ItemT>(hashItem: ${snippets.HashFunction}<HasherT, ItemT>): ${snippets.HashFunction}<HasherT, ${imports.Maybe}<ItemT>> {
+function ${syntheticNamePrefix}hashMaybe<ItemT>(hashItem: ${snippets.HashFunction}<ItemT>): ${snippets.HashFunction}<${imports.Maybe}<ItemT>> {
   return (hasher, value) => {
     value.ifJust(value => {
       hashItem(hasher, value);
     });
-    return hasher;
   }
 }`,
   );

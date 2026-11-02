@@ -6,6 +6,7 @@ import { Eithers } from "../Eithers.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
+import { isNodeShape } from "./isNodeShape.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
 import { transformPropertyShapeToAstStructTypeField } from "./transformPropertyShapeToAstStructTypeField.js";
@@ -43,12 +44,12 @@ const empty = Either.of<Error, Maybe<ast.ListType>>(Maybe.empty());
  */
 export function transformShapeToAstListType(
   this: ShapesGraphToAstTransformer,
-  shape: input.Shape,
+  shape: input.UndiscriminatedShape,
   shapeStack: ShapeStack,
 ): Either<Error, Maybe<ast.ListType>> {
   shapeStack.push(shape);
   try {
-    if (shape.$type !== "NodeShape") {
+    if (!isNodeShape(shape)) {
       return empty;
     }
     const nodeShape = shape;
@@ -82,7 +83,7 @@ export function transformShapeToAstListType(
       );
 
       return (() => {
-        let emptyListShape: input.Shape | undefined;
+        let emptyListShape: input.UndiscriminatedShape | undefined;
         let nonEmptyListShape: input.NodeShape | undefined;
         for (const shape of xone) {
           if (
@@ -90,10 +91,7 @@ export function transformShapeToAstListType(
             shape.hasValues[0].equals(rdf.nil)
           ) {
             emptyListShape = shape;
-          } else if (
-            shape.$type === "NodeShape" &&
-            shape.properties.length >= 2
-          ) {
+          } else if (isNodeShape(shape) && shape.properties.length >= 2) {
             nonEmptyListShape = shape;
           }
         }

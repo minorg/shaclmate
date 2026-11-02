@@ -3,6 +3,8 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
+import type { Callable } from "./Callable.js";
+import { InlineCallable } from "./InlineCallable.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { OptionType } from "./OptionType.js";
@@ -13,18 +15,22 @@ export abstract class AbstractLazyType<
   PartialTypeT extends AbstractLazyType.PartialTypeConstraint,
   ResolveTypeT extends AbstractLazyType.ResolveTypeConstraint,
 > extends AbstractType {
-  protected readonly partialType: PartialTypeT;
-  protected readonly resolveType: ResolveTypeT;
+  protected abstract readonly partialItemType: AbstractLazyType.ItemTypeConstraint;
+  protected abstract readonly resolveItemType: AbstractLazyType.ItemTypeConstraint;
   protected abstract readonly runtimeClass: {
     readonly name: Code;
     readonly partialPropertyName: string;
     readonly rawName: Code;
   };
 
-  override readonly discriminantProperty: AbstractType["discriminantProperty"] =
+  override readonly discriminatedType: AbstractType["discriminatedType"] =
     Maybe.empty();
+  abstract override readonly kind: "Lazy" | "LazyOption" | "LazySet";
   override readonly mutable = false;
-  override readonly validationFunction: Maybe<Code> = Maybe.empty();
+  readonly partialType: PartialTypeT;
+  readonly resolveType: ResolveTypeT;
+  override readonly validationFunction: AbstractType["validationFunction"] =
+    Maybe.empty();
 
   constructor({
     partialType,
@@ -39,22 +45,69 @@ export abstract class AbstractLazyType<
     this.resolveType = resolveType;
   }
 
-  @Memoize()
-  override get equalsFunction(): Code {
-    return code`((left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName}))`;
-  }
-
-  override get inlineExpression(): Code {
-    return this.runtimeClass.name;
+  get jsonValueType(): AbstractType["jsonValueType"] {
+    return this.partialType.jsonValueType;
   }
 
   @Memoize()
-  get filterFunction(): Code {
-    return code`((filter: ${this.filterType}, value: ${this.expression}) => ${this.partialType.filterFunction}(filter, value.${this.runtimeClass.partialPropertyName}))`;
+  override get equalsFunction(): Callable {
+    return new InlineCallable(
+      code`(left, right) => ${this.partialType.equalsFunction.annotatedUsage}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName})`,
+      {
+        type: code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`,
+      },
+    );
+  }
+
+  get jsonObjectType(): AbstractType["jsonObjectType"] {
+    return this.partialType.jsonObjectType;
+  }
+
+  @Memoize()
+  get filterFunction(): Callable {
+    return new InlineCallable(
+      code`(filter, value) => ${this.partialType.filterFunction.annotatedUsage}(filter, value.${this.runtimeClass.partialPropertyName})`,
+      {
+        type: code`${this.reusables.snippets.FilterFunction}<${this.filterType}, ${this.expression}>`,
+      },
+    );
   }
 
   get filterType(): Code {
     return this.partialType.filterType;
+  }
+
+  override get fromJsonValueFunction(): AbstractType["fromJsonValueFunction"] {
+    return new InlineCallable(
+      code`(jsonValue, { objectSet, schema, ...otherOptions }) => ${this.partialType.fromJsonValueFunction.annotatedUsage}(jsonValue, { objectSet, schema: schema.partialType, ...otherOptions })
+        .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: objectSet ? ${this.objectSetResolverFunctionExpressions({ variables: { objectSet: code`objectSet` } })} : ${this.reusables.snippets.missingResolver} }))`,
+      {
+        type: code`${this.reusables.snippets.FromJsonValueFunction}<${this.jsonValueType.expression}, ${this.expression}, ${this.schema}>`,
+      },
+    );
+  }
+
+  override get fromJsonObjectFunction(): AbstractType["fromJsonObjectFunction"] {
+    return new InlineCallable(
+      code`(jsonObject, { objectSet, schema, ...otherOptions }) => ${this.partialType.fromJsonObjectFunction.annotatedUsage}(jsonObject, { objectSet, schema: schema.partialType, ...otherOptions })
+        .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: objectSet ? ${this.objectSetResolverFunctionExpressions({ variables: { objectSet: code`objectSet` } })} : ${this.reusables.snippets.missingResolver} }))`,
+      {
+        type: code`${this.reusables.snippets.FromJsonObjectFunction}<${this.jsonObjectType.expression}, ${this.expression}, ${this.schema}>`,
+      },
+    );
+  }
+
+  @Memoize()
+  override get fromRdfResourceValuesFunction(): Callable {
+    return new InlineCallable(
+      code`\
+  (values, { objectSet, schema, ...otherOptions }) =>
+    ${this.partialType.fromRdfResourceValuesFunction.annotatedUsage}(values, { objectSet, schema: schema.partialType, ...otherOptions })
+      .map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.objectSetResolverFunctionExpressions({ variables: { objectSet: code`objectSet` } })} })))`,
+      {
+        type: code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`,
+      },
+    );
   }
 
   override get graphqlType(): AbstractType.GraphqlType {
@@ -62,8 +115,14 @@ export abstract class AbstractLazyType<
   }
 
   @Memoize()
-  override get hashFunction(): Code {
-    return code`((hasher, value) => ${this.partialType.hashFunction}(hasher, value.${this.runtimeClass.partialPropertyName}))`;
+  override get hashFunction(): Callable {
+    return new InlineCallable(
+      code`(hasher, value) => ${this.partialType.hashFunction.annotatedUsage}(hasher, value.${this.runtimeClass.partialPropertyName})`,
+    );
+  }
+
+  override get inlineExpression(): Code {
+    return this.runtimeClass.name;
   }
 
   @Memoize()
@@ -93,18 +152,46 @@ export abstract class AbstractLazyType<
     }}`;
   }
 
+  override get toJsonValueFunction(): AbstractType["toJsonValueFunction"] {
+    return new InlineCallable(
+      code`(value) => ${this.partialType.toJsonValueFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
+      {
+        type: code`${this.reusables.snippets.ToJsonValueFunction}<${this.expression}, ${this.jsonValueType.expression}>`,
+      },
+    );
+  }
+
+  override get toJsonObjectFunction(): AbstractType["toJsonObjectFunction"] {
+    return new InlineCallable(
+      code`(value) => ${this.partialType.toJsonObjectFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
+      {
+        type: code`${this.reusables.snippets.ToJsonObjectFunction}<${this.expression}, ${this.jsonValueType.expression}>`,
+      },
+    );
+  }
+
   get toRdfResourceValueTypes(): AbstractType["toRdfResourceValueTypes"] {
     return this.partialType.toRdfResourceValueTypes;
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
-    return code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlConstructTriplesFunction}({ ...otherParameters, schema: schema.partialType }))`;
+  override get valueSparqlConstructTriplesFunction(): Callable {
+    return new InlineCallable(
+      code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlConstructTriplesFunction.annotatedUsage}({ ...otherParameters, schema: schema.partialType }))`,
+      {
+        type: code`${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>`,
+      },
+    );
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
-    return code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlWherePatternsFunction}({ ...otherParameters, schema: schema.partialType }))`;
+  override get valueSparqlWherePatternsFunction(): Callable {
+    return new InlineCallable(
+      code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlWherePatternsFunction.annotatedUsage}({ ...otherParameters, schema: schema.partialType }))`,
+      {
+        type: code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>`,
+      },
+    );
   }
 
   protected override get schemaInitializers(): readonly Code[] {
@@ -113,28 +200,10 @@ export abstract class AbstractLazyType<
     );
   }
 
-  override jsonSchema(
-    parameters: Parameters<AbstractType["jsonSchema"]>[0],
-  ): Code {
-    return this.partialType.jsonSchema(parameters);
-  }
-
-  override jsonType(
-    parameters?: Parameters<AbstractType["jsonType"]>[0],
-  ): AbstractType.JsonType {
-    return this.partialType.jsonType(parameters);
-  }
-
-  override jsonUiSchemaElement(
-    parameters: Parameters<AbstractType["jsonUiSchemaElement"]>[0],
-  ): Maybe<Code> {
-    return this.partialType.jsonUiSchemaElement(parameters);
-  }
-
-  override toJsonExpression({
+  override toLoggableExpression({
     variables,
-  }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
-    return this.partialType.toJsonExpression({
+  }: Parameters<AbstractType["toLoggableExpression"]>[0]): Code {
+    return this.partialType.toLoggableExpression({
       variables: {
         value: code`${variables.value}.${this.runtimeClass.partialPropertyName}`,
       },
@@ -161,6 +230,10 @@ export abstract class AbstractLazyType<
       },
     });
   }
+
+  protected abstract objectSetResolverFunctionExpressions(parameters: {
+    variables: { objectSet: Code };
+  }): Code;
 
   protected resolveToPartialFunction<
     ObjectTypeT extends AbstractLazyType.ItemTypeConstraint,
@@ -190,7 +263,7 @@ export abstract class AbstractLazyType<
       code`default: resolved satisfies never; throw new Error("unrecognized type");`,
     );
 
-    return code`((resolved: ${resolveType.expression}) => { switch (resolved.${resolveType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} } })`;
+    return code`((resolved: ${resolveType.expression}) => { switch (resolved.${resolveType.discriminatedType.unsafeCoerce().discriminantProperty.name}) { ${joinCode(caseBlocks)} } })`;
   }
 
   protected resolvedObjectDiscriminatedUnionTypeToPartialObjectDiscriminatedUnionTypeConversion({
@@ -215,7 +288,7 @@ export abstract class AbstractLazyType<
     caseBlocks.push(
       code`default: ${variables.resolvedObjectDiscriminatedUnion} satisfies never; throw new Error("unrecognized type");`,
     );
-    return code`switch (${variables.resolvedObjectDiscriminatedUnion}.${resolvedObjectDiscriminatedUnionType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} }`;
+    return code`switch (${variables.resolvedObjectDiscriminatedUnion}.${resolvedObjectDiscriminatedUnionType.discriminatedType.unsafeCoerce().discriminantProperty.name}) { ${joinCode(caseBlocks)} }`;
   }
 }
 
@@ -228,9 +301,8 @@ export namespace AbstractLazyType {
   export type ResolveTypeConstraint = PartialTypeConstraint;
 
   export type ConversionFunction = AbstractType.ConversionFunction;
-  export type DiscriminantProperty = AbstractType.DiscriminantProperty;
+  export type DiscriminatedType = AbstractType.DiscriminatedType;
   export const GraphqlType = AbstractType.GraphqlType;
   export type GraphqlType = AbstractType.GraphqlType;
-  export const JsonType = AbstractType.JsonType;
   export type JsonType = AbstractType.JsonType;
 }

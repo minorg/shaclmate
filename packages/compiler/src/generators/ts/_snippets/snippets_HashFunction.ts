@@ -8,5 +8,5 @@ export const snippets_HashFunction: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}HashFunction`,
     code`\
-export type ${syntheticNamePrefix}HashFunction<HasherT extends ${snippets.Hasher}, ValueT> = (hasher: HasherT, value: ValueT) => HasherT;`,
+export type ${syntheticNamePrefix}HashFunction<ValueT> = (hasher: ${snippets.Hasher}, value: ValueT) => void;`,
   );

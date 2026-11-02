@@ -4,6 +4,7 @@ import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
+import { isNodeShape } from "./isNodeShape.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
@@ -13,7 +14,7 @@ import { transformShapeToAstType } from "./transformShapeToAstType.js";
  */
 export function transformShapeToAstCompoundType(
   this: ShapesGraphToAstTransformer,
-  shape: input.Shape,
+  shape: input.UndiscriminatedShape,
   shapeStack: ShapeStack,
 ): Either<Error, Maybe<ast.Type>> {
   shapeStack.push(shape);
@@ -34,7 +35,7 @@ export function transformShapeToAstCompoundType(
       let compoundTypeKind: "Intersection" | "DiscriminatedUnion";
       // Distinguish constraints that take arbitrary shapes from those that only take node shapes
       // With the latter we'll do special transformations.
-      let memberShapes: readonly input.Shape[];
+      let memberShapes: readonly input.UndiscriminatedShape[];
 
       if (andConstraintShapes.length > 0) {
         memberShapes = andConstraintShapes;
@@ -113,7 +114,7 @@ export function transformShapeToAstCompoundType(
 
               let memberDiscriminantValue: number | string | undefined;
               if (compoundTypeKind === "DiscriminatedUnion") {
-                if (memberShape.$type === "NodeShape") {
+                if (isNodeShape(memberShape)) {
                   memberDiscriminantValue =
                     memberShape.discriminantValue.extract();
                 }

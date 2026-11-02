@@ -8,8 +8,7 @@ export const snippets_hashBoolean: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}hashBoolean`,
     code`\
-function ${syntheticNamePrefix}hashBoolean<HasherT extends ${snippets.Hasher}>(hasher: HasherT, value: boolean): HasherT {
+const ${syntheticNamePrefix}hashBoolean: ${snippets.HashFunction}<boolean> = (hasher, value) => {
   hasher.update(value.toString());
-  return hasher;
 }`,
   );

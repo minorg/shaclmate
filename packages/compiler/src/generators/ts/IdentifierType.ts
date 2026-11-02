@@ -1,11 +1,11 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import { type IdentifierNodeKind, NodeKind } from "@shaclmate/shacl-ast";
+import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 
 import { Maybe } from "purify-ts";
-import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
-import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
+import { code } from "./ts-poet-wrapper.js";
 
 export class IdentifierType extends AbstractIdentifierType<
   BlankNode | NamedNode
@@ -37,20 +37,36 @@ export class IdentifierType extends AbstractIdentifierType<
         },
       ],
     });
-  override readonly filterFunction =
-    code`${this.reusables.snippets.filterIdentifier}`;
+  override readonly filterFunction = new ReferenceCallable(
+    this.reusables.snippets.filterIdentifier,
+  );
+  override readonly fromJsonValueFunction = new ReferenceCallable(
+    this.reusables.snippets.identifierFromJsonString,
+  );
+  override readonly fromJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.identifierFromJsonObject,
+  );
   override readonly filterType =
     code`${this.reusables.snippets.IdentifierFilter}`;
-  override readonly fromRdfResourceValuesFunction =
-    code`${this.reusables.snippets.identifierFromRdfResourceValues}`;
+  override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
+    this.reusables.snippets.identifierFromRdfResourceValues,
+  );
   override readonly kind = "Identifier";
   override readonly nodeKinds = nodeKinds;
-  override readonly parseFunction =
-    code`${this.reusables.snippets.parseIdentifier};`;
+  override readonly parseFunction = new ReferenceCallable(
+    this.reusables.snippets.parseIdentifier,
+  );
   override readonly schemaType =
     code`${this.reusables.snippets.IdentifierSchema}`;
-  override readonly valueSparqlWherePatternsFunction =
-    code`${this.reusables.snippets.identifierSparqlWherePatterns}`;
+  override readonly toJsonValueFunction = new ReferenceCallable(
+    this.reusables.snippets.identifierToJsonString,
+  );
+  override readonly toJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.identifierToJsonObject,
+  );
+  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
+    this.reusables.snippets.identifierSparqlWherePatterns,
+  );
 
   constructor(
     parameters: Omit<
@@ -65,55 +81,6 @@ export class IdentifierType extends AbstractIdentifierType<
       hasValues: [],
       in_: [],
     });
-  }
-
-  override fromJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractIdentifierType<BlankNode | NamedNode>["fromJsonExpression"]
-  >[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>((${variables.value}["@id"].startsWith("_:") ? ${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2)) : ${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@id"])))`;
-  }
-
-  override jsonSchema({
-    includeDiscriminantProperty,
-  }: Parameters<
-    AbstractIdentifierType<BlankNode | NamedNode>["jsonSchema"]
-  >[0]): Code {
-    const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${this.reusables.imports.z}.enum(${arrayOf(...[...this.nodeKinds].map(NodeKind.toTermType))})`
-      : "";
-
-    return code`${this.reusables.imports.z}.object({ "@id": ${this.reusables.imports.z}.string().min(1)${discriminantProperty} })`;
-  }
-
-  @Memoize()
-  override jsonType(
-    parameters?: Parameters<
-      AbstractIdentifierType<BlankNode | NamedNode>["jsonType"]
-    >[0],
-  ): AbstractIdentifierType.JsonType {
-    const discriminantProperty = parameters?.includeDiscriminantProperty
-      ? `, readonly termType: "BlankNode" | "NamedNode"`
-      : "";
-
-    return new AbstractIdentifierType.JsonType(
-      code`{ readonly "@id": string${discriminantProperty} }`,
-    );
-  }
-
-  override toJsonExpression({
-    includeDiscriminantProperty,
-    variables,
-  }: Parameters<
-    AbstractIdentifierType<BlankNode | NamedNode>["toJsonExpression"]
-  >[0]): Code {
-    const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${variables.value}.termType as ${[...this.nodeKinds].map((nodeKind) => `"${NodeKind.toTermType(nodeKind)}"`).join(" | ")}`
-      : "";
-    const valueToBlankNode = code`{ "@id": \`_:\${${variables.value}.value}\`${discriminantProperty} }`;
-    const valueToNamedNode = code`{ "@id": ${variables.value}.value${discriminantProperty} }`;
-    return code`(${variables.value}.termType === "BlankNode" ? ${valueToBlankNode} : ${valueToNamedNode})`;
   }
 }
 

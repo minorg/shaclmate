@@ -10,8 +10,8 @@ const snapshotsDirectoryPath = path.join(
 );
 
 describe("toJson", () => {
-  it("union properties", ({ expect }) => {
-    expect(
+  it("union properties", async ({ expect }) => {
+    await expect(
       kitchenSink.UnionDiscriminantsStruct.toJson(
         harnesses.unionDiscriminantsStruct1.instance,
       ),
@@ -23,7 +23,7 @@ describe("toJson", () => {
       ),
     );
 
-    expect(
+    await expect(
       kitchenSink.UnionDiscriminantsStruct.toJson(
         harnesses.unionDiscriminantsStruct2.instance,
       ),
@@ -36,8 +36,10 @@ describe("toJson", () => {
     );
   });
 
-  it("toJSON", ({ expect }) => {
-    expect(JSON.stringify(harnesses.termsStruct.instance)).toMatchFileSnapshot(
+  it("toJSON", async ({ expect }) => {
+    await expect(
+      JSON.stringify(harnesses.termsStruct.instance),
+    ).toMatchFileSnapshot(
       path.join(snapshotsDirectoryPath, "toJson", "toJSON.snap.json"),
     );
   });

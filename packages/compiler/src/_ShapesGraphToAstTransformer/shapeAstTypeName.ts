@@ -1,9 +1,12 @@
 import { Curie } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
 import type * as input from "../input/index.js";
+import { isNodeShape } from "./isNodeShape.js";
 
-export function shapeAstTypeName(shape: input.Shape): Maybe<string> {
-  if (shape.$type !== "NodeShape") {
+export function shapeAstTypeName(
+  shape: input.UndiscriminatedShape,
+): Maybe<string> {
+  if (!isNodeShape(shape)) {
     return Maybe.empty();
   }
 

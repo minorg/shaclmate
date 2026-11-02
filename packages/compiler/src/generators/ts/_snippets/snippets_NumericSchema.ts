@@ -9,6 +9,7 @@ export const snippets_NumericSchema: SnippetFactory = ({
     `${syntheticNamePrefix}NumericSchema`,
     code`\
 interface ${syntheticNamePrefix}NumericSchema<T> {
+  readonly datatype: ${imports.NamedNode};
   readonly hasValues?: readonly ${imports.Literal}[];
   readonly in?: readonly T[];
   readonly kind: "BigDecimal" | "BigInt" | "Float" | "Int";

@@ -11,7 +11,7 @@ import {
   PropertyPath as RdfxResourcePropertyPath,
   Resource,
 } from "@rdfx/resource";
-import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
+import { NTriplesIdentifier } from "@rdfx/string";
 import { Either, Left, Maybe, Right } from "purify-ts";
 
 type $_FromRdfResourceFunction<T> = (
@@ -25,17 +25,17 @@ type $_FromRdfResourceFunction<T> = (
   },
 ) => Either<Error, T>;
 
-function $bigIntFromRdfResourceValues<BigintT extends bigint>(
+function $bigIntFromRdfResourceValues<BigIntT extends bigint>(
   values: Resource.Values,
   options: Parameters<
-    $FromRdfResourceValuesFunction<BigintT, $NumericSchema<BigintT>>
+    $FromRdfResourceValuesFunction<BigIntT, $NumericSchema<BigIntT>>
   >[1],
-): Either<Error, Resource.Values<BigintT>> {
+): Either<Error, Resource.Values<BigIntT>> {
   return $termLikeFromRdfResourceValues(values, options).chain((values) =>
     values.chainMap((value) =>
       options.schema.in
         ? value.toBigInt(options.schema.in)
-        : (value.toBigInt() as Either<Error, BigintT>),
+        : (value.toBigInt() as Either<Error, BigIntT>),
     ),
   );
 }
@@ -56,6 +56,7 @@ function $booleanFromRdfResourceValues<BooleanT extends boolean>(
 }
 
 interface $BooleanSchema<BooleanT extends boolean> {
+  readonly datatype: NamedNode;
   readonly hasValues?: readonly Literal[];
   readonly in?: readonly BooleanT[];
   readonly kind: "Boolean";
@@ -318,7 +319,7 @@ function $ensureRdfResourceType(
   options: { graph: Exclude<Quad_Graph, Variable> | undefined },
 ): Either<Error, undefined> {
   return resource
-    .value($RdfVocabularies.rdf.type, options)
+    .value($rdf_type, options)
     .chain((actualRdfTypeValue) => actualRdfTypeValue.toIri())
     .chain((actualRdfType) => {
       // Check the expected type and its known subtypes
@@ -376,16 +377,13 @@ export type $FromRdfResourceValuesFunction<ValueT, ValueSchemaT> = (
   },
 ) => Either<Error, Resource.Values<ValueT>>;
 
-function $identifierFromRdfResourceValues(
-  values: Resource.Values,
-  options: Parameters<
-    $FromRdfResourceValuesFunction<BlankNode | NamedNode, $IdentifierSchema>
-  >[1],
-): Either<Error, Resource.Values<BlankNode | NamedNode>> {
-  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+const $identifierFromRdfResourceValues: $FromRdfResourceValuesFunction<
+  BlankNode | NamedNode,
+  $IdentifierSchema
+> = (values, options) =>
+  $termLikeFromRdfResourceValues(values, options).chain((values) =>
     values.chainMap((value) => value.toIdentifier()),
   );
-}
 
 interface $IdentifierSchema {
   readonly hasValues?: readonly NamedNode[];
@@ -404,6 +402,21 @@ function $identityValidationFunction<T>(
   value: T,
 ): Either<Error, T> {
   return Either.of(value);
+}
+
+function $intFromRdfResourceValues<IntT extends number>(
+  values: Resource.Values,
+  options: Parameters<
+    $FromRdfResourceValuesFunction<IntT, $NumericSchema<IntT>>
+  >[1],
+): Either<Error, Resource.Values<IntT>> {
+  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+    values.chainMap((value) =>
+      options.schema.in
+        ? value.toInt(options.schema.in)
+        : (value.toInt() as Either<Error, IntT>),
+    ),
+  );
 }
 
 function $iriFromRdfResourceValues<IriT extends string = string>(
@@ -453,16 +466,13 @@ function $listFromRdfResourceValues<ItemT, ItemSchemaT>(
 
 const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
 
-function $literalFromRdfResourceValues(
-  values: Resource.Values,
-  options: Parameters<
-    $FromRdfResourceValuesFunction<Literal, $LiteralSchema>
-  >[1],
-): Either<Error, Resource.Values<Literal>> {
-  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+const $literalFromRdfResourceValues: $FromRdfResourceValuesFunction<
+  Literal,
+  $LiteralSchema
+> = (values, options) =>
+  $termLikeFromRdfResourceValues(values, options).chain((values) =>
     values.chainMap((value) => value.toLiteral(options.schema.in)),
   );
-}
 
 interface $LiteralSchema {
   readonly hasValues?: readonly Literal[];
@@ -533,10 +543,15 @@ export type $NamespaceBuilder<TermNames extends string = any> = Record<
   ((property?: TemplateStringsArray | TermNames) => NamedNode);
 
 interface $NumericSchema<T> {
+  readonly datatype: NamedNode;
   readonly hasValues?: readonly Literal[];
   readonly in?: readonly T[];
   readonly kind: "BigDecimal" | "BigInt" | "Float" | "Int";
 }
+
+export type $ObjectTypeGuardFunction<ObjectT extends $Object> = (
+  object: $Object,
+) => object is ObjectT;
 
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
@@ -563,87 +578,38 @@ export namespace $PropertyPath {
   export const $toString = RdfxResourcePropertyPath.toString;
 }
 
+const $rdf_subject = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+);
+
+const $rdf_type = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+);
+
 function $rdfResourceIdentifierValues(resource: Resource): Resource.Values {
   return new Resource.Value({
     dataFactory: dataFactory,
     focusResource: resource,
-    propertyPath: $RdfVocabularies.rdf.subject,
+    propertyPath: $rdf_subject,
     term: resource.identifier,
   }).toValues();
 }
 
-namespace $RdfVocabularies {
-  export const rdf = {
-    first: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-    ),
-    langString: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString",
-    ),
-    nil: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-    ),
-    rest: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-    ),
-    subject: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-    ),
-    type: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-    ),
-  };
+const $rdfs_comment = dataFactory.namedNode(
+  "http://www.w3.org/2000/01/rdf-schema#comment",
+);
 
-  export const rdfs = {
-    subClassOf: dataFactory.namedNode(
-      "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-    ),
-  };
+const $rdfs_isDefinedBy = dataFactory.namedNode(
+  "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
+);
 
-  export const xsd = {
-    boolean: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean"),
-    byte: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#byte"),
-    date: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date"),
-    dateTime: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#dateTime",
-    ),
-    dateTimeStamp: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#dateTimeStamp",
-    ),
-    decimal: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal"),
-    double: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double"),
-    float: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#float"),
-    int: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#int"),
-    integer: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer"),
-    long: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#long"),
-    negativeInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#negativeInteger",
-    ),
-    nonNegativeInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
-    ),
-    nonPositiveInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
-    ),
-    positiveInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#positiveInteger",
-    ),
-    short: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#short"),
-    string: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#string"),
-    unsignedByte: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedByte",
-    ),
-    unsignedInt: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedInt",
-    ),
-    unsignedLong: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedLong",
-    ),
-    unsignedShort: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedShort",
-    ),
-  };
-}
+const $rdfs_label = dataFactory.namedNode(
+  "http://www.w3.org/2000/01/rdf-schema#label",
+);
+
+const $rdfs_subClassOf = dataFactory.namedNode(
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+);
 
 function $sequenceRecord<T extends Record<string, unknown>>(
   record: { [K in keyof T]: Either<Error, T[K]> },
@@ -729,6 +695,7 @@ function $stringFromRdfResourceValues<StringT extends string>(
 }
 
 interface $StringSchema<StringT extends string> {
+  readonly datatype: NamedNode;
   readonly hasValues?: readonly Literal[];
   readonly in?: readonly StringT[];
   readonly languageIn?: readonly string[];
@@ -864,6 +831,10 @@ interface $TermSchema<TermT extends BlankNode | Literal | NamedNode> {
   readonly types: readonly TermT["termType"][];
 }
 
+export type $ToStringFunction<T> = (value: T) => string;
+
+export type $ToStringRecordFunction<T> = (value: T) => Record<string, string>;
+
 function $validateArray<ItemSchemaT, ItemValueT>(
   validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
 ): $ValidationFunction<$CollectionSchema<ItemSchemaT>, readonly ItemValueT[]> {
@@ -919,10 +890,27 @@ function $wrap_FromRdfResourceFunction<T>(
     });
   };
 }
+
+const $xsd_boolean = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#boolean",
+);
+
+const $xsd_double = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#double",
+);
+
+const $xsd_int = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#int");
+
+const $xsd_integer = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#integer",
+);
+
+const $xsd_string = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#string",
+);
+
 export type NodeShape = {
   readonly $identifier: () => NodeShape.Identifier;
-
-  readonly $type: "NodeShape";
 
   readonly and: Maybe<readonly (BlankNode | NamedNode)[]>;
 
@@ -936,6 +924,29 @@ export type NodeShape = {
 
   readonly deactivated: Maybe<boolean>;
 
+  /**
+   * The type discriminant value to use when a type in a discriminated union needs to be wrapped in a discriminant envelope.
+   *
+   * Example:
+   *
+   *     sh:xone ([
+   *             shaclmate:discriminantValue "date" ;
+   *             sh:datatype xsd:date
+   *         ]
+   *         [
+   *             shaclmate:discriminantValue "dateTime" ;
+   *             sh:datatype xsd:dateTime
+   *         ]
+   *     )
+   *
+   * Because xsd:date and xsd:dateTime are both Date in JavaScript, the generated discriminated union needs to be wrapped in an envelope like:
+   *
+   * { $type: 'type1'; value: Date } | { $type: 'type2'; value: Date }
+   *
+   * in order to discriminate values at runtime. With shaclmate:discriminantValue from the example above, the generated type would be:
+   *
+   * { $type: 'date'; value: Date } | { $type: 'dateTime'; value: Date }
+   */
   readonly discriminantValue: Maybe<string>;
 
   readonly extern: Maybe<boolean>;
@@ -975,6 +986,9 @@ export type NodeShape = {
 
   readonly minLength: Maybe<bigint>;
 
+  /**
+   * Whether the code generated from the shape should be mutable e.g., a mutable property, a mutable array, etc.
+   */
   readonly mutable: Maybe<boolean>;
 
   readonly node: Maybe<BlankNode | NamedNode>;
@@ -1002,6 +1016,9 @@ export type NodeShape = {
 
   readonly severity: Maybe<Severity>;
 
+  /**
+   * Name to use in generated code. Used on node shapes (which don't permit sh:name) and to override sh:name in property shapes.
+   */
   readonly shaclmateName: Maybe<string>;
 
   readonly subClassOf: readonly NamedNode[];
@@ -1024,773 +1041,385 @@ export type NodeShape = {
 };
 
 export namespace NodeShape {
-  export const _fromRdfResource: $_FromRdfResourceFunction<NodeShape> = (
-    resource,
-    options,
-  ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [NodeShape.schema.properties.$rdfType.fromRdfType],
-          { graph: options.graph },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            schema: NodeShape.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        and: $shaclPropertyFromRdf<
-          Maybe<readonly (BlankNode | NamedNode)[]>,
-          $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
-        >({
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    NodeShape.Discriminated
+  > = (resource, options) =>
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.and,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            readonly (BlankNode | NamedNode)[],
-            $CollectionSchema<$IdentifierSchema>
-          >(
-            $listFromRdfResourceValues<
-              BlankNode | NamedNode,
-              $IdentifierSchema
-            >($identifierFromRdfResourceValues),
+          propertyPath: $rdf_subject,
+          schema: NodeShape.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [NodeShape.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      and: $shaclPropertyFromRdf<
+        Maybe<readonly (BlankNode | NamedNode)[]>,
+        $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.and,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          readonly (BlankNode | NamedNode)[],
+          $CollectionSchema<$IdentifierSchema>
+        >(
+          $listFromRdfResourceValues<BlankNode | NamedNode, $IdentifierSchema>(
+            $identifierFromRdfResourceValues,
           ),
-        }),
-        classes: $shaclPropertyFromRdf<
-          readonly NamedNode[],
-          $CollectionSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.classes,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        closed: $shaclPropertyFromRdf<
-          Maybe<boolean>,
-          $MaybeSchema<$BooleanSchema<boolean>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.closed,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            boolean,
-            $BooleanSchema<boolean>
-          >($booleanFromRdfResourceValues<boolean>),
-        }),
-        comment: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.comment,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        datatype: $shaclPropertyFromRdf<
-          Maybe<NamedNode>,
-          $MaybeSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.datatype,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        deactivated: $shaclPropertyFromRdf<
-          Maybe<boolean>,
-          $MaybeSchema<$BooleanSchema<boolean>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.deactivated,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            boolean,
-            $BooleanSchema<boolean>
-          >($booleanFromRdfResourceValues<boolean>),
-        }),
-        discriminantValue: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.discriminantValue,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        extern: $shaclPropertyFromRdf<
-          Maybe<boolean>,
-          $MaybeSchema<$BooleanSchema<boolean>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.extern,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            boolean,
-            $BooleanSchema<boolean>
-          >($booleanFromRdfResourceValues<boolean>),
-        }),
-        flags: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.flags,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        fromRdfType: $shaclPropertyFromRdf<
-          Maybe<NamedNode>,
-          $MaybeSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.fromRdfType,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        hasValues: $shaclPropertyFromRdf<
-          readonly (NamedNode | Literal)[],
-          $CollectionSchema<$TermSchema<NamedNode | Literal>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.hasValues,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode | Literal,
-            $TermSchema<NamedNode | Literal>
-          >($termFromRdfResourceValues<NamedNode | Literal>),
-        }),
-        ignore: $shaclPropertyFromRdf<
+        ),
+      }),
+      classes: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.classes,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      closed: $shaclPropertyFromRdf<
+        Maybe<boolean>,
+        $MaybeSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.closed,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           boolean,
-          $DefaultValueSchema<$BooleanSchema<boolean>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.ignore,
-          typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
-            boolean,
-            $BooleanSchema<boolean>
-          >($booleanFromRdfResourceValues<boolean>),
-        }),
-        ignoredProperties: $shaclPropertyFromRdf<
-          Maybe<readonly NamedNode[]>,
-          $MaybeSchema<$CollectionSchema<$IriSchema<string>>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.ignoredProperties,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            readonly NamedNode[],
-            $CollectionSchema<$IriSchema<string>>
-          >(
-            $listFromRdfResourceValues<NamedNode, $IriSchema<string>>(
-              $iriFromRdfResourceValues<string>,
-            ),
-          ),
-        }),
-        in_: $shaclPropertyFromRdf<
-          Maybe<readonly (NamedNode | Literal)[]>,
-          $MaybeSchema<$CollectionSchema<$TermSchema<NamedNode | Literal>>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.in_,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            readonly (NamedNode | Literal)[],
-            $CollectionSchema<$TermSchema<NamedNode | Literal>>
-          >(
-            $listFromRdfResourceValues<
-              NamedNode | Literal,
-              $TermSchema<NamedNode | Literal>
-            >($termFromRdfResourceValues<NamedNode | Literal>),
-          ),
-        }),
-        isDefinedBy: $shaclPropertyFromRdf<
-          Maybe<BlankNode | NamedNode>,
-          $MaybeSchema<$IdentifierSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.isDefinedBy,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            BlankNode | NamedNode,
-            $IdentifierSchema
-          >($identifierFromRdfResourceValues),
-        }),
-        label: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.label,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        languageIn: $shaclPropertyFromRdf<
-          Maybe<readonly string[]>,
-          $MaybeSchema<$CollectionSchema<$StringSchema<string>>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.languageIn,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            readonly string[],
-            $CollectionSchema<$StringSchema<string>>
-          >(
-            $listFromRdfResourceValues<string, $StringSchema<string>>(
-              $stringFromRdfResourceValues<string>,
-            ),
-          ),
-        }),
-        maxExclusive: $shaclPropertyFromRdf<
-          Maybe<Literal>,
-          $MaybeSchema<$LiteralSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.maxExclusive,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Literal,
-            $LiteralSchema
-          >($literalFromRdfResourceValues),
-        }),
-        maxInclusive: $shaclPropertyFromRdf<
-          Maybe<Literal>,
-          $MaybeSchema<$LiteralSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.maxInclusive,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Literal,
-            $LiteralSchema
-          >($literalFromRdfResourceValues),
-        }),
-        maxLength: $shaclPropertyFromRdf<
-          Maybe<bigint>,
-          $MaybeSchema<$NumericSchema<bigint>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.maxLength,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            bigint,
-            $NumericSchema<bigint>
-          >($bigIntFromRdfResourceValues<bigint>),
-        }),
-        message: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.message,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        minExclusive: $shaclPropertyFromRdf<
-          Maybe<Literal>,
-          $MaybeSchema<$LiteralSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.minExclusive,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Literal,
-            $LiteralSchema
-          >($literalFromRdfResourceValues),
-        }),
-        minInclusive: $shaclPropertyFromRdf<
-          Maybe<Literal>,
-          $MaybeSchema<$LiteralSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.minInclusive,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Literal,
-            $LiteralSchema
-          >($literalFromRdfResourceValues),
-        }),
-        minLength: $shaclPropertyFromRdf<
-          Maybe<bigint>,
-          $MaybeSchema<$NumericSchema<bigint>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.minLength,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            bigint,
-            $NumericSchema<bigint>
-          >($bigIntFromRdfResourceValues<bigint>),
-        }),
-        mutable: $shaclPropertyFromRdf<
-          Maybe<boolean>,
-          $MaybeSchema<$BooleanSchema<boolean>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.mutable,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            boolean,
-            $BooleanSchema<boolean>
-          >($booleanFromRdfResourceValues<boolean>),
-        }),
-        node: $shaclPropertyFromRdf<
-          Maybe<BlankNode | NamedNode>,
-          $MaybeSchema<$IdentifierSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.node,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            BlankNode | NamedNode,
-            $IdentifierSchema
-          >($identifierFromRdfResourceValues),
-        }),
-        nodeKind: $shaclPropertyFromRdf<
-          Maybe<
-            NamedNode<
-              | "http://www.w3.org/ns/shacl#BlankNode"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-              | "http://www.w3.org/ns/shacl#IRI"
-              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-              | "http://www.w3.org/ns/shacl#Literal"
-            >
-          >,
-          $MaybeSchema<
-            $IriSchema<
-              | "http://www.w3.org/ns/shacl#BlankNode"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-              | "http://www.w3.org/ns/shacl#IRI"
-              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-              | "http://www.w3.org/ns/shacl#Literal"
-            >
-          >
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.nodeKind,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            NamedNode<
-              | "http://www.w3.org/ns/shacl#BlankNode"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-              | "http://www.w3.org/ns/shacl#IRI"
-              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-              | "http://www.w3.org/ns/shacl#Literal"
-            >,
-            $IriSchema<
-              | "http://www.w3.org/ns/shacl#BlankNode"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-              | "http://www.w3.org/ns/shacl#IRI"
-              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-              | "http://www.w3.org/ns/shacl#Literal"
-            >
-          >(
-            $iriFromRdfResourceValues<
-              | "http://www.w3.org/ns/shacl#BlankNode"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-              | "http://www.w3.org/ns/shacl#IRI"
-              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-              | "http://www.w3.org/ns/shacl#Literal"
-            >,
-          ),
-        }),
-        not: $shaclPropertyFromRdf<
-          readonly (BlankNode | NamedNode)[],
-          $CollectionSchema<$IdentifierSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.not,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            BlankNode | NamedNode,
-            $IdentifierSchema
-          >($identifierFromRdfResourceValues),
-        }),
-        or: $shaclPropertyFromRdf<
-          Maybe<readonly (BlankNode | NamedNode)[]>,
-          $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.or,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            readonly (BlankNode | NamedNode)[],
-            $CollectionSchema<$IdentifierSchema>
-          >(
-            $listFromRdfResourceValues<
-              BlankNode | NamedNode,
-              $IdentifierSchema
-            >($identifierFromRdfResourceValues),
-          ),
-        }),
-        pattern: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.pattern,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        properties: $shaclPropertyFromRdf<
-          readonly (BlankNode | NamedNode)[],
-          $CollectionSchema<$IdentifierSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.properties,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            BlankNode | NamedNode,
-            $IdentifierSchema
-          >($identifierFromRdfResourceValues),
-        }),
-        rdfType: $shaclPropertyFromRdf<
-          Maybe<NamedNode>,
-          $MaybeSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.rdfType,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        severity: $shaclPropertyFromRdf<
-          Maybe<Severity>,
-          $MaybeSchema<$IriSchema<Severity["value"]>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.severity,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Severity,
-            $IriSchema<Severity["value"]>
-          >($iriFromRdfResourceValues<Severity["value"]>),
-        }),
-        shaclmateName: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.shaclmateName,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        subClassOf: $shaclPropertyFromRdf<
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+      comment: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.comment,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      datatype: $shaclPropertyFromRdf<
+        Maybe<NamedNode>,
+        $MaybeSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.datatype,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      deactivated: $shaclPropertyFromRdf<
+        Maybe<boolean>,
+        $MaybeSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.deactivated,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          boolean,
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+      discriminantValue: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.discriminantValue,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      extern: $shaclPropertyFromRdf<
+        Maybe<boolean>,
+        $MaybeSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.extern,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          boolean,
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+      flags: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.flags,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      fromRdfType: $shaclPropertyFromRdf<
+        Maybe<NamedNode>,
+        $MaybeSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.fromRdfType,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      hasValues: $shaclPropertyFromRdf<
+        readonly (NamedNode | Literal)[],
+        $CollectionSchema<$TermSchema<NamedNode | Literal>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.hasValues,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode | Literal,
+          $TermSchema<NamedNode | Literal>
+        >($termFromRdfResourceValues<NamedNode | Literal>),
+      }),
+      ignore: $shaclPropertyFromRdf<
+        boolean,
+        $DefaultValueSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.ignore,
+        typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
+          boolean,
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+      ignoredProperties: $shaclPropertyFromRdf<
+        Maybe<readonly NamedNode[]>,
+        $MaybeSchema<$CollectionSchema<$IriSchema<string>>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.ignoredProperties,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.subClassOf,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        targetClasses: $shaclPropertyFromRdf<
-          readonly NamedNode[],
-          $CollectionSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.targetClasses,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        targetNodes: $shaclPropertyFromRdf<
+        >(
+          $listFromRdfResourceValues<NamedNode, $IriSchema<string>>(
+            $iriFromRdfResourceValues<string>,
+          ),
+        ),
+      }),
+      in_: $shaclPropertyFromRdf<
+        Maybe<readonly (NamedNode | Literal)[]>,
+        $MaybeSchema<$CollectionSchema<$TermSchema<NamedNode | Literal>>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.in_,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           readonly (NamedNode | Literal)[],
           $CollectionSchema<$TermSchema<NamedNode | Literal>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.targetNodes,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
+        >(
+          $listFromRdfResourceValues<
             NamedNode | Literal,
             $TermSchema<NamedNode | Literal>
           >($termFromRdfResourceValues<NamedNode | Literal>),
-        }),
-        targetObjectsOf: $shaclPropertyFromRdf<
-          readonly NamedNode[],
-          $CollectionSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.targetObjectsOf,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        targetSubjectsOf: $shaclPropertyFromRdf<
-          readonly NamedNode[],
-          $CollectionSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.targetSubjectsOf,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        toRdfTypes: $shaclPropertyFromRdf<
-          readonly NamedNode[],
-          $CollectionSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.toRdfTypes,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        tsImports: $shaclPropertyFromRdf<
+        ),
+      }),
+      isDefinedBy: $shaclPropertyFromRdf<
+        Maybe<BlankNode | NamedNode>,
+        $MaybeSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.isDefinedBy,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          BlankNode | NamedNode,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+      label: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.label,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      languageIn: $shaclPropertyFromRdf<
+        Maybe<readonly string[]>,
+        $MaybeSchema<$CollectionSchema<$StringSchema<string>>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.languageIn,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           readonly string[],
           $CollectionSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.tsImports,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        types: $shaclPropertyFromRdf<
-          readonly NamedNode[],
-          $CollectionSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.types,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        xone: $shaclPropertyFromRdf<
-          Maybe<readonly (BlankNode | NamedNode)[]>,
-          $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.xone,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            readonly (BlankNode | NamedNode)[],
-            $CollectionSchema<$IdentifierSchema>
-          >(
-            $listFromRdfResourceValues<
-              BlankNode | NamedNode,
-              $IdentifierSchema
-            >($identifierFromRdfResourceValues),
+        >(
+          $listFromRdfResourceValues<string, $StringSchema<string>>(
+            $stringFromRdfResourceValues<string>,
           ),
-        }),
-      }).chain((properties) => NodeShape.create(properties)),
-    );
-
-  export const $toString: (_nodeShape: NodeShape) => string = (_nodeShape) =>
-    `NodeShape(${JSON.stringify(toStringRecord(_nodeShape))})`;
-
-  export const create = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => NodeShape.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly and?:
-      | readonly (
-          | BlankNode
-          | NamedNode
-          | (keyof $DefaultNamespaceT & string)
-          | undefined
-        )[]
-      | Maybe<readonly (BlankNode | NamedNode)[]>;
-    readonly classes?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly closed?: boolean | Maybe<boolean>;
-    readonly comment?: string | Maybe<string>;
-    readonly datatype?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly deactivated?: boolean | Maybe<boolean>;
-    readonly discriminantValue?: string | Maybe<string>;
-    readonly extern?: boolean | Maybe<boolean>;
-    readonly flags?: string | Maybe<string>;
-    readonly fromRdfType?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly hasValues?:
-      | (NamedNode | Literal)
-      | readonly (NamedNode | Literal)[];
-    readonly ignore?: boolean;
-    readonly ignoredProperties?:
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[]
-      | Maybe<readonly NamedNode[]>;
-    readonly in_?:
-      | readonly (NamedNode | Literal)[]
-      | Maybe<readonly (NamedNode | Literal)[]>;
-    readonly isDefinedBy?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-    readonly label?: string | Maybe<string>;
-    readonly languageIn?: readonly string[] | Maybe<readonly string[]>;
-    readonly maxExclusive?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
-    readonly maxInclusive?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
-    readonly maxLength?: bigint | number | string | Maybe<bigint>;
-    readonly message?: string | Maybe<string>;
-    readonly minExclusive?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
-    readonly minInclusive?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
-    readonly minLength?: bigint | number | string | Maybe<bigint>;
-    readonly mutable?: boolean | Maybe<boolean>;
-    readonly node?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-    readonly nodeKind?:
-      | (
-          | "http://www.w3.org/ns/shacl#BlankNode"
-          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-          | "http://www.w3.org/ns/shacl#IRI"
-          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-          | "http://www.w3.org/ns/shacl#Literal"
-        )
-      | NamedNode<
-          | "http://www.w3.org/ns/shacl#BlankNode"
-          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-          | "http://www.w3.org/ns/shacl#IRI"
-          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-          | "http://www.w3.org/ns/shacl#Literal"
-        >
-      | Maybe<
+        ),
+      }),
+      maxExclusive: $shaclPropertyFromRdf<
+        Maybe<Literal>,
+        $MaybeSchema<$LiteralSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.maxExclusive,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Literal,
+          $LiteralSchema
+        >($literalFromRdfResourceValues),
+      }),
+      maxInclusive: $shaclPropertyFromRdf<
+        Maybe<Literal>,
+        $MaybeSchema<$LiteralSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.maxInclusive,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Literal,
+          $LiteralSchema
+        >($literalFromRdfResourceValues),
+      }),
+      maxLength: $shaclPropertyFromRdf<
+        Maybe<bigint>,
+        $MaybeSchema<$NumericSchema<bigint>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.maxLength,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          bigint,
+          $NumericSchema<bigint>
+        >($bigIntFromRdfResourceValues<bigint>),
+      }),
+      message: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.message,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      minExclusive: $shaclPropertyFromRdf<
+        Maybe<Literal>,
+        $MaybeSchema<$LiteralSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.minExclusive,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Literal,
+          $LiteralSchema
+        >($literalFromRdfResourceValues),
+      }),
+      minInclusive: $shaclPropertyFromRdf<
+        Maybe<Literal>,
+        $MaybeSchema<$LiteralSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.minInclusive,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Literal,
+          $LiteralSchema
+        >($literalFromRdfResourceValues),
+      }),
+      minLength: $shaclPropertyFromRdf<
+        Maybe<bigint>,
+        $MaybeSchema<$NumericSchema<bigint>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.minLength,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          bigint,
+          $NumericSchema<bigint>
+        >($bigIntFromRdfResourceValues<bigint>),
+      }),
+      mutable: $shaclPropertyFromRdf<
+        Maybe<boolean>,
+        $MaybeSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.mutable,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          boolean,
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+      node: $shaclPropertyFromRdf<
+        Maybe<BlankNode | NamedNode>,
+        $MaybeSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.node,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          BlankNode | NamedNode,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+      nodeKind: $shaclPropertyFromRdf<
+        Maybe<
           NamedNode<
             | "http://www.w3.org/ns/shacl#BlankNode"
             | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
@@ -1799,87 +1428,287 @@ export namespace NodeShape {
             | "http://www.w3.org/ns/shacl#IRIOrLiteral"
             | "http://www.w3.org/ns/shacl#Literal"
           >
-        >;
-    readonly not?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | readonly (
-          | BlankNode
-          | NamedNode
-          | (keyof $DefaultNamespaceT & string)
-          | undefined
-        )[];
-    readonly or?:
-      | readonly (
-          | BlankNode
-          | NamedNode
-          | (keyof $DefaultNamespaceT & string)
-          | undefined
-        )[]
-      | Maybe<readonly (BlankNode | NamedNode)[]>;
-    readonly pattern?: string | Maybe<string>;
-    readonly properties?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | readonly (
-          | BlankNode
-          | NamedNode
-          | (keyof $DefaultNamespaceT & string)
-          | undefined
-        )[];
-    readonly rdfType?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly severity?: Severity["value"] | Severity | Maybe<Severity>;
-    readonly shaclmateName?: string | Maybe<string>;
-    readonly subClassOf?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly targetClasses?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly targetNodes?:
-      | (NamedNode | Literal)
-      | readonly (NamedNode | Literal)[];
-    readonly targetObjectsOf?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly targetSubjectsOf?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly toRdfTypes?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly tsImports?: string | readonly string[];
-    readonly types?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly xone?:
-      | readonly (
-          | BlankNode
-          | NamedNode
-          | (keyof $DefaultNamespaceT & string)
-          | undefined
-        )[]
-      | Maybe<readonly (BlankNode | NamedNode)[]>;
-  }): Either<Error, NodeShape> =>
+        >,
+        $MaybeSchema<
+          $IriSchema<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >
+        >
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.nodeKind,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          NamedNode<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >,
+          $IriSchema<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >
+        >(
+          $iriFromRdfResourceValues<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >,
+        ),
+      }),
+      not: $shaclPropertyFromRdf<
+        readonly (BlankNode | NamedNode)[],
+        $CollectionSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.not,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          BlankNode | NamedNode,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+      or: $shaclPropertyFromRdf<
+        Maybe<readonly (BlankNode | NamedNode)[]>,
+        $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.or,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          readonly (BlankNode | NamedNode)[],
+          $CollectionSchema<$IdentifierSchema>
+        >(
+          $listFromRdfResourceValues<BlankNode | NamedNode, $IdentifierSchema>(
+            $identifierFromRdfResourceValues,
+          ),
+        ),
+      }),
+      pattern: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.pattern,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      properties: $shaclPropertyFromRdf<
+        readonly (BlankNode | NamedNode)[],
+        $CollectionSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.properties,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          BlankNode | NamedNode,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+      rdfType: $shaclPropertyFromRdf<
+        Maybe<NamedNode>,
+        $MaybeSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.rdfType,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      severity: $shaclPropertyFromRdf<
+        Maybe<Severity>,
+        $MaybeSchema<$IriSchema<Severity["value"]>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.severity,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Severity,
+          $IriSchema<Severity["value"]>
+        >($iriFromRdfResourceValues<Severity["value"]>),
+      }),
+      shaclmateName: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.shaclmateName,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      subClassOf: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.subClassOf,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      targetClasses: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.targetClasses,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      targetNodes: $shaclPropertyFromRdf<
+        readonly (NamedNode | Literal)[],
+        $CollectionSchema<$TermSchema<NamedNode | Literal>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.targetNodes,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode | Literal,
+          $TermSchema<NamedNode | Literal>
+        >($termFromRdfResourceValues<NamedNode | Literal>),
+      }),
+      targetObjectsOf: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.targetObjectsOf,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      targetSubjectsOf: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.targetSubjectsOf,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      toRdfTypes: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.toRdfTypes,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      tsImports: $shaclPropertyFromRdf<
+        readonly string[],
+        $CollectionSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.tsImports,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      types: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.types,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      xone: $shaclPropertyFromRdf<
+        Maybe<readonly (BlankNode | NamedNode)[]>,
+        $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.xone,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          readonly (BlankNode | NamedNode)[],
+          $CollectionSchema<$IdentifierSchema>
+        >(
+          $listFromRdfResourceValues<BlankNode | NamedNode, $IdentifierSchema>(
+            $identifierFromRdfResourceValues,
+          ),
+        ),
+      }),
+    }).chain((properties) => NodeShape.create(properties));
+
+  export const $toString: $ToStringFunction<
+    Pick<NodeShape, "$identifier" | "label" | "shaclmateName">
+  > = (_nodeShape) =>
+    `NodeShape(${JSON.stringify(NodeShape.toStringRecord(_nodeShape))})`;
+
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters?: NodeShape.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, NodeShape.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
-        parameters?.$identifier,
-        parameters?.$defaultNamespace,
+        parameters.$identifier,
+        parameters.$defaultNamespace,
       ),
+      $type: Right("NodeShape" as const),
       and: $convertToMaybe($convertToList($convertToIdentifier))(
-        parameters?.and,
-        parameters?.$defaultNamespace,
+        parameters.and,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction))(
           NodeShape.schema.properties.and.type,
@@ -1887,8 +1716,8 @@ export namespace NodeShape {
         ),
       ),
       classes: $convertToScalarSet($convertToIri)(
-        parameters?.classes,
-        parameters?.$defaultNamespace,
+        parameters.classes,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.classes.type,
@@ -1896,8 +1725,8 @@ export namespace NodeShape {
         ),
       ),
       closed: $convertToMaybe($identityConversionFunction)(
-        parameters?.closed,
-        parameters?.$defaultNamespace,
+        parameters.closed,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.closed.type,
@@ -1905,8 +1734,8 @@ export namespace NodeShape {
         ),
       ),
       comment: $convertToMaybe($identityConversionFunction)(
-        parameters?.comment,
-        parameters?.$defaultNamespace,
+        parameters.comment,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.comment.type,
@@ -1914,8 +1743,8 @@ export namespace NodeShape {
         ),
       ),
       datatype: $convertToMaybe($convertToIri)(
-        parameters?.datatype,
-        parameters?.$defaultNamespace,
+        parameters.datatype,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.datatype.type,
@@ -1923,8 +1752,8 @@ export namespace NodeShape {
         ),
       ),
       deactivated: $convertToMaybe($identityConversionFunction)(
-        parameters?.deactivated,
-        parameters?.$defaultNamespace,
+        parameters.deactivated,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.deactivated.type,
@@ -1932,8 +1761,8 @@ export namespace NodeShape {
         ),
       ),
       discriminantValue: $convertToMaybe($identityConversionFunction)(
-        parameters?.discriminantValue,
-        parameters?.$defaultNamespace,
+        parameters.discriminantValue,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.discriminantValue.type,
@@ -1941,8 +1770,8 @@ export namespace NodeShape {
         ),
       ),
       extern: $convertToMaybe($identityConversionFunction)(
-        parameters?.extern,
-        parameters?.$defaultNamespace,
+        parameters.extern,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.extern.type,
@@ -1950,8 +1779,8 @@ export namespace NodeShape {
         ),
       ),
       flags: $convertToMaybe($identityConversionFunction)(
-        parameters?.flags,
-        parameters?.$defaultNamespace,
+        parameters.flags,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.flags.type,
@@ -1959,8 +1788,8 @@ export namespace NodeShape {
         ),
       ),
       fromRdfType: $convertToMaybe($convertToIri)(
-        parameters?.fromRdfType,
-        parameters?.$defaultNamespace,
+        parameters.fromRdfType,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.fromRdfType.type,
@@ -1968,8 +1797,8 @@ export namespace NodeShape {
         ),
       ),
       hasValues: $convertToScalarSet($identityConversionFunction)(
-        parameters?.hasValues,
-        parameters?.$defaultNamespace,
+        parameters.hasValues,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.hasValues.type,
@@ -1977,12 +1806,12 @@ export namespace NodeShape {
         ),
       ),
       ignore: $convertWithDefaultValue($identityConversionFunction, false)(
-        parameters?.ignore,
-        parameters?.$defaultNamespace,
+        parameters.ignore,
+        parameters.$defaultNamespace,
       ),
       ignoredProperties: $convertToMaybe($convertToList($convertToIri))(
-        parameters?.ignoredProperties,
-        parameters?.$defaultNamespace,
+        parameters.ignoredProperties,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction))(
           NodeShape.schema.properties.ignoredProperties.type,
@@ -1990,8 +1819,8 @@ export namespace NodeShape {
         ),
       ),
       in_: $convertToMaybe($convertToList($identityConversionFunction))(
-        parameters?.in_,
-        parameters?.$defaultNamespace,
+        parameters.in_,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction))(
           NodeShape.schema.properties.in_.type,
@@ -1999,8 +1828,8 @@ export namespace NodeShape {
         ),
       ),
       isDefinedBy: $convertToMaybe($convertToIdentifier)(
-        parameters?.isDefinedBy,
-        parameters?.$defaultNamespace,
+        parameters.isDefinedBy,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.isDefinedBy.type,
@@ -2008,8 +1837,8 @@ export namespace NodeShape {
         ),
       ),
       label: $convertToMaybe($identityConversionFunction)(
-        parameters?.label,
-        parameters?.$defaultNamespace,
+        parameters.label,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.label.type,
@@ -2017,8 +1846,8 @@ export namespace NodeShape {
         ),
       ),
       languageIn: $convertToMaybe($convertToList($identityConversionFunction))(
-        parameters?.languageIn,
-        parameters?.$defaultNamespace,
+        parameters.languageIn,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction))(
           NodeShape.schema.properties.languageIn.type,
@@ -2026,8 +1855,8 @@ export namespace NodeShape {
         ),
       ),
       maxExclusive: $convertToMaybe($convertToLiteral)(
-        parameters?.maxExclusive,
-        parameters?.$defaultNamespace,
+        parameters.maxExclusive,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.maxExclusive.type,
@@ -2035,8 +1864,8 @@ export namespace NodeShape {
         ),
       ),
       maxInclusive: $convertToMaybe($convertToLiteral)(
-        parameters?.maxInclusive,
-        parameters?.$defaultNamespace,
+        parameters.maxInclusive,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.maxInclusive.type,
@@ -2044,8 +1873,8 @@ export namespace NodeShape {
         ),
       ),
       maxLength: $convertToMaybe($convertToBigInt)(
-        parameters?.maxLength,
-        parameters?.$defaultNamespace,
+        parameters.maxLength,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.maxLength.type,
@@ -2053,8 +1882,8 @@ export namespace NodeShape {
         ),
       ),
       message: $convertToMaybe($identityConversionFunction)(
-        parameters?.message,
-        parameters?.$defaultNamespace,
+        parameters.message,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.message.type,
@@ -2062,8 +1891,8 @@ export namespace NodeShape {
         ),
       ),
       minExclusive: $convertToMaybe($convertToLiteral)(
-        parameters?.minExclusive,
-        parameters?.$defaultNamespace,
+        parameters.minExclusive,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.minExclusive.type,
@@ -2071,8 +1900,8 @@ export namespace NodeShape {
         ),
       ),
       minInclusive: $convertToMaybe($convertToLiteral)(
-        parameters?.minInclusive,
-        parameters?.$defaultNamespace,
+        parameters.minInclusive,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.minInclusive.type,
@@ -2080,8 +1909,8 @@ export namespace NodeShape {
         ),
       ),
       minLength: $convertToMaybe($convertToBigInt)(
-        parameters?.minLength,
-        parameters?.$defaultNamespace,
+        parameters.minLength,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.minLength.type,
@@ -2089,8 +1918,8 @@ export namespace NodeShape {
         ),
       ),
       mutable: $convertToMaybe($identityConversionFunction)(
-        parameters?.mutable,
-        parameters?.$defaultNamespace,
+        parameters.mutable,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.mutable.type,
@@ -2098,8 +1927,8 @@ export namespace NodeShape {
         ),
       ),
       node: $convertToMaybe($convertToIdentifier)(
-        parameters?.node,
-        parameters?.$defaultNamespace,
+        parameters.node,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.node.type,
@@ -2115,15 +1944,15 @@ export namespace NodeShape {
           | "http://www.w3.org/ns/shacl#IRIOrLiteral"
           | "http://www.w3.org/ns/shacl#Literal"
         >,
-      )(parameters?.nodeKind, parameters?.$defaultNamespace).chain((value) =>
+      )(parameters.nodeKind, parameters.$defaultNamespace).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.nodeKind.type,
           value,
         ),
       ),
       not: $convertToScalarSet($convertToIdentifier)(
-        parameters?.not,
-        parameters?.$defaultNamespace,
+        parameters.not,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.not.type,
@@ -2131,8 +1960,8 @@ export namespace NodeShape {
         ),
       ),
       or: $convertToMaybe($convertToList($convertToIdentifier))(
-        parameters?.or,
-        parameters?.$defaultNamespace,
+        parameters.or,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction))(
           NodeShape.schema.properties.or.type,
@@ -2140,8 +1969,8 @@ export namespace NodeShape {
         ),
       ),
       pattern: $convertToMaybe($identityConversionFunction)(
-        parameters?.pattern,
-        parameters?.$defaultNamespace,
+        parameters.pattern,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.pattern.type,
@@ -2149,8 +1978,8 @@ export namespace NodeShape {
         ),
       ),
       properties: $convertToScalarSet($convertToIdentifier)(
-        parameters?.properties,
-        parameters?.$defaultNamespace,
+        parameters.properties,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.properties.type,
@@ -2158,8 +1987,8 @@ export namespace NodeShape {
         ),
       ),
       rdfType: $convertToMaybe($convertToIri)(
-        parameters?.rdfType,
-        parameters?.$defaultNamespace,
+        parameters.rdfType,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.rdfType.type,
@@ -2167,8 +1996,8 @@ export namespace NodeShape {
         ),
       ),
       severity: $convertToMaybe($convertToInIri<Severity["value"]>)(
-        parameters?.severity,
-        parameters?.$defaultNamespace,
+        parameters.severity,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.severity.type,
@@ -2176,8 +2005,8 @@ export namespace NodeShape {
         ),
       ),
       shaclmateName: $convertToMaybe($identityConversionFunction)(
-        parameters?.shaclmateName,
-        parameters?.$defaultNamespace,
+        parameters.shaclmateName,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.shaclmateName.type,
@@ -2185,8 +2014,8 @@ export namespace NodeShape {
         ),
       ),
       subClassOf: $convertToScalarSet($convertToIri)(
-        parameters?.subClassOf,
-        parameters?.$defaultNamespace,
+        parameters.subClassOf,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.subClassOf.type,
@@ -2194,8 +2023,8 @@ export namespace NodeShape {
         ),
       ),
       targetClasses: $convertToScalarSet($convertToIri)(
-        parameters?.targetClasses,
-        parameters?.$defaultNamespace,
+        parameters.targetClasses,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.targetClasses.type,
@@ -2203,8 +2032,8 @@ export namespace NodeShape {
         ),
       ),
       targetNodes: $convertToScalarSet($identityConversionFunction)(
-        parameters?.targetNodes,
-        parameters?.$defaultNamespace,
+        parameters.targetNodes,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.targetNodes.type,
@@ -2212,8 +2041,8 @@ export namespace NodeShape {
         ),
       ),
       targetObjectsOf: $convertToScalarSet($convertToIri)(
-        parameters?.targetObjectsOf,
-        parameters?.$defaultNamespace,
+        parameters.targetObjectsOf,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.targetObjectsOf.type,
@@ -2221,8 +2050,8 @@ export namespace NodeShape {
         ),
       ),
       targetSubjectsOf: $convertToScalarSet($convertToIri)(
-        parameters?.targetSubjectsOf,
-        parameters?.$defaultNamespace,
+        parameters.targetSubjectsOf,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.targetSubjectsOf.type,
@@ -2230,8 +2059,8 @@ export namespace NodeShape {
         ),
       ),
       toRdfTypes: $convertToScalarSet($convertToIri)(
-        parameters?.toRdfTypes,
-        parameters?.$defaultNamespace,
+        parameters.toRdfTypes,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.toRdfTypes.type,
@@ -2239,8 +2068,8 @@ export namespace NodeShape {
         ),
       ),
       tsImports: $convertToScalarSet($identityConversionFunction)(
-        parameters?.tsImports,
-        parameters?.$defaultNamespace,
+        parameters.tsImports,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.tsImports.type,
@@ -2248,8 +2077,8 @@ export namespace NodeShape {
         ),
       ),
       types: $convertToScalarSet($convertToIri)(
-        parameters?.types,
-        parameters?.$defaultNamespace,
+        parameters.types,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.types.type,
@@ -2257,23 +2086,21 @@ export namespace NodeShape {
         ),
       ),
       xone: $convertToMaybe($convertToList($convertToIdentifier))(
-        parameters?.xone,
-        parameters?.$defaultNamespace,
+        parameters.xone,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction))(
           NodeShape.schema.properties.xone.type,
           value,
         ),
       ),
-    })
-      .map((properties) => ({ ...properties, $type: "NodeShape" as const }))
-      .map((object) =>
-        $monkeyPatchObject(object, { $toString: NodeShape.$toString }),
-      );
+    }).map((object) =>
+      $monkeyPatchObject(object, { $toString: NodeShape.$toString }),
+    );
 
-  export function createUnsafe<
+  export type CreateParameters<
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
+  > = {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NodeShape.Identifier)
@@ -2462,30 +2289,38 @@ export namespace NodeShape {
           | undefined
         )[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
-  }): NodeShape {
-    return create(parameters).unsafeCoerce();
-  }
+  };
 
-  export const fromRdfResource =
-    $wrap_FromRdfResourceFunction(_fromRdfResource);
+  export const createUnsafe: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters?: NodeShape.CreateParameters<$DefaultNamespaceT>,
+  ) => NodeShape.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = NodeShape & { readonly $type: "NodeShape" };
+
+  export const fromRdfResource: $FromRdfResourceFunction<NodeShape.Discriminated> =
+    $wrap_FromRdfResourceFunction(NodeShape._fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    NodeShape,
+    NodeShape.Discriminated,
     NodeShape.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
         .toResource()
-        .chain((resource) => fromRdfResource(resource, options)),
+        .chain((resource) => NodeShape.fromRdfResource(resource, options)),
     );
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
-  export const isNodeShape = (object: $Object): object is NodeShape =>
+  export const isNodeShape: $ObjectTypeGuardFunction<
+    NodeShape.Discriminated
+  > = (object): object is NodeShape.Discriminated =>
     object.$type === "NodeShape";
 
   export const schema = {
@@ -2503,7 +2338,6 @@ export namespace NodeShape {
           dataFactory.namedNode("http://www.w3.org/ns/shacl#NodeShape"),
         ],
       },
-      $type: { kind: "Discriminant", value: "NodeShape" },
       and: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
@@ -2525,17 +2359,15 @@ export namespace NodeShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#closed"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "Boolean" as const },
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
         },
       },
       comment: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
+        path: $rdfs_comment,
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       datatype: {
@@ -2548,7 +2380,7 @@ export namespace NodeShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#deactivated"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "Boolean" as const },
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
         },
       },
       discriminantValue: {
@@ -2558,7 +2390,7 @@ export namespace NodeShape {
         ),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       extern: {
@@ -2568,7 +2400,7 @@ export namespace NodeShape {
         ),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "Boolean" as const },
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
         },
       },
       flags: {
@@ -2576,7 +2408,7 @@ export namespace NodeShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       fromRdfType: {
@@ -2601,11 +2433,8 @@ export namespace NodeShape {
         ),
         type: {
           kind: "DefaultValue" as const,
-          itemType: { kind: "Boolean" as const },
-          defaultValue: dataFactory.literal(
-            "false",
-            $RdfVocabularies.xsd.boolean,
-          ),
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
+          defaultValue: dataFactory.literal("false", $xsd_boolean),
         },
       },
       ignoredProperties: {
@@ -2637,9 +2466,7 @@ export namespace NodeShape {
       },
       isDefinedBy: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-        ),
+        path: $rdfs_isDefinedBy,
         type: {
           kind: "Option" as const,
           itemType: { kind: "Identifier" as const },
@@ -2647,12 +2474,10 @@ export namespace NodeShape {
       },
       label: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
+        path: $rdfs_label,
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       languageIn: {
@@ -2662,7 +2487,7 @@ export namespace NodeShape {
           kind: "Option" as const,
           itemType: {
             kind: "List" as const,
-            itemType: { kind: "String" as const },
+            itemType: { kind: "String" as const, datatype: $xsd_string },
           },
         },
       },
@@ -2687,7 +2512,7 @@ export namespace NodeShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "BigInt" as const },
+          itemType: { kind: "BigInt" as const, datatype: $xsd_integer },
         },
       },
       message: {
@@ -2695,7 +2520,7 @@ export namespace NodeShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#message"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       minExclusive: {
@@ -2719,7 +2544,7 @@ export namespace NodeShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "BigInt" as const },
+          itemType: { kind: "BigInt" as const, datatype: $xsd_integer },
         },
       },
       mutable: {
@@ -2729,7 +2554,7 @@ export namespace NodeShape {
         ),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "Boolean" as const },
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
         },
       },
       node: {
@@ -2786,7 +2611,7 @@ export namespace NodeShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       properties: {
@@ -2821,12 +2646,12 @@ export namespace NodeShape {
         path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       subClassOf: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.subClassOf,
+        path: $rdfs_subClassOf,
         type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
       targetClasses: {
@@ -2868,11 +2693,14 @@ export namespace NodeShape {
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#tsImport",
         ),
-        type: { kind: "Set" as const, itemType: { kind: "String" as const } },
+        type: {
+          kind: "Set" as const,
+          itemType: { kind: "String" as const, datatype: $xsd_string },
+        },
       },
       types: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdf.type,
+        path: $rdf_type,
         type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
       xone: {
@@ -2891,9 +2719,9 @@ export namespace NodeShape {
 
   export type Schema = typeof schema;
 
-  export const toStringRecord: (
-    _nodeShape: NodeShape,
-  ) => Record<string, string> = (_nodeShape) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<NodeShape, "$identifier" | "label" | "shaclmateName">
+  > = (_nodeShape) =>
     $compactRecord({
       $identifier: _nodeShape.$identifier().toString(),
       label: _nodeShape.label.map((item) => item.toString()).extract(),
@@ -2902,10 +2730,9 @@ export namespace NodeShape {
         .extract(),
     });
 }
+
 export type Ontology = {
   readonly $identifier: () => Ontology.Identifier;
-
-  readonly $type: "Ontology";
 
   readonly comment: Maybe<string>;
 
@@ -2913,80 +2740,74 @@ export type Ontology = {
 };
 
 export namespace Ontology {
-  export const _fromRdfResource: $_FromRdfResourceFunction<Ontology> = (
-    resource,
-    options,
-  ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [Ontology.schema.properties.$rdfType.fromRdfType],
-          { graph: options.graph },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            schema: Ontology.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        comment: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    Ontology.Discriminated
+  > = (resource, options) =>
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.comment,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        label: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.label,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-      }).chain((properties) => Ontology.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: Ontology.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [Ontology.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      comment: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.comment,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      label: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.label,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+    }).chain((properties) => Ontology.create(properties));
 
-  export const $toString: (_ontology: Ontology) => string = (_ontology) =>
-    `Ontology(${JSON.stringify(toStringRecord(_ontology))})`;
+  export const $toString: $ToStringFunction<Omit<Ontology, "comment">> = (
+    _ontology,
+  ) => `Ontology(${JSON.stringify(Ontology.toStringRecord(_ontology))})`;
 
-  export const create = <
+  export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => Ontology.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly comment?: string | Maybe<string>;
-    readonly label?: string | Maybe<string>;
-  }): Either<Error, Ontology> =>
+  >(
+    parameters?: Ontology.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, Ontology.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
-        parameters?.$identifier,
-        parameters?.$defaultNamespace,
+        parameters.$identifier,
+        parameters.$defaultNamespace,
       ),
+      $type: Right("Ontology" as const),
       comment: $convertToMaybe($identityConversionFunction)(
-        parameters?.comment,
-        parameters?.$defaultNamespace,
+        parameters.comment,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.comment.type,
@@ -2994,23 +2815,21 @@ export namespace Ontology {
         ),
       ),
       label: $convertToMaybe($identityConversionFunction)(
-        parameters?.label,
-        parameters?.$defaultNamespace,
+        parameters.label,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.label.type,
           value,
         ),
       ),
-    })
-      .map((properties) => ({ ...properties, $type: "Ontology" as const }))
-      .map((object) =>
-        $monkeyPatchObject(object, { $toString: Ontology.$toString }),
-      );
+    }).map((object) =>
+      $monkeyPatchObject(object, { $toString: Ontology.$toString }),
+    );
 
-  export function createUnsafe<
+  export type CreateParameters<
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
+  > = {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => Ontology.Identifier)
@@ -3019,31 +2838,38 @@ export namespace Ontology {
       | (keyof $DefaultNamespaceT & string);
     readonly comment?: string | Maybe<string>;
     readonly label?: string | Maybe<string>;
-  }): Ontology {
-    return create(parameters).unsafeCoerce();
-  }
+  };
 
-  export const fromRdfResource =
-    $wrap_FromRdfResourceFunction(_fromRdfResource);
+  export const createUnsafe: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters?: Ontology.CreateParameters<$DefaultNamespaceT>,
+  ) => Ontology.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = Ontology & { readonly $type: "Ontology" };
+
+  export const fromRdfResource: $FromRdfResourceFunction<Ontology.Discriminated> =
+    $wrap_FromRdfResourceFunction(Ontology._fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    Ontology,
+    Ontology.Discriminated,
     Ontology.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
         .toResource()
-        .chain((resource) => fromRdfResource(resource, options)),
+        .chain((resource) => Ontology.fromRdfResource(resource, options)),
     );
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
-  export const isOntology = (object: $Object): object is Ontology =>
-    object.$type === "Ontology";
+  export const isOntology: $ObjectTypeGuardFunction<Ontology.Discriminated> = (
+    object,
+  ): object is Ontology.Discriminated => object.$type === "Ontology";
 
   export const schema = {
     properties: {
@@ -3060,25 +2886,20 @@ export namespace Ontology {
           dataFactory.namedNode("http://www.w3.org/2002/07/owl#Ontology"),
         ],
       },
-      $type: { kind: "Discriminant", value: "Ontology" },
       comment: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
+        path: $rdfs_comment,
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       label: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
+        path: $rdfs_label,
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
     },
@@ -3086,17 +2907,1689 @@ export namespace Ontology {
 
   export type Schema = typeof schema;
 
-  export const toStringRecord: (_ontology: Ontology) => Record<string, string> =
-    (_ontology) =>
-      $compactRecord({
-        $identifier: _ontology.$identifier().toString(),
-        label: _ontology.label.map((item) => item.toString()).extract(),
-      });
+  export const toStringRecord: $ToStringRecordFunction<
+    Omit<Ontology, "comment">
+  > = (_ontology) =>
+    $compactRecord({
+      $identifier: _ontology.$identifier().toString(),
+      label: _ontology.label.map((item) => item.toString()).extract(),
+    });
 }
+
+/**
+ * Service operation
+ */
+export type Operation = {
+  readonly $identifier: () => Operation.Identifier;
+
+  /**
+   * Transport bindings for the operation, loosely modeled after WSDL. If no bindings are specified the operation will be excluded from transport client and server generation.
+   */
+  readonly bindings: readonly OperationHttpBinding[];
+
+  readonly comment: Maybe<string>;
+
+  /**
+   * Error types associated with the operation
+   */
+  readonly error: readonly OperationError[];
+
+  readonly label: Maybe<string>;
+
+  /**
+   * Identifier-safe name of the operation, incorporated into generated code.
+   */
+  readonly name: Maybe<string>;
+
+  /**
+   * Optional parameter type. This must be a node shape with properties (a 'struct').
+   */
+  readonly parameter: Maybe<OperationParameter>;
+
+  /**
+   * Optional result type. The type is a property shape in order to incorporate cardinality.
+   */
+  readonly result: Maybe<OperationResult>;
+};
+
+export namespace Operation {
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    Operation.Discriminated
+  > = (resource, options) =>
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
+          ...options,
+          focusResource: resource,
+          propertyPath: $rdf_subject,
+          schema: Operation.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [Operation.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      bindings: $shaclPropertyFromRdf<
+        readonly OperationHttpBinding[],
+        $CollectionSchema<OperationHttpBinding.Schema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: Operation.schema.properties.bindings,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          OperationHttpBinding,
+          OperationHttpBinding.Schema
+        >(OperationHttpBinding.fromRdfResourceValues),
+      }),
+      comment: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.comment,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      error: $shaclPropertyFromRdf<
+        readonly OperationError[],
+        $CollectionSchema<OperationError.Schema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: Operation.schema.properties.error,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          OperationError,
+          OperationError.Schema
+        >(OperationError.fromRdfResourceValues),
+      }),
+      label: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.label,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      name: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: Operation.schema.properties.name,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      parameter: $shaclPropertyFromRdf<
+        Maybe<OperationParameter>,
+        $MaybeSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: Operation.schema.properties.parameter,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          OperationParameter,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+      result: $shaclPropertyFromRdf<
+        Maybe<OperationResult>,
+        $MaybeSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: Operation.schema.properties.result,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          OperationResult,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+    }).chain((properties) => Operation.create(properties));
+
+  export const $toString: $ToStringFunction<
+    Pick<Operation, "$identifier" | "label" | "name">
+  > = (_operation) =>
+    `Operation(${JSON.stringify(Operation.toStringRecord(_operation))})`;
+
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters?: Operation.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, Operation.Discriminated> = (parameters = {}) =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      $type: Right("Operation" as const),
+      bindings: $convertToScalarSet($identityConversionFunction)(
+        parameters.bindings,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
+          Operation.schema.properties.bindings.type,
+          value,
+        ),
+      ),
+      comment: $convertToMaybe($identityConversionFunction)(
+        parameters.comment,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.comment.type,
+          value,
+        ),
+      ),
+      error: $convertToScalarSet($identityConversionFunction)(
+        parameters.error,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
+          Operation.schema.properties.error.type,
+          value,
+        ),
+      ),
+      label: $convertToMaybe($identityConversionFunction)(
+        parameters.label,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.label.type,
+          value,
+        ),
+      ),
+      name: $convertToMaybe($identityConversionFunction)(
+        parameters.name,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          Operation.schema.properties.name.type,
+          value,
+        ),
+      ),
+      parameter: $convertToMaybe($convertToIdentifier)(
+        parameters.parameter,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          Operation.schema.properties.parameter.type,
+          value,
+        ),
+      ),
+      result: $convertToMaybe($convertToIdentifier)(
+        parameters.result,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          Operation.schema.properties.result.type,
+          value,
+        ),
+      ),
+    }).map((object) =>
+      $monkeyPatchObject(object, { $toString: Operation.$toString }),
+    );
+
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => Operation.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly bindings?: OperationHttpBinding | readonly OperationHttpBinding[];
+    readonly comment?: string | Maybe<string>;
+    readonly error?: OperationError | readonly OperationError[];
+    readonly label?: string | Maybe<string>;
+    readonly name?: string | Maybe<string>;
+    readonly parameter?:
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string)
+      | Maybe<OperationParameter>;
+    readonly result?:
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string)
+      | Maybe<OperationResult>;
+  };
+
+  export const createUnsafe: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters?: Operation.CreateParameters<$DefaultNamespaceT>,
+  ) => Operation.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = Operation & { readonly $type: "Operation" };
+
+  export const fromRdfResource: $FromRdfResourceFunction<Operation.Discriminated> =
+    $wrap_FromRdfResourceFunction(Operation._fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    Operation.Discriminated,
+    Operation.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => Operation.fromRdfResource(resource, options)),
+    );
+
+  export type Identifier = BlankNode | NamedNode;
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+  }
+
+  export const isOperation: $ObjectTypeGuardFunction<
+    Operation.Discriminated
+  > = (object): object is Operation.Discriminated =>
+    object.$type === "Operation";
+
+  export const schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#Operation",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://purl.org/shaclmate/ontology#Operation"),
+        ],
+      },
+      bindings: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#binding",
+        ),
+        get type() {
+          return {
+            kind: "Set" as const,
+            get itemType() {
+              return OperationHttpBinding.schema;
+            },
+          };
+        },
+      },
+      comment: {
+        kind: "Shacl",
+        path: $rdfs_comment,
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const, datatype: $xsd_string },
+        },
+      },
+      error: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#error"),
+        get type() {
+          return {
+            kind: "Set" as const,
+            get itemType() {
+              return OperationError.schema;
+            },
+          };
+        },
+      },
+      label: {
+        kind: "Shacl",
+        path: $rdfs_label,
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const, datatype: $xsd_string },
+        },
+      },
+      name: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const, datatype: $xsd_string },
+        },
+      },
+      parameter: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#parameter",
+        ),
+        get type() {
+          return {
+            kind: "Option" as const,
+            get itemType() {
+              return OperationParameter.schema;
+            },
+          };
+        },
+      },
+      result: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#result",
+        ),
+        get type() {
+          return {
+            kind: "Option" as const,
+            get itemType() {
+              return OperationResult.schema;
+            },
+          };
+        },
+      },
+    },
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<Operation, "$identifier" | "label" | "name">
+  > = (_operation) =>
+    $compactRecord({
+      $identifier: _operation.$identifier().toString(),
+      label: _operation.label.map((item) => item.toString()).extract(),
+      name: _operation.name.map((item) => item.toString()).extract(),
+    });
+}
+
+/**
+ * Error type associated with an operation. Must be a struct type (i.e., have at least one sh:property).
+ */
+export type OperationError = {
+  readonly $identifier: () => OperationError.Identifier;
+
+  readonly classes: readonly NamedNode[];
+
+  readonly closed: Maybe<boolean>;
+
+  readonly comment: Maybe<string>;
+
+  readonly deactivated: Maybe<boolean>;
+
+  readonly extern: Maybe<boolean>;
+
+  readonly fromRdfType: Maybe<NamedNode>;
+
+  readonly ignoredProperties: Maybe<readonly NamedNode[]>;
+
+  readonly isDefinedBy: Maybe<BlankNode | NamedNode>;
+
+  readonly label: Maybe<string>;
+
+  readonly message: Maybe<string>;
+
+  readonly nodeKind: Maybe<
+    NamedNode<
+      | "http://www.w3.org/ns/shacl#BlankNode"
+      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+      | "http://www.w3.org/ns/shacl#IRI"
+      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+      | "http://www.w3.org/ns/shacl#Literal"
+    >
+  >;
+
+  readonly properties: readonly (BlankNode | NamedNode)[];
+
+  readonly rdfType: Maybe<NamedNode>;
+
+  readonly severity: Maybe<Severity>;
+
+  /**
+   * Name to use in generated code. Used on node shapes (which don't permit sh:name) and to override sh:name in property shapes.
+   */
+  readonly shaclmateName: Maybe<string>;
+
+  readonly subClassOf: readonly NamedNode[];
+
+  readonly toRdfTypes: readonly NamedNode[];
+
+  readonly tsImports: readonly string[];
+
+  readonly types: readonly NamedNode[];
+};
+
+export namespace OperationError {
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    OperationError.Discriminated
+  > = (resource, options) =>
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
+          ...options,
+          focusResource: resource,
+          propertyPath: $rdf_subject,
+          schema: OperationError.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      classes: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.classes,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      closed: $shaclPropertyFromRdf<
+        Maybe<boolean>,
+        $MaybeSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.closed,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          boolean,
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+      comment: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.comment,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      deactivated: $shaclPropertyFromRdf<
+        Maybe<boolean>,
+        $MaybeSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.deactivated,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          boolean,
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+      extern: $shaclPropertyFromRdf<
+        Maybe<boolean>,
+        $MaybeSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.extern,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          boolean,
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+      fromRdfType: $shaclPropertyFromRdf<
+        Maybe<NamedNode>,
+        $MaybeSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.fromRdfType,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      ignoredProperties: $shaclPropertyFromRdf<
+        Maybe<readonly NamedNode[]>,
+        $MaybeSchema<$CollectionSchema<$IriSchema<string>>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.ignoredProperties,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          readonly NamedNode[],
+          $CollectionSchema<$IriSchema<string>>
+        >(
+          $listFromRdfResourceValues<NamedNode, $IriSchema<string>>(
+            $iriFromRdfResourceValues<string>,
+          ),
+        ),
+      }),
+      isDefinedBy: $shaclPropertyFromRdf<
+        Maybe<BlankNode | NamedNode>,
+        $MaybeSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.isDefinedBy,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          BlankNode | NamedNode,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+      label: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.label,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      message: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.message,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      nodeKind: $shaclPropertyFromRdf<
+        Maybe<
+          NamedNode<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >
+        >,
+        $MaybeSchema<
+          $IriSchema<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >
+        >
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.nodeKind,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          NamedNode<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >,
+          $IriSchema<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >
+        >(
+          $iriFromRdfResourceValues<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >,
+        ),
+      }),
+      properties: $shaclPropertyFromRdf<
+        readonly (BlankNode | NamedNode)[],
+        $CollectionSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: OperationError.schema.properties.properties,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          BlankNode | NamedNode,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+      rdfType: $shaclPropertyFromRdf<
+        Maybe<NamedNode>,
+        $MaybeSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.rdfType,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      severity: $shaclPropertyFromRdf<
+        Maybe<Severity>,
+        $MaybeSchema<$IriSchema<Severity["value"]>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.severity,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Severity,
+          $IriSchema<Severity["value"]>
+        >($iriFromRdfResourceValues<Severity["value"]>),
+      }),
+      shaclmateName: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.shaclmateName,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      subClassOf: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.subClassOf,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      toRdfTypes: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.toRdfTypes,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      tsImports: $shaclPropertyFromRdf<
+        readonly string[],
+        $CollectionSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.tsImports,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      types: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.types,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+    }).chain((properties) => OperationError.create(properties));
+
+  export const $toString: $ToStringFunction<
+    Pick<OperationError, "$identifier" | "label" | "shaclmateName">
+  > = (_operationError) =>
+    `OperationError(${JSON.stringify(OperationError.toStringRecord(_operationError))})`;
+
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters?: OperationError.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, OperationError.Discriminated> = (parameters = {}) =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      $type: Right("OperationError" as const),
+      classes: $convertToScalarSet($convertToIri)(
+        parameters.classes,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
+          NodeShape.schema.properties.classes.type,
+          value,
+        ),
+      ),
+      closed: $convertToMaybe($identityConversionFunction)(
+        parameters.closed,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.closed.type,
+          value,
+        ),
+      ),
+      comment: $convertToMaybe($identityConversionFunction)(
+        parameters.comment,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.comment.type,
+          value,
+        ),
+      ),
+      deactivated: $convertToMaybe($identityConversionFunction)(
+        parameters.deactivated,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.deactivated.type,
+          value,
+        ),
+      ),
+      extern: $convertToMaybe($identityConversionFunction)(
+        parameters.extern,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.extern.type,
+          value,
+        ),
+      ),
+      fromRdfType: $convertToMaybe($convertToIri)(
+        parameters.fromRdfType,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.fromRdfType.type,
+          value,
+        ),
+      ),
+      ignoredProperties: $convertToMaybe($convertToList($convertToIri))(
+        parameters.ignoredProperties,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction))(
+          NodeShape.schema.properties.ignoredProperties.type,
+          value,
+        ),
+      ),
+      isDefinedBy: $convertToMaybe($convertToIdentifier)(
+        parameters.isDefinedBy,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.isDefinedBy.type,
+          value,
+        ),
+      ),
+      label: $convertToMaybe($identityConversionFunction)(
+        parameters.label,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.label.type,
+          value,
+        ),
+      ),
+      message: $convertToMaybe($identityConversionFunction)(
+        parameters.message,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.message.type,
+          value,
+        ),
+      ),
+      nodeKind: $convertToMaybe(
+        $convertToInIri<
+          | "http://www.w3.org/ns/shacl#BlankNode"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+          | "http://www.w3.org/ns/shacl#IRI"
+          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+          | "http://www.w3.org/ns/shacl#Literal"
+        >,
+      )(parameters.nodeKind, parameters.$defaultNamespace).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.nodeKind.type,
+          value,
+        ),
+      ),
+      properties: $convertToScalarSet($convertToIdentifier)(
+        parameters.properties,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
+          OperationError.schema.properties.properties.type,
+          value,
+        ),
+      ),
+      rdfType: $convertToMaybe($convertToIri)(
+        parameters.rdfType,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.rdfType.type,
+          value,
+        ),
+      ),
+      severity: $convertToMaybe($convertToInIri<Severity["value"]>)(
+        parameters.severity,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.severity.type,
+          value,
+        ),
+      ),
+      shaclmateName: $convertToMaybe($identityConversionFunction)(
+        parameters.shaclmateName,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.shaclmateName.type,
+          value,
+        ),
+      ),
+      subClassOf: $convertToScalarSet($convertToIri)(
+        parameters.subClassOf,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
+          NodeShape.schema.properties.subClassOf.type,
+          value,
+        ),
+      ),
+      toRdfTypes: $convertToScalarSet($convertToIri)(
+        parameters.toRdfTypes,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
+          NodeShape.schema.properties.toRdfTypes.type,
+          value,
+        ),
+      ),
+      tsImports: $convertToScalarSet($identityConversionFunction)(
+        parameters.tsImports,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
+          NodeShape.schema.properties.tsImports.type,
+          value,
+        ),
+      ),
+      types: $convertToScalarSet($convertToIri)(
+        parameters.types,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
+          NodeShape.schema.properties.types.type,
+          value,
+        ),
+      ),
+    }).map((object) =>
+      $monkeyPatchObject(object, { $toString: OperationError.$toString }),
+    );
+
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => OperationError.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly classes?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly closed?: boolean | Maybe<boolean>;
+    readonly comment?: string | Maybe<string>;
+    readonly deactivated?: boolean | Maybe<boolean>;
+    readonly extern?: boolean | Maybe<boolean>;
+    readonly fromRdfType?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
+    readonly ignoredProperties?:
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[]
+      | Maybe<readonly NamedNode[]>;
+    readonly isDefinedBy?:
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string)
+      | Maybe<BlankNode | NamedNode>;
+    readonly label?: string | Maybe<string>;
+    readonly message?: string | Maybe<string>;
+    readonly nodeKind?:
+      | (
+          | "http://www.w3.org/ns/shacl#BlankNode"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+          | "http://www.w3.org/ns/shacl#IRI"
+          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+          | "http://www.w3.org/ns/shacl#Literal"
+        )
+      | NamedNode<
+          | "http://www.w3.org/ns/shacl#BlankNode"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+          | "http://www.w3.org/ns/shacl#IRI"
+          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+          | "http://www.w3.org/ns/shacl#Literal"
+        >
+      | Maybe<
+          NamedNode<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >
+        >;
+    readonly properties?:
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string)
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[];
+    readonly rdfType?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
+    readonly severity?: Severity["value"] | Severity | Maybe<Severity>;
+    readonly shaclmateName?: string | Maybe<string>;
+    readonly subClassOf?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly toRdfTypes?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly tsImports?: string | readonly string[];
+    readonly types?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+  };
+
+  export const createUnsafe: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters?: OperationError.CreateParameters<$DefaultNamespaceT>,
+  ) => OperationError.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = OperationError & {
+    readonly $type: "OperationError";
+  };
+
+  export const fromRdfResource: $FromRdfResourceFunction<OperationError.Discriminated> =
+    $wrap_FromRdfResourceFunction(OperationError._fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    OperationError.Discriminated,
+    OperationError.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => OperationError.fromRdfResource(resource, options)),
+    );
+
+  export type Identifier = BlankNode | NamedNode;
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+  }
+
+  export const isOperationError: $ObjectTypeGuardFunction<
+    OperationError.Discriminated
+  > = (object): object is OperationError.Discriminated =>
+    object.$type === "OperationError";
+
+  export const schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      classes: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
+      },
+      closed: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#closed"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
+        },
+      },
+      comment: {
+        kind: "Shacl",
+        path: $rdfs_comment,
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const, datatype: $xsd_string },
+        },
+      },
+      deactivated: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#deactivated"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
+        },
+      },
+      extern: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#extern",
+        ),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
+        },
+      },
+      fromRdfType: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#fromRdfType",
+        ),
+        type: { kind: "Option" as const, itemType: { kind: "Iri" as const } },
+      },
+      ignoredProperties: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#ignoredProperties",
+        ),
+        type: {
+          kind: "Option" as const,
+          itemType: {
+            kind: "List" as const,
+            itemType: { kind: "Iri" as const },
+          },
+        },
+      },
+      isDefinedBy: {
+        kind: "Shacl",
+        path: $rdfs_isDefinedBy,
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "Identifier" as const },
+        },
+      },
+      label: {
+        kind: "Shacl",
+        path: $rdfs_label,
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const, datatype: $xsd_string },
+        },
+      },
+      message: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#message"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const, datatype: $xsd_string },
+        },
+      },
+      nodeKind: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
+        type: {
+          kind: "Option" as const,
+          itemType: {
+            kind: "Iri" as const,
+            in: [
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#BlankNode"),
+              dataFactory.namedNode(
+                "http://www.w3.org/ns/shacl#BlankNodeOrIRI",
+              ),
+              dataFactory.namedNode(
+                "http://www.w3.org/ns/shacl#BlankNodeOrLiteral",
+              ),
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#IRI"),
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#IRIOrLiteral"),
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#Literal"),
+            ] as const,
+          },
+        },
+      },
+      properties: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#property"),
+        type: {
+          kind: "Set" as const,
+          itemType: { kind: "Identifier" as const },
+          minCount: 1,
+        },
+      },
+      rdfType: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#rdfType",
+        ),
+        type: { kind: "Option" as const, itemType: { kind: "Iri" as const } },
+      },
+      severity: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#severity"),
+        get type() {
+          return {
+            kind: "Option" as const,
+            get itemType() {
+              return Severity.schema;
+            },
+          };
+        },
+      },
+      shaclmateName: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const, datatype: $xsd_string },
+        },
+      },
+      subClassOf: {
+        kind: "Shacl",
+        path: $rdfs_subClassOf,
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
+      },
+      toRdfTypes: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#toRdfType",
+        ),
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
+      },
+      tsImports: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#tsImport",
+        ),
+        type: {
+          kind: "Set" as const,
+          itemType: { kind: "String" as const, datatype: $xsd_string },
+        },
+      },
+      types: {
+        kind: "Shacl",
+        path: $rdf_type,
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
+      },
+    },
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<OperationError, "$identifier" | "label" | "shaclmateName">
+  > = (_operationError) =>
+    $compactRecord({
+      $identifier: _operationError.$identifier().toString(),
+      label: _operationError.label.map((item) => item.toString()).extract(),
+      shaclmateName: _operationError.shaclmateName
+        .map((item) => item.toString())
+        .extract(),
+    });
+}
+
+/**
+ * HTTP binding for an operation error
+ */
+export type OperationErrorHttpBinding = {
+  readonly $identifier: () => OperationErrorHttpBinding.Identifier;
+
+  /**
+   * HTTP client/server error code for the bound error.
+   */
+  readonly statusCode: OperationErrorHttpBindingStatusCode;
+};
+
+export namespace OperationErrorHttpBinding {
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    OperationErrorHttpBinding.Discriminated
+  > = (resource, options) =>
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
+          ...options,
+          focusResource: resource,
+          propertyPath: $rdf_subject,
+          schema: OperationErrorHttpBinding.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      statusCode: $shaclPropertyFromRdf<
+        OperationErrorHttpBindingStatusCode,
+        $NumericSchema<OperationErrorHttpBindingStatusCode>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: OperationErrorHttpBinding.schema.properties.statusCode,
+        typeFromRdfResourceValues:
+          $intFromRdfResourceValues<OperationErrorHttpBindingStatusCode>,
+      }),
+    }).chain((properties) => OperationErrorHttpBinding.create(properties));
+
+  export const $toString: $ToStringFunction<
+    Pick<OperationErrorHttpBinding, "$identifier">
+  > = (_operationErrorHttpBinding) =>
+    `OperationErrorHttpBinding(${JSON.stringify(
+      OperationErrorHttpBinding.toStringRecord(_operationErrorHttpBinding),
+    )})`;
+
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: OperationErrorHttpBinding.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, OperationErrorHttpBinding.Discriminated> = (parameters) =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      $type: Right("OperationErrorHttpBinding" as const),
+      statusCode: Either.of(parameters.statusCode),
+    }).map((object) =>
+      $monkeyPatchObject(object, {
+        $toString: OperationErrorHttpBinding.$toString,
+      }),
+    );
+
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => OperationErrorHttpBinding.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly statusCode: OperationErrorHttpBindingStatusCode;
+  };
+
+  export const createUnsafe: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: OperationErrorHttpBinding.CreateParameters<$DefaultNamespaceT>,
+  ) => OperationErrorHttpBinding.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = OperationErrorHttpBinding & {
+    readonly $type: "OperationErrorHttpBinding";
+  };
+
+  export const fromRdfResource: $FromRdfResourceFunction<OperationErrorHttpBinding.Discriminated> =
+    $wrap_FromRdfResourceFunction(OperationErrorHttpBinding._fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    OperationErrorHttpBinding.Discriminated,
+    OperationErrorHttpBinding.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) =>
+          OperationErrorHttpBinding.fromRdfResource(resource, options),
+        ),
+    );
+
+  export type Identifier = BlankNode | NamedNode;
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+  }
+
+  export const isOperationErrorHttpBinding: $ObjectTypeGuardFunction<
+    OperationErrorHttpBinding.Discriminated
+  > = (object): object is OperationErrorHttpBinding.Discriminated =>
+    object.$type === "OperationErrorHttpBinding";
+
+  export const schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      statusCode: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#httpStatusCode",
+        ),
+        get type() {
+          return OperationErrorHttpBindingStatusCode.schema;
+        },
+      },
+    },
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<OperationErrorHttpBinding, "$identifier">
+  > = (_operationErrorHttpBinding) =>
+    $compactRecord({
+      $identifier: _operationErrorHttpBinding.$identifier().toString(),
+    });
+}
+
+export type OperationErrorHttpBindingStatusCode =
+  OperationErrorHttpBindingStatusCode.Schema["in"][number];
+
+export namespace OperationErrorHttpBindingStatusCode {
+  export const schema = {
+    kind: "Int" as const,
+    in: [
+      400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414,
+      415, 416, 417, 418, 421, 422, 423, 424, 425, 426, 428, 429, 431, 451, 500,
+      501, 502, 503, 504, 505, 506, 507, 508, 510, 511,
+    ] as const,
+    datatype: $xsd_int,
+  };
+
+  export type Schema = typeof schema;
+}
+
+/**
+ * HTTP binding for an operation
+ */
+export type OperationHttpBinding = {
+  readonly $identifier: () => OperationHttpBinding.Identifier;
+
+  /**
+   * HTTP request body method. If this is not specified, it's inferred from the existence of path, query, and/or body parameters
+   */
+  readonly method: Maybe<OperationHttpBindingMethod>;
+
+  /**
+   * RFC 6570 URI template for the HTTP request. Variables in the template must correspond to properties of the parameter. Any other properties of the parameter are serialized into the HTTP requets body following the given/inferred content type.
+   */
+  readonly urlTemplate: string;
+};
+
+export namespace OperationHttpBinding {
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    OperationHttpBinding.Discriminated
+  > = (resource, options) =>
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
+          ...options,
+          focusResource: resource,
+          propertyPath: $rdf_subject,
+          schema: OperationHttpBinding.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      method: $shaclPropertyFromRdf<
+        Maybe<OperationHttpBindingMethod>,
+        $MaybeSchema<$StringSchema<OperationHttpBindingMethod>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: OperationHttpBinding.schema.properties.method,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          OperationHttpBindingMethod,
+          $StringSchema<OperationHttpBindingMethod>
+        >($stringFromRdfResourceValues<OperationHttpBindingMethod>),
+      }),
+      urlTemplate: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: OperationHttpBinding.schema.properties.urlTemplate,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) => OperationHttpBinding.create(properties));
+
+  export const $toString: $ToStringFunction<
+    Pick<OperationHttpBinding, "$identifier">
+  > = (_operationHttpBinding) =>
+    `OperationHttpBinding(${JSON.stringify(OperationHttpBinding.toStringRecord(_operationHttpBinding))})`;
+
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: OperationHttpBinding.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, OperationHttpBinding.Discriminated> = (parameters) =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      $type: Right("OperationHttpBinding" as const),
+      method: $convertToMaybe($identityConversionFunction)(
+        parameters.method,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          OperationHttpBinding.schema.properties.method.type,
+          value,
+        ),
+      ),
+      urlTemplate: Either.of(parameters.urlTemplate),
+    }).map((object) =>
+      $monkeyPatchObject(object, { $toString: OperationHttpBinding.$toString }),
+    );
+
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => OperationHttpBinding.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly method?:
+      | OperationHttpBindingMethod
+      | Maybe<OperationHttpBindingMethod>;
+    readonly urlTemplate: string;
+  };
+
+  export const createUnsafe: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: OperationHttpBinding.CreateParameters<$DefaultNamespaceT>,
+  ) => OperationHttpBinding.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = OperationHttpBinding & {
+    readonly $type: "OperationHttpBinding";
+  };
+
+  export const fromRdfResource: $FromRdfResourceFunction<OperationHttpBinding.Discriminated> =
+    $wrap_FromRdfResourceFunction(OperationHttpBinding._fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    OperationHttpBinding.Discriminated,
+    OperationHttpBinding.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) =>
+          OperationHttpBinding.fromRdfResource(resource, options),
+        ),
+    );
+
+  export type Identifier = BlankNode | NamedNode;
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+  }
+
+  export const isOperationHttpBinding: $ObjectTypeGuardFunction<
+    OperationHttpBinding.Discriminated
+  > = (object): object is OperationHttpBinding.Discriminated =>
+    object.$type === "OperationHttpBinding";
+
+  export const schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      method: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://schema.org/httpMethod"),
+        get type() {
+          return {
+            kind: "Option" as const,
+            get itemType() {
+              return OperationHttpBindingMethod.schema;
+            },
+          };
+        },
+      },
+      urlTemplate: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://schema.org/urlTemplate"),
+        type: { kind: "String" as const, datatype: $xsd_string },
+      },
+    },
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<OperationHttpBinding, "$identifier">
+  > = (_operationHttpBinding) =>
+    $compactRecord({
+      $identifier: _operationHttpBinding.$identifier().toString(),
+    });
+}
+
+export type OperationHttpBindingMethod =
+  OperationHttpBindingMethod.Schema["in"][number];
+
+export namespace OperationHttpBindingMethod {
+  export const schema = {
+    kind: "String" as const,
+    in: ["DELETE", "GET", "POST", "PUT"] as const,
+    datatype: $xsd_string,
+  };
+
+  export type Schema = typeof schema;
+}
+
+export type OperationHttpBindingStatusCode =
+  OperationHttpBindingStatusCode.Schema["in"][number];
+
+export namespace OperationHttpBindingStatusCode {
+  export const schema = {
+    kind: "Int" as const,
+    in: [200, 201, 202, 203, 204, 205, 206, 207, 208, 226] as const,
+    datatype: $xsd_int,
+  };
+
+  export type Schema = typeof schema;
+}
+
+export type OperationParameter = BlankNode | NamedNode;
+
+export namespace OperationParameter {
+  export const schema = { kind: "Identifier" as const };
+
+  export type Schema = typeof schema;
+}
+
+export type OperationParameterHttpBindingContentType =
+  OperationParameterHttpBindingContentType.Schema["in"][number];
+
+export namespace OperationParameterHttpBindingContentType {
+  export const schema = {
+    kind: "String" as const,
+    in: ["application/json"] as const,
+    datatype: $xsd_string,
+  };
+
+  export type Schema = typeof schema;
+}
+
+export type OperationResult = BlankNode | NamedNode;
+
+export namespace OperationResult {
+  export const schema = { kind: "Identifier" as const };
+
+  export type Schema = typeof schema;
+}
+
+export type OperationResultHttpBindingContentType =
+  OperationResultHttpBindingContentType.Schema["in"][number];
+
+export namespace OperationResultHttpBindingContentType {
+  export const schema = {
+    kind: "String" as const,
+    in: ["application/json"] as const,
+    datatype: $xsd_string,
+  };
+
+  export type Schema = typeof schema;
+}
+
 export type PropertyGroup = {
   readonly $identifier: () => PropertyGroup.Identifier;
-
-  readonly $type: "PropertyGroup";
 
   readonly comment: Maybe<string>;
 
@@ -3104,83 +4597,75 @@ export type PropertyGroup = {
 };
 
 export namespace PropertyGroup {
-  export const _fromRdfResource: $_FromRdfResourceFunction<PropertyGroup> = (
-    resource,
-    options,
-  ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [PropertyGroup.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            schema: PropertyGroup.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        comment: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    PropertyGroup.Discriminated
+  > = (resource, options) =>
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.comment,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        label: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.label,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-      }).chain((properties) => PropertyGroup.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: PropertyGroup.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [PropertyGroup.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      comment: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.comment,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      label: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.label,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+    }).chain((properties) => PropertyGroup.create(properties));
 
-  export const $toString: (_propertyGroup: PropertyGroup) => string = (
+  export const $toString: $ToStringFunction<Omit<PropertyGroup, "comment">> = (
     _propertyGroup,
-  ) => `PropertyGroup(${JSON.stringify(toStringRecord(_propertyGroup))})`;
+  ) =>
+    `PropertyGroup(${JSON.stringify(PropertyGroup.toStringRecord(_propertyGroup))})`;
 
-  export const create = <
+  export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PropertyGroup.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly comment?: string | Maybe<string>;
-    readonly label?: string | Maybe<string>;
-  }): Either<Error, PropertyGroup> =>
+  >(
+    parameters?: PropertyGroup.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, PropertyGroup.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
-        parameters?.$identifier,
-        parameters?.$defaultNamespace,
+        parameters.$identifier,
+        parameters.$defaultNamespace,
       ),
+      $type: Right("PropertyGroup" as const),
       comment: $convertToMaybe($identityConversionFunction)(
-        parameters?.comment,
-        parameters?.$defaultNamespace,
+        parameters.comment,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.comment.type,
@@ -3188,23 +4673,21 @@ export namespace PropertyGroup {
         ),
       ),
       label: $convertToMaybe($identityConversionFunction)(
-        parameters?.label,
-        parameters?.$defaultNamespace,
+        parameters.label,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.label.type,
           value,
         ),
       ),
-    })
-      .map((properties) => ({ ...properties, $type: "PropertyGroup" as const }))
-      .map((object) =>
-        $monkeyPatchObject(object, { $toString: PropertyGroup.$toString }),
-      );
+    }).map((object) =>
+      $monkeyPatchObject(object, { $toString: PropertyGroup.$toString }),
+    );
 
-  export function createUnsafe<
+  export type CreateParameters<
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
+  > = {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyGroup.Identifier)
@@ -3213,30 +4696,40 @@ export namespace PropertyGroup {
       | (keyof $DefaultNamespaceT & string);
     readonly comment?: string | Maybe<string>;
     readonly label?: string | Maybe<string>;
-  }): PropertyGroup {
-    return create(parameters).unsafeCoerce();
-  }
+  };
 
-  export const fromRdfResource =
-    $wrap_FromRdfResourceFunction(_fromRdfResource);
+  export const createUnsafe: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters?: PropertyGroup.CreateParameters<$DefaultNamespaceT>,
+  ) => PropertyGroup.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = PropertyGroup & {
+    readonly $type: "PropertyGroup";
+  };
+
+  export const fromRdfResource: $FromRdfResourceFunction<PropertyGroup.Discriminated> =
+    $wrap_FromRdfResourceFunction(PropertyGroup._fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    PropertyGroup,
+    PropertyGroup.Discriminated,
     PropertyGroup.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
         .toResource()
-        .chain((resource) => fromRdfResource(resource, options)),
+        .chain((resource) => PropertyGroup.fromRdfResource(resource, options)),
     );
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
-  export const isPropertyGroup = (object: $Object): object is PropertyGroup =>
+  export const isPropertyGroup: $ObjectTypeGuardFunction<
+    PropertyGroup.Discriminated
+  > = (object): object is PropertyGroup.Discriminated =>
     object.$type === "PropertyGroup";
 
   export const schema = {
@@ -3254,25 +4747,20 @@ export namespace PropertyGroup {
           dataFactory.namedNode("http://www.w3.org/ns/shacl#PropertyGroup"),
         ],
       },
-      $type: { kind: "Discriminant", value: "PropertyGroup" },
       comment: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
+        path: $rdfs_comment,
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       label: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
+        path: $rdfs_label,
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
     },
@@ -3280,18 +4768,17 @@ export namespace PropertyGroup {
 
   export type Schema = typeof schema;
 
-  export const toStringRecord: (
-    _propertyGroup: PropertyGroup,
-  ) => Record<string, string> = (_propertyGroup) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Omit<PropertyGroup, "comment">
+  > = (_propertyGroup) =>
     $compactRecord({
       $identifier: _propertyGroup.$identifier().toString(),
       label: _propertyGroup.label.map((item) => item.toString()).extract(),
     });
 }
+
 export type PropertyShape = {
   readonly $identifier: () => PropertyShape.Identifier;
-
-  readonly $type: "PropertyShape";
 
   readonly and: Maybe<readonly (BlankNode | NamedNode)[]>;
 
@@ -3357,6 +4844,9 @@ export type PropertyShape = {
 
   readonly minLength: Maybe<bigint>;
 
+  /**
+   * Whether the code generated from the shape should be mutable e.g., a mutable property, a mutable array, etc.
+   */
   readonly mutable: Maybe<boolean>;
 
   readonly name: Maybe<string>;
@@ -3396,6 +4886,9 @@ export type PropertyShape = {
 
   readonly severity: Maybe<Severity>;
 
+  /**
+   * Name to use in generated code. Used on node shapes (which don't permit sh:name) and to override sh:name in property shapes.
+   */
   readonly shaclmateName: Maybe<string>;
 
   readonly targetClasses: readonly NamedNode[];
@@ -3412,893 +4905,459 @@ export type PropertyShape = {
 };
 
 export namespace PropertyShape {
-  export const _fromRdfResource: $_FromRdfResourceFunction<PropertyShape> = (
-    resource,
-    options,
-  ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [PropertyShape.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            schema: PropertyShape.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        and: $shaclPropertyFromRdf<
-          Maybe<readonly (BlankNode | NamedNode)[]>,
-          $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
-        >({
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    PropertyShape.Discriminated
+  > = (resource, options) =>
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.and,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            readonly (BlankNode | NamedNode)[],
-            $CollectionSchema<$IdentifierSchema>
-          >(
-            $listFromRdfResourceValues<
-              BlankNode | NamedNode,
-              $IdentifierSchema
-            >($identifierFromRdfResourceValues),
-          ),
-        }),
-        classes: $shaclPropertyFromRdf<
-          readonly NamedNode[],
-          $CollectionSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.classes,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        comment: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.comment,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        datatype: $shaclPropertyFromRdf<
-          Maybe<NamedNode>,
-          $MaybeSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.datatype,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        deactivated: $shaclPropertyFromRdf<
-          Maybe<boolean>,
-          $MaybeSchema<$BooleanSchema<boolean>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.deactivated,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            boolean,
-            $BooleanSchema<boolean>
-          >($booleanFromRdfResourceValues<boolean>),
-        }),
-        defaultValue: $shaclPropertyFromRdf<
-          Maybe<NamedNode | Literal>,
-          $MaybeSchema<$TermSchema<NamedNode | Literal>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.defaultValue,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            NamedNode | Literal,
-            $TermSchema<NamedNode | Literal>
-          >($termFromRdfResourceValues<NamedNode | Literal>),
-        }),
-        description: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.description,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        disjoint: $shaclPropertyFromRdf<
-          readonly NamedNode[],
-          $CollectionSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.disjoint,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        display: $shaclPropertyFromRdf<
-          boolean,
-          $DefaultValueSchema<$BooleanSchema<boolean>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.display,
-          typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
-            boolean,
-            $BooleanSchema<boolean>
-          >($booleanFromRdfResourceValues<boolean>),
-        }),
-        equals: $shaclPropertyFromRdf<
-          readonly NamedNode[],
-          $CollectionSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.equals,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        flags: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.flags,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        groups: $shaclPropertyFromRdf<
+          propertyPath: $rdf_subject,
+          schema: PropertyShape.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [PropertyShape.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      and: $shaclPropertyFromRdf<
+        Maybe<readonly (BlankNode | NamedNode)[]>,
+        $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.and,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           readonly (BlankNode | NamedNode)[],
           $CollectionSchema<$IdentifierSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.groups,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            BlankNode | NamedNode,
-            $IdentifierSchema
-          >($identifierFromRdfResourceValues),
-        }),
-        hasValues: $shaclPropertyFromRdf<
-          readonly (NamedNode | Literal)[],
-          $CollectionSchema<$TermSchema<NamedNode | Literal>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.hasValues,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode | Literal,
-            $TermSchema<NamedNode | Literal>
-          >($termFromRdfResourceValues<NamedNode | Literal>),
-        }),
-        ignore: $shaclPropertyFromRdf<
+        >(
+          $listFromRdfResourceValues<BlankNode | NamedNode, $IdentifierSchema>(
+            $identifierFromRdfResourceValues,
+          ),
+        ),
+      }),
+      classes: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.classes,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      comment: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.comment,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      datatype: $shaclPropertyFromRdf<
+        Maybe<NamedNode>,
+        $MaybeSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.datatype,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      deactivated: $shaclPropertyFromRdf<
+        Maybe<boolean>,
+        $MaybeSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.deactivated,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           boolean,
-          $DefaultValueSchema<$BooleanSchema<boolean>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.ignore,
-          typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
-            boolean,
-            $BooleanSchema<boolean>
-          >($booleanFromRdfResourceValues<boolean>),
-        }),
-        in_: $shaclPropertyFromRdf<
-          Maybe<readonly (NamedNode | Literal)[]>,
-          $MaybeSchema<$CollectionSchema<$TermSchema<NamedNode | Literal>>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.in_,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            readonly (NamedNode | Literal)[],
-            $CollectionSchema<$TermSchema<NamedNode | Literal>>
-          >(
-            $listFromRdfResourceValues<
-              NamedNode | Literal,
-              $TermSchema<NamedNode | Literal>
-            >($termFromRdfResourceValues<NamedNode | Literal>),
-          ),
-        }),
-        isDefinedBy: $shaclPropertyFromRdf<
-          Maybe<BlankNode | NamedNode>,
-          $MaybeSchema<$IdentifierSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.isDefinedBy,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            BlankNode | NamedNode,
-            $IdentifierSchema
-          >($identifierFromRdfResourceValues),
-        }),
-        label: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.label,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        languageIn: $shaclPropertyFromRdf<
-          Maybe<readonly string[]>,
-          $MaybeSchema<$CollectionSchema<$StringSchema<string>>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.languageIn,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            readonly string[],
-            $CollectionSchema<$StringSchema<string>>
-          >(
-            $listFromRdfResourceValues<string, $StringSchema<string>>(
-              $stringFromRdfResourceValues<string>,
-            ),
-          ),
-        }),
-        lessThan: $shaclPropertyFromRdf<
-          readonly NamedNode[],
-          $CollectionSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.lessThan,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        lessThanOrEquals: $shaclPropertyFromRdf<
-          readonly NamedNode[],
-          $CollectionSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.lessThanOrEquals,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        maxCount: $shaclPropertyFromRdf<
-          Maybe<bigint>,
-          $MaybeSchema<$NumericSchema<bigint>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.maxCount,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            bigint,
-            $NumericSchema<bigint>
-          >($bigIntFromRdfResourceValues<bigint>),
-        }),
-        maxExclusive: $shaclPropertyFromRdf<
-          Maybe<Literal>,
-          $MaybeSchema<$LiteralSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.maxExclusive,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Literal,
-            $LiteralSchema
-          >($literalFromRdfResourceValues),
-        }),
-        maxInclusive: $shaclPropertyFromRdf<
-          Maybe<Literal>,
-          $MaybeSchema<$LiteralSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.maxInclusive,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Literal,
-            $LiteralSchema
-          >($literalFromRdfResourceValues),
-        }),
-        maxLength: $shaclPropertyFromRdf<
-          Maybe<bigint>,
-          $MaybeSchema<$NumericSchema<bigint>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.maxLength,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            bigint,
-            $NumericSchema<bigint>
-          >($bigIntFromRdfResourceValues<bigint>),
-        }),
-        message: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.message,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        minCount: $shaclPropertyFromRdf<
-          Maybe<bigint>,
-          $MaybeSchema<$NumericSchema<bigint>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.minCount,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            bigint,
-            $NumericSchema<bigint>
-          >($bigIntFromRdfResourceValues<bigint>),
-        }),
-        minExclusive: $shaclPropertyFromRdf<
-          Maybe<Literal>,
-          $MaybeSchema<$LiteralSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.minExclusive,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Literal,
-            $LiteralSchema
-          >($literalFromRdfResourceValues),
-        }),
-        minInclusive: $shaclPropertyFromRdf<
-          Maybe<Literal>,
-          $MaybeSchema<$LiteralSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.minInclusive,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Literal,
-            $LiteralSchema
-          >($literalFromRdfResourceValues),
-        }),
-        minLength: $shaclPropertyFromRdf<
-          Maybe<bigint>,
-          $MaybeSchema<$NumericSchema<bigint>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.minLength,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            bigint,
-            $NumericSchema<bigint>
-          >($bigIntFromRdfResourceValues<bigint>),
-        }),
-        mutable: $shaclPropertyFromRdf<
-          Maybe<boolean>,
-          $MaybeSchema<$BooleanSchema<boolean>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.mutable,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            boolean,
-            $BooleanSchema<boolean>
-          >($booleanFromRdfResourceValues<boolean>),
-        }),
-        name: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.name,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        node: $shaclPropertyFromRdf<
-          Maybe<BlankNode | NamedNode>,
-          $MaybeSchema<$IdentifierSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.node,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            BlankNode | NamedNode,
-            $IdentifierSchema
-          >($identifierFromRdfResourceValues),
-        }),
-        nodeKind: $shaclPropertyFromRdf<
-          Maybe<
-            NamedNode<
-              | "http://www.w3.org/ns/shacl#BlankNode"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-              | "http://www.w3.org/ns/shacl#IRI"
-              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-              | "http://www.w3.org/ns/shacl#Literal"
-            >
-          >,
-          $MaybeSchema<
-            $IriSchema<
-              | "http://www.w3.org/ns/shacl#BlankNode"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-              | "http://www.w3.org/ns/shacl#IRI"
-              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-              | "http://www.w3.org/ns/shacl#Literal"
-            >
-          >
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.nodeKind,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            NamedNode<
-              | "http://www.w3.org/ns/shacl#BlankNode"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-              | "http://www.w3.org/ns/shacl#IRI"
-              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-              | "http://www.w3.org/ns/shacl#Literal"
-            >,
-            $IriSchema<
-              | "http://www.w3.org/ns/shacl#BlankNode"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-              | "http://www.w3.org/ns/shacl#IRI"
-              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-              | "http://www.w3.org/ns/shacl#Literal"
-            >
-          >(
-            $iriFromRdfResourceValues<
-              | "http://www.w3.org/ns/shacl#BlankNode"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-              | "http://www.w3.org/ns/shacl#IRI"
-              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-              | "http://www.w3.org/ns/shacl#Literal"
-            >,
-          ),
-        }),
-        not: $shaclPropertyFromRdf<
-          readonly (BlankNode | NamedNode)[],
-          $CollectionSchema<$IdentifierSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.not,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            BlankNode | NamedNode,
-            $IdentifierSchema
-          >($identifierFromRdfResourceValues),
-        }),
-        or: $shaclPropertyFromRdf<
-          Maybe<readonly (BlankNode | NamedNode)[]>,
-          $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.or,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            readonly (BlankNode | NamedNode)[],
-            $CollectionSchema<$IdentifierSchema>
-          >(
-            $listFromRdfResourceValues<
-              BlankNode | NamedNode,
-              $IdentifierSchema
-            >($identifierFromRdfResourceValues),
-          ),
-        }),
-        order: $shaclPropertyFromRdf<
-          Maybe<number>,
-          $MaybeSchema<$NumericSchema<number>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.order,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            number,
-            $NumericSchema<number>
-          >($floatFromRdfResourceValues<number>),
-        }),
-        path: $shaclPropertyFromRdf<$PropertyPath, $PropertyPath.Schema>({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.path,
-          typeFromRdfResourceValues: $PropertyPath.fromRdfResourceValues,
-        }),
-        pattern: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.pattern,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        qualifiedMaxCount: $shaclPropertyFromRdf<
-          Maybe<bigint>,
-          $MaybeSchema<$NumericSchema<bigint>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.qualifiedMaxCount,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            bigint,
-            $NumericSchema<bigint>
-          >($bigIntFromRdfResourceValues<bigint>),
-        }),
-        qualifiedMinCount: $shaclPropertyFromRdf<
-          Maybe<bigint>,
-          $MaybeSchema<$NumericSchema<bigint>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.qualifiedMinCount,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            bigint,
-            $NumericSchema<bigint>
-          >($bigIntFromRdfResourceValues<bigint>),
-        }),
-        qualifiedValueShape: $shaclPropertyFromRdf<
-          Maybe<BlankNode | NamedNode>,
-          $MaybeSchema<$IdentifierSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.qualifiedValueShape,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            BlankNode | NamedNode,
-            $IdentifierSchema
-          >($identifierFromRdfResourceValues),
-        }),
-        qualifiedValueShapesDisjoint: $shaclPropertyFromRdf<
-          Maybe<boolean>,
-          $MaybeSchema<$BooleanSchema<boolean>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            PropertyShape.schema.properties.qualifiedValueShapesDisjoint,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            boolean,
-            $BooleanSchema<boolean>
-          >($booleanFromRdfResourceValues<boolean>),
-        }),
-        resolve: $shaclPropertyFromRdf<
-          Maybe<BlankNode | NamedNode>,
-          $MaybeSchema<$IdentifierSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.resolve,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            BlankNode | NamedNode,
-            $IdentifierSchema
-          >($identifierFromRdfResourceValues),
-        }),
-        severity: $shaclPropertyFromRdf<
-          Maybe<Severity>,
-          $MaybeSchema<$IriSchema<Severity["value"]>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.severity,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            Severity,
-            $IriSchema<Severity["value"]>
-          >($iriFromRdfResourceValues<Severity["value"]>),
-        }),
-        shaclmateName: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.shaclmateName,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        targetClasses: $shaclPropertyFromRdf<
-          readonly NamedNode[],
-          $CollectionSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.targetClasses,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        targetNodes: $shaclPropertyFromRdf<
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+      defaultValue: $shaclPropertyFromRdf<
+        Maybe<NamedNode | Literal>,
+        $MaybeSchema<$TermSchema<NamedNode | Literal>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.defaultValue,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          NamedNode | Literal,
+          $TermSchema<NamedNode | Literal>
+        >($termFromRdfResourceValues<NamedNode | Literal>),
+      }),
+      description: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.description,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      disjoint: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.disjoint,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      display: $shaclPropertyFromRdf<
+        boolean,
+        $DefaultValueSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.display,
+        typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
+          boolean,
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+      equals: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.equals,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      flags: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.flags,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      groups: $shaclPropertyFromRdf<
+        readonly (BlankNode | NamedNode)[],
+        $CollectionSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.groups,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          BlankNode | NamedNode,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+      hasValues: $shaclPropertyFromRdf<
+        readonly (NamedNode | Literal)[],
+        $CollectionSchema<$TermSchema<NamedNode | Literal>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.hasValues,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode | Literal,
+          $TermSchema<NamedNode | Literal>
+        >($termFromRdfResourceValues<NamedNode | Literal>),
+      }),
+      ignore: $shaclPropertyFromRdf<
+        boolean,
+        $DefaultValueSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.ignore,
+        typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
+          boolean,
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+      in_: $shaclPropertyFromRdf<
+        Maybe<readonly (NamedNode | Literal)[]>,
+        $MaybeSchema<$CollectionSchema<$TermSchema<NamedNode | Literal>>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.in_,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           readonly (NamedNode | Literal)[],
           $CollectionSchema<$TermSchema<NamedNode | Literal>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.targetNodes,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
+        >(
+          $listFromRdfResourceValues<
             NamedNode | Literal,
             $TermSchema<NamedNode | Literal>
           >($termFromRdfResourceValues<NamedNode | Literal>),
-        }),
-        targetObjectsOf: $shaclPropertyFromRdf<
-          readonly NamedNode[],
-          $CollectionSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.targetObjectsOf,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        targetSubjectsOf: $shaclPropertyFromRdf<
-          readonly NamedNode[],
-          $CollectionSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.targetSubjectsOf,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        uniqueLang: $shaclPropertyFromRdf<
-          Maybe<boolean>,
-          $MaybeSchema<$BooleanSchema<boolean>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: PropertyShape.schema.properties.uniqueLang,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            boolean,
-            $BooleanSchema<boolean>
-          >($booleanFromRdfResourceValues<boolean>),
-        }),
-        xone: $shaclPropertyFromRdf<
-          Maybe<readonly (BlankNode | NamedNode)[]>,
-          $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NodeShape.schema.properties.xone,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            readonly (BlankNode | NamedNode)[],
-            $CollectionSchema<$IdentifierSchema>
-          >(
-            $listFromRdfResourceValues<
-              BlankNode | NamedNode,
-              $IdentifierSchema
-            >($identifierFromRdfResourceValues),
+        ),
+      }),
+      isDefinedBy: $shaclPropertyFromRdf<
+        Maybe<BlankNode | NamedNode>,
+        $MaybeSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.isDefinedBy,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          BlankNode | NamedNode,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+      label: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.label,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      languageIn: $shaclPropertyFromRdf<
+        Maybe<readonly string[]>,
+        $MaybeSchema<$CollectionSchema<$StringSchema<string>>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.languageIn,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          readonly string[],
+          $CollectionSchema<$StringSchema<string>>
+        >(
+          $listFromRdfResourceValues<string, $StringSchema<string>>(
+            $stringFromRdfResourceValues<string>,
           ),
-        }),
-      }).chain((properties) => PropertyShape.create(properties)),
-    );
-
-  export const $toString: (_propertyShape: PropertyShape) => string = (
-    _propertyShape,
-  ) => `PropertyShape(${JSON.stringify(toStringRecord(_propertyShape))})`;
-
-  export const create = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => PropertyShape.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly and?:
-      | readonly (
-          | BlankNode
-          | NamedNode
-          | (keyof $DefaultNamespaceT & string)
-          | undefined
-        )[]
-      | Maybe<readonly (BlankNode | NamedNode)[]>;
-    readonly classes?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly comment?: string | Maybe<string>;
-    readonly datatype?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly deactivated?: boolean | Maybe<boolean>;
-    readonly defaultValue?: (NamedNode | Literal) | Maybe<NamedNode | Literal>;
-    readonly description?: string | Maybe<string>;
-    readonly disjoint?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly display?: boolean;
-    readonly equals?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly flags?: string | Maybe<string>;
-    readonly groups?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | readonly (
-          | BlankNode
-          | NamedNode
-          | (keyof $DefaultNamespaceT & string)
-          | undefined
-        )[];
-    readonly hasValues?:
-      | (NamedNode | Literal)
-      | readonly (NamedNode | Literal)[];
-    readonly ignore?: boolean;
-    readonly in_?:
-      | readonly (NamedNode | Literal)[]
-      | Maybe<readonly (NamedNode | Literal)[]>;
-    readonly isDefinedBy?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-    readonly label?: string | Maybe<string>;
-    readonly languageIn?: readonly string[] | Maybe<readonly string[]>;
-    readonly lessThan?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly lessThanOrEquals?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly maxCount?: bigint | number | string | Maybe<bigint>;
-    readonly maxExclusive?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
-    readonly maxInclusive?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
-    readonly maxLength?: bigint | number | string | Maybe<bigint>;
-    readonly message?: string | Maybe<string>;
-    readonly minCount?: bigint | number | string | Maybe<bigint>;
-    readonly minExclusive?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
-    readonly minInclusive?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
-    readonly minLength?: bigint | number | string | Maybe<bigint>;
-    readonly mutable?: boolean | Maybe<boolean>;
-    readonly name?: string | Maybe<string>;
-    readonly node?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-    readonly nodeKind?:
-      | (
-          | "http://www.w3.org/ns/shacl#BlankNode"
-          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-          | "http://www.w3.org/ns/shacl#IRI"
-          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-          | "http://www.w3.org/ns/shacl#Literal"
-        )
-      | NamedNode<
-          | "http://www.w3.org/ns/shacl#BlankNode"
-          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-          | "http://www.w3.org/ns/shacl#IRI"
-          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-          | "http://www.w3.org/ns/shacl#Literal"
-        >
-      | Maybe<
+        ),
+      }),
+      lessThan: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.lessThan,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      lessThanOrEquals: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.lessThanOrEquals,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      maxCount: $shaclPropertyFromRdf<
+        Maybe<bigint>,
+        $MaybeSchema<$NumericSchema<bigint>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.maxCount,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          bigint,
+          $NumericSchema<bigint>
+        >($bigIntFromRdfResourceValues<bigint>),
+      }),
+      maxExclusive: $shaclPropertyFromRdf<
+        Maybe<Literal>,
+        $MaybeSchema<$LiteralSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.maxExclusive,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Literal,
+          $LiteralSchema
+        >($literalFromRdfResourceValues),
+      }),
+      maxInclusive: $shaclPropertyFromRdf<
+        Maybe<Literal>,
+        $MaybeSchema<$LiteralSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.maxInclusive,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Literal,
+          $LiteralSchema
+        >($literalFromRdfResourceValues),
+      }),
+      maxLength: $shaclPropertyFromRdf<
+        Maybe<bigint>,
+        $MaybeSchema<$NumericSchema<bigint>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.maxLength,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          bigint,
+          $NumericSchema<bigint>
+        >($bigIntFromRdfResourceValues<bigint>),
+      }),
+      message: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.message,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      minCount: $shaclPropertyFromRdf<
+        Maybe<bigint>,
+        $MaybeSchema<$NumericSchema<bigint>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.minCount,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          bigint,
+          $NumericSchema<bigint>
+        >($bigIntFromRdfResourceValues<bigint>),
+      }),
+      minExclusive: $shaclPropertyFromRdf<
+        Maybe<Literal>,
+        $MaybeSchema<$LiteralSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.minExclusive,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Literal,
+          $LiteralSchema
+        >($literalFromRdfResourceValues),
+      }),
+      minInclusive: $shaclPropertyFromRdf<
+        Maybe<Literal>,
+        $MaybeSchema<$LiteralSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.minInclusive,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Literal,
+          $LiteralSchema
+        >($literalFromRdfResourceValues),
+      }),
+      minLength: $shaclPropertyFromRdf<
+        Maybe<bigint>,
+        $MaybeSchema<$NumericSchema<bigint>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.minLength,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          bigint,
+          $NumericSchema<bigint>
+        >($bigIntFromRdfResourceValues<bigint>),
+      }),
+      mutable: $shaclPropertyFromRdf<
+        Maybe<boolean>,
+        $MaybeSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.mutable,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          boolean,
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+      name: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.name,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      node: $shaclPropertyFromRdf<
+        Maybe<BlankNode | NamedNode>,
+        $MaybeSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.node,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          BlankNode | NamedNode,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+      nodeKind: $shaclPropertyFromRdf<
+        Maybe<
           NamedNode<
             | "http://www.w3.org/ns/shacl#BlankNode"
             | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
@@ -4307,73 +5366,308 @@ export namespace PropertyShape {
             | "http://www.w3.org/ns/shacl#IRIOrLiteral"
             | "http://www.w3.org/ns/shacl#Literal"
           >
-        >;
-    readonly not?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | readonly (
-          | BlankNode
-          | NamedNode
-          | (keyof $DefaultNamespaceT & string)
-          | undefined
-        )[];
-    readonly or?:
-      | readonly (
-          | BlankNode
-          | NamedNode
-          | (keyof $DefaultNamespaceT & string)
-          | undefined
-        )[]
-      | Maybe<readonly (BlankNode | NamedNode)[]>;
-    readonly order?: number | Maybe<number>;
-    readonly path: $PropertyPath;
-    readonly pattern?: string | Maybe<string>;
-    readonly qualifiedMaxCount?: bigint | number | string | Maybe<bigint>;
-    readonly qualifiedMinCount?: bigint | number | string | Maybe<bigint>;
-    readonly qualifiedValueShape?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-    readonly qualifiedValueShapesDisjoint?: boolean | Maybe<boolean>;
-    readonly resolve?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-    readonly severity?: Severity["value"] | Severity | Maybe<Severity>;
-    readonly shaclmateName?: string | Maybe<string>;
-    readonly targetClasses?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly targetNodes?:
-      | (NamedNode | Literal)
-      | readonly (NamedNode | Literal)[];
-    readonly targetObjectsOf?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly targetSubjectsOf?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly uniqueLang?: boolean | Maybe<boolean>;
-    readonly xone?:
-      | readonly (
-          | BlankNode
-          | NamedNode
-          | (keyof $DefaultNamespaceT & string)
-          | undefined
-        )[]
-      | Maybe<readonly (BlankNode | NamedNode)[]>;
-  }): Either<Error, PropertyShape> =>
+        >,
+        $MaybeSchema<
+          $IriSchema<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >
+        >
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.nodeKind,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          NamedNode<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >,
+          $IriSchema<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >
+        >(
+          $iriFromRdfResourceValues<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >,
+        ),
+      }),
+      not: $shaclPropertyFromRdf<
+        readonly (BlankNode | NamedNode)[],
+        $CollectionSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.not,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          BlankNode | NamedNode,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+      or: $shaclPropertyFromRdf<
+        Maybe<readonly (BlankNode | NamedNode)[]>,
+        $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.or,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          readonly (BlankNode | NamedNode)[],
+          $CollectionSchema<$IdentifierSchema>
+        >(
+          $listFromRdfResourceValues<BlankNode | NamedNode, $IdentifierSchema>(
+            $identifierFromRdfResourceValues,
+          ),
+        ),
+      }),
+      order: $shaclPropertyFromRdf<
+        Maybe<number>,
+        $MaybeSchema<$NumericSchema<number>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.order,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          number,
+          $NumericSchema<number>
+        >($floatFromRdfResourceValues<number>),
+      }),
+      path: $shaclPropertyFromRdf<$PropertyPath, $PropertyPath.Schema>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.path,
+        typeFromRdfResourceValues: $PropertyPath.fromRdfResourceValues,
+      }),
+      pattern: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.pattern,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      qualifiedMaxCount: $shaclPropertyFromRdf<
+        Maybe<bigint>,
+        $MaybeSchema<$NumericSchema<bigint>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.qualifiedMaxCount,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          bigint,
+          $NumericSchema<bigint>
+        >($bigIntFromRdfResourceValues<bigint>),
+      }),
+      qualifiedMinCount: $shaclPropertyFromRdf<
+        Maybe<bigint>,
+        $MaybeSchema<$NumericSchema<bigint>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.qualifiedMinCount,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          bigint,
+          $NumericSchema<bigint>
+        >($bigIntFromRdfResourceValues<bigint>),
+      }),
+      qualifiedValueShape: $shaclPropertyFromRdf<
+        Maybe<BlankNode | NamedNode>,
+        $MaybeSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.qualifiedValueShape,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          BlankNode | NamedNode,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+      qualifiedValueShapesDisjoint: $shaclPropertyFromRdf<
+        Maybe<boolean>,
+        $MaybeSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          PropertyShape.schema.properties.qualifiedValueShapesDisjoint,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          boolean,
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+      resolve: $shaclPropertyFromRdf<
+        Maybe<BlankNode | NamedNode>,
+        $MaybeSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.resolve,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          BlankNode | NamedNode,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+      severity: $shaclPropertyFromRdf<
+        Maybe<Severity>,
+        $MaybeSchema<$IriSchema<Severity["value"]>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.severity,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          Severity,
+          $IriSchema<Severity["value"]>
+        >($iriFromRdfResourceValues<Severity["value"]>),
+      }),
+      shaclmateName: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.shaclmateName,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      targetClasses: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.targetClasses,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      targetNodes: $shaclPropertyFromRdf<
+        readonly (NamedNode | Literal)[],
+        $CollectionSchema<$TermSchema<NamedNode | Literal>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.targetNodes,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode | Literal,
+          $TermSchema<NamedNode | Literal>
+        >($termFromRdfResourceValues<NamedNode | Literal>),
+      }),
+      targetObjectsOf: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.targetObjectsOf,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      targetSubjectsOf: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.targetSubjectsOf,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
+      uniqueLang: $shaclPropertyFromRdf<
+        Maybe<boolean>,
+        $MaybeSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: PropertyShape.schema.properties.uniqueLang,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          boolean,
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+      xone: $shaclPropertyFromRdf<
+        Maybe<readonly (BlankNode | NamedNode)[]>,
+        $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.xone,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          readonly (BlankNode | NamedNode)[],
+          $CollectionSchema<$IdentifierSchema>
+        >(
+          $listFromRdfResourceValues<BlankNode | NamedNode, $IdentifierSchema>(
+            $identifierFromRdfResourceValues,
+          ),
+        ),
+      }),
+    }).chain((properties) => PropertyShape.create(properties));
+
+  export const $toString: $ToStringFunction<
+    Pick<
+      PropertyShape,
+      "$identifier" | "label" | "name" | "path" | "shaclmateName"
+    >
+  > = (_propertyShape) =>
+    `PropertyShape(${JSON.stringify(PropertyShape.toStringRecord(_propertyShape))})`;
+
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: PropertyShape.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, PropertyShape.Discriminated> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
         parameters.$defaultNamespace,
       ),
+      $type: Right("PropertyShape" as const),
       and: $convertToMaybe($convertToList($convertToIdentifier))(
         parameters.and,
         parameters.$defaultNamespace,
@@ -4823,15 +6117,13 @@ export namespace PropertyShape {
           value,
         ),
       ),
-    })
-      .map((properties) => ({ ...properties, $type: "PropertyShape" as const }))
-      .map((object) =>
-        $monkeyPatchObject(object, { $toString: PropertyShape.$toString }),
-      );
+    }).map((object) =>
+      $monkeyPatchObject(object, { $toString: PropertyShape.$toString }),
+    );
 
-  export function createUnsafe<
+  export type CreateParameters<
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
+  > = {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyShape.Identifier)
@@ -5031,30 +6323,40 @@ export namespace PropertyShape {
           | undefined
         )[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
-  }): PropertyShape {
-    return create(parameters).unsafeCoerce();
-  }
+  };
 
-  export const fromRdfResource =
-    $wrap_FromRdfResourceFunction(_fromRdfResource);
+  export const createUnsafe: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: PropertyShape.CreateParameters<$DefaultNamespaceT>,
+  ) => PropertyShape.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = PropertyShape & {
+    readonly $type: "PropertyShape";
+  };
+
+  export const fromRdfResource: $FromRdfResourceFunction<PropertyShape.Discriminated> =
+    $wrap_FromRdfResourceFunction(PropertyShape._fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    PropertyShape,
+    PropertyShape.Discriminated,
     PropertyShape.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
         .toResource()
-        .chain((resource) => fromRdfResource(resource, options)),
+        .chain((resource) => PropertyShape.fromRdfResource(resource, options)),
     );
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
-  export const isPropertyShape = (object: $Object): object is PropertyShape =>
+  export const isPropertyShape: $ObjectTypeGuardFunction<
+    PropertyShape.Discriminated
+  > = (object): object is PropertyShape.Discriminated =>
     object.$type === "PropertyShape";
 
   export const schema = {
@@ -5072,7 +6374,6 @@ export namespace PropertyShape {
           dataFactory.namedNode("http://www.w3.org/ns/shacl#PropertyShape"),
         ],
       },
-      $type: { kind: "Discriminant", value: "PropertyShape" },
       and: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
@@ -5091,12 +6392,10 @@ export namespace PropertyShape {
       },
       comment: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
+        path: $rdfs_comment,
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       datatype: {
@@ -5109,7 +6408,7 @@ export namespace PropertyShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#deactivated"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "Boolean" as const },
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
         },
       },
       defaultValue: {
@@ -5125,7 +6424,7 @@ export namespace PropertyShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#description"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       disjoint: {
@@ -5140,11 +6439,8 @@ export namespace PropertyShape {
         ),
         type: {
           kind: "DefaultValue" as const,
-          itemType: { kind: "Boolean" as const },
-          defaultValue: dataFactory.literal(
-            "false",
-            $RdfVocabularies.xsd.boolean,
-          ),
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
+          defaultValue: dataFactory.literal("false", $xsd_boolean),
         },
       },
       equals: {
@@ -5157,7 +6453,7 @@ export namespace PropertyShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       groups: {
@@ -5183,11 +6479,8 @@ export namespace PropertyShape {
         ),
         type: {
           kind: "DefaultValue" as const,
-          itemType: { kind: "Boolean" as const },
-          defaultValue: dataFactory.literal(
-            "false",
-            $RdfVocabularies.xsd.boolean,
-          ),
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
+          defaultValue: dataFactory.literal("false", $xsd_boolean),
         },
       },
       in_: {
@@ -5206,9 +6499,7 @@ export namespace PropertyShape {
       },
       isDefinedBy: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-        ),
+        path: $rdfs_isDefinedBy,
         type: {
           kind: "Option" as const,
           itemType: { kind: "Identifier" as const },
@@ -5216,12 +6507,10 @@ export namespace PropertyShape {
       },
       label: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
+        path: $rdfs_label,
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       languageIn: {
@@ -5231,7 +6520,7 @@ export namespace PropertyShape {
           kind: "Option" as const,
           itemType: {
             kind: "List" as const,
-            itemType: { kind: "String" as const },
+            itemType: { kind: "String" as const, datatype: $xsd_string },
           },
         },
       },
@@ -5252,7 +6541,7 @@ export namespace PropertyShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "BigInt" as const },
+          itemType: { kind: "BigInt" as const, datatype: $xsd_integer },
         },
       },
       maxExclusive: {
@@ -5276,7 +6565,7 @@ export namespace PropertyShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "BigInt" as const },
+          itemType: { kind: "BigInt" as const, datatype: $xsd_integer },
         },
       },
       message: {
@@ -5284,7 +6573,7 @@ export namespace PropertyShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#message"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       minCount: {
@@ -5292,7 +6581,7 @@ export namespace PropertyShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "BigInt" as const },
+          itemType: { kind: "BigInt" as const, datatype: $xsd_integer },
         },
       },
       minExclusive: {
@@ -5316,7 +6605,7 @@ export namespace PropertyShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "BigInt" as const },
+          itemType: { kind: "BigInt" as const, datatype: $xsd_integer },
         },
       },
       mutable: {
@@ -5326,7 +6615,7 @@ export namespace PropertyShape {
         ),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "Boolean" as const },
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
         },
       },
       name: {
@@ -5334,7 +6623,7 @@ export namespace PropertyShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#name"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       node: {
@@ -5389,7 +6678,10 @@ export namespace PropertyShape {
       order: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#order"),
-        type: { kind: "Option" as const, itemType: { kind: "Float" as const } },
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "Float" as const, datatype: $xsd_double },
+        },
       },
       path: {
         kind: "Shacl",
@@ -5403,7 +6695,7 @@ export namespace PropertyShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       qualifiedMaxCount: {
@@ -5413,7 +6705,7 @@ export namespace PropertyShape {
         ),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "BigInt" as const },
+          itemType: { kind: "BigInt" as const, datatype: $xsd_integer },
         },
       },
       qualifiedMinCount: {
@@ -5423,7 +6715,7 @@ export namespace PropertyShape {
         ),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "BigInt" as const },
+          itemType: { kind: "BigInt" as const, datatype: $xsd_integer },
         },
       },
       qualifiedValueShape: {
@@ -5443,7 +6735,7 @@ export namespace PropertyShape {
         ),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "Boolean" as const },
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
         },
       },
       resolve: {
@@ -5473,7 +6765,7 @@ export namespace PropertyShape {
         path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       targetClasses: {
@@ -5508,7 +6800,7 @@ export namespace PropertyShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#uniqueLang"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "Boolean" as const },
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
         },
       },
       xone: {
@@ -5527,9 +6819,12 @@ export namespace PropertyShape {
 
   export type Schema = typeof schema;
 
-  export const toStringRecord: (
-    _propertyShape: PropertyShape,
-  ) => Record<string, string> = (_propertyShape) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<
+      PropertyShape,
+      "$identifier" | "label" | "name" | "path" | "shaclmateName"
+    >
+  > = (_propertyShape) =>
     $compactRecord({
       $identifier: _propertyShape.$identifier().toString(),
       label: _propertyShape.label.map((item) => item.toString()).extract(),
@@ -5540,6 +6835,273 @@ export namespace PropertyShape {
         .extract(),
     });
 }
+
+/**
+ * Service with operations
+ */
+export type Service = {
+  readonly $identifier: () => Service.Identifier;
+
+  readonly comment: Maybe<string>;
+
+  readonly label: Maybe<string>;
+
+  /**
+   * Identifier-safe name of the service
+   */
+  readonly name: Maybe<string>;
+
+  /**
+   * Set of operations associated with the service
+   */
+  readonly operations: readonly Operation[];
+};
+
+export namespace Service {
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    Service.Discriminated
+  > = (resource, options) =>
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
+          ...options,
+          focusResource: resource,
+          propertyPath: $rdf_subject,
+          schema: Service.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [Service.schema.properties.$rdfType.fromRdfType],
+            { graph: options.graph },
+          )
+        : Right(true as const),
+      comment: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.comment,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      label: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.label,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      name: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: Service.schema.properties.name,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      operations: $shaclPropertyFromRdf<
+        readonly Operation[],
+        $CollectionSchema<Operation.Schema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: Service.schema.properties.operations,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          Operation,
+          Operation.Schema
+        >(Operation.fromRdfResourceValues),
+      }),
+    }).chain((properties) => Service.create(properties));
+
+  export const $toString: $ToStringFunction<
+    Omit<Service, "comment" | "operations">
+  > = (_service) =>
+    `Service(${JSON.stringify(Service.toStringRecord(_service))})`;
+
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters?: Service.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, Service.Discriminated> = (parameters = {}) =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      $type: Right("Service" as const),
+      comment: $convertToMaybe($identityConversionFunction)(
+        parameters.comment,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.comment.type,
+          value,
+        ),
+      ),
+      label: $convertToMaybe($identityConversionFunction)(
+        parameters.label,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.label.type,
+          value,
+        ),
+      ),
+      name: $convertToMaybe($identityConversionFunction)(
+        parameters.name,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          Service.schema.properties.name.type,
+          value,
+        ),
+      ),
+      operations: $convertToScalarSet($identityConversionFunction)(
+        parameters.operations,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
+          Service.schema.properties.operations.type,
+          value,
+        ),
+      ),
+    }).map((object) =>
+      $monkeyPatchObject(object, { $toString: Service.$toString }),
+    );
+
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => Service.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly comment?: string | Maybe<string>;
+    readonly label?: string | Maybe<string>;
+    readonly name?: string | Maybe<string>;
+    readonly operations?: Operation | readonly Operation[];
+  };
+
+  export const createUnsafe: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters?: Service.CreateParameters<$DefaultNamespaceT>,
+  ) => Service.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = Service & { readonly $type: "Service" };
+
+  export const fromRdfResource: $FromRdfResourceFunction<Service.Discriminated> =
+    $wrap_FromRdfResourceFunction(Service._fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    Service.Discriminated,
+    Service.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => Service.fromRdfResource(resource, options)),
+    );
+
+  export type Identifier = BlankNode | NamedNode;
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+  }
+
+  export const isService: $ObjectTypeGuardFunction<Service.Discriminated> = (
+    object,
+  ): object is Service.Discriminated => object.$type === "Service";
+
+  export const schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#Service",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://purl.org/shaclmate/ontology#Service"),
+        ],
+      },
+      comment: {
+        kind: "Shacl",
+        path: $rdfs_comment,
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const, datatype: $xsd_string },
+        },
+      },
+      label: {
+        kind: "Shacl",
+        path: $rdfs_label,
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const, datatype: $xsd_string },
+        },
+      },
+      name: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const, datatype: $xsd_string },
+        },
+      },
+      operations: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#operation",
+        ),
+        get type() {
+          return {
+            kind: "Set" as const,
+            get itemType() {
+              return Operation.schema;
+            },
+          };
+        },
+      },
+    },
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export const toStringRecord: $ToStringRecordFunction<
+    Omit<Service, "comment" | "operations">
+  > = (_service) =>
+    $compactRecord({
+      $identifier: _service.$identifier().toString(),
+      label: _service.label.map((item) => item.toString()).extract(),
+      name: _service.name.map((item) => item.toString()).extract(),
+    });
+}
+
 export type Severity = NamedNode<(typeof Severity.schema)["inValues"][number]>;
 
 export namespace Severity {
@@ -5554,11 +7116,12 @@ export namespace Severity {
     in: inValues.map((inValue) => dataFactory.namedNode(inValue)),
     inValues,
   };
+
+  export type Schema = typeof schema;
 }
+
 export type ValidationReport = {
   readonly $identifier: () => ValidationReport.Identifier;
-
-  readonly $type: "ValidationReport";
 
   readonly conforms: boolean;
 
@@ -5568,89 +7131,80 @@ export type ValidationReport = {
 };
 
 export namespace ValidationReport {
-  export const _fromRdfResource: $_FromRdfResourceFunction<ValidationReport> = (
-    resource,
-    options,
-  ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [ValidationReport.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            schema: ValidationReport.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        conforms: $shaclPropertyFromRdf<boolean, $BooleanSchema<boolean>>({
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    ValidationReport.Discriminated
+  > = (resource, options) =>
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ValidationReport.schema.properties.conforms,
-          typeFromRdfResourceValues: $booleanFromRdfResourceValues<boolean>,
-        }),
-        results: $shaclPropertyFromRdf<
-          readonly ValidationResult[],
-          $CollectionSchema<ValidationResult.Schema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ValidationReport.schema.properties.results,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            ValidationResult,
-            ValidationResult.Schema
-          >(ValidationResult.fromRdfResourceValues),
-        }),
-        shapesGraphWellFormed: $shaclPropertyFromRdf<
-          Maybe<boolean>,
-          $MaybeSchema<$BooleanSchema<boolean>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            ValidationReport.schema.properties.shapesGraphWellFormed,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            boolean,
-            $BooleanSchema<boolean>
-          >($booleanFromRdfResourceValues<boolean>),
-        }),
-      }).chain((properties) => ValidationReport.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema: ValidationReport.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [ValidationReport.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      conforms: $shaclPropertyFromRdf<boolean, $BooleanSchema<boolean>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ValidationReport.schema.properties.conforms,
+        typeFromRdfResourceValues: $booleanFromRdfResourceValues<boolean>,
+      }),
+      results: $shaclPropertyFromRdf<
+        readonly ValidationResult[],
+        $CollectionSchema<ValidationResult.Schema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ValidationReport.schema.properties.results,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          ValidationResult,
+          ValidationResult.Schema
+        >(ValidationResult.fromRdfResourceValues),
+      }),
+      shapesGraphWellFormed: $shaclPropertyFromRdf<
+        Maybe<boolean>,
+        $MaybeSchema<$BooleanSchema<boolean>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          ValidationReport.schema.properties.shapesGraphWellFormed,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          boolean,
+          $BooleanSchema<boolean>
+        >($booleanFromRdfResourceValues<boolean>),
+      }),
+    }).chain((properties) => ValidationReport.create(properties));
 
-  export const $toString: (_validationReport: ValidationReport) => string = (
-    _validationReport,
-  ) => `ValidationReport(${JSON.stringify(toStringRecord(_validationReport))})`;
+  export const $toString: $ToStringFunction<
+    Pick<ValidationReport, "$identifier">
+  > = (_validationReport) =>
+    `ValidationReport(${JSON.stringify(ValidationReport.toStringRecord(_validationReport))})`;
 
-  export const create = <
+  export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ValidationReport.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly conforms: boolean;
-    readonly results?: ValidationResult | readonly ValidationResult[];
-    readonly shapesGraphWellFormed?: boolean | Maybe<boolean>;
-  }): Either<Error, ValidationReport> =>
+  >(
+    parameters: ValidationReport.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, ValidationReport.Discriminated> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
         parameters.$defaultNamespace,
       ),
+      $type: Right("ValidationReport" as const),
       conforms: Either.of(parameters.conforms),
       results: $convertToScalarSet($identityConversionFunction)(
         parameters.results,
@@ -5670,18 +7224,13 @@ export namespace ValidationReport {
           value,
         ),
       ),
-    })
-      .map((properties) => ({
-        ...properties,
-        $type: "ValidationReport" as const,
-      }))
-      .map((object) =>
-        $monkeyPatchObject(object, { $toString: ValidationReport.$toString }),
-      );
+    }).map((object) =>
+      $monkeyPatchObject(object, { $toString: ValidationReport.$toString }),
+    );
 
-  export function createUnsafe<
+  export type CreateParameters<
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
+  > = {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ValidationReport.Identifier)
@@ -5691,32 +7240,43 @@ export namespace ValidationReport {
     readonly conforms: boolean;
     readonly results?: ValidationResult | readonly ValidationResult[];
     readonly shapesGraphWellFormed?: boolean | Maybe<boolean>;
-  }): ValidationReport {
-    return create(parameters).unsafeCoerce();
-  }
+  };
 
-  export const fromRdfResource =
-    $wrap_FromRdfResourceFunction(_fromRdfResource);
+  export const createUnsafe: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: ValidationReport.CreateParameters<$DefaultNamespaceT>,
+  ) => ValidationReport.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = ValidationReport & {
+    readonly $type: "ValidationReport";
+  };
+
+  export const fromRdfResource: $FromRdfResourceFunction<ValidationReport.Discriminated> =
+    $wrap_FromRdfResourceFunction(ValidationReport._fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    ValidationReport,
+    ValidationReport.Discriminated,
     ValidationReport.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
         .toResource()
-        .chain((resource) => fromRdfResource(resource, options)),
+        .chain((resource) =>
+          ValidationReport.fromRdfResource(resource, options),
+        ),
     );
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
-  export const isValidationReport = (
-    object: $Object,
-  ): object is ValidationReport => object.$type === "ValidationReport";
+  export const isValidationReport: $ObjectTypeGuardFunction<
+    ValidationReport.Discriminated
+  > = (object): object is ValidationReport.Discriminated =>
+    object.$type === "ValidationReport";
 
   export const schema = {
     properties: {
@@ -5733,11 +7293,10 @@ export namespace ValidationReport {
           dataFactory.namedNode("http://www.w3.org/ns/shacl#ValidationReport"),
         ],
       },
-      $type: { kind: "Discriminant", value: "ValidationReport" },
       conforms: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#conforms"),
-        type: { kind: "Boolean" as const },
+        type: { kind: "Boolean" as const, datatype: $xsd_boolean },
       },
       results: {
         kind: "Shacl",
@@ -5758,7 +7317,7 @@ export namespace ValidationReport {
         ),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "Boolean" as const },
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
         },
       },
     },
@@ -5766,15 +7325,14 @@ export namespace ValidationReport {
 
   export type Schema = typeof schema;
 
-  export const toStringRecord: (
-    _validationReport: ValidationReport,
-  ) => Record<string, string> = (_validationReport) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<ValidationReport, "$identifier">
+  > = (_validationReport) =>
     $compactRecord({ $identifier: _validationReport.$identifier().toString() });
 }
+
 export type ValidationResult = {
   readonly $identifier: () => ValidationResult.Identifier;
-
-  readonly $type: "ValidationResult";
 
   readonly details: readonly (BlankNode | NamedNode | Literal)[];
 
@@ -5794,170 +7352,141 @@ export type ValidationResult = {
 };
 
 export namespace ValidationResult {
-  export const _fromRdfResource: $_FromRdfResourceFunction<ValidationResult> = (
-    resource,
-    options,
-  ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [ValidationResult.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            schema: ValidationResult.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        details: $shaclPropertyFromRdf<
-          readonly (BlankNode | NamedNode | Literal)[],
-          $CollectionSchema<$TermSchema<BlankNode | NamedNode | Literal>>
-        >({
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    ValidationResult.Discriminated
+  > = (resource, options) =>
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ValidationResult.schema.properties.details,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            BlankNode | NamedNode | Literal,
-            $TermSchema<BlankNode | NamedNode | Literal>
-          >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
-        }),
-        focusNode: $shaclPropertyFromRdf<
+          propertyPath: $rdf_subject,
+          schema: ValidationResult.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [ValidationResult.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
+      details: $shaclPropertyFromRdf<
+        readonly (BlankNode | NamedNode | Literal)[],
+        $CollectionSchema<$TermSchema<BlankNode | NamedNode | Literal>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ValidationResult.schema.properties.details,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
           BlankNode | NamedNode | Literal,
           $TermSchema<BlankNode | NamedNode | Literal>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ValidationResult.schema.properties.focusNode,
-          typeFromRdfResourceValues: $termFromRdfResourceValues<
-            BlankNode | NamedNode | Literal
-          >,
-        }),
-        message: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ValidationResult.schema.properties.message,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-        path: $shaclPropertyFromRdf<
-          Maybe<$PropertyPath>,
-          $MaybeSchema<$PropertyPath.Schema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ValidationResult.schema.properties.path,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            $PropertyPath,
-            $PropertyPath.Schema
-          >($PropertyPath.fromRdfResourceValues),
-        }),
-        severity: $shaclPropertyFromRdf<
-          Severity,
-          $IriSchema<Severity["value"]>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ValidationResult.schema.properties.severity,
-          typeFromRdfResourceValues: $iriFromRdfResourceValues<
-            Severity["value"]
-          >,
-        }),
-        sourceConstraintComponent: $shaclPropertyFromRdf<
-          NamedNode,
-          $IriSchema<string>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            ValidationResult.schema.properties.sourceConstraintComponent,
-          typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
-        }),
-        sourceShape: $shaclPropertyFromRdf<
-          Maybe<BlankNode | NamedNode>,
-          $MaybeSchema<$IdentifierSchema>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ValidationResult.schema.properties.sourceShape,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            BlankNode | NamedNode,
-            $IdentifierSchema
-          >($identifierFromRdfResourceValues),
-        }),
-        value: $shaclPropertyFromRdf<
-          Maybe<BlankNode | NamedNode | Literal>,
-          $MaybeSchema<$TermSchema<BlankNode | NamedNode | Literal>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: ValidationResult.schema.properties.value,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            BlankNode | NamedNode | Literal,
-            $TermSchema<BlankNode | NamedNode | Literal>
-          >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
-        }),
-      }).chain((properties) => ValidationResult.create(properties)),
-    );
+        >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
+      }),
+      focusNode: $shaclPropertyFromRdf<
+        BlankNode | NamedNode | Literal,
+        $TermSchema<BlankNode | NamedNode | Literal>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ValidationResult.schema.properties.focusNode,
+        typeFromRdfResourceValues: $termFromRdfResourceValues<
+          BlankNode | NamedNode | Literal
+        >,
+      }),
+      message: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ValidationResult.schema.properties.message,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      path: $shaclPropertyFromRdf<
+        Maybe<$PropertyPath>,
+        $MaybeSchema<$PropertyPath.Schema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ValidationResult.schema.properties.path,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          $PropertyPath,
+          $PropertyPath.Schema
+        >($PropertyPath.fromRdfResourceValues),
+      }),
+      severity: $shaclPropertyFromRdf<Severity, $IriSchema<Severity["value"]>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ValidationResult.schema.properties.severity,
+        typeFromRdfResourceValues: $iriFromRdfResourceValues<Severity["value"]>,
+      }),
+      sourceConstraintComponent: $shaclPropertyFromRdf<
+        NamedNode,
+        $IriSchema<string>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          ValidationResult.schema.properties.sourceConstraintComponent,
+        typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
+      }),
+      sourceShape: $shaclPropertyFromRdf<
+        Maybe<BlankNode | NamedNode>,
+        $MaybeSchema<$IdentifierSchema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ValidationResult.schema.properties.sourceShape,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          BlankNode | NamedNode,
+          $IdentifierSchema
+        >($identifierFromRdfResourceValues),
+      }),
+      value: $shaclPropertyFromRdf<
+        Maybe<BlankNode | NamedNode | Literal>,
+        $MaybeSchema<$TermSchema<BlankNode | NamedNode | Literal>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ValidationResult.schema.properties.value,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          BlankNode | NamedNode | Literal,
+          $TermSchema<BlankNode | NamedNode | Literal>
+        >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
+      }),
+    }).chain((properties) => ValidationResult.create(properties));
 
-  export const $toString: (_validationResult: ValidationResult) => string = (
-    _validationResult,
-  ) => `ValidationResult(${JSON.stringify(toStringRecord(_validationResult))})`;
+  export const $toString: $ToStringFunction<
+    Pick<ValidationResult, "$identifier">
+  > = (_validationResult) =>
+    `ValidationResult(${JSON.stringify(ValidationResult.toStringRecord(_validationResult))})`;
 
-  export const create = <
+  export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => ValidationResult.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly details?:
-      | (BlankNode | NamedNode | Literal)
-      | readonly (BlankNode | NamedNode | Literal)[];
-    readonly focusNode: BlankNode | NamedNode | Literal;
-    readonly message?: string | Maybe<string>;
-    readonly path?: $PropertyPath | Maybe<$PropertyPath>;
-    readonly severity: Severity["value"] | Severity;
-    readonly sourceConstraintComponent:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode;
-    readonly sourceShape?:
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
-    readonly value?:
-      | (BlankNode | NamedNode | Literal)
-      | Maybe<BlankNode | NamedNode | Literal>;
-  }): Either<Error, ValidationResult> =>
+  >(
+    parameters: ValidationResult.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, ValidationResult.Discriminated> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
         parameters.$defaultNamespace,
       ),
+      $type: Right("ValidationResult" as const),
       details: $convertToScalarSet($identityConversionFunction)(
         parameters.details,
         parameters.$defaultNamespace,
@@ -6012,18 +7541,13 @@ export namespace ValidationResult {
           value,
         ),
       ),
-    })
-      .map((properties) => ({
-        ...properties,
-        $type: "ValidationResult" as const,
-      }))
-      .map((object) =>
-        $monkeyPatchObject(object, { $toString: ValidationResult.$toString }),
-      );
+    }).map((object) =>
+      $monkeyPatchObject(object, { $toString: ValidationResult.$toString }),
+    );
 
-  export function createUnsafe<
+  export type CreateParameters<
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
+  > = {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ValidationResult.Identifier)
@@ -6048,32 +7572,43 @@ export namespace ValidationResult {
     readonly value?:
       | (BlankNode | NamedNode | Literal)
       | Maybe<BlankNode | NamedNode | Literal>;
-  }): ValidationResult {
-    return create(parameters).unsafeCoerce();
-  }
+  };
 
-  export const fromRdfResource =
-    $wrap_FromRdfResourceFunction(_fromRdfResource);
+  export const createUnsafe: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: ValidationResult.CreateParameters<$DefaultNamespaceT>,
+  ) => ValidationResult.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = ValidationResult & {
+    readonly $type: "ValidationResult";
+  };
+
+  export const fromRdfResource: $FromRdfResourceFunction<ValidationResult.Discriminated> =
+    $wrap_FromRdfResourceFunction(ValidationResult._fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    ValidationResult,
+    ValidationResult.Discriminated,
     ValidationResult.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
         .toResource()
-        .chain((resource) => fromRdfResource(resource, options)),
+        .chain((resource) =>
+          ValidationResult.fromRdfResource(resource, options),
+        ),
     );
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
-  export const isValidationResult = (
-    object: $Object,
-  ): object is ValidationResult => object.$type === "ValidationResult";
+  export const isValidationResult: $ObjectTypeGuardFunction<
+    ValidationResult.Discriminated
+  > = (object): object is ValidationResult.Discriminated =>
+    object.$type === "ValidationResult";
 
   export const schema = {
     properties: {
@@ -6090,7 +7625,6 @@ export namespace ValidationResult {
           dataFactory.namedNode("http://www.w3.org/ns/shacl#ValidationResult"),
         ],
       },
-      $type: { kind: "Discriminant", value: "ValidationResult" },
       details: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#detail"),
@@ -6115,7 +7649,7 @@ export namespace ValidationResult {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#resultMessage"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       path: {
@@ -6170,15 +7704,16 @@ export namespace ValidationResult {
 
   export type Schema = typeof schema;
 
-  export const toStringRecord: (
-    _validationResult: ValidationResult,
-  ) => Record<string, string> = (_validationResult) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<ValidationResult, "$identifier">
+  > = (_validationResult) =>
     $compactRecord({ $identifier: _validationResult.$identifier().toString() });
 }
-export type Shape = NodeShape | PropertyShape;
+
+export type Shape = NodeShape.Discriminated | PropertyShape.Discriminated;
 
 export namespace Shape {
-  export const $toString = (value: Shape): string => {
+  export const $toString: $ToStringFunction<Shape> = (value) => {
     if (value["$type"] === "NodeShape") {
       return NodeShape.$toString(value);
     }
@@ -6208,8 +7743,8 @@ export namespace Shape {
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     Shape,
-    typeof Shape.schema
-  > = ((inputValues, options) => {
+    Shape.Schema
+  > = (inputValues, options) => {
     const memberInputValues: Resource.Values[] = Array.from({ length: 2 }).map(
       () =>
         Resource.Values.empty({
@@ -6286,19 +7821,17 @@ export namespace Shape {
       }
     }
     return Right(collectedOutputValues);
-  }) satisfies $FromRdfResourceValuesFunction<Shape, typeof Shape.schema>;
+  };
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isShape(object: $Object): object is Shape {
-    return (
-      NodeShape.isNodeShape(object) || PropertyShape.isPropertyShape(object)
-    );
-  }
+  export const isShape: $ObjectTypeGuardFunction<Shape> = (
+    object,
+  ): object is Shape =>
+    NodeShape.isNodeShape(object) || PropertyShape.isPropertyShape(object);
 
   export const schema = {
     kind: "ObjectDiscriminatedUnion" as const,
@@ -6328,12 +7861,10 @@ export namespace Shape {
       },
       comment: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
+        path: $rdfs_comment,
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       datatype: {
@@ -6346,7 +7877,7 @@ export namespace Shape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#deactivated"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "Boolean" as const },
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
         },
       },
       flags: {
@@ -6354,7 +7885,7 @@ export namespace Shape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       hasValues: {
@@ -6372,11 +7903,8 @@ export namespace Shape {
         ),
         type: {
           kind: "DefaultValue" as const,
-          itemType: { kind: "Boolean" as const },
-          defaultValue: dataFactory.literal(
-            "false",
-            $RdfVocabularies.xsd.boolean,
-          ),
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
+          defaultValue: dataFactory.literal("false", $xsd_boolean),
         },
       },
       in_: {
@@ -6395,9 +7923,7 @@ export namespace Shape {
       },
       isDefinedBy: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-        ),
+        path: $rdfs_isDefinedBy,
         type: {
           kind: "Option" as const,
           itemType: { kind: "Identifier" as const },
@@ -6405,12 +7931,10 @@ export namespace Shape {
       },
       label: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
+        path: $rdfs_label,
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       languageIn: {
@@ -6420,7 +7944,7 @@ export namespace Shape {
           kind: "Option" as const,
           itemType: {
             kind: "List" as const,
-            itemType: { kind: "String" as const },
+            itemType: { kind: "String" as const, datatype: $xsd_string },
           },
         },
       },
@@ -6445,7 +7969,7 @@ export namespace Shape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "BigInt" as const },
+          itemType: { kind: "BigInt" as const, datatype: $xsd_integer },
         },
       },
       message: {
@@ -6453,7 +7977,7 @@ export namespace Shape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#message"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       minExclusive: {
@@ -6477,7 +8001,7 @@ export namespace Shape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "BigInt" as const },
+          itemType: { kind: "BigInt" as const, datatype: $xsd_integer },
         },
       },
       mutable: {
@@ -6487,7 +8011,7 @@ export namespace Shape {
         ),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "Boolean" as const },
+          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
         },
       },
       node: {
@@ -6544,7 +8068,7 @@ export namespace Shape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       severity: {
@@ -6564,7 +8088,7 @@ export namespace Shape {
         path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const },
+          itemType: { kind: "String" as const, datatype: $xsd_string },
         },
       },
       targetClasses: {
@@ -6607,14 +8131,22 @@ export namespace Shape {
       },
     },
   } as const;
+
+  export type Schema = typeof schema;
 }
+
 export type $Object =
-  | NodeShape
-  | Ontology
-  | PropertyGroup
-  | PropertyShape
-  | ValidationReport
-  | ValidationResult;
+  | NodeShape.Discriminated
+  | Ontology.Discriminated
+  | Operation.Discriminated
+  | OperationError.Discriminated
+  | OperationErrorHttpBinding.Discriminated
+  | OperationHttpBinding.Discriminated
+  | PropertyGroup.Discriminated
+  | PropertyShape.Discriminated
+  | Service.Discriminated
+  | ValidationReport.Discriminated
+  | ValidationResult.Discriminated;
 
 export namespace $Object {
   export function $toString(object: $Object) {
@@ -6623,10 +8155,20 @@ export namespace $Object {
         return NodeShape.$toString(object);
       case "Ontology":
         return Ontology.$toString(object);
+      case "Operation":
+        return Operation.$toString(object);
+      case "OperationError":
+        return OperationError.$toString(object);
+      case "OperationErrorHttpBinding":
+        return OperationErrorHttpBinding.$toString(object);
+      case "OperationHttpBinding":
+        return OperationHttpBinding.$toString(object);
       case "PropertyGroup":
         return PropertyGroup.$toString(object);
       case "PropertyShape":
         return PropertyShape.$toString(object);
+      case "Service":
+        return Service.$toString(object);
       case "ValidationReport":
         return ValidationReport.$toString(object);
       case "ValidationResult":

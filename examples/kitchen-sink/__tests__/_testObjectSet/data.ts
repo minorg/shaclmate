@@ -60,19 +60,19 @@ export const data = {
   unionObjects: [...new Array(4)].map((_, i) => {
     switch (i % 2) {
       case 0:
-        return kitchenSink.DiscriminatedUnionMember1.createUnsafe({
+        return kitchenSink.StructDiscriminatedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
-          discriminatedUnionMemberCommon: `common parent ${i}`,
-          discriminatedUnionMember1Distinct: `member ${i}`,
+          structDiscriminatedUnionMemberCommon: `common parent ${i}`,
+          structDiscriminatedUnionMember1Distinct: `member ${i}`,
         });
       case 1:
-        return kitchenSink.DiscriminatedUnionMember2.createUnsafe({
+        return kitchenSink.StructDiscriminatedUnionMember2.createUnsafe({
           $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
-          discriminatedUnionMemberCommon: `common parent ${i}`,
-          discriminatedUnionMember2Distinct: `member ${i}`,
+          structDiscriminatedUnionMemberCommon: `common parent ${i}`,
+          structDiscriminatedUnionMember2Distinct: `member ${i}`,
         });
       default:
         throw new RangeError(i.toString());
     }
-  }) as readonly kitchenSink.DiscriminatedUnion[],
+  }) as readonly kitchenSink.StructDiscriminatedUnion[],
 };

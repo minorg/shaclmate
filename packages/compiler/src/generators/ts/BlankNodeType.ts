@@ -1,10 +1,10 @@
 import type { BlankNode } from "@rdfjs/types";
 
 import { Maybe } from "purify-ts";
-import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
+import { code } from "./ts-poet-wrapper.js";
 
 export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   protected override readonly inlineExpression =
@@ -24,20 +24,36 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
         },
       ],
     });
-  override readonly filterFunction =
-    code`${this.reusables.snippets.filterBlankNode}`;
+  override readonly filterFunction = new ReferenceCallable(
+    this.reusables.snippets.filterBlankNode,
+  );
   override readonly filterType =
     code`${this.reusables.snippets.BlankNodeFilter}`;
-  override readonly fromRdfResourceValuesFunction =
-    code`${this.reusables.snippets.blankNodeFromRdfResourceValues}`;
+  override readonly fromJsonValueFunction = new ReferenceCallable(
+    this.reusables.snippets.blankNodeFromJsonString,
+  );
+  override readonly fromJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.blankNodeFromJsonObject,
+  );
+  override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
+    this.reusables.snippets.blankNodeFromRdfResourceValues,
+  );
   override readonly kind = "BlankNode";
   override readonly nodeKinds = nodeKinds;
-  override readonly parseFunction =
-    code`${this.reusables.snippets.parseBlankNode};`;
+  override readonly parseFunction = new ReferenceCallable(
+    this.reusables.snippets.parseBlankNode,
+  );
   override readonly schemaType =
     code`${this.reusables.snippets.BlankNodeSchema}`;
-  override readonly valueSparqlWherePatternsFunction =
-    code`${this.reusables.snippets.blankNodeSparqlWherePatterns}`;
+  override readonly toJsonValueFunction = new ReferenceCallable(
+    this.reusables.snippets.blankNodeToJsonString,
+  );
+  override readonly toJsonObjectFunction = new ReferenceCallable(
+    this.reusables.snippets.blankNodeToJsonObject,
+  );
+  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
+    this.reusables.snippets.blankNodeSparqlWherePatterns,
+  );
 
   constructor(
     superParameters: Omit<
@@ -50,49 +66,6 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
       hasValues: [],
       in_: [],
     });
-  }
-
-  override fromJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractIdentifierType<BlankNode>["fromJsonExpression"]
-  >[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2)))`;
-  }
-
-  override jsonSchema({
-    includeDiscriminantProperty,
-  }: Parameters<AbstractIdentifierType<BlankNode>["jsonSchema"]>[0]): Code {
-    const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${this.reusables.imports.z}.literal("BlankNode")`
-      : "";
-
-    return code`${this.reusables.imports.z}.object({ "@id": ${this.reusables.imports.z}.string().min(1)${discriminantProperty} })`;
-  }
-
-  @Memoize()
-  override jsonType(
-    parameters?: Parameters<AbstractIdentifierType<BlankNode>["jsonType"]>[0],
-  ): AbstractIdentifierType.JsonType {
-    const discriminantProperty = parameters?.includeDiscriminantProperty
-      ? `, readonly termType: "BlankNode"`
-      : "";
-
-    return new AbstractIdentifierType.JsonType(
-      code`{ readonly "@id": string${discriminantProperty} }`,
-    );
-  }
-
-  override toJsonExpression({
-    includeDiscriminantProperty,
-    variables,
-  }: Parameters<
-    AbstractIdentifierType<BlankNode>["toJsonExpression"]
-  >[0]): Code {
-    const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${variables.value}.termType`
-      : "";
-    return code`{ "@id": \`_:\${${variables.value}.value}\`${discriminantProperty} }`;
   }
 }
 

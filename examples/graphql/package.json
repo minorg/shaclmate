@@ -14,8 +14,8 @@
     "dist/dataset.js",
     "dist/graphql.shaclmate.d.ts",
     "dist/graphql.shaclmate.js",
-    "dist/server.d.ts",
-    "dist/server.js"
+    "dist/main.d.ts",
+    "dist/main.js"
   ],
   "license": "Apache-2.0",
   "main": "./dist/index.js",
@@ -34,7 +34,7 @@
     "test": "cd ../.. && vitest run /Users/minor/projects/shaclmate/examples/graphql/__tests__",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput",
-    "start": "NODE_ENV=development tsx src/server.ts"
+    "start": "NODE_ENV=development tsx src/main.ts"
   },
   "type": "module",
   "types": "./dist/index.d.ts",

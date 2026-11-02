@@ -16,7 +16,7 @@ export function testObjectCountMethods(createObjectSet: ObjectSetFactory) {
       it("with fromRdfTypes", async ({ expect }) => {
         const objectSet = createObjectSet(objectDataset(data.unionObjects));
         expect(
-          (await objectSet.discriminatedUnionCount()).unsafeCoerce(),
+          (await objectSet.structDiscriminatedUnionCount()).unsafeCoerce(),
         ).toStrictEqual(data.unionObjects.length);
       });
 

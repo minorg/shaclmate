@@ -398,29 +398,59 @@ describe("convert", () => {
     it("from partial type instance", async ({ expect }) => {
       const instance = kitchenSink.LazyPropertiesStruct.createUnsafe({
         optionalLazyToResolvedBlankNodeOrIriIdentifier:
-          kitchenSink.$DefaultPartial.createUnsafe(
-            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+          kitchenSink.$LazyOption.fromPartial<
+            kitchenSink.$DefaultPartial,
+            kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct
+          >(
+            kitchenSink.$DefaultPartial.createUnsafe(
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+            ),
           ),
         optionalPartialToResolvedBlankNodeOrIriIdentifier:
-          kitchenSink.PartialStruct.createUnsafe(
-            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+          kitchenSink.$LazyOption.fromPartial<
+            kitchenSink.PartialStruct,
+            kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct
+          >(
+            kitchenSink.PartialStruct.createUnsafe(
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+            ),
           ),
         requiredLazyToResolvedBlankNodeOrIriIdentifier:
-          kitchenSink.$DefaultPartial.createUnsafe(
-            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+          kitchenSink.$Lazy.fromPartial<
+            kitchenSink.$DefaultPartial,
+            kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct
+          >(
+            kitchenSink.$DefaultPartial.createUnsafe(
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+            ),
           ),
         requiredPartialToResolvedBlankNodeOrIriIdentifier:
-          kitchenSink.PartialStruct.createUnsafe(
-            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+          kitchenSink.$Lazy.fromPartial<
+            kitchenSink.PartialStruct,
+            kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct
+          >(
+            kitchenSink.PartialStruct.createUnsafe(
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+            ),
           ),
         setLazyToResolvedBlankNodeOrIriIdentifier:
-          kitchenSink.$DefaultPartial.createUnsafe(
-            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
-          ),
+          kitchenSink.$LazySet.fromPartials<
+            kitchenSink.$DefaultPartial,
+            kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct
+          >([
+            kitchenSink.$DefaultPartial.createUnsafe(
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+            ),
+          ]),
         setPartialToResolvedBlankNodeOrIriIdentifier:
-          kitchenSink.PartialStruct.createUnsafe(
-            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
-          ),
+          kitchenSink.$LazySet.fromPartials<
+            kitchenSink.PartialStruct,
+            kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct
+          >([
+            kitchenSink.PartialStruct.createUnsafe(
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+            ),
+          ]),
       });
 
       expect(

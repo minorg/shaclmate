@@ -9,16 +9,37 @@ export abstract class AbstractLiteralType extends AbstractTermType<
   Literal,
   Literal
 > {
+  override readonly jsonObjectType: AbstractTermType<
+    Literal,
+    Literal
+  >["jsonObjectType"] = this.jsonTypeFactory.createJsonObjectType(
+    {
+      "@language": {
+        optional: true,
+        type: this.jsonTypeFactory.createJsonStringType(),
+      },
+      "@type": {
+        optional: true,
+        type: this.jsonTypeFactory.createJsonStringType(),
+      },
+      "@value": {
+        type: this.jsonTypeFactory.createJsonStringType(),
+      },
+    },
+    {
+      snippet: this.reusables.snippets.LiteralJsonObject,
+    },
+  );
+
   override readonly nodeKinds = nodeKinds;
 }
 
 export namespace AbstractLiteralType {
   export type ConversionFunction = AbstractTermType.ConversionFunction;
-  export type DiscriminantProperty = AbstractTermType.DiscriminantProperty;
+  export type DiscriminatedType = AbstractTermType.DiscriminatedType;
   export const GraphqlType = AbstractTermType.GraphqlType;
   export type GraphqlType = AbstractTermType.GraphqlType;
   export type JsType = AbstractTermType.JsType;
-  export const JsonType = AbstractTermType.JsonType;
   export type JsonType = AbstractTermType.JsonType;
 }
 

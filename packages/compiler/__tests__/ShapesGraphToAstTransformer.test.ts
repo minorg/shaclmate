@@ -19,6 +19,11 @@ describe("ShapesGraphToAstTransformer", () => {
       switch (testShapesGraph.kind) {
         case "error":
           continue;
+        case "example":
+          if (id === "restExample") {
+            continue;
+          }
+          break;
         case "stress": {
           switch (id) {
             case "empty":
@@ -67,7 +72,7 @@ describe("ShapesGraphToAstTransformer", () => {
             (_) => _.kind === "Struct",
           );
           if (id === "kitchenSinkExample") {
-            expect(namedObjectTypes).toHaveLength(53);
+            expect(namedObjectTypes).toHaveLength(56);
           } else if (id !== "empty" && id !== "propertyShapesOnly") {
             expect(namedObjectTypes).not.toHaveLength(0);
           }
@@ -77,7 +82,11 @@ describe("ShapesGraphToAstTransformer", () => {
           const namedIntersectionTypes = ast.namedTypes.filter(
             (_) => _.kind === "Intersection",
           );
-          expect(namedIntersectionTypes).toHaveLength(0);
+          if (id === "kitchenSinkExample") {
+            expect(namedIntersectionTypes).toHaveLength(1);
+          } else {
+            expect(namedIntersectionTypes).toHaveLength(0);
+          }
         });
 
         it("should transform named union types", ({ expect }) => {
@@ -115,6 +124,7 @@ describe("ShapesGraphToAstTransformer", () => {
               expect(astStructType).toBeDefined();
               const recursiveProperty = astStructType.fields.find(
                 (field) =>
+                  field.kind === "Shacl" &&
                   field.path.termType === "NamedNode" &&
                   field.path.value === recursivePropertyIri,
               );
@@ -186,6 +196,7 @@ describe("ShapesGraphToAstTransformer", () => {
           case "objectDiscriminantProperty":
           case "propertyShapeNameConflicts":
           case "propertyShapesOnly":
+          case "restExample":
           case "shaclShacl":
           case "syntax":
             throw new RangeError(id);

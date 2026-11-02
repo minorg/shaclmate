@@ -1,0 +1,21 @@
+import type { AbstractDiscriminatedUnionType } from "../AbstractDiscriminatedUnionType.js";
+import type { Type } from "../Type.js";
+import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
+
+export function AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression<
+  MemberTypeT extends Type,
+>(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
+  return code`\
+({ filter, schema, ...otherParameters }) => {
+  const unionPatterns: ${this.reusables.imports.sparqljs}.GroupPattern[] = [];
+
+  ${joinCode(
+    this.members.map(
+      ({ type, primaryDiscriminantValue }) => code`\
+unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction.unannotatedUsage}({ ...otherParameters, filter: filter?.on?.[${literalOf(primaryDiscriminantValue)}], ignoreRdfType: false, schema: schema.members[${literalOf(primaryDiscriminantValue)}].type }).concat(), type: "group" });`,
+    ),
+  )}
+  
+  return [{ patterns: unionPatterns, type: "union" }];
+}`;
+}

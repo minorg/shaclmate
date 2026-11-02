@@ -1,9 +1,8 @@
 import type { Logger } from "@rdfx/logger";
 import type * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
-import { ObjectType_jsonSchemaExpression } from "./_ObjectType/ObjectType_jsonSchemaExpression.js";
-import { ObjectType_jsonTypeExpression } from "./_ObjectType/ObjectType_jsonTypeExpression.js";
 import { Reusables } from "./Reusables.js";
+import type { TsFeature } from "./TsFeature.js";
 import { TsGenerator } from "./TsGenerator.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
@@ -16,10 +15,10 @@ export class ZodGenerator implements Generator {
   }
 
   generate(ast_: ast.Ast): string {
-    const configuration = TsGenerator.Configuration.finalize(
-      ast_,
-      TsGenerator.Configuration.default_,
-    );
+    const configuration = TsGenerator.Configuration.finalize(ast_, {
+      ...TsGenerator.Configuration.default_,
+      features: new Set<TsFeature>(["Object.JSON.schema", "Object.JSON.type"]),
+    });
     const reusables = new Reusables({ configuration, logger: this.logger });
     const typeFactory = new TypeFactory({
       configuration,
@@ -35,13 +34,7 @@ export class ZodGenerator implements Generator {
           const tsNamedObjectType = typeFactory.createObjectType(astNamedType);
           declarations.push(code`\
 export namespace ${tsNamedObjectType.name.unsafeCoerce()} {
-  export type Json = ${ObjectType_jsonTypeExpression.call(tsNamedObjectType)};
-
-  export namespace Json {
-    export function schema() {
-      return ${ObjectType_jsonSchemaExpression.call(tsNamedObjectType)};
-    }
-  }
+${tsNamedObjectType.jsonObjectType.declaration.unsafeCoerce()}
 }`);
           break;
         }
@@ -50,10 +43,7 @@ export namespace ${tsNamedObjectType.name.unsafeCoerce()} {
             typeFactory.createDiscriminatedUnionType(astNamedType);
           declarations.push(code`\
 export namespace ${tsNamedDiscriminatedUnionType.name.unsafeCoerce()} {
-  ${tsNamedDiscriminatedUnionType.jsonTypeAliasDeclaration}
-  export namespace Json {
-    ${tsNamedDiscriminatedUnionType.jsonSchemaFunctionDeclaration}
-  }
+${tsNamedDiscriminatedUnionType.jsonObjectType.declaration.unsafeCoerce()}
 }`);
           break;
         }

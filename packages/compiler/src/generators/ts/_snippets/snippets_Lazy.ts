@@ -3,6 +3,7 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_Lazy: SnippetFactory = ({
   imports,
+  snippets,
   syntheticNamePrefix,
 }) =>
   conditionalOutput(
@@ -21,6 +22,13 @@ export class ${syntheticNamePrefix}Lazy<PartialT, ResolvedT> {
   }) {
     this.partial = partial;
     this.resolver = resolver;
+  }
+
+  static fromPartial<PartialT, ResolvedT>(partial: PartialT): ${syntheticNamePrefix}Lazy<PartialT, ResolvedT> {
+    return new ${syntheticNamePrefix}Lazy({
+      partial,
+      resolver: ${snippets.missingResolver}<ResolvedT>
+    });
   }
 
   resolve(options?: { preferredLanguages?: readonly string[] }): Promise<${imports.Either}<Error, ResolvedT>> {

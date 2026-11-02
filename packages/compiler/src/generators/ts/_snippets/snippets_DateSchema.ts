@@ -9,6 +9,7 @@ export const snippets_DateSchema: SnippetFactory = ({
     `${syntheticNamePrefix}DateSchema`,
     code`\
 interface ${syntheticNamePrefix}DateSchema {
+  readonly datatype: ${imports.NamedNode};
   readonly hasValues?: readonly ${imports.Literal}[];
   readonly in?: readonly Date[];
   readonly kind: "Date" | "DateTime",

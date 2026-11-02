@@ -10,7 +10,8 @@ import { parseTestShapesGraph } from "./parseTestShapesGraph.js";
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
 describe("ZodGenerator", () => {
-  for (const [id, testShapesGraph] of Object.entries(testShapesGraphs)) {
+  for (const [idString, testShapesGraph] of Object.entries(testShapesGraphs)) {
+    const id = idString as keyof typeof testShapesGraphs;
     if (testShapesGraph.kind !== "example") {
       continue;
     }
@@ -29,6 +30,8 @@ describe("ZodGenerator", () => {
             "src",
           );
           break;
+        case "restExample":
+          return;
       }
 
       const shapesGraph = (

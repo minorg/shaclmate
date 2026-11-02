@@ -62,14 +62,14 @@ describe("graphqlSchema", () => {
 
   it("nested object", async ({ expect }) => {
     const result = await execute(
-      `query { rootObject(identifier: "<http://example.com/rootObject0>") { _identifier optionalObjectProperty { _identifier } } }`,
+      `query { rootObject(identifier: "<http://example.com/rootObject0>") { _identifier optionalObjectProperty { requiredStringProperty } } }`,
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
       rootObject: {
         _identifier: "<http://example.com/rootObject0>",
         optionalObjectProperty: {
-          _identifier: "<http://example.com/rootObject0/nestedObject>",
+          requiredStringProperty: "required string (nested)",
         },
       },
     });
@@ -78,7 +78,7 @@ describe("graphqlSchema", () => {
   describe("root object", () => {
     it("object", async ({ expect }) => {
       const result = await execute(
-        `query { rootObject(identifier: "<http://example.com/rootObject0>") { _identifier, requiredStringProperty } }`,
+        `query { rootObject(identifier: "<http://example.com/rootObject0>") { _identifier requiredStringProperty } }`,
       );
       expect(result.errors).toBeUndefined();
       expect(result.data).toEqual({

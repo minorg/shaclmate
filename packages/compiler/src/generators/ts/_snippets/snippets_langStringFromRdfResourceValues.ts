@@ -9,7 +9,6 @@ export const snippets_langStringFromRdfResourceValues: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}langStringFromRdfResourceValues`,
     code`\
-function ${syntheticNamePrefix}langStringFromRdfResourceValues(values: ${imports.Resource}.Values, options: Parameters<${snippets.FromRdfResourceValuesFunction}<${imports.Literal}, ${snippets.LangStringSchema}>>[1]): ${imports.Either}<Error, ${imports.Resource}.Values<${imports.Literal}>> {
-  return ${snippets.termLikeFromRdfResourceValues}(values, options).chain(values => values.chainMap(value => value.toLangString(options.schema.in)));
-}`,
+const ${syntheticNamePrefix}langStringFromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${imports.Literal}, ${snippets.LangStringSchema}> =
+  (values, options) => ${snippets.termLikeFromRdfResourceValues}(values, options).chain(values => values.chainMap(value => value.toLangString(options.schema.in)));`,
   );

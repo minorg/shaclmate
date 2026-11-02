@@ -2,6 +2,8 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractContainerType } from "./AbstractContainerType.js";
+import type { Callable } from "./Callable.js";
+import { InlineCallable } from "./InlineCallable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
@@ -12,8 +14,6 @@ export abstract class AbstractCollectionType<
 > extends AbstractContainerType<ItemTypeT> {
   protected readonly _mutable: boolean;
 
-  override readonly discriminantProperty: Maybe<AbstractContainerType.DiscriminantProperty> =
-    Maybe.empty();
   override readonly graphqlArgs: AbstractContainerType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
 
@@ -28,13 +28,20 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  override get equalsFunction(): Code {
-    return code`((left, right) => ${this.reusables.snippets.arrayEquals}(left, right, ${this.itemType.equalsFunction}))`;
+  override get equalsFunction(): Callable {
+    return new InlineCallable(
+      code`((left, right) => ${this.reusables.snippets.arrayEquals}(left, right, ${this.itemType.equalsFunction.unannotatedUsage}))`,
+      {
+        type: code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`,
+      },
+    );
   }
 
   @Memoize()
-  get filterFunction(): Code {
-    return code`${this.reusables.snippets.filterArray}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
+  get filterFunction(): Callable {
+    return new InlineCallable(
+      code`${this.reusables.snippets.filterArray}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction.unannotatedUsage})`,
+    );
   }
 
   @Memoize()
@@ -51,8 +58,10 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  get hashFunction(): Code {
-    return code`${this.reusables.snippets.hashArray}(${this.itemType.hashFunction})`;
+  get hashFunction(): Callable {
+    return new InlineCallable(
+      code`${this.reusables.snippets.hashArray}(${this.itemType.hashFunction.annotatedUsage})`,
+    );
   }
 
   override get mutable(): boolean {
@@ -65,11 +74,13 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  override get validationFunction(): Maybe<Code> {
+  override get validationFunction(): Maybe<Callable> {
     return Maybe.of(
-      code`${this._mutable ? this.reusables.snippets.validateMutableArray : this.reusables.snippets.validateArray}(${this.itemType.validationFunction.orDefault(
-        this.itemValidationFunctionDefault,
-      )})`,
+      new InlineCallable(
+        code`${this._mutable ? this.reusables.snippets.validateMutableArray : this.reusables.snippets.validateArray}(${this.itemType.validationFunction
+          .map((_) => _.unannotatedUsage)
+          .orDefault(this.itemValidationFunctionDefault.unannotatedUsage)})`,
+      ),
     );
   }
 
@@ -86,30 +97,21 @@ export abstract class AbstractCollectionType<
     return variables.value;
   }
 
-  override jsonUiSchemaElement(
-    parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]
-    >[0],
-  ): Maybe<Code> {
-    return this.itemType.jsonUiSchemaElement(parameters);
-  }
-
-  override toJsonExpression({
+  override toLoggableExpression({
     variables,
   }: Parameters<
-    AbstractContainerType<ItemTypeT>["toJsonExpression"]
+    AbstractContainerType<ItemTypeT>["toLoggableExpression"]
   >[0]): Code {
-    return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: code`item` } })}))`;
+    return code`${variables.value}.map(item => (${this.itemType.toLoggableExpression({ variables: { value: code`item` } })}))`;
   }
 }
 
 export namespace AbstractCollectionType {
   export type ConversionFunction = AbstractContainerType.ConversionFunction;
-  export type DiscriminantProperty = AbstractContainerType.DiscriminantProperty;
+  export type DiscriminatedType = AbstractContainerType.DiscriminatedType;
   export const GraphqlType = AbstractContainerType.GraphqlType;
   export type GraphqlType = AbstractContainerType.GraphqlType;
   export const isItemType = AbstractContainerType.isItemType;
   export type ItemType = AbstractContainerType.ItemType;
-  export const JsonType = AbstractContainerType.JsonType;
   export type JsonType = AbstractContainerType.JsonType;
 }

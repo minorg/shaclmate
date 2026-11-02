@@ -1,0 +1,10 @@
+import type { SnippetFactory } from "../SnippetFactory.js";
+import { code, conditionalOutput } from "../ts-poet-wrapper.js";
+
+export const snippets_ToStringFunction: SnippetFactory = ({
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}ToStringFunction`,
+    code`export type ${syntheticNamePrefix}ToStringFunction<T> = (value: T) => string;`,
+  );

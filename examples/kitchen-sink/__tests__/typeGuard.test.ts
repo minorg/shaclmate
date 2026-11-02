@@ -5,13 +5,13 @@ import { harnesses } from "./harnesses.js";
 describe("typeGuard", () => {
   it("should work on a union", ({ expect }) => {
     expect(
-      kitchenSink.DiscriminatedUnion.isDiscriminatedUnion(
-        harnesses.discriminatedUnionMember1.instance,
+      kitchenSink.StructDiscriminatedUnion.isStructDiscriminatedUnion(
+        harnesses.structDiscriminatedUnionMember1.instance,
       ),
     ).toStrictEqual(true);
     expect(
-      kitchenSink.DiscriminatedUnion.isDiscriminatedUnion(
-        harnesses.discriminatedUnionMember2.instance,
+      kitchenSink.StructDiscriminatedUnion.isStructDiscriminatedUnion(
+        harnesses.structDiscriminatedUnionMember2.instance,
       ),
     ).toStrictEqual(true);
   });

@@ -13,7 +13,7 @@ export function AbstractDiscriminatedUnionType_inlineExpression<
           ({ type, primaryDiscriminantValue }) =>
             code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.expression} }`,
         ),
-        { on: "|" },
+        { on: " | " },
       )})`;
     case "Hybrid":
       return code`(${joinCode(
@@ -22,26 +22,29 @@ export function AbstractDiscriminatedUnionType_inlineExpression<
             case "Extrinsic":
               return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.expression} }`;
             case "Intrinsic":
-              return code`${type.expression}`;
+              return code`${type.discriminatedType.unsafeCoerce().expression}`;
             default:
               throw new Error();
           }
         }),
-        { on: "|" },
+        { on: " | " },
       )})`;
     case "Intrinsic":
       // If every type shares a discriminant (e.g., RDF/JS "termType" or generated ObjectType "type"),
       // just join their names with "|"
       return code`(${joinCode(
-        this.members.map(({ type }) => code`${type.expression}`),
-        { on: "|" },
+        this.members.map(
+          ({ type }) =>
+            code`${type.discriminatedType.unsafeCoerce().expression}`,
+        ),
+        { on: " | " },
       )})`;
     case "Typeof":
       // The type.name may include literal values, but they should still be unambiguous with other member types since the typeofs
       // of the different member types are known to be different.
       return code`(${joinCode(
         this.members.map(({ type }) => code`${type.expression}`),
-        { on: "|" },
+        { on: " | " },
       )})`;
     default:
       discriminant satisfies never;

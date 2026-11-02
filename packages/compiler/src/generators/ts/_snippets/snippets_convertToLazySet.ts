@@ -10,9 +10,8 @@ export const snippets_convertToLazySet: SnippetFactory = ({
     `${syntheticNamePrefix}convertToLazySet`,
     code`\
 function ${syntheticNamePrefix}convertToLazySet<PartialT, ResolvedT>(
-  isPartial: (object: PartialT | ResolvedT) => object is PartialT,
   resolvedToPartial: (resolved: ResolvedT) => PartialT
-): ${snippets.ConversionFunction}<${snippets.LazySet}<PartialT, ResolvedT> | readonly PartialT[] | readonly ResolvedT[] | PartialT | ResolvedT | undefined, ${snippets.LazySet}<PartialT, ResolvedT>>  {
+): ${snippets.ConversionFunction}<${snippets.LazySet}<PartialT, ResolvedT> | readonly ResolvedT[] | ResolvedT | undefined, ${snippets.LazySet}<PartialT, ResolvedT>>  {
   return (value) => {
     if (typeof value === "undefined") {
       return ${imports.Either}.of(new ${snippets.LazySet}<PartialT, ResolvedT>({
@@ -25,19 +24,7 @@ function ${syntheticNamePrefix}convertToLazySet<PartialT, ResolvedT>(
       return ${imports.Either}.of(value);
     }
 
-    const arrayValue = (Array.isArray(value) ? value : [value]) as readonly PartialT[] | readonly ResolvedT[];
-
-    if (arrayValue.every(isPartial)) {
-      const partials: readonly PartialT[] = arrayValue;
-      return ${imports.Either}.of(
-        new ${snippets.LazySet}<PartialT, ResolvedT>({
-          partials,
-          resolver: async () => ${imports.Left}(new Error("unable to resolve"))
-        })
-      );
-    }
-
-    const resolved: readonly ResolvedT[] = arrayValue;
+    const resolved = (Array.isArray(value) ? value : [value]) as readonly ResolvedT[];
     return ${imports.Either}.of(
       new ${snippets.LazySet}<PartialT, ResolvedT>({
         partials: resolved.map(resolvedToPartial),
