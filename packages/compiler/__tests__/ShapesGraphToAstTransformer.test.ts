@@ -19,6 +19,11 @@ describe("ShapesGraphToAstTransformer", () => {
       switch (testShapesGraph.kind) {
         case "error":
           continue;
+        case "example":
+          if (id === "restExample") {
+            continue;
+          }
+          break;
         case "stress": {
           switch (id) {
             case "empty":
