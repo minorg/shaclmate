@@ -47,7 +47,7 @@ export function AbstractDiscriminatedUnionType_conversionFunctionExpression<
 
       const memberIdentitySourceType: AbstractType.ConversionFunction.SourceType =
         {
-          expression: member.type.expression,
+          expression: member.type.discriminatedType.unsafeCoerce().expression,
           jsType: {
             instanceof: "Object",
             typeof: "object",

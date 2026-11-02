@@ -22,7 +22,7 @@ export function AbstractDiscriminatedUnionType_inlineExpression<
             case "Extrinsic":
               return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.expression} }`;
             case "Intrinsic":
-              return code`${type.expression}`;
+              return code`${type.discriminatedType.unsafeCoerce().expression}`;
             default:
               throw new Error();
           }
@@ -33,7 +33,10 @@ export function AbstractDiscriminatedUnionType_inlineExpression<
       // If every type shares a discriminant (e.g., RDF/JS "termType" or generated ObjectType "type"),
       // just join their names with "|"
       return code`(${joinCode(
-        this.members.map(({ type }) => code`${type.expression}`),
+        this.members.map(
+          ({ type }) =>
+            code`${type.discriminatedType.unsafeCoerce().expression}`,
+        ),
         { on: " | " },
       )})`;
     case "Typeof":
