@@ -36,7 +36,7 @@ const classes = {
   },
 };
 
-const initialData = generated.FormStruct.toJsonObject(
+const initialData = generated.FormStruct.toJson(
   generated.FormStruct.createUnsafe({
     $identifier: dataFactory.namedNode("http://example.com/form"),
     nestedStructProperty: {
@@ -62,7 +62,7 @@ const App: FC = () => {
   const dataRdfString = useMemo(
     () =>
       generated.FormStruct.Json.parse(data)
-        .chain(generated.FormStruct.fromJsonObject)
+        .chain(generated.FormStruct.fromJson)
         .map((instance) => {
           return serializeSync(
             generated.FormStruct.toRdfResource(instance).dataset,
