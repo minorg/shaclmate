@@ -3119,6 +3119,16 @@ export namespace $PropertyPath {
     $PropertyPath
   > = RdfxResourcePropertyPath.toResource;
 
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    $PropertyPath,
+    Resource.Identifier
+  > = (value, options) => [
+    toRdfResource(value, {
+      graph: options.graph,
+      resourceSet: options.resourceSet,
+    }).identifier,
+  ];
+
   export const $toString = RdfxResourcePropertyPath.toString;
 }
 
