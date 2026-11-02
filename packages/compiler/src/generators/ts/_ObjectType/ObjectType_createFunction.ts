@@ -32,7 +32,7 @@ function ObjectType_createFunctionExpression(this: ObjectType): Code {
 
 export function ObjectType_createFunction(this: ObjectType): Callable {
   return this._function({
-    type: code`<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.createFunctionParameters.signature}) => ${this.reusables.imports.Either}<Error, ${this.discriminatedType.unsafeCoerce().expression}>`,
+    type: code`<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.createFunctionParameters.signature}) => ${this.reusables.imports.Either}<Error, ${this.discriminatedType.map((discriminatedType) => discriminatedType.expression).orDefault(this.expression)}>`,
     unannotatedExpression: () => ObjectType_createFunctionExpression.call(this),
     unqualifiedName: "create",
   });
