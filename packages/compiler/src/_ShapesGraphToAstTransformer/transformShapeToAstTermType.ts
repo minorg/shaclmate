@@ -22,7 +22,7 @@ type AstTermType =
  */
 export function transformShapeToAstTermType(
   this: ShapesGraphToAstTransformer,
-  shape: input.Shape,
+  shape: input.UndiscriminatedShape,
   shapeStack: ShapeStack,
 ): Either<Error, AstTermType> {
   shapeStack.push(shape);

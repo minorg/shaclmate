@@ -1,8 +1,11 @@
 import { NodeKind } from "@shaclmate/shacl-ast";
 import { Either, Left, Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
+import { isNodeShape } from "./isNodeShape.js";
+import { isPropertyShape } from "./isPropertyShape.js";
 
 const defaultPropertyShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
   "BlankNode",
@@ -12,7 +15,7 @@ const defaultPropertyShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
 
 export function shapeNodeKinds(
   this: ShapesGraphToAstTransformer,
-  shape: input.Shape,
+  shape: input.UndiscriminatedShape,
   options?: {
     defaultNodeShapeNodeKinds: ReadonlySet<NodeKind>;
     defaultPropertyShapeNodeKinds?: ReadonlySet<NodeKind>;
@@ -43,12 +46,11 @@ export function shapeNodeKinds(
     [
       "sh:defaultValue",
       {
-        includeNodeKinds:
-          shape.$type === "PropertyShape"
-            ? shape.defaultValue
-                .map((value) => NodeKind.fromTermType(value.termType))
-                .toList()
-            : [],
+        includeNodeKinds: isPropertyShape(shape)
+          ? shape.defaultValue
+              .map((value) => NodeKind.fromTermType(value.termType))
+              .toList()
+          : [],
       },
     ],
     [
@@ -118,7 +120,7 @@ export function shapeNodeKinds(
     [
       "shaclmate:resolve",
       {
-        includeNodeKinds: (shape.$type === "PropertyShape"
+        includeNodeKinds: (isPropertyShape(shape)
           ? shape.resolve
           : Maybe.empty()
         )
@@ -197,12 +199,13 @@ export function shapeNodeKinds(
     return Either.of(constraintNodeKinds);
   }
 
-  if (shape.$type === "NodeShape") {
+  if (isNodeShape(shape)) {
     return Either.of(
       options?.defaultNodeShapeNodeKinds ?? defaultNodeShapeNodeKinds,
     );
   }
 
+  invariant(isPropertyShape(shape));
   if (shape.path.termType === "InversePath") {
     // Inverse paths can only have blank nodes and IRIs as values, because the value is the subject of a triple.
     return Either.of(new Set(["BlankNode", "IRI"]));

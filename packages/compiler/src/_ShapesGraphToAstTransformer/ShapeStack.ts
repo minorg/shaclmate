@@ -2,9 +2,10 @@ import type { Literal, NamedNode } from "@rdfjs/types";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type * as input from "../input/index.js";
+import { isPropertyShape } from "./isPropertyShape.js";
 
 export class ShapeStack {
-  private readonly stack: input.Shape[] = [];
+  private readonly stack: input.UndiscriminatedShape[] = [];
 
   constructor() {
     const stack = this.stack;
@@ -36,7 +37,7 @@ export class ShapeStack {
 
   get defaultValue(): Maybe<Literal | NamedNode> {
     for (const shape of this.stack.toReversed()) {
-      if (shape.$type !== "PropertyShape") {
+      if (!isPropertyShape(shape)) {
         continue;
       }
       if (shape.defaultValue.isJust()) {
@@ -46,7 +47,7 @@ export class ShapeStack {
     return Maybe.empty();
   }
 
-  pop(shape: input.Shape): this {
+  pop(shape: input.UndiscriminatedShape): this {
     const poppedShape = this.stack.pop();
     invariant(poppedShape, "stack is empty");
     invariant(
@@ -56,7 +57,7 @@ export class ShapeStack {
     return this;
   }
 
-  push(shape: input.Shape): this {
+  push(shape: input.UndiscriminatedShape): this {
     invariant(
       !this.stack.some((stackShape) => Object.is(stackShape, shape)),
       "shape already on stack",

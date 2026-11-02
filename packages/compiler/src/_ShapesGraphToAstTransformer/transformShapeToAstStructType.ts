@@ -7,6 +7,7 @@ import { Eithers } from "../Eithers.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
+import { isNodeShape } from "./isNodeShape.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
@@ -96,7 +97,7 @@ function transformNodeShapeNodeKindsToAstIdentifierType(
 
 export function transformShapeToAstStructType(
   this: ShapesGraphToAstTransformer,
-  shape: input.Shape,
+  shape: input.UndiscriminatedShape,
   shapeStack: ShapeStack,
 ): Either<Error, Maybe<ast.Type>> {
   shapeStack.push(shape);
@@ -111,7 +112,7 @@ export function transformShapeToAstStructType(
         .map(Maybe.of);
     }
 
-    if (shape.$type !== "NodeShape") {
+    if (!isNodeShape(shape)) {
       return Either.of(Maybe.empty());
     }
 
