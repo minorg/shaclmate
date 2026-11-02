@@ -515,30 +515,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :inIdentifierString
     ] .
 
-:InIntersection
-    shaclmate:ignore true ;
-    a sh:NodeShape ;
-    rdfs:comment "Node shape that sh:and's two sh:in node shapes to get the intersection of them." ;
-    sh:and (:InIntersectionMember1
-        :InIntersectionMember2
-    ) .
-
-:InIntersectionMember1
-    a sh:NodeShape ;
-    sh:in ("test1"
-        "test2"
-        "test3"
-        "test4"
-    ) .
-
-:InIntersectionMember2
-    a sh:NodeShape ;
-    sh:in ("test3"
-        "test4"
-        "test5"
-        "test6"
-    ) .
-
 :InIri
     a sh:NodeShape ;
     rdfs:comment "Named sh:in of IRIs" ;
