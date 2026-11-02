@@ -35,8 +35,8 @@ export function filter(_filter: Filter, _value: ${syntheticNamePrefix}PropertyPa
 
   if (configuration.features.has("Object.fromRdf")) {
     companionDeclarations.push(
-      //       code`\
-      // export const fromRdfResource: ${syntheticNamePrefix}FromRdfResourceFunction<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.fromResource;`,
+      code`\
+export const fromRdfResource: ${syntheticNamePrefix}FromRdfResourceFunction<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.fromResource;`,
       code`\
 export const fromRdfResourceValues: ${syntheticNamePrefix}FromRdfResourceValuesFunction<${syntheticNamePrefix}PropertyPath, object> = (values, options) =>
   values.chainMap((value) =>
