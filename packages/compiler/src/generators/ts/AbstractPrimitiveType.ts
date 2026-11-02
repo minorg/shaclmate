@@ -36,8 +36,8 @@ export abstract class AbstractPrimitiveType<
   @Memoize()
   protected override get inlineExpression(): Code {
     if (this.in_.length > 0) {
-      return this.schemaVariable
-        .map((schemaVariable) => code`${schemaVariable}["in"][number]`)
+      return this.name
+        .map((name) => code`${name}.Schema["in"][number]`)
         .orDefault(
           code`${joinCode(
             this.in_.map((value) => this.valueExpression(value)),
