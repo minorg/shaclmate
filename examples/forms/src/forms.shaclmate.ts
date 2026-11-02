@@ -35,17 +35,17 @@ function $arrayFromJsonArray<ItemJsonValueT, ItemT, ItemSchemaT>(
   ItemT[],
   $CollectionSchema<ItemSchemaT>
 > {
-  return (arrayJsonValue, options) => {
-    if (arrayJsonValue === undefined) {
+  return (jsonArray, options) => {
+    if (jsonArray === undefined) {
       return Either.of([]);
     }
     const { schema, ...otherOptions } = options;
     const itemFromJsonValueOptions = {
-      ...otherOptions,
       schema: schema.itemType,
+      ...otherOptions,
     };
     return Either.sequence(
-      arrayJsonValue.map((itemJsonValue) =>
+      jsonArray.map((itemJsonValue) =>
         itemFromJsonValue(itemJsonValue, itemFromJsonValueOptions),
       ),
     );
@@ -55,13 +55,13 @@ function $arrayFromJsonArray<ItemJsonValueT, ItemT, ItemSchemaT>(
 function $arrayToJsonArray<ItemT, ItemJsonValueT>(
   itemToJsonValue: $ToJsonValueFunction<ItemT, ItemJsonValueT>,
 ): $ToJsonValueFunction<readonly ItemT[], ItemJsonValueT[]> {
-  return (values) => values.map(itemToJsonValue);
+  return (array) => array.map(itemToJsonValue);
 }
 
 const $blankNodeFromJsonString: $FromJsonValueFunction<
   string,
   BlankNode,
-  object
+  undefined
 > = (jsonValue) => Right(dataFactory.blankNode(jsonValue.substring(2)));
 
 interface $CollectionSchema<ItemSchemaT> {
@@ -197,17 +197,24 @@ export type $FromJsonObjectFunction<
 > = [ValueSchemaT] extends [undefined]
   ? (
       jsonObject: JsonObjectT,
-      options?: { context?: unknown },
+      options?: { context?: unknown; schema?: unknown },
     ) => Either<Error, ValueT>
   : (
       jsonObject: JsonObjectT,
       options: { context?: unknown; schema: ValueSchemaT },
     ) => Either<Error, ValueT>;
 
-export type $FromJsonValueFunction<JsonValueT, ValueT, ValueSchemaT> = (
-  jsonValue: JsonValueT,
-  options: { context?: unknown; schema: ValueSchemaT },
-) => Either<Error, ValueT>;
+export type $FromJsonValueFunction<JsonValueT, ValueT, ValueSchemaT> = [
+  ValueSchemaT,
+] extends [undefined]
+  ? (
+      jsonValue: JsonValueT,
+      options?: { context?: unknown; schema?: unknown },
+    ) => Either<Error, ValueT>
+  : (
+      jsonValue: JsonValueT,
+      options: { context?: unknown; schema: ValueSchemaT },
+    ) => Either<Error, ValueT>;
 
 const $identifierFromJsonString: $FromJsonValueFunction<
   string,
@@ -276,8 +283,8 @@ function $maybeFromJsonValue<ItemJsonValueT, ItemT, ItemSchemaT>(
     }
     const { schema, ...otherOptions } = options;
     return itemFromJsonValue(value, {
-      ...otherOptions,
       schema: schema.itemType,
+      ...otherOptions,
     }).map((value) => Maybe.of(value));
   };
 }
@@ -338,6 +345,10 @@ interface $NumericSchema<T> {
   readonly kind: "BigDecimal" | "BigInt" | "Float" | "Int";
 }
 
+export type $ObjectTypeGuardFunction<ObjectT extends $Object> = (
+  object: $Object,
+) => object is ObjectT;
+
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
 function $primitiveToJsonValue<PrimitiveT extends boolean | number | string>(
@@ -357,6 +368,16 @@ export namespace $PropertyPath {
     Resource.Identifier,
     $PropertyPath
   > = RdfxResourcePropertyPath.toResource;
+
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    $PropertyPath,
+    Resource.Identifier
+  > = (value, options) => [
+    toRdfResource(value, {
+      graph: options.graph,
+      resourceSet: options.resourceSet,
+    }).identifier,
+  ];
 
   export const $toString = RdfxResourcePropertyPath.toString;
 }
@@ -747,7 +768,7 @@ export namespace FormStruct {
       requiredStringProperty: Either.of(parameters.requiredStringProperty),
     }).map((object) =>
       $monkeyPatchObject(object, {
-        toJson: FormStruct.toJsonObject,
+        toJson: FormStruct.toJson,
         $toString: FormStruct.$toString,
       }),
     );
@@ -785,7 +806,7 @@ export namespace FormStruct {
 
   export type Discriminated = FormStruct & { readonly $type: "FormStruct" };
 
-  export const fromJsonObject: $FromJsonObjectFunction<
+  export const fromJson: $FromJsonObjectFunction<
     FormStruct.Json,
     FormStruct.Discriminated,
     undefined
@@ -914,11 +935,10 @@ export namespace FormStruct {
     export const parse = $parseIdentifier;
   }
 
-  export const isFormStruct: (
-    object: $Object,
-  ) => object is FormStruct.Discriminated = (
-    object,
-  ): object is FormStruct.Discriminated => object.$type === "FormStruct";
+  export const isFormStruct: $ObjectTypeGuardFunction<
+    FormStruct.Discriminated
+  > = (object): object is FormStruct.Discriminated =>
+    object.$type === "FormStruct";
 
   export type Json = {
     "@id": string;
@@ -1097,10 +1117,9 @@ export namespace FormStruct {
 
   export type Schema = typeof schema;
 
-  export const toJsonObject: $ToJsonObjectFunction<
-    FormStruct,
-    FormStruct.Json
-  > = (_formStruct) =>
+  export const toJson: $ToJsonObjectFunction<FormStruct, FormStruct.Json> = (
+    _formStruct,
+  ) =>
     JSON.parse(
       JSON.stringify({
         "@id":

@@ -781,6 +781,16 @@ export namespace $PropertyPath {
     $PropertyPath
   > = RdfxResourcePropertyPath.toResource;
 
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    $PropertyPath,
+    Resource.Identifier
+  > = (value, options) => [
+    toRdfResource(value, {
+      graph: options.graph,
+      resourceSet: options.resourceSet,
+    }).identifier,
+  ];
+
   export const $toString = RdfxResourcePropertyPath.toString;
 }
 
@@ -1135,11 +1145,11 @@ export namespace $DefaultPartial {
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(
     parameters?: $DefaultPartial.CreateParameters<$DefaultNamespaceT>,
-  ) => Either<Error, $DefaultPartial.Discriminated> = (parameters?) =>
+  ) => Either<Error, $DefaultPartial.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
-        parameters?.$identifier,
-        parameters?.$defaultNamespace,
+        parameters.$identifier,
+        parameters.$defaultNamespace,
       ),
       $type: Right("DefaultPartial" as const),
     }).map((object) =>
@@ -1829,9 +1839,9 @@ export namespace RootObject {
           $setFromRdfResourceValues<$DefaultPartial, $DefaultPartial.Schema>(
             $DefaultPartial.fromRdfResourceValues,
           )(values, {
-            ...otherOptions,
             objectSet,
             schema: schema.partialType,
+            ...otherOptions,
           }).map((values) =>
             values.map(
               (partials) =>
@@ -1866,9 +1876,9 @@ export namespace RootObject {
           $maybeFromRdfResourceValues<$DefaultPartial, $DefaultPartial.Schema>(
             $DefaultPartial.fromRdfResourceValues,
           )(values, {
-            ...otherOptions,
             objectSet,
             schema: schema.partialType,
+            ...otherOptions,
           }).map((values) =>
             values.map(
               (partial) =>
@@ -2394,16 +2404,16 @@ export namespace UnionMember1 {
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(
     parameters?: UnionMember1.CreateParameters<$DefaultNamespaceT>,
-  ) => Either<Error, UnionMember1.Discriminated> = (parameters?) =>
+  ) => Either<Error, UnionMember1.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
-        parameters?.$identifier,
-        parameters?.$defaultNamespace,
+        parameters.$identifier,
+        parameters.$defaultNamespace,
       ),
       $type: Right("UnionMember1" as const),
       optionalNumberProperty: $convertToMaybe($identityConversionFunction)(
-        parameters?.optionalNumberProperty,
-        parameters?.$defaultNamespace,
+        parameters.optionalNumberProperty,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           LazyObject.schema.properties.optionalNumberProperty.type,
@@ -2636,16 +2646,16 @@ export namespace UnionMember2 {
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(
     parameters?: UnionMember2.CreateParameters<$DefaultNamespaceT>,
-  ) => Either<Error, UnionMember2.Discriminated> = (parameters?) =>
+  ) => Either<Error, UnionMember2.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
-        parameters?.$identifier,
-        parameters?.$defaultNamespace,
+        parameters.$identifier,
+        parameters.$defaultNamespace,
       ),
       $type: Right("UnionMember2" as const),
       optionalStringProperty: $convertToMaybe($identityConversionFunction)(
-        parameters?.optionalStringProperty,
-        parameters?.$defaultNamespace,
+        parameters.optionalStringProperty,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           LazyObject.schema.properties.optionalStringProperty.type,
