@@ -67,7 +67,7 @@ describe("ShapesGraphToAstTransformer", () => {
             (_) => _.kind === "Struct",
           );
           if (id === "kitchenSinkExample") {
-            expect(namedObjectTypes).toHaveLength(53);
+            expect(namedObjectTypes).toHaveLength(56);
           } else if (id !== "empty" && id !== "propertyShapesOnly") {
             expect(namedObjectTypes).not.toHaveLength(0);
           }
@@ -77,7 +77,11 @@ describe("ShapesGraphToAstTransformer", () => {
           const namedIntersectionTypes = ast.namedTypes.filter(
             (_) => _.kind === "Intersection",
           );
-          expect(namedIntersectionTypes).toHaveLength(0);
+          if (id === "kitchenSinkExample") {
+            expect(namedIntersectionTypes).toHaveLength(1);
+          } else {
+            expect(namedIntersectionTypes).toHaveLength(0);
+          }
         });
 
         it("should transform named union types", ({ expect }) => {
