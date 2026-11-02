@@ -110,12 +110,12 @@ ${this.memberTypeSwitch({
 
     if (this.members.length === 1) {
       return Maybe.of(
-        code`export const toJsonObject = ${this.members[0].name.unsafeCoerce()}.toJsonObject;`,
+        code`export const toJson = ${this.members[0].name.unsafeCoerce()}.toJson;`,
       );
     }
 
     return Maybe.of(code`\
-export function toJsonObject(object: ${this.name}) {
+export function toJson(object: ${this.name}) {
 ${this.memberTypeSwitch({
   caseBlock: (member) =>
     code`\

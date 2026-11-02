@@ -63258,7 +63258,7 @@ export namespace $Object {
     }
   };
 
-  export function toJsonObject(object: $Object) {
+  export function toJson(object: $Object) {
     switch (object.$type) {
       case "DefaultPartial":
         return { ...$DefaultPartial.toJson(object), $type: "DefaultPartial" };

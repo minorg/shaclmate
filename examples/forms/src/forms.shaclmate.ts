@@ -1182,7 +1182,7 @@ export namespace FormStruct {
 export type $Object = FormStruct.Discriminated;
 
 export namespace $Object {
-  export const toJsonObject = FormStruct.toJsonObject;
+  export const toJson = FormStruct.toJson;
 
   export const toRdfResource = FormStruct.toRdfResource;
 
