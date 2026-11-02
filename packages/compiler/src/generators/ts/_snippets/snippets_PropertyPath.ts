@@ -58,6 +58,12 @@ export const fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${
   if (configuration.features.has("Object.toRdf")) {
     companionDeclarations.push(code`\
 export const toRdfResource: ${snippets.ToRdfResourceFunction}<${imports.Resource}.Identifier, ${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.toResource;`);
+
+    companionDeclarations.push(code`
+export const toRdfResourceValues: ${snippets.ToRdfResourceValuesFunction}<${syntheticNamePrefix}Propertypath, ${imports.Resource}.Identifier> = (
+  value,
+  options,
+) => [toRdfResource(value, { graph: options.graph, resourceSet: options.resourceSet }).identifier];`);
   }
 
   if (configuration.features.has("Object.toString")) {
