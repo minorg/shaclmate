@@ -380,10 +380,14 @@ export abstract class AbstractShapesGraph<
   >(
     shapesGraph: ShapesGraphT,
     ...objects: readonly (
-      | NodeShapeT
-      | OntologyT
-      | PropertyGroupT
-      | PropertyShapeT
+      | (NodeShapeT & { $type: generated.NodeShape.Discriminated["$type"] })
+      | (OntologyT & { $type: generated.Ontology.Discriminated["$type"] })
+      | (PropertyGroupT & {
+          $type: generated.PropertyGroup.Discriminated["$type"];
+        })
+      | (PropertyShapeT & {
+          $type: generated.PropertyShape.Discriminated["$type"];
+        })
     )[]
   ): ShapesGraphT {
     for (const object of objects) {

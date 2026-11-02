@@ -36,12 +36,18 @@ export class ShapesGraph extends AbstractShapesGraph<
 
   static fromObjects(
     ...objects: readonly (
-      | generated.NodeShape
-      | generated.Ontology
-      | generated.PropertyGroup
-      | generated.PropertyShape
+      | generated.NodeShape.Discriminated
+      | generated.Ontology.Discriminated
+      | generated.PropertyGroup.Discriminated
+      | generated.PropertyShape.Discriminated
     )[]
   ): ShapesGraph {
-    return AbstractShapesGraph._fromObjects(new ShapesGraph(), ...objects);
+    return AbstractShapesGraph._fromObjects<
+      generated.NodeShape,
+      generated.Ontology,
+      generated.PropertyGroup,
+      generated.PropertyShape,
+      ShapesGraph
+    >(new ShapesGraph(), ...objects);
   }
 }
