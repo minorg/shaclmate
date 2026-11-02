@@ -15,7 +15,8 @@ export abstract class AbstractTypedLiteralType<
   ValueT,
 > extends AbstractLiteralType {
   readonly datatype: NamedNode;
-
+  override readonly discriminatedType: Maybe<AbstractTypedLiteralType.DiscriminatedType> =
+    Maybe.empty();
   override readonly jsonObjectType: AbstractTermType<
     Literal,
     Literal
@@ -43,8 +44,10 @@ export abstract class AbstractTypedLiteralType<
     this.datatype = datatype;
   }
 
-  override get discriminantProperty(): Maybe<AbstractLiteralType.DiscriminantProperty> {
-    return Maybe.empty();
+  protected override get schemaInitializers(): readonly Code[] {
+    return super.schemaInitializers.concat(
+      code`datatype: ${this.rdfjsTermExpression(this.datatype)}`,
+    );
   }
 
   override graphqlResolveExpression({
@@ -53,18 +56,12 @@ export abstract class AbstractTypedLiteralType<
     return variables.value;
   }
 
-  protected override get schemaInitializers(): readonly Code[] {
-    return super.schemaInitializers.concat(
-      code`datatype: ${this.rdfjsTermExpression(this.datatype)}`,
-    );
-  }
-
   abstract override valueExpression(literal: Literal | ValueT): Code;
 }
 
 export namespace AbstractTypedLiteralType {
   export type ConversionFunction = AbstractTermType.ConversionFunction;
-  export type DiscriminantProperty = AbstractTermType.DiscriminantProperty;
+  export type DiscriminatedType = AbstractTermType.DiscriminatedType;
   export const GraphqlType = AbstractTermType.GraphqlType;
   export type GraphqlType = AbstractTermType.GraphqlType;
   export type JsType = AbstractTermType.JsType;

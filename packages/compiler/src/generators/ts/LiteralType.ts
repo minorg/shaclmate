@@ -71,11 +71,14 @@ export class LiteralType extends AbstractLiteralType {
   }
 
   @Memoize()
-  override get discriminantProperty(): Maybe<AbstractLiteralType.DiscriminantProperty> {
+  override get discriminatedType(): Maybe<AbstractLiteralType.DiscriminatedType> {
     return Maybe.of({
-      jsonName: "termType",
-      name: "termType",
-      values: [...this.termTypes],
+      discriminantProperty: {
+        jsonName: "termType",
+        name: "termType",
+        values: [...this.termTypes],
+      },
+      expression: this.expression,
     });
   }
 

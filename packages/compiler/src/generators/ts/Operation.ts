@@ -151,8 +151,8 @@ export namespace Operation {
       variables: { logger: Code; service: Code };
     }): Code {
       const errorDiscriminantPropertyName = this.operation.error
-        .chain((error) => error.discriminantProperty)
-        .map((discriminantProperty) => discriminantProperty.name)
+        .chain((error) => error.discriminatedType)
+        .map((discriminatedType) => discriminatedType.discriminantProperty.name)
         .extract();
       invariant(
         this.errorResponses.length === 0 || errorDiscriminantPropertyName,

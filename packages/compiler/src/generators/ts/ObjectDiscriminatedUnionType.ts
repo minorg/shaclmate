@@ -115,7 +115,9 @@ export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType
   protected override get inlineExpression() {
     if (this.discriminant.kind === "Intrinsic") {
       return code`(${joinCode(
-        this.members.map(({ type }) => type.discriminatedExpression),
+        this.members.map(
+          ({ type }) => type.discriminatedType.unsafeCoerce().expression,
+        ),
         { on: " | " },
       )})`;
     }

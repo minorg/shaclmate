@@ -23,11 +23,14 @@ export abstract class AbstractIdentifierType<
   abstract readonly parseFunction: Callable;
 
   @Memoize()
-  override get discriminantProperty(): Maybe<AbstractTermType.DiscriminantProperty> {
+  override get discriminatedType(): Maybe<AbstractTermType.DiscriminatedType> {
     return Maybe.of({
-      jsonName: "termType",
-      name: "termType",
-      values: [...this.termTypes],
+      discriminantProperty: {
+        jsonName: "termType",
+        name: "termType",
+        values: [...this.termTypes],
+      },
+      expression: this.expression,
     });
   }
 

@@ -104,7 +104,7 @@ export abstract class AbstractDiscriminatedUnionType<
 
     this.lazyMembers = () =>
       members.map((member, memberI) => {
-        let discriminantValues: readonly AbstractCompoundType.DiscriminantProperty.Value[];
+        let discriminantValues: AbstractCompoundType.DiscriminatedType["discriminantProperty"]["values"];
         switch (this.discriminant.kind) {
           case "Extrinsic":
             discriminantValues = [this.discriminant.memberValues[memberI]];
@@ -114,7 +114,8 @@ export abstract class AbstractDiscriminatedUnionType<
             break;
           case "Intrinsic": {
             discriminantValues =
-              member.type.discriminantProperty.unsafeCoerce().values;
+              member.type.discriminatedType.unsafeCoerce().discriminantProperty
+                .values;
             break;
           }
           case "Typeof":
@@ -218,22 +219,31 @@ export abstract class AbstractDiscriminatedUnionType<
   }
 
   @Memoize()
-  override get discriminantProperty(): Maybe<AbstractCompoundType.DiscriminantProperty> {
+  override get discriminatedType(): Maybe<AbstractCompoundType.DiscriminatedType> {
     switch (this.discriminant.kind) {
       case "Extrinsic":
         return Maybe.of({
-          name: this.discriminant.name,
-          values: this.discriminant.memberValues,
+          discriminantProperty: {
+            name: this.discriminant.name,
+            values: this.discriminant.memberValues,
+          },
+          expression: this.expression,
         });
       case "Hybrid":
         return Maybe.of({
-          name: "termType",
-          values: this.discriminant.memberValues.flatMap((_) => _.values),
+          discriminantProperty: {
+            name: "termType",
+            values: this.discriminant.memberValues.flatMap((_) => _.values),
+          },
+          expression: this.expression,
         });
       case "Intrinsic":
         return Maybe.of({
-          name: this.discriminant.name,
-          values: this.discriminant.memberValues,
+          discriminantProperty: {
+            name: this.discriminant.name,
+            values: this.discriminant.memberValues,
+          },
+          expression: this.expression,
         });
       case "Typeof":
         return Maybe.empty();
@@ -352,8 +362,8 @@ export namespace AbstractDiscriminatedUnionType {
   export type Discriminant = AbstractDiscriminatedUnionType_Discriminant;
 
   export interface Member<TypeT extends Type> {
-    readonly discriminantValues: readonly AbstractCompoundType.DiscriminantProperty.Value[];
-    readonly primaryDiscriminantValue: AbstractCompoundType.DiscriminantProperty.Value;
+    readonly discriminantValues: AbstractCompoundType.DiscriminatedType["discriminantProperty"]["values"];
+    readonly primaryDiscriminantValue: AbstractCompoundType.DiscriminatedType["discriminantProperty"]["values"][number];
     readonly type: TypeT;
     readonly typeCheck: (instance: Code) => Code;
     readonly unwrap: (instance: Code) => Code;

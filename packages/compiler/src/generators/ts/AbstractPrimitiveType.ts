@@ -20,16 +20,16 @@ export abstract class AbstractPrimitiveType<
   );
 
   @Memoize()
-  override get toJsonValueFunction(): AbstractTypedLiteralType<ValueT>["toJsonValueFunction"] {
+  override get toJsonObjectFunction(): AbstractTypedLiteralType<ValueT>["toJsonObjectFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.primitiveToJsonValue}<${this.expression}>`,
+      code`${this.reusables.snippets.primitiveToJsonObject}<${this.expression}>(${this.rdfjsTermExpression(this.datatype)})`,
     );
   }
 
   @Memoize()
-  override get toJsonObjectFunction(): AbstractTypedLiteralType<ValueT>["toJsonObjectFunction"] {
+  override get toJsonValueFunction(): AbstractTypedLiteralType<ValueT>["toJsonValueFunction"] {
     return new ReferenceCallable(
-      code`${this.reusables.snippets.primitiveToJsonObject}<${this.expression}>(${this.rdfjsTermExpression(this.datatype)})`,
+      code`${this.reusables.snippets.primitiveToJsonValue}<${this.expression}>`,
     );
   }
 
@@ -58,7 +58,7 @@ export abstract class AbstractPrimitiveType<
 
 export namespace AbstractPrimitiveType {
   export type ConversionFunction = AbstractLiteralType.ConversionFunction;
-  export type DiscriminantProperty = AbstractLiteralType.DiscriminantProperty;
+  export type DiscriminatedType = AbstractLiteralType.DiscriminatedType;
   export type JsType = AbstractLiteralType.JsType;
   export const GraphqlType = AbstractLiteralType.GraphqlType;
   export type GraphqlType = AbstractLiteralType.GraphqlType;

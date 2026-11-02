@@ -117,7 +117,7 @@ export class ObjectType extends AbstractStructuredType {
   protected override valueSparqlWherePatternsFunctionExpression =
     ObjectType_valueSparqlWherePatternsFunctionExpression;
 
-  override readonly discriminantProperty: Maybe<ObjectType.DiscriminantProperty>;
+  private readonly discriminantProperty: Maybe<ObjectType.DiscriminantProperty>;
   readonly extern: boolean;
   override readonly graphqlArgs: AbstractStructuredType["graphqlArgs"] =
     Maybe.empty();
@@ -208,10 +208,11 @@ export class ObjectType extends AbstractStructuredType {
    * Expression of this type including the discriminant property, if available.
    */
   @Memoize()
-  get discriminatedExpression(): Code {
-    return this.name
-      .map((name) => code`${name}.Discriminated`)
-      .orDefault(this.inlineExpression);
+  override get discriminatedType(): Maybe<AbstractStructuredType.DiscriminatedType> {
+    return this.name.map((name) => ({
+      discriminantProperty: this.discriminantProperty.unsafeCoerce(),
+      expression: code`${name}.Discriminated`,
+    }));
   }
 
   @Memoize()

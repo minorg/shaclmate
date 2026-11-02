@@ -3,7 +3,7 @@ import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractType_ConversionFunction } from "./_AbstractType/AbstractType_ConversionFunction.js";
-import type { AbstractType_DiscriminantProperty } from "./_AbstractType/AbstractType_DiscriminantProperty.js";
+import type { AbstractType_DiscriminatedType } from "./_AbstractType/AbstractType_DiscriminatedType.js";
 import { AbstractType_GraphqlType } from "./_AbstractType/AbstractType_GraphqlType.js";
 import type {
   AbstractType_JsonType,
@@ -47,9 +47,9 @@ export abstract class AbstractType extends AbstractConstruct {
   abstract readonly conversionFunction: Maybe<AbstractType.ConversionFunction>;
 
   /**
-   * A property that discriminates sub-types of this type e.g., termType on RDF/JS terms.
+   * A version of this type with an intrinsic discriminant property.
    */
-  abstract readonly discriminantProperty: Maybe<AbstractType.DiscriminantProperty>;
+  abstract readonly discriminatedType: Maybe<AbstractType.DiscriminatedType>;
 
   /**
    * A function (reference or literal) that compares two property values of this type, returning a
@@ -387,10 +387,7 @@ export namespace AbstractType {
     export const SourceType = AbstractType_ConversionFunction.SourceType;
     export type SourceType = AbstractType_ConversionFunction.SourceType;
   }
-  export type DiscriminantProperty = AbstractType_DiscriminantProperty;
-  export namespace DiscriminantProperty {
-    export type Value = AbstractType_DiscriminantProperty.Value;
-  }
+  export type DiscriminatedType = AbstractType_DiscriminatedType;
   export const GraphqlType = AbstractType_GraphqlType;
   export type GraphqlType = AbstractType_GraphqlType;
   export type JsType = AbstractType_JsType;

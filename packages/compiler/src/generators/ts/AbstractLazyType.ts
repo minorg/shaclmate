@@ -23,7 +23,7 @@ export abstract class AbstractLazyType<
     readonly rawName: Code;
   };
 
-  override readonly discriminantProperty: AbstractType["discriminantProperty"] =
+  override readonly discriminatedType: AbstractType["discriminatedType"] =
     Maybe.empty();
   abstract override readonly kind: "Lazy" | "LazyOption" | "LazySet";
   override readonly mutable = false;
@@ -263,7 +263,7 @@ export abstract class AbstractLazyType<
       code`default: resolved satisfies never; throw new Error("unrecognized type");`,
     );
 
-    return code`((resolved: ${resolveType.expression}) => { switch (resolved.${resolveType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} } })`;
+    return code`((resolved: ${resolveType.expression}) => { switch (resolved.${resolveType.discriminatedType.unsafeCoerce().discriminantProperty.name}) { ${joinCode(caseBlocks)} } })`;
   }
 
   protected resolvedObjectDiscriminatedUnionTypeToPartialObjectDiscriminatedUnionTypeConversion({
@@ -288,7 +288,7 @@ export abstract class AbstractLazyType<
     caseBlocks.push(
       code`default: ${variables.resolvedObjectDiscriminatedUnion} satisfies never; throw new Error("unrecognized type");`,
     );
-    return code`switch (${variables.resolvedObjectDiscriminatedUnion}.${resolvedObjectDiscriminatedUnionType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} }`;
+    return code`switch (${variables.resolvedObjectDiscriminatedUnion}.${resolvedObjectDiscriminatedUnionType.discriminatedType.unsafeCoerce().discriminantProperty.name}) { ${joinCode(caseBlocks)} }`;
   }
 }
 
@@ -301,7 +301,7 @@ export namespace AbstractLazyType {
   export type ResolveTypeConstraint = PartialTypeConstraint;
 
   export type ConversionFunction = AbstractType.ConversionFunction;
-  export type DiscriminantProperty = AbstractType.DiscriminantProperty;
+  export type DiscriminatedType = AbstractType.DiscriminatedType;
   export const GraphqlType = AbstractType.GraphqlType;
   export type GraphqlType = AbstractType.GraphqlType;
   export type JsonType = AbstractType.JsonType;

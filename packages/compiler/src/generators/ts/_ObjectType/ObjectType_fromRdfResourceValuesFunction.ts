@@ -10,5 +10,5 @@ export function ObjectType_fromRdfResourceValuesFunctionExpression(
 export function ObjectType_fromRdfResourceValuesFunctionType(
   this: ObjectType,
 ): Code {
-  return code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.discriminatedExpression}, ${this.schemaType}>`;
+  return code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.discriminatedType.unsafeCoerce().expression}, ${this.schemaType}>`;
 }

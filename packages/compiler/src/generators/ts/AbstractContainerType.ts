@@ -1,3 +1,4 @@
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
@@ -31,6 +32,8 @@ import { type Code, code } from "./ts-poet-wrapper.js";
 export abstract class AbstractContainerType<
   ItemTypeT extends AbstractContainerType.ItemType,
 > extends AbstractType {
+  override readonly discriminatedType: Maybe<AbstractType.DiscriminatedType> =
+    Maybe.empty();
   abstract override readonly kind: "DefaultValue" | "List" | "Option" | "Set";
 
   /**
@@ -93,7 +96,7 @@ export abstract class AbstractContainerType<
 
 export namespace AbstractContainerType {
   export type ConversionFunction = AbstractType.ConversionFunction;
-  export type DiscriminantProperty = AbstractType.DiscriminantProperty;
+  export type DiscriminatedType = AbstractType.DiscriminatedType;
   export const GraphqlType = AbstractType.GraphqlType;
   export type GraphqlType = AbstractType.GraphqlType;
 

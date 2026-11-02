@@ -111,7 +111,7 @@ export abstract class AbstractTermType<
 
 export namespace AbstractTermType {
   export type ConversionFunction = AbstractType.ConversionFunction;
-  export type DiscriminantProperty = AbstractType.DiscriminantProperty;
+  export type DiscriminatedType = AbstractType.DiscriminatedType;
   export const GraphqlType = AbstractType.GraphqlType;
   export type GraphqlType = AbstractType.GraphqlType;
   export type JsType = AbstractType.JsType;

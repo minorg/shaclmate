@@ -5,7 +5,6 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractContainerType } from "./AbstractContainerType.js";
-import type { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import { InlineCallable } from "./InlineCallable.js";
 import { ReferenceCallable } from "./ReferenceCallable.js";
@@ -16,8 +15,6 @@ export class DefaultValueType<
   ItemTypeT extends DefaultValueType.ItemType,
 > extends AbstractContainerType<ItemTypeT> {
   readonly defaultValue: Literal | NamedNode;
-  override readonly discriminantProperty: Maybe<AbstractType.DiscriminantProperty> =
-    Maybe.empty();
   override readonly equalsFunction = this.itemType.equalsFunction;
   override readonly filterFunction = this.itemType.filterFunction;
   override readonly filterType = this.itemType.filterType;
@@ -26,7 +23,8 @@ export class DefaultValueType<
   override readonly fromRdfResourceValuesFunction = new InlineCallable(
     code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
   );
-  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: AbstractContainerType<ItemTypeT>["graphqlArgs"] =
+    Maybe.empty();
   override readonly graphqlType = this.itemType.graphqlType;
   override readonly hashFunction = this.itemType.hashFunction;
   override readonly inlineExpression = this.itemType.expression;
@@ -41,7 +39,7 @@ export class DefaultValueType<
   override readonly toJsonValueFunction = this.itemType.toJsonValueFunction;
   override readonly toRdfResourceValueTypes =
     this.itemType.toRdfResourceValueTypes;
-  override readonly validationFunction: AbstractType["validationFunction"] =
+  override readonly validationFunction: AbstractContainerType<ItemTypeT>["validationFunction"] =
     this.itemType.validationFunction;
   override readonly valueSparqlConstructTriplesFunction =
     this.itemType.valueSparqlConstructTriplesFunction;
@@ -124,20 +122,26 @@ export class DefaultValueType<
   }
 
   override toLoggableExpression(
-    parameters: Parameters<AbstractType["toLoggableExpression"]>[0],
+    parameters: Parameters<
+      AbstractContainerType<ItemTypeT>["toLoggableExpression"]
+    >[0],
   ): Code {
     return this.itemType.toLoggableExpression(parameters);
   }
 
   override toRdfResourceValuesExpression(
-    parameters: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0],
+    parameters: Parameters<
+      AbstractContainerType<ItemTypeT>["toRdfResourceValuesExpression"]
+    >[0],
   ): Code {
     const { variables } = parameters;
     return code`${this.itemType.equalsFunction.annotatedUsage}(${variables.value}, ${this.defaultValueExpression}).isLeft() ? ${this.itemType.toRdfResourceValuesExpression(parameters)} : []`;
   }
 
   override toStringExpression(
-    parameters: Parameters<AbstractType["toStringExpression"]>[0],
+    parameters: Parameters<
+      AbstractContainerType<ItemTypeT>["toStringExpression"]
+    >[0],
   ): Code {
     return this.itemType.toStringExpression(parameters);
   }

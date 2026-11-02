@@ -343,10 +343,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
 export namespace AbstractStructuredType {
   export type ConversionFunction = AbstractType.ConversionFunction;
-  export type DiscriminantProperty = AbstractType.DiscriminantProperty;
-  export namespace DiscriminantProperty {
-    export type Value = AbstractType.DiscriminantProperty.Value;
-  }
+  export type DiscriminatedType = AbstractType.DiscriminatedType;
   export type GraphqlType = AbstractType.GraphqlType;
   export type JsonType = AbstractType.JsonType;
   export type JsType = AbstractType.JsType;

@@ -14,8 +14,6 @@ export abstract class AbstractCollectionType<
 > extends AbstractContainerType<ItemTypeT> {
   protected readonly _mutable: boolean;
 
-  override readonly discriminantProperty: Maybe<AbstractContainerType.DiscriminantProperty> =
-    Maybe.empty();
   override readonly graphqlArgs: AbstractContainerType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
 
@@ -110,7 +108,7 @@ export abstract class AbstractCollectionType<
 
 export namespace AbstractCollectionType {
   export type ConversionFunction = AbstractContainerType.ConversionFunction;
-  export type DiscriminantProperty = AbstractContainerType.DiscriminantProperty;
+  export type DiscriminatedType = AbstractContainerType.DiscriminatedType;
   export const GraphqlType = AbstractContainerType.GraphqlType;
   export type GraphqlType = AbstractContainerType.GraphqlType;
   export const isItemType = AbstractContainerType.isItemType;

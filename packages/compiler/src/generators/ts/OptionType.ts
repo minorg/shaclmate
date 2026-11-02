@@ -12,8 +12,6 @@ import { type Code, code } from "./ts-poet-wrapper.js";
 export class OptionType<
   ItemTypeT extends OptionType.ItemType,
 > extends AbstractContainerType<ItemTypeT> {
-  override readonly discriminantProperty: Maybe<AbstractContainerType.DiscriminantProperty> =
-    Maybe.empty();
   override readonly graphqlArgs: AbstractContainerType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
   override readonly jsTypes = [

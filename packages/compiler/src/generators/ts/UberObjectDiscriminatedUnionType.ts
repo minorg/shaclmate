@@ -121,7 +121,7 @@ ${this.memberTypeSwitch({
     code`\
 return {
   ...(${member.toJsonObjectFunction.annotatedUsage})(object),
-  ${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}: ${literalOf(member.discriminantProperty.unsafeCoerce().value)}
+  ${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}: ${literalOf(member.discriminatedType.unsafeCoerce().discriminantProperty.values[0])}
 };`,
   variables: { value: code`object` },
 })}
@@ -205,7 +205,7 @@ switch (${variables.value}.${this.configuration.objectDiscriminantProperty.name}
 ${joinCode(
   this.members.map(
     (member) =>
-      code`case "${member.discriminantProperty.unsafeCoerce().value}": ${caseBlock(member)}`,
+      code`case "${member.discriminatedType.unsafeCoerce().discriminantProperty.values[0]}": ${caseBlock(member)}`,
   ),
   { on: "\n" },
 )}

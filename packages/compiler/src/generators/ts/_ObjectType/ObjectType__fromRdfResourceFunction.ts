@@ -50,7 +50,7 @@ export function ObjectType__fromRdfResourceFunction(
   this: ObjectType,
 ): Callable {
   return this._function({
-    type: code`${this.reusables.snippets._FromRdfResourceFunction}<${this.discriminatedExpression}>`,
+    type: code`${this.reusables.snippets._FromRdfResourceFunction}<${this.discriminatedType.unsafeCoerce().expression}>`,
     unannotatedExpression: () =>
       ObjectType__fromRdfResourceFunctionExpression.call(this),
     unqualifiedName: "_fromRdfResource",

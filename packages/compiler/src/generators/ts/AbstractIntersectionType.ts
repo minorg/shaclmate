@@ -38,10 +38,6 @@ export abstract class AbstractIntersectionType<
     AbstractIntersectionType.Member<MemberTypeT>,
     MemberTypeT
   >["conversionFunction"] = Maybe.empty();
-  override readonly discriminantProperty: AbstractCompoundType<
-    AbstractIntersectionType.Member<MemberTypeT>,
-    MemberTypeT
-  >["discriminantProperty"] = Maybe.empty();
   override readonly graphqlArgs: AbstractCompoundType<
     AbstractIntersectionType.Member<MemberTypeT>,
     MemberTypeT

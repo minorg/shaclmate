@@ -45,26 +45,29 @@ export function AbstractDiscriminatedUnionType_inferDiscriminant<
   // intrinsic
   {
     let intrinsicDiscriminantProperty:
-      | AbstractType.DiscriminantProperty
+      | AbstractType.DiscriminatedType["discriminantProperty"]
       | undefined;
-    let memberValues: AbstractType.DiscriminantProperty.Value[] = [];
+    let memberValues: AbstractType.DiscriminatedType["discriminantProperty"]["values"] =
+      [];
     for (const memberType of memberTypes) {
-      const memberTypeDiscriminantProperty =
-        memberType.discriminantProperty.extract();
-      if (!memberTypeDiscriminantProperty) {
+      const memberDiscriminatedType = memberType.discriminatedType.extract();
+      if (!memberDiscriminatedType) {
         intrinsicDiscriminantProperty = undefined;
         break;
       }
       if (!intrinsicDiscriminantProperty) {
-        intrinsicDiscriminantProperty = memberTypeDiscriminantProperty;
+        intrinsicDiscriminantProperty =
+          memberDiscriminatedType.discriminantProperty;
       } else if (
-        memberTypeDiscriminantProperty.name !==
+        memberDiscriminatedType.discriminantProperty.name !==
         intrinsicDiscriminantProperty.name
       ) {
         intrinsicDiscriminantProperty = undefined;
         break;
       }
-      memberValues = memberValues.concat(memberTypeDiscriminantProperty.values);
+      memberValues = memberValues.concat(
+        memberDiscriminatedType.discriminantProperty.values,
+      );
     }
 
     if (intrinsicDiscriminantProperty) {
@@ -136,7 +139,7 @@ export function AbstractDiscriminatedUnionType_inferDiscriminant<
 
   // extrinsic with inferred values
   {
-    let memberValues: readonly AbstractType.DiscriminantProperty.Value[];
+    let memberValues: AbstractType.DiscriminatedType["discriminantProperty"]["values"];
     {
       const memberTypeNames: readonly string[] = memberTypes.map((memberType) =>
         memberType.name.orDefault(memberType.jsTypes[0].typeof),

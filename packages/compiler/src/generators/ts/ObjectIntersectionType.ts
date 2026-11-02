@@ -1,3 +1,4 @@
+import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { ObjectIntersectionType__fromRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType__fromRdfResourceFunction.js";
@@ -36,6 +37,8 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
   protected override toRdfResourceValuesFunctionExpression =
     ObjectIntersectionType_toRdfResourceValuesFunctionExpression;
 
+  override readonly discriminatedType: AbstractIntersectionType<ObjectType>["discriminatedType"] =
+    Maybe.empty();
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
   override readonly kind = "ObjectIntersection";
 
@@ -59,10 +62,6 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
     return ObjectIntersectionType__toRdfResourceFunction.call(this);
   }
 
-  get jsonValueType(): AbstractIntersectionType<ObjectType>["jsonValueType"] {
-    return this.jsonObjectType;
-  }
-
   @Memoize()
   get createFunction(): Callable {
     return ObjectIntersectionType_createFunction.call(this);
@@ -71,17 +70,6 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
   @Memoize()
   get createFunctionParameters(): ObjectType.CreateFunctionParameters {
     return ObjectIntersectionType_createFunctionParameters.call(this);
-  }
-
-  @Memoize()
-  override get jsonObjectType(): AbstractIntersectionType<ObjectType>["jsonObjectType"] {
-    return this.jsonTypeFactory.createJsonIntersectionType(
-      this.members.map((member) => member.type.jsonObjectType),
-      {
-        name: this.name.map((name) => [name, "Json"]).extract(),
-        recursive: this.recursive,
-      },
-    );
   }
 
   @Memoize()
@@ -107,6 +95,29 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
   }
 
   @Memoize()
+  override get jsonObjectType(): AbstractIntersectionType<ObjectType>["jsonObjectType"] {
+    return this.jsonTypeFactory.createJsonIntersectionType(
+      this.members.map((member) => member.type.jsonObjectType),
+      {
+        name: this.name.map((name) => [name, "Json"]).extract(),
+        recursive: this.recursive,
+      },
+    );
+  }
+
+  get jsonValueType(): AbstractIntersectionType<ObjectType>["jsonValueType"] {
+    return this.jsonObjectType;
+  }
+
+  @Memoize()
+  get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
+    return ObjectType_objectSetMethodNames.call({
+      name: this.name.unsafeCoerce(),
+      configuration: this.configuration,
+    });
+  }
+
+  @Memoize()
   get sparqlConstructQueryFunction(): Callable {
     return ObjectType_sparqlConstructQueryFunction.call({
       configuration: this.configuration,
@@ -128,14 +139,6 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
       _function: this._function.bind(this),
       sparqlConstructQueryFunction: this.sparqlConstructQueryFunction,
       reusables: this.reusables,
-    });
-  }
-
-  @Memoize()
-  get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
-    return ObjectType_objectSetMethodNames.call({
-      name: this.name.unsafeCoerce(),
-      configuration: this.configuration,
     });
   }
 
