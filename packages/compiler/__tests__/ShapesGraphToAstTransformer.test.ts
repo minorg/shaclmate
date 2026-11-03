@@ -72,7 +72,7 @@ describe("ShapesGraphToAstTransformer", () => {
             (_) => _.kind === "Struct",
           );
           if (id === "kitchenSinkExample") {
-            expect(namedObjectTypes).toHaveLength(56);
+            expect(namedObjectTypes).toHaveLength(57);
           } else if (id !== "empty" && id !== "propertyShapesOnly") {
             expect(namedObjectTypes).not.toHaveLength(0);
           }
@@ -83,7 +83,7 @@ describe("ShapesGraphToAstTransformer", () => {
             (_) => _.kind === "Intersection",
           );
           if (id === "kitchenSinkExample") {
-            expect(namedIntersectionTypes).toHaveLength(1);
+            expect(namedIntersectionTypes).toHaveLength(3);
           } else {
             expect(namedIntersectionTypes).toHaveLength(0);
           }

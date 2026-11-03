@@ -235,8 +235,8 @@ class JsonDiscriminatedUnionType extends AbstractJsonType {
 
         switch (member.type.kind) {
           case "JsonIntersection": {
-            // z.discriminatedUnion can't handle an array of z.intersection(member, z.object({ discriminant: z.literal("value") })),
-            // it can only handle arrays of z.object's, so flatten the intersection into a z.object and then add the discriminant.
+            // z.discriminatedUnion can't handle a z.intersection(member, z.object({ discriminant: z.literal("value") })),
+            // it can only handle z.object's, so flatten the intersection into a z.object and then add the discriminant.
             return code`${this.reusables.imports.z}.object({ ${joinCode(
               member.type.memberTypes
                 .map((member) => {
@@ -291,10 +291,12 @@ class JsonIntersectionType extends AbstractJsonType {
 
   @Memoize()
   protected get schemaExpression(): Code {
-    return code`${this.reusables.imports.z}.intersection(${joinCode(
-      this.memberTypes.map((memberType) => memberType.schema),
-      { on: ", " },
-    )})`;
+    // Use .and chains instead of .intersection. The latter only supports two operands.
+    return joinCode(
+      this.memberTypes.map((memberType, memberI) =>
+        memberI === 0 ? memberType.schema : code`.and(${memberType.schema})`,
+      ),
+    );
   }
 }
 
