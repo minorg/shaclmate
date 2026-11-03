@@ -647,6 +647,30 @@ export const harnesses = {
     kitchenSink.StructDiscriminatedUnion,
     "StructDiscriminatedUnion",
   ),
+  structInheritance1: new Harness(
+    kitchenSink.StructInheritance1.createUnsafe({
+      $identifier,
+      structInheritance1: "test1",
+    }),
+    kitchenSink.StructInheritance1,
+  ),
+  structInheritance2: new Harness(
+    kitchenSink.StructInheritance2.createUnsafe({
+      $identifier,
+      structInheritance1: "test1",
+      structInheritance2: "test2",
+    }),
+    kitchenSink.StructInheritance2,
+  ),
+  structInheritance3: new Harness(
+    kitchenSink.StructInheritance3.createUnsafe({
+      $identifier,
+      structInheritance1: "test1",
+      structInheritance2: "test2",
+      structInheritance3: "test3",
+    }),
+    kitchenSink.StructInheritance3,
+  ),
   structIntersection: new Harness(
     kitchenSink.StructIntersection.createUnsafe({
       $identifier,
