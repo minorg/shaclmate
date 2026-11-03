@@ -117,7 +117,7 @@ export class ObjectType extends AbstractStructuredType {
   protected override valueSparqlWherePatternsFunctionExpression =
     ObjectType_valueSparqlWherePatternsFunctionExpression;
 
-  private readonly discriminantProperty: Maybe<ObjectType.DiscriminantProperty>;
+  readonly discriminatedType: Maybe<AbstractStructuredType.DiscriminatedType>;
   readonly extern: boolean;
   override readonly graphqlArgs: AbstractStructuredType["graphqlArgs"] =
     Maybe.empty();
@@ -155,7 +155,13 @@ export class ObjectType extends AbstractStructuredType {
     synthetic: boolean;
   } & ConstructorParameters<typeof AbstractStructuredType>[0]) {
     super(superParameters);
-    this.discriminantProperty = discriminantProperty;
+    this.discriminatedType = discriminantProperty.map(
+      (discriminantProperty) => ({
+        discriminantProperty,
+        // If discriminantProperty is Just then name must be as well.
+        expression: code`${this.name.unsafeCoerce()}.Discriminated`,
+      }),
+    );
     this.extern = extern;
     this.identifierProperty = identifierProperty;
     this.identifierType = identifierType;
@@ -202,17 +208,6 @@ export class ObjectType extends AbstractStructuredType {
 
   override get declaration(): Maybe<Code> {
     return !this.extern ? super.declaration : Maybe.empty();
-  }
-
-  /**
-   * Expression of this type including the discriminant property, if available.
-   */
-  @Memoize()
-  override get discriminatedType(): Maybe<AbstractStructuredType.DiscriminatedType> {
-    return this.name.map((name) => ({
-      discriminantProperty: this.discriminantProperty.unsafeCoerce(),
-      expression: code`${name}.Discriminated`,
-    }));
   }
 
   @Memoize()
@@ -484,11 +479,11 @@ export class ObjectType extends AbstractStructuredType {
         ...staticModuleDeclarations,
         ...ObjectType_identifierTypeDeclarations.call(this),
       };
-      this.discriminantProperty.ifJust((discriminantProperty) => {
+      this.discriminatedType.ifJust(({ discriminantProperty }) => {
         staticModuleDeclarations["Discriminated"] =
-          code`export type Discriminated = ${name} & { readonly ${discriminantProperty.name}: ${literalOf(discriminantProperty.value)} };`;
+          code`export type Discriminated = ${name} & { readonly ${discriminantProperty.name}: ${literalOf(discriminantProperty.values[0])} };`;
       });
-      ObjectType_typeGuardFunction.call(this).ifJust(addFunctionDeclaration);
+      this.typeGuardFunction.ifJust(addFunctionDeclaration);
     }
 
     return staticModuleDeclarations;

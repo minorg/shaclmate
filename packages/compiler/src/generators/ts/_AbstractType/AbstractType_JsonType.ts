@@ -229,13 +229,31 @@ class JsonDiscriminatedUnionType extends AbstractJsonType {
 
   @Memoize()
   protected get schemaExpression(): Code {
-    // z.discriminatedUnion can't handle an array of z.intersection(member, z.object({ discriminant: z.literal("value") })),
-    // it can only handle arrays of z.object's
     return code`${this.reusables.imports.z}.discriminatedUnion(${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}, [${joinCode(
-      this.members.map(
-        (member) =>
-          code`${member.type.schema}.extend({ ${this.configuration.objectDiscriminantProperty.jsonName}: ${this.reusables.imports.z}.literal(${literalOf(member.discriminantValue)}) })`,
-      ),
+      this.members.map((member) => {
+        const discriminantPropertyInitializer = code`${this.configuration.objectDiscriminantProperty.jsonName}: ${this.reusables.imports.z}.literal(${literalOf(member.discriminantValue)})`;
+
+        switch (member.type.kind) {
+          case "JsonIntersection": {
+            // z.discriminatedUnion can't handle an array of z.intersection(member, z.object({ discriminant: z.literal("value") })),
+            // it can only handle arrays of z.object's, so flatten the intersection into a z.object and then add the discriminant.
+            return code`${this.reusables.imports.z}.object({ ${joinCode(
+              member.type.memberTypes
+                .map((member) => {
+                  invariant(member.kind === "JsonObject", member.kind);
+                  return code`...${member.schema}.shape`;
+                })
+                .concat(discriminantPropertyInitializer),
+              { on: "," },
+            )} })`;
+          }
+          case "JsonObject":
+            return code`${member.type.schema}.extend({ ${discriminantPropertyInitializer} })`;
+          default:
+            member.type satisfies never;
+            throw new Error();
+        }
+      }),
       { on: ", " },
     )}])`;
   }
@@ -244,7 +262,7 @@ class JsonDiscriminatedUnionType extends AbstractJsonType {
 namespace JsonDiscriminatedUnionType {
   export interface Member {
     readonly discriminantValue: number | string;
-    readonly type: JsonObjectType;
+    readonly type: JsonIntersectionType | JsonObjectType;
   }
 }
 

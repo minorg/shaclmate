@@ -62506,12 +62506,16 @@ export type StructIntersection = StructIntersectionMember1 &
 
 export namespace StructIntersection {
   export const _fromRdfResource: $_FromRdfResourceFunction<
-    StructIntersection
+    StructIntersection.Discriminated
   > = (resource, options) =>
     StructIntersectionMember1.fromRdfResource(resource, options).chain(
       (member0) =>
         StructIntersectionMember2.fromRdfResource(resource, options).map(
-          (member1) => ({ ...member0, ...member1 }),
+          (member1) => ({
+            ...member0,
+            ...member1,
+            $type: "StructIntersection" as const,
+          }),
         ),
     );
 
@@ -62533,12 +62537,13 @@ export namespace StructIntersection {
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(
     parameters: StructIntersection.CreateParameters<$DefaultNamespaceT>,
-  ) => Either<Error, StructIntersection> = (parameters) =>
+  ) => Either<Error, StructIntersection.Discriminated> = (parameters) =>
     StructIntersectionMember1.create(parameters)
       .chain((member0) =>
         StructIntersectionMember2.create(parameters).map((member1) => ({
           ...member0,
           ...member1,
+          $type: "StructIntersection" as const,
         })),
       )
       .map((object) =>
@@ -62557,7 +62562,12 @@ export namespace StructIntersection {
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(
     parameters: StructIntersection.CreateParameters<$DefaultNamespaceT>,
-  ) => StructIntersection = (parameters) => create(parameters).unsafeCoerce();
+  ) => StructIntersection.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = StructIntersection & {
+    readonly $type: "StructIntersection";
+  };
 
   export const equals: $EqualsFunction<StructIntersection> = (left, right) =>
     StructIntersectionMember1.equals(left, right) &&
@@ -62601,21 +62611,22 @@ export namespace StructIntersection {
 
   export const fromJson: $FromJsonObjectFunction<
     StructIntersection.Json,
-    StructIntersection,
+    StructIntersection.Discriminated,
     undefined
   > = (value) =>
     StructIntersectionMember1.fromJson(value).chain((member0) =>
       StructIntersectionMember2.fromJson(value).map((member1) => ({
         ...member0,
         ...member1,
+        $type: "StructIntersection" as const,
       })),
     );
 
-  export const fromRdfResource: $FromRdfResourceFunction<StructIntersection> =
+  export const fromRdfResource: $FromRdfResourceFunction<StructIntersection.Discriminated> =
     $wrap_FromRdfResourceFunction(StructIntersection._fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    StructIntersection,
+    StructIntersection.Discriminated,
     StructIntersection.Schema
   > = (values, options) =>
     values.chainMap((value) =>
@@ -62635,6 +62646,11 @@ export namespace StructIntersection {
   export namespace Identifier {
     export const parse = $parseIdentifier;
   }
+
+  export const isStructIntersection: $ObjectTypeGuardFunction<
+    StructIntersection.Discriminated
+  > = (object): object is StructIntersection.Discriminated =>
+    object.$type === "StructIntersection";
 
   export type Json = StructIntersectionMember1.Json &
     StructIntersectionMember2.Json;
@@ -62855,7 +62871,8 @@ export type $Object =
   | StructIntersectionMember2.Discriminated
   | TargetClassStruct.Discriminated
   | TermsStruct.Discriminated
-  | UnionDiscriminantsStruct.Discriminated;
+  | UnionDiscriminantsStruct.Discriminated
+  | StructIntersection.Discriminated;
 
 export namespace $Object {
   export function equals(left: $Object, right: $Object): $EqualsResult {
@@ -63076,6 +63093,8 @@ export namespace $Object {
           left,
           right as UnionDiscriminantsStruct,
         );
+      case "StructIntersection":
+        return StructIntersection.equals(left, right as StructIntersection);
       default:
         left satisfies never;
         throw new Error("should never reach this point");
@@ -63252,6 +63271,9 @@ export namespace $Object {
       case "UnionDiscriminantsStruct":
         UnionDiscriminantsStruct.hash(hasher, object);
         break;
+      case "StructIntersection":
+        StructIntersection.hash(hasher, object);
+        break;
       default:
         object satisfies never;
         throw new Error("should never reach this point");
@@ -63261,245 +63283,277 @@ export namespace $Object {
   export function toJson(object: $Object) {
     switch (object.$type) {
       case "DefaultPartial":
-        return { ...$DefaultPartial.toJson(object), $type: "DefaultPartial" };
+        return {
+          ...$DefaultPartial.toJson(object),
+          $type: "DefaultPartial" as const,
+        };
       case "NamedDefaultPartial":
         return {
           ...$NamedDefaultPartial.toJson(object),
-          $type: "NamedDefaultPartial",
+          $type: "NamedDefaultPartial" as const,
         };
       case "AnonymousTypesStruct":
         return {
           ...AnonymousTypesStruct.toJson(object),
-          $type: "AnonymousTypesStruct",
+          $type: "AnonymousTypesStruct" as const,
         };
       case "BlankNodeIdentifierStruct":
         return {
           ...BlankNodeIdentifierStruct.toJson(object),
-          $type: "BlankNodeIdentifierStruct",
+          $type: "BlankNodeIdentifierStruct" as const,
         };
       case "BlankNodeOrIriIdentifierStruct":
         return {
           ...BlankNodeOrIriIdentifierStruct.toJson(object),
-          $type: "BlankNodeOrIriIdentifierStruct",
+          $type: "BlankNodeOrIriIdentifierStruct" as const,
         };
       case "ClassConstraintsStruct":
         return {
           ...ClassConstraintsStruct.toJson(object),
-          $type: "ClassConstraintsStruct",
+          $type: "ClassConstraintsStruct" as const,
         };
       case "ConvertibleTypesStruct":
         return {
           ...ConvertibleTypesStruct.toJson(object),
-          $type: "ConvertibleTypesStruct",
+          $type: "ConvertibleTypesStruct" as const,
         };
       case "DatatypeDiscriminatedUnionsStruct":
         return {
           ...DatatypeDiscriminatedUnionsStruct.toJson(object),
-          $type: "DatatypeDiscriminatedUnionsStruct",
+          $type: "DatatypeDiscriminatedUnionsStruct" as const,
         };
       case "DatesStruct":
-        return { ...DatesStruct.toJson(object), $type: "DatesStruct" };
+        return { ...DatesStruct.toJson(object), $type: "DatesStruct" as const };
       case "DefaultValuesStruct":
         return {
           ...DefaultValuesStruct.toJson(object),
-          $type: "DefaultValuesStruct",
+          $type: "DefaultValuesStruct" as const,
         };
       case "DirectRecursiveStruct":
         return {
           ...DirectRecursiveStruct.toJson(object),
-          $type: "DirectRecursiveStruct",
+          $type: "DirectRecursiveStruct" as const,
         };
       case "DisplayStruct":
-        return { ...DisplayStruct.toJson(object), $type: "DisplayStruct" };
+        return {
+          ...DisplayStruct.toJson(object),
+          $type: "DisplayStruct" as const,
+        };
       case "ExplicitFromToRdfTypesStruct":
         return {
           ...ExplicitFromToRdfTypesStruct.toJson(object),
-          $type: "ExplicitFromToRdfTypesStruct",
+          $type: "ExplicitFromToRdfTypesStruct" as const,
         };
       case "ExplicitRdfTypeStruct":
         return {
           ...ExplicitRdfTypeStruct.toJson(object),
-          $type: "ExplicitRdfTypeStruct",
+          $type: "ExplicitRdfTypeStruct" as const,
         };
       case "FlattenDiscriminatedUnionMember3":
         return {
           ...FlattenDiscriminatedUnionMember3.toJson(object),
-          $type: "FlattenDiscriminatedUnionMember3",
+          $type: "FlattenDiscriminatedUnionMember3" as const,
         };
       case "HasValuesStruct":
-        return { ...HasValuesStruct.toJson(object), $type: "HasValuesStruct" };
+        return {
+          ...HasValuesStruct.toJson(object),
+          $type: "HasValuesStruct" as const,
+        };
       case "IgnoredPropertiesStruct":
         return {
           ...IgnoredPropertiesStruct.toJson(object),
-          $type: "IgnoredPropertiesStruct",
+          $type: "IgnoredPropertiesStruct" as const,
         };
       case "IndirectRecursiveStruct":
         return {
           ...IndirectRecursiveStruct.toJson(object),
-          $type: "IndirectRecursiveStruct",
+          $type: "IndirectRecursiveStruct" as const,
         };
       case "IndirectRecursiveStructHelper":
         return {
           ...IndirectRecursiveStructHelper.toJson(object),
-          $type: "IndirectRecursiveStructHelper",
+          $type: "IndirectRecursiveStructHelper" as const,
         };
       case "InIdentifierStruct":
         return {
           ...InIdentifierStruct.toJson(object),
-          $type: "InIdentifierStruct",
+          $type: "InIdentifierStruct" as const,
         };
       case "InPropertiesStruct":
         return {
           ...InPropertiesStruct.toJson(object),
-          $type: "InPropertiesStruct",
+          $type: "InPropertiesStruct" as const,
         };
       case "IntersectionPropertiesStruct":
         return {
           ...IntersectionPropertiesStruct.toJson(object),
-          $type: "IntersectionPropertiesStruct",
+          $type: "IntersectionPropertiesStruct" as const,
         };
       case "IriIdentifierStruct":
         return {
           ...IriIdentifierStruct.toJson(object),
-          $type: "IriIdentifierStruct",
+          $type: "IriIdentifierStruct" as const,
         };
       case "LangStringStruct":
         return {
           ...LangStringStruct.toJson(object),
-          $type: "LangStringStruct",
+          $type: "LangStringStruct" as const,
         };
       case "LanguageInStruct":
         return {
           ...LanguageInStruct.toJson(object),
-          $type: "LanguageInStruct",
+          $type: "LanguageInStruct" as const,
         };
       case "LazilyResolvedBlankNodeOrIriIdentifierStruct":
         return {
           ...LazilyResolvedBlankNodeOrIriIdentifierStruct.toJson(object),
-          $type: "LazilyResolvedBlankNodeOrIriIdentifierStruct",
+          $type: "LazilyResolvedBlankNodeOrIriIdentifierStruct" as const,
         };
       case "LazilyResolvedDiscriminatedUnionMember1":
         return {
           ...LazilyResolvedDiscriminatedUnionMember1.toJson(object),
-          $type: "LazilyResolvedDiscriminatedUnionMember1",
+          $type: "LazilyResolvedDiscriminatedUnionMember1" as const,
         };
       case "LazilyResolvedDiscriminatedUnionMember2":
         return {
           ...LazilyResolvedDiscriminatedUnionMember2.toJson(object),
-          $type: "LazilyResolvedDiscriminatedUnionMember2",
+          $type: "LazilyResolvedDiscriminatedUnionMember2" as const,
         };
       case "LazilyResolvedIriIdentifierStruct":
         return {
           ...LazilyResolvedIriIdentifierStruct.toJson(object),
-          $type: "LazilyResolvedIriIdentifierStruct",
+          $type: "LazilyResolvedIriIdentifierStruct" as const,
         };
       case "LazyPropertiesStruct":
         return {
           ...LazyPropertiesStruct.toJson(object),
-          $type: "LazyPropertiesStruct",
+          $type: "LazyPropertiesStruct" as const,
         };
       case "ListSetsStruct":
-        return { ...ListSetsStruct.toJson(object), $type: "ListSetsStruct" };
+        return {
+          ...ListSetsStruct.toJson(object),
+          $type: "ListSetsStruct" as const,
+        };
       case "ListsStruct":
-        return { ...ListsStruct.toJson(object), $type: "ListsStruct" };
+        return { ...ListsStruct.toJson(object), $type: "ListsStruct" as const };
       case "MutablePropertiesStruct":
         return {
           ...MutablePropertiesStruct.toJson(object),
-          $type: "MutablePropertiesStruct",
+          $type: "MutablePropertiesStruct" as const,
         };
       case "NamedTypesStruct":
         return {
           ...NamedTypesStruct.toJson(object),
-          $type: "NamedTypesStruct",
+          $type: "NamedTypesStruct" as const,
         };
       case "NewName":
-        return { ...NewName.toJson(object), $type: "NewName" };
+        return { ...NewName.toJson(object), $type: "NewName" as const };
       case "NodeKindsStruct":
-        return { ...NodeKindsStruct.toJson(object), $type: "NodeKindsStruct" };
+        return {
+          ...NodeKindsStruct.toJson(object),
+          $type: "NodeKindsStruct" as const,
+        };
       case "NonClassStruct":
-        return { ...NonClassStruct.toJson(object), $type: "NonClassStruct" };
+        return {
+          ...NonClassStruct.toJson(object),
+          $type: "NonClassStruct" as const,
+        };
       case "NoRdfTypeDiscriminatedUnionMember1":
         return {
           ...NoRdfTypeDiscriminatedUnionMember1.toJson(object),
-          $type: "NoRdfTypeDiscriminatedUnionMember1",
+          $type: "NoRdfTypeDiscriminatedUnionMember1" as const,
         };
       case "NoRdfTypeDiscriminatedUnionMember2":
         return {
           ...NoRdfTypeDiscriminatedUnionMember2.toJson(object),
-          $type: "NoRdfTypeDiscriminatedUnionMember2",
+          $type: "NoRdfTypeDiscriminatedUnionMember2" as const,
         };
       case "NumericsStruct":
-        return { ...NumericsStruct.toJson(object), $type: "NumericsStruct" };
+        return {
+          ...NumericsStruct.toJson(object),
+          $type: "NumericsStruct" as const,
+        };
       case "OrderedStruct":
-        return { ...OrderedStruct.toJson(object), $type: "OrderedStruct" };
+        return {
+          ...OrderedStruct.toJson(object),
+          $type: "OrderedStruct" as const,
+        };
       case "PartialDiscriminatedUnionMember1":
         return {
           ...PartialDiscriminatedUnionMember1.toJson(object),
-          $type: "PartialDiscriminatedUnionMember1",
+          $type: "PartialDiscriminatedUnionMember1" as const,
         };
       case "PartialDiscriminatedUnionMember2":
         return {
           ...PartialDiscriminatedUnionMember2.toJson(object),
-          $type: "PartialDiscriminatedUnionMember2",
+          $type: "PartialDiscriminatedUnionMember2" as const,
         };
       case "PartialStruct":
-        return { ...PartialStruct.toJson(object), $type: "PartialStruct" };
+        return {
+          ...PartialStruct.toJson(object),
+          $type: "PartialStruct" as const,
+        };
       case "PropertyCardinalitiesStruct":
         return {
           ...PropertyCardinalitiesStruct.toJson(object),
-          $type: "PropertyCardinalitiesStruct",
+          $type: "PropertyCardinalitiesStruct" as const,
         };
       case "PropertyNamesStruct":
         return {
           ...PropertyNamesStruct.toJson(object),
-          $type: "PropertyNamesStruct",
+          $type: "PropertyNamesStruct" as const,
         };
       case "PropertyPathsStruct":
         return {
           ...PropertyPathsStruct.toJson(object),
-          $type: "PropertyPathsStruct",
+          $type: "PropertyPathsStruct" as const,
         };
       case "RecursiveDiscriminatedUnionMember1":
         return {
           ...RecursiveDiscriminatedUnionMember1.toJson(object),
-          $type: "RecursiveDiscriminatedUnionMember1",
+          $type: "RecursiveDiscriminatedUnionMember1" as const,
         };
       case "RecursiveDiscriminatedUnionMember2":
         return {
           ...RecursiveDiscriminatedUnionMember2.toJson(object),
-          $type: "RecursiveDiscriminatedUnionMember2",
+          $type: "RecursiveDiscriminatedUnionMember2" as const,
         };
       case "StructDiscriminatedUnionMember1":
         return {
           ...StructDiscriminatedUnionMember1.toJson(object),
-          $type: "StructDiscriminatedUnionMember1",
+          $type: "StructDiscriminatedUnionMember1" as const,
         };
       case "StructDiscriminatedUnionMember2":
         return {
           ...StructDiscriminatedUnionMember2.toJson(object),
-          $type: "StructDiscriminatedUnionMember2",
+          $type: "StructDiscriminatedUnionMember2" as const,
         };
       case "StructIntersectionMember1":
         return {
           ...StructIntersectionMember1.toJson(object),
-          $type: "StructIntersectionMember1",
+          $type: "StructIntersectionMember1" as const,
         };
       case "StructIntersectionMember2":
         return {
           ...StructIntersectionMember2.toJson(object),
-          $type: "StructIntersectionMember2",
+          $type: "StructIntersectionMember2" as const,
         };
       case "TargetClassStruct":
         return {
           ...TargetClassStruct.toJson(object),
-          $type: "TargetClassStruct",
+          $type: "TargetClassStruct" as const,
         };
       case "TermsStruct":
-        return { ...TermsStruct.toJson(object), $type: "TermsStruct" };
+        return { ...TermsStruct.toJson(object), $type: "TermsStruct" as const };
       case "UnionDiscriminantsStruct":
         return {
           ...UnionDiscriminantsStruct.toJson(object),
-          $type: "UnionDiscriminantsStruct",
+          $type: "UnionDiscriminantsStruct" as const,
+        };
+      case "StructIntersection":
+        return {
+          ...StructIntersection.toJson(object),
+          $type: "StructIntersection" as const,
         };
       default:
         object satisfies never;
@@ -63645,6 +63699,8 @@ export namespace $Object {
         return TermsStruct.toRdfResource(object, options);
       case "UnionDiscriminantsStruct":
         return UnionDiscriminantsStruct.toRdfResource(object, options);
+      case "StructIntersection":
+        return StructIntersection.toRdfResource(object, options);
       default:
         object satisfies never;
         throw new Error("should never reach this point");
@@ -63765,6 +63821,8 @@ export namespace $Object {
         return TermsStruct.$toString(object);
       case "UnionDiscriminantsStruct":
         return UnionDiscriminantsStruct.$toString(object);
+      case "StructIntersection":
+        return StructIntersection.$toString(object);
       default:
         object satisfies never;
         throw new Error("should never reach this point");

@@ -258,13 +258,38 @@ export abstract class AbstractDiscriminatedUnionType<
     MemberTypeT
   >["jsonObjectType"] {
     return this.jsonTypeFactory.createJsonDiscriminatedUnionType(
-      this.members.map((member) => {
-        const type = member.type.jsonObjectType;
-        invariant(type.kind === "JsonObject");
-        return {
-          discriminantValue: member.primaryDiscriminantValue,
-          type,
-        };
+      this.members.flatMap((member) => {
+        const memberJsonObjectType = member.type.jsonObjectType;
+
+        switch (memberJsonObjectType.kind) {
+          case "JsonDiscriminatedUnion":
+            return memberJsonObjectType.members;
+          case "JsonObject":
+            return [
+              {
+                discriminantValue: member.primaryDiscriminantValue,
+                type: memberJsonObjectType,
+              },
+            ];
+          case "JsonIntersection":
+            if (
+              memberJsonObjectType.memberTypes.every(
+                (member) => member.kind === "JsonObject",
+              )
+            ) {
+              return [
+                {
+                  discriminantValue: member.primaryDiscriminantValue,
+                  type: memberJsonObjectType,
+                },
+              ];
+            }
+            break;
+        }
+
+        throw new Error(
+          `unable to create JSON discriminated union from ${memberJsonObjectType.kind}`,
+        );
       }),
       {
         name: this.name.map((name) => [name, "Json"]).extract(),
