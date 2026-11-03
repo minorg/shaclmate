@@ -4633,9 +4633,9 @@ export namespace $DefaultPartial {
     $DefaultPartial.Json,
     $DefaultPartial.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: $DefaultPartial.schema.properties.$identifier.type,
       }),
@@ -4959,9 +4959,9 @@ export namespace $NamedDefaultPartial {
     $NamedDefaultPartial.Json,
     $NamedDefaultPartial.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $iriFromJsonString<string>($jsonObject["@id"], {
+      $identifier: $iriFromJsonString<string>(jsonObject["@id"], {
         ...options,
         schema: $NamedDefaultPartial.schema.properties.$identifier.type,
       }),
@@ -5844,20 +5844,20 @@ export namespace AnonymousTypesStruct {
     AnonymousTypesStruct.Json,
     AnonymousTypesStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: AnonymousTypesStruct.schema.properties.$identifier.type,
       }),
-      anonymousStruct: $maybeFromJsonValue((($jsonObject, options) =>
+      anonymousStruct: $maybeFromJsonValue(((jsonObject, options = {}) =>
         $sequenceRecord({
-          $identifier: $identifierFromJsonString($jsonObject["@id"], {
+          $identifier: $identifierFromJsonString(jsonObject["@id"], {
             ...options,
             schema: { kind: "Identifier" as const },
           }),
           anonymousStructString: $stringFromJsonString<string>(
-            $jsonObject["anonymousStructString"],
+            jsonObject["anonymousStructString"],
             {
               ...options,
               schema: { kind: "String" as const, datatype: $xsd_string },
@@ -5923,7 +5923,7 @@ export namespace AnonymousTypesStruct {
           readonly anonymousStructString: string;
         },
         undefined
-      >)($jsonObject["anonymousStruct"], {
+      >)(jsonObject["anonymousStruct"], {
         ...options,
         schema: AnonymousTypesStruct.schema.properties.anonymousStruct.type,
       }),
@@ -6497,11 +6497,11 @@ export namespace BlankNodeIdentifierStruct {
     BlankNodeIdentifierStruct.Json,
     BlankNodeIdentifierStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
       blankNodeIdentifierString: $maybeFromJsonValue(
         $stringFromJsonString<string>,
-      )($jsonObject["blankNodeIdentifierString"], {
+      )(jsonObject["blankNodeIdentifierString"], {
         ...options,
         schema:
           BlankNodeIdentifierStruct.schema.properties.blankNodeIdentifierString
@@ -7049,16 +7049,16 @@ export namespace BlankNodeOrIriIdentifierStruct {
     BlankNodeOrIriIdentifierStruct.Json,
     BlankNodeOrIriIdentifierStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           BlankNodeOrIriIdentifierStruct.schema.properties.$identifier.type,
       }),
       blankNodeOrIriIdentifierString: $maybeFromJsonValue(
         $stringFromJsonString<string>,
-      )($jsonObject["blankNodeOrIriIdentifierString"], {
+      )(jsonObject["blankNodeOrIriIdentifierString"], {
         ...options,
         schema:
           BlankNodeOrIriIdentifierStruct.schema.properties
@@ -7976,42 +7976,42 @@ export namespace ClassConstraintsStruct {
     ClassConstraintsStruct.Json,
     ClassConstraintsStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: ClassConstraintsStruct.schema.properties.$identifier.type,
       }),
       iriClass: $maybeFromJsonValue($iriFromJsonString<string>)(
-        $jsonObject["iriClass"],
+        jsonObject["iriClass"],
         {
           ...options,
           schema: ClassConstraintsStruct.schema.properties.iriClass.type,
         },
       ),
       multiClass: $maybeFromJsonValue($identifierFromJsonString)(
-        $jsonObject["multiClass"],
+        jsonObject["multiClass"],
         {
           ...options,
           schema: ClassConstraintsStruct.schema.properties.multiClass.type,
         },
       ),
       nodeClass1: $maybeFromJsonValue(NonClassStruct.fromJson)(
-        $jsonObject["nodeClass1"],
+        jsonObject["nodeClass1"],
         {
           ...options,
           schema: ClassConstraintsStruct.schema.properties.nodeClass1.type,
         },
       ),
       nodeClass2: $maybeFromJsonValue(PartialStruct.fromJson)(
-        $jsonObject["nodeClass2"],
+        jsonObject["nodeClass2"],
         {
           ...options,
           schema: ClassConstraintsStruct.schema.properties.nodeClass2.type,
         },
       ),
       singleClass: $maybeFromJsonValue($identifierFromJsonString)(
-        $jsonObject["singleClass"],
+        jsonObject["singleClass"],
         {
           ...options,
           schema: ClassConstraintsStruct.schema.properties.singleClass.type,
@@ -9566,29 +9566,26 @@ export namespace ConvertibleTypesStruct {
     ConvertibleTypesStruct.Json,
     ConvertibleTypesStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: ConvertibleTypesStruct.schema.properties.$identifier.type,
       }),
-      convertibleIri: $iriFromJsonString<string>(
-        $jsonObject["convertibleIri"],
-        {
-          ...options,
-          schema: ConvertibleTypesStruct.schema.properties.convertibleIri.type,
-        },
-      ),
+      convertibleIri: $iriFromJsonString<string>(jsonObject["convertibleIri"], {
+        ...options,
+        schema: ConvertibleTypesStruct.schema.properties.convertibleIri.type,
+      }),
       convertibleIriNonEmptySet: $arrayFromJsonArray(
         $iriFromJsonString<string>,
-      )($jsonObject["convertibleIriNonEmptySet"], {
+      )(jsonObject["convertibleIriNonEmptySet"], {
         ...options,
         schema:
           ConvertibleTypesStruct.schema.properties.convertibleIriNonEmptySet
             .type,
       }),
       convertibleIriOption: $maybeFromJsonValue($iriFromJsonString<string>)(
-        $jsonObject["convertibleIriOption"],
+        jsonObject["convertibleIriOption"],
         {
           ...options,
           schema:
@@ -9596,7 +9593,7 @@ export namespace ConvertibleTypesStruct {
         },
       ),
       convertibleIriSet: $arrayFromJsonArray($iriFromJsonString<string>)(
-        $jsonObject["convertibleIriSet"],
+        jsonObject["convertibleIriSet"],
         {
           ...options,
           schema:
@@ -9604,7 +9601,7 @@ export namespace ConvertibleTypesStruct {
         },
       ),
       convertibleLiteral: $literalFromJsonObject(
-        $jsonObject["convertibleLiteral"],
+        jsonObject["convertibleLiteral"],
         {
           ...options,
           schema:
@@ -9613,14 +9610,14 @@ export namespace ConvertibleTypesStruct {
       ),
       convertibleLiteralNonEmptySet: $arrayFromJsonArray(
         $literalFromJsonObject,
-      )($jsonObject["convertibleLiteralNonEmptySet"], {
+      )(jsonObject["convertibleLiteralNonEmptySet"], {
         ...options,
         schema:
           ConvertibleTypesStruct.schema.properties.convertibleLiteralNonEmptySet
             .type,
       }),
       convertibleLiteralOption: $maybeFromJsonValue($literalFromJsonObject)(
-        $jsonObject["convertibleLiteralOption"],
+        jsonObject["convertibleLiteralOption"],
         {
           ...options,
           schema:
@@ -9629,7 +9626,7 @@ export namespace ConvertibleTypesStruct {
         },
       ),
       convertibleLiteralSet: $arrayFromJsonArray($literalFromJsonObject)(
-        $jsonObject["convertibleLiteralSet"],
+        jsonObject["convertibleLiteralSet"],
         {
           ...options,
           schema:
@@ -9637,7 +9634,7 @@ export namespace ConvertibleTypesStruct {
         },
       ),
       convertibleTerm: $termFromJsonObject<BlankNode | NamedNode | Literal>(
-        $jsonObject["convertibleTerm"],
+        jsonObject["convertibleTerm"],
         {
           ...options,
           schema: ConvertibleTypesStruct.schema.properties.convertibleTerm.type,
@@ -9645,7 +9642,7 @@ export namespace ConvertibleTypesStruct {
       ),
       convertibleTermNonEmptySet: $arrayFromJsonArray(
         $termFromJsonObject<BlankNode | NamedNode | Literal>,
-      )($jsonObject["convertibleTermNonEmptySet"], {
+      )(jsonObject["convertibleTermNonEmptySet"], {
         ...options,
         schema:
           ConvertibleTypesStruct.schema.properties.convertibleTermNonEmptySet
@@ -9653,14 +9650,14 @@ export namespace ConvertibleTypesStruct {
       }),
       convertibleTermOption: $maybeFromJsonValue(
         $termFromJsonObject<BlankNode | NamedNode | Literal>,
-      )($jsonObject["convertibleTermOption"], {
+      )(jsonObject["convertibleTermOption"], {
         ...options,
         schema:
           ConvertibleTypesStruct.schema.properties.convertibleTermOption.type,
       }),
       convertibleTermSet: $arrayFromJsonArray(
         $termFromJsonObject<BlankNode | NamedNode | Literal>,
-      )($jsonObject["convertibleTermSet"], {
+      )(jsonObject["convertibleTermSet"], {
         ...options,
         schema:
           ConvertibleTypesStruct.schema.properties.convertibleTermSet.type,
@@ -13710,9 +13707,9 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     DatatypeDiscriminatedUnionsStruct.Json,
     DatatypeDiscriminatedUnionsStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.$identifier.type,
@@ -13768,7 +13765,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         }
 
         throw new Error("unable to deserialize JSON");
-      })($jsonObject["dateOrDateTime"], {
+      })(jsonObject["dateOrDateTime"], {
         ...options,
         schema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.dateOrDateTime
@@ -13813,7 +13810,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         }
 
         throw new Error("unable to deserialize JSON");
-      })($jsonObject["dateOrString"], {
+      })(jsonObject["dateOrString"], {
         ...options,
         schema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.dateOrString.type,
@@ -13869,7 +13866,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         }
 
         throw new Error("unable to deserialize JSON");
-      })($jsonObject["dateTimeOrDate"], {
+      })(jsonObject["dateTimeOrDate"], {
         ...options,
         schema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.dateTimeOrDate
@@ -13914,7 +13911,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         }
 
         throw new Error("unable to deserialize JSON");
-      })($jsonObject["decimalOrString"], {
+      })(jsonObject["decimalOrString"], {
         ...options,
         schema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.decimalOrString
@@ -13959,7 +13956,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         }
 
         throw new Error("unable to deserialize JSON");
-      })($jsonObject["integerOrString"], {
+      })(jsonObject["integerOrString"], {
         ...options,
         schema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.integerOrString
@@ -14072,7 +14069,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         }
 
         throw new Error("unable to deserialize JSON");
-      })($jsonObject["jsPrimitive"], {
+      })(jsonObject["jsPrimitive"], {
         ...options,
         schema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.jsPrimitive.type,
@@ -14116,14 +14113,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         }
 
         throw new Error("unable to deserialize JSON");
-      })($jsonObject["langStringOrString"], {
+      })(jsonObject["langStringOrString"], {
         ...options,
         schema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.langStringOrString
             .type,
       }),
       namedDatatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.fromJson(
-        $jsonObject["namedDatatypeDiscriminatedUnion1"],
+        jsonObject["namedDatatypeDiscriminatedUnion1"],
         {
           ...options,
           schema:
@@ -14132,7 +14129,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         },
       ),
       namedDatatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2.fromJson(
-        $jsonObject["namedDatatypeDiscriminatedUnion2"],
+        jsonObject["namedDatatypeDiscriminatedUnion2"],
         {
           ...options,
           schema:
@@ -14179,7 +14176,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         }
 
         throw new Error("unable to deserialize JSON");
-      })($jsonObject["stringOrDate"], {
+      })(jsonObject["stringOrDate"], {
         ...options,
         schema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrDate.type,
@@ -14223,7 +14220,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         }
 
         throw new Error("unable to deserialize JSON");
-      })($jsonObject["stringOrDecimal"], {
+      })(jsonObject["stringOrDecimal"], {
         ...options,
         schema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrDecimal
@@ -14268,7 +14265,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         }
 
         throw new Error("unable to deserialize JSON");
-      })($jsonObject["stringOrInteger"], {
+      })(jsonObject["stringOrInteger"], {
         ...options,
         schema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrInteger
@@ -14313,7 +14310,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         }
 
         throw new Error("unable to deserialize JSON");
-      })($jsonObject["stringOrLangString"], {
+      })(jsonObject["stringOrLangString"], {
         ...options,
         schema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrLangString
@@ -15867,25 +15864,25 @@ export namespace DatesStruct {
     DatesStruct.Json,
     DatesStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: DatesStruct.schema.properties.$identifier.type,
       }),
-      date: $maybeFromJsonValue($dateFromJsonString)($jsonObject["date"], {
+      date: $maybeFromJsonValue($dateFromJsonString)(jsonObject["date"], {
         ...options,
         schema: DatesStruct.schema.properties.date.type,
       }),
       dateTime: $maybeFromJsonValue($dateFromJsonString)(
-        $jsonObject["dateTime"],
+        jsonObject["dateTime"],
         {
           ...options,
           schema: DatesStruct.schema.properties.dateTime.type,
         },
       ),
       dateTimeStamp: $maybeFromJsonValue($dateFromJsonString)(
-        $jsonObject["dateTimeStamp"],
+        jsonObject["dateTimeStamp"],
         {
           ...options,
           schema: DatesStruct.schema.properties.dateTimeStamp.type,
@@ -16823,21 +16820,21 @@ export namespace DefaultValuesStruct {
     DefaultValuesStruct.Json,
     DefaultValuesStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: DefaultValuesStruct.schema.properties.$identifier.type,
       }),
       dateDefaultValue: $defaultValueFromJsonValue($dateFromJsonString)(
-        $jsonObject["dateDefaultValue"],
+        jsonObject["dateDefaultValue"],
         {
           ...options,
           schema: DefaultValuesStruct.schema.properties.dateDefaultValue.type,
         },
       ),
       dateTimeDefaultValue: $defaultValueFromJsonValue($dateFromJsonString)(
-        $jsonObject["dateTimeDefaultValue"],
+        jsonObject["dateTimeDefaultValue"],
         {
           ...options,
           schema:
@@ -16846,26 +16843,26 @@ export namespace DefaultValuesStruct {
       ),
       falseBooleanDefaultValue: $defaultValueFromJsonValue(
         $booleanFromJsonBoolean<boolean>,
-      )($jsonObject["falseBooleanDefaultValue"], {
+      )(jsonObject["falseBooleanDefaultValue"], {
         ...options,
         schema:
           DefaultValuesStruct.schema.properties.falseBooleanDefaultValue.type,
       }),
       numberDefaultValue: $defaultValueFromJsonValue(
         $floatFromJsonNumber<number>,
-      )($jsonObject["numberDefaultValue"], {
+      )(jsonObject["numberDefaultValue"], {
         ...options,
         schema: DefaultValuesStruct.schema.properties.numberDefaultValue.type,
       }),
       stringDefaultValue: $defaultValueFromJsonValue(
         $stringFromJsonString<string>,
-      )($jsonObject["stringDefaultValue"], {
+      )(jsonObject["stringDefaultValue"], {
         ...options,
         schema: DefaultValuesStruct.schema.properties.stringDefaultValue.type,
       }),
       trueBooleanDefaultValue: $defaultValueFromJsonValue(
         $booleanFromJsonBoolean<boolean>,
-      )($jsonObject["trueBooleanDefaultValue"], {
+      )(jsonObject["trueBooleanDefaultValue"], {
         ...options,
         schema:
           DefaultValuesStruct.schema.properties.trueBooleanDefaultValue.type,
@@ -17488,14 +17485,14 @@ export namespace DirectRecursiveStruct {
     DirectRecursiveStruct.Json,
     DirectRecursiveStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: DirectRecursiveStruct.schema.properties.$identifier.type,
       }),
       directRecursive: $maybeFromJsonValue(DirectRecursiveStruct.fromJson)(
-        $jsonObject["directRecursive"],
+        jsonObject["directRecursive"],
         {
           ...options,
           schema: DirectRecursiveStruct.schema.properties.directRecursive.type,
@@ -18141,28 +18138,28 @@ export namespace DisplayStruct {
     DisplayStruct.Json,
     DisplayStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: DisplayStruct.schema.properties.$identifier.type,
       }),
       explicitFalseDisplay: $stringFromJsonString<string>(
-        $jsonObject["explicitFalseDisplay"],
+        jsonObject["explicitFalseDisplay"],
         {
           ...options,
           schema: DisplayStruct.schema.properties.explicitFalseDisplay.type,
         },
       ),
       explicitTrueDisplay: $stringFromJsonString<string>(
-        $jsonObject["explicitTrueDisplay"],
+        jsonObject["explicitTrueDisplay"],
         {
           ...options,
           schema: DisplayStruct.schema.properties.explicitTrueDisplay.type,
         },
       ),
       implicitFalseDisplay: $stringFromJsonString<string>(
-        $jsonObject["implicitFalseDisplay"],
+        jsonObject["implicitFalseDisplay"],
         {
           ...options,
           schema: DisplayStruct.schema.properties.implicitFalseDisplay.type,
@@ -18734,14 +18731,14 @@ export namespace ExplicitFromToRdfTypesStruct {
     ExplicitFromToRdfTypesStruct.Json,
     ExplicitFromToRdfTypesStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: ExplicitFromToRdfTypesStruct.schema.properties.$identifier.type,
       }),
       explicitFromToRdfTypesString: $stringFromJsonString<string>(
-        $jsonObject["explicitFromToRdfTypesString"],
+        jsonObject["explicitFromToRdfTypesString"],
         {
           ...options,
           schema:
@@ -19270,14 +19267,14 @@ export namespace ExplicitRdfTypeStruct {
     ExplicitRdfTypeStruct.Json,
     ExplicitRdfTypeStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: ExplicitRdfTypeStruct.schema.properties.$identifier.type,
       }),
       explicitRdfTypeString: $stringFromJsonString<string>(
-        $jsonObject["explicitRdfTypeString"],
+        jsonObject["explicitRdfTypeString"],
         {
           ...options,
           schema:
@@ -19817,15 +19814,15 @@ export namespace FlattenDiscriminatedUnionMember3 {
     FlattenDiscriminatedUnionMember3.Json,
     FlattenDiscriminatedUnionMember3.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           FlattenDiscriminatedUnionMember3.schema.properties.$identifier.type,
       }),
       flattenDiscriminatedUnionMember3String: $stringFromJsonString<string>(
-        $jsonObject["flattenDiscriminatedUnionMember3String"],
+        jsonObject["flattenDiscriminatedUnionMember3String"],
         {
           ...options,
           schema:
@@ -20320,18 +20317,18 @@ export namespace HasValuesStruct {
     HasValuesStruct.Json,
     HasValuesStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: HasValuesStruct.schema.properties.$identifier.type,
       }),
-      hasIriValue: $iriFromJsonString<string>($jsonObject["hasIriValue"], {
+      hasIriValue: $iriFromJsonString<string>(jsonObject["hasIriValue"], {
         ...options,
         schema: HasValuesStruct.schema.properties.hasIriValue.type,
       }),
       hasLiteralValue: $stringFromJsonString<string>(
-        $jsonObject["hasLiteralValue"],
+        jsonObject["hasLiteralValue"],
         {
           ...options,
           schema: HasValuesStruct.schema.properties.hasLiteralValue.type,
@@ -20919,14 +20916,14 @@ export namespace IgnoredPropertiesStruct {
     IgnoredPropertiesStruct.Json,
     IgnoredPropertiesStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: IgnoredPropertiesStruct.schema.properties.$identifier.type,
       }),
       severityDefaultProperty: $stringFromJsonString<string>(
-        $jsonObject["severityDefaultProperty"],
+        jsonObject["severityDefaultProperty"],
         {
           ...options,
           schema:
@@ -20935,7 +20932,7 @@ export namespace IgnoredPropertiesStruct {
         },
       ),
       severityViolationProperty: $stringFromJsonString<string>(
-        $jsonObject["severityViolationProperty"],
+        jsonObject["severityViolationProperty"],
         {
           ...options,
           schema:
@@ -20944,7 +20941,7 @@ export namespace IgnoredPropertiesStruct {
         },
       ),
       shaclmateIgnoreFalseProperty: $stringFromJsonString<string>(
-        $jsonObject["shaclmateIgnoreFalseProperty"],
+        jsonObject["shaclmateIgnoreFalseProperty"],
         {
           ...options,
           schema:
@@ -21509,15 +21506,15 @@ export namespace IndirectRecursiveStruct {
     IndirectRecursiveStruct.Json,
     IndirectRecursiveStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: IndirectRecursiveStruct.schema.properties.$identifier.type,
       }),
       indirectRecursiveHelper: $maybeFromJsonValue(
         IndirectRecursiveStructHelper.fromJson,
-      )($jsonObject["indirectRecursiveHelper"], {
+      )(jsonObject["indirectRecursiveHelper"], {
         ...options,
         schema:
           IndirectRecursiveStruct.schema.properties.indirectRecursiveHelper
@@ -22067,15 +22064,15 @@ export namespace IndirectRecursiveStructHelper {
     IndirectRecursiveStructHelper.Json,
     IndirectRecursiveStructHelper.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           IndirectRecursiveStructHelper.schema.properties.$identifier.type,
       }),
       indirectRecursive: $maybeFromJsonValue(IndirectRecursiveStruct.fromJson)(
-        $jsonObject["indirectRecursive"],
+        jsonObject["indirectRecursive"],
         {
           ...options,
           schema:
@@ -22640,17 +22637,17 @@ export namespace InIdentifierStruct {
     InIdentifierStruct.Json,
     InIdentifierStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
       $identifier: $iriFromJsonString<
         | "http://example.com/InIdentifierStructInstance1"
         | "http://example.com/InIdentifierStructInstance2"
-      >($jsonObject["@id"], {
+      >(jsonObject["@id"], {
         ...options,
         schema: InIdentifierStruct.schema.properties.$identifier.type,
       }),
       inIdentifierString: $maybeFromJsonValue($stringFromJsonString<string>)(
-        $jsonObject["inIdentifierString"],
+        jsonObject["inIdentifierString"],
         {
           ...options,
           schema: InIdentifierStruct.schema.properties.inIdentifierString.type,
@@ -23684,28 +23681,28 @@ export namespace InPropertiesStruct {
     InPropertiesStruct.Json,
     InPropertiesStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: InPropertiesStruct.schema.properties.$identifier.type,
       }),
       inBooleans: $maybeFromJsonValue($booleanFromJsonBoolean<true>)(
-        $jsonObject["inBooleans"],
+        jsonObject["inBooleans"],
         {
           ...options,
           schema: InPropertiesStruct.schema.properties.inBooleans.type,
         },
       ),
       inDateTimes: $maybeFromJsonValue($dateFromJsonString)(
-        $jsonObject["inDateTimes"],
+        jsonObject["inDateTimes"],
         {
           ...options,
           schema: InPropertiesStruct.schema.properties.inDateTimes.type,
         },
       ),
       inDoubles: $maybeFromJsonValue($floatFromJsonNumber<1 | 2>)(
-        $jsonObject["inDoubles"],
+        jsonObject["inDoubles"],
         {
           ...options,
           schema: InPropertiesStruct.schema.properties.inDoubles.type,
@@ -23713,7 +23710,7 @@ export namespace InPropertiesStruct {
       ),
       inIntegers: $maybeFromJsonValue(
         $bigIntFromJsonString<"1" | "2", 1n | 2n>,
-      )($jsonObject["inIntegers"], {
+      )(jsonObject["inIntegers"], {
         ...options,
         schema: InPropertiesStruct.schema.properties.inIntegers.type,
       }),
@@ -23721,12 +23718,12 @@ export namespace InPropertiesStruct {
         $iriFromJsonString<
           "http://example.com/InIri1" | "http://example.com/InIri2"
         >,
-      )($jsonObject["inIris"], {
+      )(jsonObject["inIris"], {
         ...options,
         schema: InPropertiesStruct.schema.properties.inIris.type,
       }),
       inStrings: $maybeFromJsonValue($stringFromJsonString<"text" | "html">)(
-        $jsonObject["inStrings"],
+        jsonObject["inStrings"],
         {
           ...options,
           schema: InPropertiesStruct.schema.properties.inStrings.type,
@@ -24315,14 +24312,14 @@ export namespace IntersectionPropertiesStruct {
     IntersectionPropertiesStruct.Json,
     IntersectionPropertiesStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: IntersectionPropertiesStruct.schema.properties.$identifier.type,
       }),
       namedStructIntersection: StructIntersection.fromJson(
-        $jsonObject["namedStructIntersection"],
+        jsonObject["namedStructIntersection"],
         {
           ...options,
           schema:
@@ -24863,14 +24860,14 @@ export namespace IriIdentifierStruct {
     IriIdentifierStruct.Json,
     IriIdentifierStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $iriFromJsonString<string>($jsonObject["@id"], {
+      $identifier: $iriFromJsonString<string>(jsonObject["@id"], {
         ...options,
         schema: IriIdentifierStruct.schema.properties.$identifier.type,
       }),
       iriIdentifierString: $maybeFromJsonValue($stringFromJsonString<string>)(
-        $jsonObject["iriIdentifierString"],
+        jsonObject["iriIdentifierString"],
         {
           ...options,
           schema:
@@ -26058,14 +26055,14 @@ export namespace LangStringStruct {
     LangStringStruct.Json,
     LangStringStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: LangStringStruct.schema.properties.$identifier.type,
       }),
       langString: $maybeFromJsonValue($langStringFromJsonObject)(
-        $jsonObject["langString"],
+        jsonObject["langString"],
         {
           ...options,
           schema: LangStringStruct.schema.properties.langString.type,
@@ -26115,7 +26112,7 @@ export namespace LangStringStruct {
         | ($TypedLiteralJsonObject & { $type: "string" }),
         Literal | string,
         undefined
-      >)($jsonObject["langStringOrString"], {
+      >)(jsonObject["langStringOrString"], {
         ...options,
         schema: LangStringStruct.schema.properties.langStringOrString.type,
       }),
@@ -26163,7 +26160,7 @@ export namespace LangStringStruct {
         | ($LangStringJsonObject & { $type: "object" }),
         string | Literal,
         undefined
-      >)($jsonObject["stringOrLangString"], {
+      >)(jsonObject["stringOrLangString"], {
         ...options,
         schema: LangStringStruct.schema.properties.stringOrLangString.type,
       }),
@@ -26775,14 +26772,14 @@ export namespace LanguageInStruct {
     LanguageInStruct.Json,
     LanguageInStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: LanguageInStruct.schema.properties.$identifier.type,
       }),
       languageIn: $arrayFromJsonArray($langStringFromJsonObject)(
-        $jsonObject["languageIn"],
+        jsonObject["languageIn"],
         {
           ...options,
           schema: LanguageInStruct.schema.properties.languageIn.type,
@@ -27304,16 +27301,16 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     LazilyResolvedBlankNodeOrIriIdentifierStruct.Json,
     LazilyResolvedBlankNodeOrIriIdentifierStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
             .$identifier.type,
       }),
       lazilyResolved: $stringFromJsonString<string>(
-        $jsonObject["lazilyResolved"],
+        jsonObject["lazilyResolved"],
         {
           ...options,
           schema:
@@ -27867,16 +27864,16 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     LazilyResolvedDiscriminatedUnionMember1.Json,
     LazilyResolvedDiscriminatedUnionMember1.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           LazilyResolvedDiscriminatedUnionMember1.schema.properties.$identifier
             .type,
       }),
       lazilyResolved: $stringFromJsonString<string>(
-        $jsonObject["lazilyResolved"],
+        jsonObject["lazilyResolved"],
         {
           ...options,
           schema:
@@ -28421,16 +28418,16 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     LazilyResolvedDiscriminatedUnionMember2.Json,
     LazilyResolvedDiscriminatedUnionMember2.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           LazilyResolvedDiscriminatedUnionMember2.schema.properties.$identifier
             .type,
       }),
       lazilyResolved: $stringFromJsonString<string>(
-        $jsonObject["lazilyResolved"],
+        jsonObject["lazilyResolved"],
         {
           ...options,
           schema:
@@ -28887,15 +28884,15 @@ export namespace LazilyResolvedIriIdentifierStruct {
     LazilyResolvedIriIdentifierStruct.Json,
     LazilyResolvedIriIdentifierStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $iriFromJsonString<string>($jsonObject["@id"], {
+      $identifier: $iriFromJsonString<string>(jsonObject["@id"], {
         ...options,
         schema:
           LazilyResolvedIriIdentifierStruct.schema.properties.$identifier.type,
       }),
       lazilyResolved: $stringFromJsonString<string>(
-        $jsonObject["lazilyResolved"],
+        jsonObject["lazilyResolved"],
         {
           ...options,
           schema:
@@ -30690,9 +30687,9 @@ export namespace LazyPropertiesStruct {
     LazyPropertiesStruct.Json,
     LazyPropertiesStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: LazyPropertiesStruct.schema.properties.$identifier.type,
       }),
@@ -30719,7 +30716,7 @@ export namespace LazyPropertiesStruct {
                     )
                 : $missingResolver,
             }),
-        ))($jsonObject["optionalLazyToResolvedBlankNodeOrIriIdentifier"], {
+        ))(jsonObject["optionalLazyToResolvedBlankNodeOrIriIdentifier"], {
         ...options,
         schema:
           LazyPropertiesStruct.schema.properties
@@ -30745,7 +30742,7 @@ export namespace LazyPropertiesStruct {
                     )
                 : $missingResolver,
             }),
-        ))($jsonObject["optionalLazyToResolvedDiscriminatedUnion"], {
+        ))(jsonObject["optionalLazyToResolvedDiscriminatedUnion"], {
         ...options,
         schema:
           LazyPropertiesStruct.schema.properties
@@ -30774,7 +30771,7 @@ export namespace LazyPropertiesStruct {
                     )
                 : $missingResolver,
             }),
-        ))($jsonObject["optionalLazyToResolvedIriIdentifier"], {
+        ))(jsonObject["optionalLazyToResolvedIriIdentifier"], {
         ...options,
         schema:
           LazyPropertiesStruct.schema.properties
@@ -30804,7 +30801,7 @@ export namespace LazyPropertiesStruct {
                 : $missingResolver,
             }),
         ))(
-        $jsonObject[
+        jsonObject[
           "optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion"
         ],
         {
@@ -30838,7 +30835,7 @@ export namespace LazyPropertiesStruct {
                     )
                 : $missingResolver,
             }),
-        ))($jsonObject["optionalPartialToResolvedBlankNodeOrIriIdentifier"], {
+        ))(jsonObject["optionalPartialToResolvedBlankNodeOrIriIdentifier"], {
         ...options,
         schema:
           LazyPropertiesStruct.schema.properties
@@ -30864,7 +30861,7 @@ export namespace LazyPropertiesStruct {
                     )
                 : $missingResolver,
             }),
-        ))($jsonObject["optionalPartialToResolvedDiscriminatedUnion"], {
+        ))(jsonObject["optionalPartialToResolvedDiscriminatedUnion"], {
         ...options,
         schema:
           LazyPropertiesStruct.schema.properties
@@ -30895,7 +30892,7 @@ export namespace LazyPropertiesStruct {
                       )
                   : $missingResolver,
               }),
-          ))($jsonObject["requiredLazyToResolvedBlankNodeOrIriIdentifier"], {
+          ))(jsonObject["requiredLazyToResolvedBlankNodeOrIriIdentifier"], {
         ...options,
         schema:
           LazyPropertiesStruct.schema.properties
@@ -30924,7 +30921,7 @@ export namespace LazyPropertiesStruct {
                     )
                 : $missingResolver,
             }),
-        ))($jsonObject["requiredPartialToResolvedBlankNodeOrIriIdentifier"], {
+        ))(jsonObject["requiredPartialToResolvedBlankNodeOrIriIdentifier"], {
         ...options,
         schema:
           LazyPropertiesStruct.schema.properties
@@ -30955,7 +30952,7 @@ export namespace LazyPropertiesStruct {
                     })
                 : $missingResolver,
             }),
-        ))($jsonObject["setLazyToResolvedBlankNodeOrIriIdentifier"], {
+        ))(jsonObject["setLazyToResolvedBlankNodeOrIriIdentifier"], {
         ...options,
         schema:
           LazyPropertiesStruct.schema.properties
@@ -30986,7 +30983,7 @@ export namespace LazyPropertiesStruct {
                     })
                 : $missingResolver,
             }),
-        ))($jsonObject["setPartialToResolvedBlankNodeOrIriIdentifier"], {
+        ))(jsonObject["setPartialToResolvedBlankNodeOrIriIdentifier"], {
         ...options,
         schema:
           LazyPropertiesStruct.schema.properties
@@ -32558,9 +32555,9 @@ export namespace ListSetsStruct {
     ListSetsStruct.Json,
     ListSetsStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: ListSetsStruct.schema.properties.$identifier.type,
       }),
@@ -32620,19 +32617,19 @@ export namespace ListSetsStruct {
         | ($TypedLiteralJsonObject & { $type: "string" }),
         readonly string[] | string,
         undefined
-      >)($jsonObject["listDiscriminatedUnionSet"], {
+      >)(jsonObject["listDiscriminatedUnionSet"], {
         ...options,
         schema: ListSetsStruct.schema.properties.listDiscriminatedUnionSet.type,
       }),
       listListSet: $arrayFromJsonArray(
         $arrayFromJsonArray($arrayFromJsonArray($stringFromJsonString<string>)),
-      )($jsonObject["listListSet"], {
+      )(jsonObject["listListSet"], {
         ...options,
         schema: ListSetsStruct.schema.properties.listListSet.type,
       }),
       listSet: $arrayFromJsonArray(
         $arrayFromJsonArray($stringFromJsonString<string>),
-      )($jsonObject["listSet"], {
+      )(jsonObject["listSet"], {
         ...options,
         schema: ListSetsStruct.schema.properties.listSet.type,
       }),
@@ -33887,33 +33884,33 @@ export namespace ListsStruct {
     ListsStruct.Json,
     ListsStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: ListsStruct.schema.properties.$identifier.type,
       }),
       iriList: $maybeFromJsonValue(
         $arrayFromJsonArray($iriFromJsonString<string>),
-      )($jsonObject["iriList"], {
+      )(jsonObject["iriList"], {
         ...options,
         schema: ListsStruct.schema.properties.iriList.type,
       }),
       stringList: $maybeFromJsonValue(
         $arrayFromJsonArray($stringFromJsonString<string>),
-      )($jsonObject["stringList"], {
+      )(jsonObject["stringList"], {
         ...options,
         schema: ListsStruct.schema.properties.stringList.type,
       }),
       stringListList: $maybeFromJsonValue(
         $arrayFromJsonArray($arrayFromJsonArray($stringFromJsonString<string>)),
-      )($jsonObject["stringListList"], {
+      )(jsonObject["stringListList"], {
         ...options,
         schema: ListsStruct.schema.properties.stringListList.type,
       }),
       structList: $maybeFromJsonValue(
         $arrayFromJsonArray(NonClassStruct.fromJson),
-      )($jsonObject["structList"], {
+      )(jsonObject["structList"], {
         ...options,
         schema: ListsStruct.schema.properties.structList.type,
       }),
@@ -34772,27 +34769,27 @@ export namespace MutablePropertiesStruct {
     MutablePropertiesStruct.Json,
     MutablePropertiesStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: MutablePropertiesStruct.schema.properties.$identifier.type,
       }),
       mutableList: $maybeFromJsonValue(
         $arrayFromJsonArray($stringFromJsonString<string>),
-      )($jsonObject["mutableList"], {
+      )(jsonObject["mutableList"], {
         ...options,
         schema: MutablePropertiesStruct.schema.properties.mutableList.type,
       }),
       mutableSet: $arrayFromJsonArray($stringFromJsonString<string>)(
-        $jsonObject["mutableSet"],
+        jsonObject["mutableSet"],
         {
           ...options,
           schema: MutablePropertiesStruct.schema.properties.mutableSet.type,
         },
       ),
       mutableString: $maybeFromJsonValue($stringFromJsonString<string>)(
-        $jsonObject["mutableString"],
+        jsonObject["mutableString"],
         {
           ...options,
           schema: MutablePropertiesStruct.schema.properties.mutableString.type,
@@ -35477,22 +35474,22 @@ export namespace NamedTypesStruct {
     NamedTypesStruct.Json,
     NamedTypesStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: NamedTypesStruct.schema.properties.$identifier.type,
       }),
-      inIri: $iriFromJsonString<InIri["value"]>($jsonObject["inIri"], {
+      inIri: $iriFromJsonString<InIri["value"]>(jsonObject["inIri"], {
         ...options,
         schema: NamedTypesStruct.schema.properties.inIri.type,
       }),
-      inLiteral: $stringFromJsonString<InLiteral>($jsonObject["inLiteral"], {
+      inLiteral: $stringFromJsonString<InLiteral>(jsonObject["inLiteral"], {
         ...options,
         schema: NamedTypesStruct.schema.properties.inLiteral.type,
       }),
       namedDatatype: $stringFromJsonString<NamedDatatype>(
-        $jsonObject["namedDatatype"],
+        jsonObject["namedDatatype"],
         {
           ...options,
           schema: NamedTypesStruct.schema.properties.namedDatatype.type,
@@ -36055,14 +36052,14 @@ export namespace NewName {
     NewName.Json,
     NewName.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: NewName.schema.properties.$identifier.type,
       }),
       newNameString: $maybeFromJsonValue($stringFromJsonString<string>)(
-        $jsonObject["newNameString"],
+        jsonObject["newNameString"],
         {
           ...options,
           schema: NewName.schema.properties.newNameString.type,
@@ -36875,43 +36872,43 @@ export namespace NodeKindsStruct {
     NodeKindsStruct.Json,
     NodeKindsStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: NodeKindsStruct.schema.properties.$identifier.type,
       }),
-      blankNodeKind: $blankNodeFromJsonString($jsonObject["blankNodeKind"], {
+      blankNodeKind: $blankNodeFromJsonString(jsonObject["blankNodeKind"], {
         ...options,
         schema: NodeKindsStruct.schema.properties.blankNodeKind.type,
       }),
       blankNodeOrIriNodeKind: $identifierFromJsonString(
-        $jsonObject["blankNodeOrIriNodeKind"],
+        jsonObject["blankNodeOrIriNodeKind"],
         {
           ...options,
           schema: NodeKindsStruct.schema.properties.blankNodeOrIriNodeKind.type,
         },
       ),
       blankNodeOrLiteralNodeKind: $termFromJsonObject<BlankNode | Literal>(
-        $jsonObject["blankNodeOrLiteralNodeKind"],
+        jsonObject["blankNodeOrLiteralNodeKind"],
         {
           ...options,
           schema:
             NodeKindsStruct.schema.properties.blankNodeOrLiteralNodeKind.type,
         },
       ),
-      iriNodeKind: $iriFromJsonString<string>($jsonObject["iriNodeKind"], {
+      iriNodeKind: $iriFromJsonString<string>(jsonObject["iriNodeKind"], {
         ...options,
         schema: NodeKindsStruct.schema.properties.iriNodeKind.type,
       }),
       iriOrLiteralNodeKind: $termFromJsonObject<NamedNode | Literal>(
-        $jsonObject["iriOrLiteralNodeKind"],
+        jsonObject["iriOrLiteralNodeKind"],
         {
           ...options,
           schema: NodeKindsStruct.schema.properties.iriOrLiteralNodeKind.type,
         },
       ),
-      literalNodeKind: $literalFromJsonObject($jsonObject["literalNodeKind"], {
+      literalNodeKind: $literalFromJsonObject(jsonObject["literalNodeKind"], {
         ...options,
         schema: NodeKindsStruct.schema.properties.literalNodeKind.type,
       }),
@@ -37414,14 +37411,14 @@ export namespace NonClassStruct {
     NonClassStruct.Json,
     NonClassStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: NonClassStruct.schema.properties.$identifier.type,
       }),
       nonClassString: $stringFromJsonString<string>(
-        $jsonObject["nonClassString"],
+        jsonObject["nonClassString"],
         {
           ...options,
           schema: NonClassStruct.schema.properties.nonClassString.type,
@@ -37858,15 +37855,15 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
     NoRdfTypeDiscriminatedUnionMember1.Json,
     NoRdfTypeDiscriminatedUnionMember1.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           NoRdfTypeDiscriminatedUnionMember1.schema.properties.$identifier.type,
       }),
       noRdfTypeDiscriminatedUnionMember1String: $stringFromJsonString<string>(
-        $jsonObject["noRdfTypeDiscriminatedUnionMember1String"],
+        jsonObject["noRdfTypeDiscriminatedUnionMember1String"],
         {
           ...options,
           schema:
@@ -38324,15 +38321,15 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
     NoRdfTypeDiscriminatedUnionMember2.Json,
     NoRdfTypeDiscriminatedUnionMember2.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           NoRdfTypeDiscriminatedUnionMember2.schema.properties.$identifier.type,
       }),
       noRdfTypeDiscriminatedUnionMember2String: $stringFromJsonString<string>(
-        $jsonObject["noRdfTypeDiscriminatedUnionMember2String"],
+        jsonObject["noRdfTypeDiscriminatedUnionMember2String"],
         {
           ...options,
           schema:
@@ -40123,35 +40120,35 @@ export namespace NumericsStruct {
     NumericsStruct.Json,
     NumericsStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: NumericsStruct.schema.properties.$identifier.type,
       }),
       byteNumeric: $maybeFromJsonValue($intFromJsonNumber<number>)(
-        $jsonObject["byteNumeric"],
+        jsonObject["byteNumeric"],
         {
           ...options,
           schema: NumericsStruct.schema.properties.byteNumeric.type,
         },
       ),
       decimalNumeric: $maybeFromJsonValue($bigDecimalFromJsonString)(
-        $jsonObject["decimalNumeric"],
+        jsonObject["decimalNumeric"],
         {
           ...options,
           schema: NumericsStruct.schema.properties.decimalNumeric.type,
         },
       ),
       doubleNumeric: $maybeFromJsonValue($floatFromJsonNumber<number>)(
-        $jsonObject["doubleNumeric"],
+        jsonObject["doubleNumeric"],
         {
           ...options,
           schema: NumericsStruct.schema.properties.doubleNumeric.type,
         },
       ),
       floatNumeric: $maybeFromJsonValue($floatFromJsonNumber<number>)(
-        $jsonObject["floatNumeric"],
+        jsonObject["floatNumeric"],
         {
           ...options,
           schema: NumericsStruct.schema.properties.floatNumeric.type,
@@ -40159,19 +40156,19 @@ export namespace NumericsStruct {
       ),
       integerNumeric: $maybeFromJsonValue(
         $bigIntFromJsonString<string, bigint>,
-      )($jsonObject["integerNumeric"], {
+      )(jsonObject["integerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.integerNumeric.type,
       }),
       intNumeric: $maybeFromJsonValue($intFromJsonNumber<number>)(
-        $jsonObject["intNumeric"],
+        jsonObject["intNumeric"],
         {
           ...options,
           schema: NumericsStruct.schema.properties.intNumeric.type,
         },
       ),
       longNumeric: $maybeFromJsonValue($bigIntFromJsonString<string, bigint>)(
-        $jsonObject["longNumeric"],
+        jsonObject["longNumeric"],
         {
           ...options,
           schema: NumericsStruct.schema.properties.longNumeric.type,
@@ -40179,44 +40176,44 @@ export namespace NumericsStruct {
       ),
       negativeIntegerNumeric: $maybeFromJsonValue(
         $bigIntFromJsonString<string, bigint>,
-      )($jsonObject["negativeIntegerNumeric"], {
+      )(jsonObject["negativeIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.negativeIntegerNumeric.type,
       }),
       nonNegativeIntegerNumeric: $maybeFromJsonValue(
         $bigIntFromJsonString<string, bigint>,
-      )($jsonObject["nonNegativeIntegerNumeric"], {
+      )(jsonObject["nonNegativeIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.nonNegativeIntegerNumeric.type,
       }),
       nonPositiveIntegerNumeric: $maybeFromJsonValue(
         $bigIntFromJsonString<string, bigint>,
-      )($jsonObject["nonPositiveIntegerNumeric"], {
+      )(jsonObject["nonPositiveIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.nonPositiveIntegerNumeric.type,
       }),
       positiveIntegerNumeric: $maybeFromJsonValue(
         $bigIntFromJsonString<string, bigint>,
-      )($jsonObject["positiveIntegerNumeric"], {
+      )(jsonObject["positiveIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.positiveIntegerNumeric.type,
       }),
       shortNumeric: $maybeFromJsonValue($intFromJsonNumber<number>)(
-        $jsonObject["shortNumeric"],
+        jsonObject["shortNumeric"],
         {
           ...options,
           schema: NumericsStruct.schema.properties.shortNumeric.type,
         },
       ),
       unsignedByteNumeric: $maybeFromJsonValue($intFromJsonNumber<number>)(
-        $jsonObject["unsignedByteNumeric"],
+        jsonObject["unsignedByteNumeric"],
         {
           ...options,
           schema: NumericsStruct.schema.properties.unsignedByteNumeric.type,
         },
       ),
       unsignedIntNumeric: $maybeFromJsonValue($intFromJsonNumber<number>)(
-        $jsonObject["unsignedIntNumeric"],
+        jsonObject["unsignedIntNumeric"],
         {
           ...options,
           schema: NumericsStruct.schema.properties.unsignedIntNumeric.type,
@@ -40224,12 +40221,12 @@ export namespace NumericsStruct {
       ),
       unsignedLongNumeric: $maybeFromJsonValue(
         $bigIntFromJsonString<string, bigint>,
-      )($jsonObject["unsignedLongNumeric"], {
+      )(jsonObject["unsignedLongNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.unsignedLongNumeric.type,
       }),
       unsignedShortNumeric: $maybeFromJsonValue($intFromJsonNumber<number>)(
-        $jsonObject["unsignedShortNumeric"],
+        jsonObject["unsignedShortNumeric"],
         {
           ...options,
           schema: NumericsStruct.schema.properties.unsignedShortNumeric.type,
@@ -41076,21 +41073,21 @@ export namespace OrderedStruct {
     OrderedStruct.Json,
     OrderedStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: OrderedStruct.schema.properties.$identifier.type,
       }),
-      orderedC: $stringFromJsonString<string>($jsonObject["orderedC"], {
+      orderedC: $stringFromJsonString<string>(jsonObject["orderedC"], {
         ...options,
         schema: OrderedStruct.schema.properties.orderedC.type,
       }),
-      orderedB: $stringFromJsonString<string>($jsonObject["orderedB"], {
+      orderedB: $stringFromJsonString<string>(jsonObject["orderedB"], {
         ...options,
         schema: OrderedStruct.schema.properties.orderedB.type,
       }),
-      orderedA: $stringFromJsonString<string>($jsonObject["orderedA"], {
+      orderedA: $stringFromJsonString<string>(jsonObject["orderedA"], {
         ...options,
         schema: OrderedStruct.schema.properties.orderedA.type,
       }),
@@ -41621,15 +41618,15 @@ export namespace PartialDiscriminatedUnionMember1 {
     PartialDiscriminatedUnionMember1.Json,
     PartialDiscriminatedUnionMember1.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           PartialDiscriminatedUnionMember1.schema.properties.$identifier.type,
       }),
       lazilyResolved: $stringFromJsonString<string>(
-        $jsonObject["lazilyResolved"],
+        jsonObject["lazilyResolved"],
         {
           ...options,
           schema:
@@ -42158,15 +42155,15 @@ export namespace PartialDiscriminatedUnionMember2 {
     PartialDiscriminatedUnionMember2.Json,
     PartialDiscriminatedUnionMember2.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           PartialDiscriminatedUnionMember2.schema.properties.$identifier.type,
       }),
       lazilyResolved: $stringFromJsonString<string>(
-        $jsonObject["lazilyResolved"],
+        jsonObject["lazilyResolved"],
         {
           ...options,
           schema:
@@ -42593,14 +42590,14 @@ export namespace PartialStruct {
     PartialStruct.Json,
     PartialStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: PartialStruct.schema.properties.$identifier.type,
       }),
       lazilyResolved: $stringFromJsonString<string>(
-        $jsonObject["lazilyResolved"],
+        jsonObject["lazilyResolved"],
         {
           ...options,
           schema: PartialStruct.schema.properties.lazilyResolved.type,
@@ -43274,21 +43271,21 @@ export namespace PropertyCardinalitiesStruct {
     PropertyCardinalitiesStruct.Json,
     PropertyCardinalitiesStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: PropertyCardinalitiesStruct.schema.properties.$identifier.type,
       }),
       emptySet: $arrayFromJsonArray($stringFromJsonString<string>)(
-        $jsonObject["emptySet"],
+        jsonObject["emptySet"],
         {
           ...options,
           schema: PropertyCardinalitiesStruct.schema.properties.emptySet.type,
         },
       ),
       nonEmptySet: $arrayFromJsonArray($stringFromJsonString<string>)(
-        $jsonObject["nonEmptySet"],
+        jsonObject["nonEmptySet"],
         {
           ...options,
           schema:
@@ -43296,13 +43293,13 @@ export namespace PropertyCardinalitiesStruct {
         },
       ),
       optional: $maybeFromJsonValue($stringFromJsonString<string>)(
-        $jsonObject["optional"],
+        jsonObject["optional"],
         {
           ...options,
           schema: PropertyCardinalitiesStruct.schema.properties.optional.type,
         },
       ),
-      required: $stringFromJsonString<string>($jsonObject["required"], {
+      required: $stringFromJsonString<string>(jsonObject["required"], {
         ...options,
         schema: PropertyCardinalitiesStruct.schema.properties.required.type,
       }),
@@ -44096,29 +44093,29 @@ export namespace PropertyNamesStruct {
     PropertyNamesStruct.Json,
     PropertyNamesStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: PropertyNamesStruct.schema.properties.$identifier.type,
       }),
-      actualName1: $stringFromJsonString<string>($jsonObject["actualName1"], {
+      actualName1: $stringFromJsonString<string>(jsonObject["actualName1"], {
         ...options,
         schema: PropertyNamesStruct.schema.properties.actualName1.type,
       }),
-      actualName2: $stringFromJsonString<string>($jsonObject["actualName2"], {
+      actualName2: $stringFromJsonString<string>(jsonObject["actualName2"], {
         ...options,
         schema: PropertyNamesStruct.schema.properties.actualName2.type,
       }),
-      actualName3: $stringFromJsonString<string>($jsonObject["actualName3"], {
+      actualName3: $stringFromJsonString<string>(jsonObject["actualName3"], {
         ...options,
         schema: PropertyNamesStruct.schema.properties.actualName3.type,
       }),
-      actualName4: $stringFromJsonString<string>($jsonObject["actualName4"], {
+      actualName4: $stringFromJsonString<string>(jsonObject["actualName4"], {
         ...options,
         schema: PropertyNamesStruct.schema.properties.actualName4.type,
       }),
-      actualName5: $stringFromJsonString<string>($jsonObject["actualName5"], {
+      actualName5: $stringFromJsonString<string>(jsonObject["actualName5"], {
         ...options,
         schema: PropertyNamesStruct.schema.properties.actualName5.type,
       }),
@@ -44816,21 +44813,21 @@ export namespace PropertyPathsStruct {
     PropertyPathsStruct.Json,
     PropertyPathsStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: PropertyPathsStruct.schema.properties.$identifier.type,
       }),
       inversePath: $maybeFromJsonValue($iriFromJsonString<string>)(
-        $jsonObject["inversePath"],
+        jsonObject["inversePath"],
         {
           ...options,
           schema: PropertyPathsStruct.schema.properties.inversePath.type,
         },
       ),
       predicatePath: $maybeFromJsonValue($stringFromJsonString<string>)(
-        $jsonObject["predicatePath"],
+        jsonObject["predicatePath"],
         {
           ...options,
           schema: PropertyPathsStruct.schema.properties.predicatePath.type,
@@ -45399,16 +45396,16 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     RecursiveDiscriminatedUnionMember1.Json,
     RecursiveDiscriminatedUnionMember1.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           RecursiveDiscriminatedUnionMember1.schema.properties.$identifier.type,
       }),
       recursiveDiscriminatedUnionMember1Property: $maybeFromJsonValue(
         RecursiveDiscriminatedUnion.fromJson,
-      )($jsonObject["recursiveDiscriminatedUnionMember1Property"], {
+      )(jsonObject["recursiveDiscriminatedUnionMember1Property"], {
         ...options,
         schema:
           RecursiveDiscriminatedUnionMember1.schema.properties
@@ -45980,16 +45977,16 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     RecursiveDiscriminatedUnionMember2.Json,
     RecursiveDiscriminatedUnionMember2.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           RecursiveDiscriminatedUnionMember2.schema.properties.$identifier.type,
       }),
       recursiveDiscriminatedUnionMember2Property: $maybeFromJsonValue(
         RecursiveDiscriminatedUnion.fromJson,
-      )($jsonObject["recursiveDiscriminatedUnionMember2Property"], {
+      )(jsonObject["recursiveDiscriminatedUnionMember2Property"], {
         ...options,
         schema:
           RecursiveDiscriminatedUnionMember2.schema.properties
@@ -46637,15 +46634,15 @@ export namespace StructDiscriminatedUnionMember1 {
     StructDiscriminatedUnionMember1.Json,
     StructDiscriminatedUnionMember1.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           StructDiscriminatedUnionMember1.schema.properties.$identifier.type,
       }),
       structDiscriminatedUnionMember1Distinct: $stringFromJsonString<string>(
-        $jsonObject["structDiscriminatedUnionMember1Distinct"],
+        jsonObject["structDiscriminatedUnionMember1Distinct"],
         {
           ...options,
           schema:
@@ -46654,7 +46651,7 @@ export namespace StructDiscriminatedUnionMember1 {
         },
       ),
       structDiscriminatedUnionMemberCommon: $stringFromJsonString<string>(
-        $jsonObject["structDiscriminatedUnionMemberCommon"],
+        jsonObject["structDiscriminatedUnionMemberCommon"],
         {
           ...options,
           schema:
@@ -47310,15 +47307,15 @@ export namespace StructDiscriminatedUnionMember2 {
     StructDiscriminatedUnionMember2.Json,
     StructDiscriminatedUnionMember2.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           StructDiscriminatedUnionMember2.schema.properties.$identifier.type,
       }),
       structDiscriminatedUnionMember2Distinct: $stringFromJsonString<string>(
-        $jsonObject["structDiscriminatedUnionMember2Distinct"],
+        jsonObject["structDiscriminatedUnionMember2Distinct"],
         {
           ...options,
           schema:
@@ -47327,7 +47324,7 @@ export namespace StructDiscriminatedUnionMember2 {
         },
       ),
       structDiscriminatedUnionMemberCommon: $stringFromJsonString<string>(
-        $jsonObject["structDiscriminatedUnionMemberCommon"],
+        jsonObject["structDiscriminatedUnionMemberCommon"],
         {
           ...options,
           schema:
@@ -47596,6 +47593,421 @@ export namespace StructDiscriminatedUnionMember2 {
   }) =>
     (propertyPatterns as readonly $SparqlPattern[]).concat(
       StructDiscriminatedUnionMember2.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
+}
+
+/**
+ * Struct 'inheritance' through sh:and (level 1 struct)
+ */
+export type StructInheritance1 = {
+  readonly $identifier: () => StructInheritance1.Identifier;
+
+  readonly structInheritance1: string;
+};
+
+export namespace StructInheritance1 {
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    StructInheritance1.Discriminated
+  > = (resource, options) =>
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
+          ...options,
+          focusResource: resource,
+          propertyPath: $rdf_subject,
+          schema: StructInheritance1.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      structInheritance1: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: StructInheritance1.schema.properties.structInheritance1,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) => StructInheritance1.create(properties));
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    StructInheritance1.Identifier,
+    StructInheritance1
+  > = (parameters) => {
+    parameters.resource.add(
+      StructInheritance1.schema.properties.structInheritance1.path,
+      [$literalFactory.string(parameters.object.structInheritance1)],
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const $toString: $ToStringFunction<
+    Pick<StructInheritance1, "$identifier">
+  > = (_structInheritance1) =>
+    `StructInheritance1(${JSON.stringify(StructInheritance1.toStringRecord(_structInheritance1))})`;
+
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: StructInheritance1.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, StructInheritance1.Discriminated> = (parameters) =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      $type: Right("StructInheritance1" as const),
+      structInheritance1: Either.of(parameters.structInheritance1),
+    }).map((object) =>
+      $monkeyPatchObject(object, {
+        toJson: StructInheritance1.toJson,
+        $toString: StructInheritance1.$toString,
+      }),
+    );
+
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => StructInheritance1.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly structInheritance1: string;
+  };
+
+  export const createUnsafe: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: StructInheritance1.CreateParameters<$DefaultNamespaceT>,
+  ) => StructInheritance1.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = StructInheritance1 & {
+    readonly $type: "StructInheritance1";
+  };
+
+  export const equals: $EqualsFunction<StructInheritance1> = (left, right) =>
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        { equalsFunction: $strictEquals, name: "structInheritance1" },
+        [left, left.structInheritance1],
+        [right, right.structInheritance1],
+      ),
+    );
+
+  export const filter: $FilterFunction<
+    StructInheritance1.Filter,
+    StructInheritance1
+  > = (filter, value) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.structInheritance1 !== undefined &&
+      !$filterString(filter.structInheritance1, value.structInheritance1)
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly structInheritance1?: $StringFilter;
+  };
+
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    StructInheritance1.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.structInheritance1,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "structInheritance1",
+        propertySchema: StructInheritance1.schema.properties.structInheritance1,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    StructInheritance1.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: StructInheritance1.schema.properties.$identifier.type,
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.structInheritance1,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "structInheritance1",
+        propertySchema: StructInheritance1.schema.properties.structInheritance1,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
+  export const fromJson: $FromJsonObjectFunction<
+    StructInheritance1.Json,
+    StructInheritance1.Discriminated,
+    undefined
+  > = (jsonObject, options = {}) =>
+    $sequenceRecord({
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+        ...options,
+        schema: StructInheritance1.schema.properties.$identifier.type,
+      }),
+      structInheritance1: $stringFromJsonString<string>(
+        jsonObject["structInheritance1"],
+        {
+          ...options,
+          schema: StructInheritance1.schema.properties.structInheritance1.type,
+        },
+      ),
+    }).chain(StructInheritance1.create);
+
+  export const fromRdfResource: $FromRdfResourceFunction<StructInheritance1.Discriminated> =
+    $wrap_FromRdfResourceFunction(StructInheritance1._fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    StructInheritance1.Discriminated,
+    StructInheritance1.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) =>
+          StructInheritance1.fromRdfResource(resource, options),
+        ),
+    );
+
+  export const hash: $HashFunction<
+    Omit<StructInheritance1, "$identifier"> & {
+      readonly $identifier?: () => StructInheritance1.Identifier;
+    }
+  > = (hasher, _structInheritance1) => {
+    if (_structInheritance1.$identifier) {
+      hasher.update(_structInheritance1.$identifier().value);
+    }
+    $hashString(hasher, _structInheritance1.structInheritance1);
+  };
+
+  export type Identifier = BlankNode | NamedNode;
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+  }
+
+  export const isStructInheritance1: $ObjectTypeGuardFunction<
+    StructInheritance1.Discriminated
+  > = (object): object is StructInheritance1.Discriminated =>
+    object.$type === "StructInheritance1";
+
+  export type Json = { "@id": string; structInheritance1: string };
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        structInheritance1: z.string(),
+      }) satisfies z.ZodType<Json>;
+    }
+
+    export const uiSchema = (_options?: { scopePrefix?: string }): any => {
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${_options?.scopePrefix ?? "#"}/properties/@id`,
+            type: "Control",
+          },
+          {
+            scope: `${_options?.scopePrefix ?? "#"}/properties/structInheritance1`,
+            type: "Control",
+          },
+        ],
+        type: "Group",
+        label: "StructInheritance1",
+      };
+    };
+  }
+
+  export const schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      structInheritance1: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/structInheritance1"),
+        type: { kind: "String" as const, datatype: $xsd_string },
+      },
+    },
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export const sparqlConstructQuery: $SparqlConstructQueryFunction<
+    StructInheritance1.Filter
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }) => {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "structInheritance1";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        StructInheritance1.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          StructInheritance1.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  };
+
+  export const sparqlConstructQueryString: $SparqlConstructQueryStringFunction<
+    StructInheritance1.Filter
+  > = (parameters) =>
+    new sparqljs.Generator(parameters).stringify(
+      StructInheritance1.sparqlConstructQuery(parameters),
+    );
+
+  export const toJson: $ToJsonObjectFunction<
+    StructInheritance1,
+    StructInheritance1.Json
+  > = (_structInheritance1) =>
+    JSON.parse(
+      JSON.stringify({
+        "@id":
+          _structInheritance1.$identifier().termType === "BlankNode"
+            ? `_:${_structInheritance1.$identifier().value}`
+            : _structInheritance1.$identifier().value,
+        structInheritance1: $primitiveToJsonValue<string>(
+          _structInheritance1.structInheritance1,
+        ),
+      }),
+    );
+
+  export const toLoggable: $ToLoggableFunction<StructInheritance1> = (
+    _structInheritance1,
+  ) =>
+    $compactRecord({
+      $identifier: _structInheritance1.$identifier().value,
+      structInheritance1: _structInheritance1.structInheritance1,
+    });
+
+  export const toRdfResource: $ToRdfResourceFunction<
+    StructInheritance1.Identifier,
+    StructInheritance1
+  > = $wrap_ToRdfResourceFunction<
+    StructInheritance1.Identifier,
+    StructInheritance1
+  >(StructInheritance1._toRdfResource);
+
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    StructInheritance1,
+    BlankNode | NamedNode
+  > = (value, options) => [
+    StructInheritance1.toRdfResource(value, {
+      graph: options.graph,
+      resourceSet: options.resourceSet,
+    }).identifier,
+  ];
+
+  export const toStringRecord: $ToStringRecordFunction<
+    Pick<StructInheritance1, "$identifier">
+  > = (_structInheritance1) =>
+    $compactRecord({
+      $identifier: _structInheritance1.$identifier().toString(),
+    });
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    StructInheritance1.Filter,
+    StructInheritance1.Schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    StructInheritance1.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    StructInheritance1.Filter,
+    StructInheritance1.Schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      StructInheritance1.focusSparqlWherePatterns({
         filter,
         focusIdentifier: valueVariable,
         ignoreRdfType,
@@ -47972,14 +48384,14 @@ export namespace StructIntersectionMember1 {
     StructIntersectionMember1.Json,
     StructIntersectionMember1.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: StructIntersectionMember1.schema.properties.$identifier.type,
       }),
       structIntersectionMember1Distinct: $stringFromJsonString<string>(
-        $jsonObject["structIntersectionMember1Distinct"],
+        jsonObject["structIntersectionMember1Distinct"],
         {
           ...options,
           schema:
@@ -47988,7 +48400,7 @@ export namespace StructIntersectionMember1 {
         },
       ),
       structIntersectionMemberCommon: $stringFromJsonString<string>(
-        $jsonObject["structIntersectionMemberCommon"],
+        jsonObject["structIntersectionMemberCommon"],
         {
           ...options,
           schema:
@@ -48628,14 +49040,14 @@ export namespace StructIntersectionMember2 {
     StructIntersectionMember2.Json,
     StructIntersectionMember2.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: StructIntersectionMember2.schema.properties.$identifier.type,
       }),
       structIntersectionMember2Distinct: $stringFromJsonString<string>(
-        $jsonObject["structIntersectionMember2Distinct"],
+        jsonObject["structIntersectionMember2Distinct"],
         {
           ...options,
           schema:
@@ -48644,7 +49056,7 @@ export namespace StructIntersectionMember2 {
         },
       ),
       structIntersectionMemberCommon: $stringFromJsonString<string>(
-        $jsonObject["structIntersectionMemberCommon"],
+        jsonObject["structIntersectionMemberCommon"],
         {
           ...options,
           schema:
@@ -49184,14 +49596,14 @@ export namespace TargetClassStruct {
     TargetClassStruct.Json,
     TargetClassStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: TargetClassStruct.schema.properties.$identifier.type,
       }),
       targetClassString: $stringFromJsonString<string>(
-        $jsonObject["targetClassString"],
+        jsonObject["targetClassString"],
         {
           ...options,
           schema: TargetClassStruct.schema.properties.targetClassString.type,
@@ -50541,77 +50953,77 @@ export namespace TermsStruct {
     TermsStruct.Json,
     TermsStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: TermsStruct.schema.properties.$identifier.type,
       }),
       blankNodeTerm: $maybeFromJsonValue($blankNodeFromJsonString)(
-        $jsonObject["blankNodeTerm"],
+        jsonObject["blankNodeTerm"],
         {
           ...options,
           schema: TermsStruct.schema.properties.blankNodeTerm.type,
         },
       ),
       booleanTerm: $maybeFromJsonValue($booleanFromJsonBoolean<boolean>)(
-        $jsonObject["booleanTerm"],
+        jsonObject["booleanTerm"],
         {
           ...options,
           schema: TermsStruct.schema.properties.booleanTerm.type,
         },
       ),
       dateTerm: $maybeFromJsonValue($dateFromJsonString)(
-        $jsonObject["dateTerm"],
+        jsonObject["dateTerm"],
         {
           ...options,
           schema: TermsStruct.schema.properties.dateTerm.type,
         },
       ),
       dateTimeTerm: $maybeFromJsonValue($dateFromJsonString)(
-        $jsonObject["dateTimeTerm"],
+        jsonObject["dateTimeTerm"],
         {
           ...options,
           schema: TermsStruct.schema.properties.dateTimeTerm.type,
         },
       ),
       doubleTerm: $maybeFromJsonValue($floatFromJsonNumber<number>)(
-        $jsonObject["doubleTerm"],
+        jsonObject["doubleTerm"],
         {
           ...options,
           schema: TermsStruct.schema.properties.doubleTerm.type,
         },
       ),
       identifierTerm: $maybeFromJsonValue($identifierFromJsonString)(
-        $jsonObject["identifierTerm"],
+        jsonObject["identifierTerm"],
         {
           ...options,
           schema: TermsStruct.schema.properties.identifierTerm.type,
         },
       ),
       iriTerm: $maybeFromJsonValue($iriFromJsonString<string>)(
-        $jsonObject["iriTerm"],
+        jsonObject["iriTerm"],
         {
           ...options,
           schema: TermsStruct.schema.properties.iriTerm.type,
         },
       ),
       langStringTerm: $maybeFromJsonValue($langStringFromJsonObject)(
-        $jsonObject["langStringTerm"],
+        jsonObject["langStringTerm"],
         {
           ...options,
           schema: TermsStruct.schema.properties.langStringTerm.type,
         },
       ),
       literalTerm: $maybeFromJsonValue($literalFromJsonObject)(
-        $jsonObject["literalTerm"],
+        jsonObject["literalTerm"],
         {
           ...options,
           schema: TermsStruct.schema.properties.literalTerm.type,
         },
       ),
       stringTerm: $maybeFromJsonValue($stringFromJsonString<string>)(
-        $jsonObject["stringTerm"],
+        jsonObject["stringTerm"],
         {
           ...options,
           schema: TermsStruct.schema.properties.stringTerm.type,
@@ -50619,7 +51031,7 @@ export namespace TermsStruct {
       ),
       term: $maybeFromJsonValue(
         $termFromJsonObject<BlankNode | NamedNode | Literal>,
-      )($jsonObject["term"], {
+      )(jsonObject["term"], {
         ...options,
         schema: TermsStruct.schema.properties.term.type,
       }),
@@ -55966,9 +56378,9 @@ export namespace UnionDiscriminantsStruct {
     UnionDiscriminantsStruct.Json,
     UnionDiscriminantsStruct.Discriminated,
     undefined
-  > = ($jsonObject, options) =>
+  > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString($jsonObject["@id"], {
+      $identifier: $identifierFromJsonString(jsonObject["@id"], {
         ...options,
         schema: UnionDiscriminantsStruct.schema.properties.$identifier.type,
       }),
@@ -56016,7 +56428,7 @@ export namespace UnionDiscriminantsStruct {
         | ($TypedLiteralJsonObject & { $type: "string" }),
         NamedNode | string,
         undefined
-      >)($jsonObject["optionalIriOrString"], {
+      >)(jsonObject["optionalIriOrString"], {
         ...options,
         schema:
           UnionDiscriminantsStruct.schema.properties.optionalIriOrString.type,
@@ -56088,7 +56500,7 @@ export namespace UnionDiscriminantsStruct {
           }
         | Literal,
         undefined
-      >)($jsonObject["optionalNodeOrLiteral"], {
+      >)(jsonObject["optionalNodeOrLiteral"], {
         ...options,
         schema:
           UnionDiscriminantsStruct.schema.properties.optionalNodeOrLiteral.type,
@@ -56222,7 +56634,7 @@ export namespace UnionDiscriminantsStruct {
           }
         | { $type: "string"; value: string },
         undefined
-      >)($jsonObject["optionalNodeOrNodeOrString"], {
+      >)(jsonObject["optionalNodeOrNodeOrString"], {
         ...options,
         schema:
           UnionDiscriminantsStruct.schema.properties.optionalNodeOrNodeOrString
@@ -56272,7 +56684,7 @@ export namespace UnionDiscriminantsStruct {
         | ($LiteralJsonObject & { $type: "Literal" }),
         (BlankNode | NamedNode) | Literal,
         undefined
-      >)($jsonObject["optionalTerm"], {
+      >)(jsonObject["optionalTerm"], {
         ...options,
         schema: UnionDiscriminantsStruct.schema.properties.optionalTerm.type,
       }),
@@ -56315,7 +56727,7 @@ export namespace UnionDiscriminantsStruct {
         }
 
         throw new Error("unable to deserialize JSON");
-      })($jsonObject["requiredIriOrString"], {
+      })(jsonObject["requiredIriOrString"], {
         ...options,
         schema:
           UnionDiscriminantsStruct.schema.properties.requiredIriOrString.type,
@@ -56376,7 +56788,7 @@ export namespace UnionDiscriminantsStruct {
         }
 
         throw new Error("unable to deserialize JSON");
-      })($jsonObject["requiredNodeOrLiteral"], {
+      })(jsonObject["requiredNodeOrLiteral"], {
         ...options,
         schema:
           UnionDiscriminantsStruct.schema.properties.requiredNodeOrLiteral.type,
@@ -56492,7 +56904,7 @@ export namespace UnionDiscriminantsStruct {
         }
 
         throw new Error("unable to deserialize JSON");
-      })($jsonObject["requiredNodeOrNodeOrString"], {
+      })(jsonObject["requiredNodeOrNodeOrString"], {
         ...options,
         schema:
           UnionDiscriminantsStruct.schema.properties.requiredNodeOrNodeOrString
@@ -56537,7 +56949,7 @@ export namespace UnionDiscriminantsStruct {
         }
 
         throw new Error("unable to deserialize JSON");
-      })($jsonObject["requiredTerm"], {
+      })(jsonObject["requiredTerm"], {
         ...options,
         schema: UnionDiscriminantsStruct.schema.properties.requiredTerm.type,
       }),
@@ -56585,7 +56997,7 @@ export namespace UnionDiscriminantsStruct {
         | ($TypedLiteralJsonObject & { $type: "string" }),
         NamedNode | string,
         undefined
-      >)($jsonObject["setIriOrString"], {
+      >)(jsonObject["setIriOrString"], {
         ...options,
         schema: UnionDiscriminantsStruct.schema.properties.setIriOrString.type,
       }),
@@ -56656,7 +57068,7 @@ export namespace UnionDiscriminantsStruct {
           }
         | Literal,
         undefined
-      >)($jsonObject["setNodeOrLiteral"], {
+      >)(jsonObject["setNodeOrLiteral"], {
         ...options,
         schema:
           UnionDiscriminantsStruct.schema.properties.setNodeOrLiteral.type,
@@ -56790,7 +57202,7 @@ export namespace UnionDiscriminantsStruct {
           }
         | { $type: "string"; value: string },
         undefined
-      >)($jsonObject["setNodeOrNodeOrString"], {
+      >)(jsonObject["setNodeOrNodeOrString"], {
         ...options,
         schema:
           UnionDiscriminantsStruct.schema.properties.setNodeOrNodeOrString.type,
@@ -56839,7 +57251,7 @@ export namespace UnionDiscriminantsStruct {
         | ($LiteralJsonObject & { $type: "Literal" }),
         (BlankNode | NamedNode) | Literal,
         undefined
-      >)($jsonObject["setTerm"], {
+      >)(jsonObject["setTerm"], {
         ...options,
         schema: UnionDiscriminantsStruct.schema.properties.setTerm.type,
       }),
@@ -62499,6 +62911,2101 @@ export namespace StructDiscriminatedUnion {
 }
 
 /**
+ * Struct 'inheritance' through sh:and (level 2 struct)
+ */
+export type StructInheritance2 = StructInheritance1 & {
+  readonly $identifier: () => BlankNode | NamedNode;
+
+  readonly structInheritance2: string;
+};
+
+export namespace StructInheritance2 {
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    StructInheritance2.Discriminated
+  > = (resource, options) =>
+    StructInheritance1.fromRdfResource(resource, options).chain((member0) =>
+      $wrap_FromRdfResourceFunction(((resource, options) =>
+        $sequenceRecord({
+          $identifier: $identifierFromRdfResourceValues(
+            $rdfResourceIdentifierValues(resource),
+            {
+              ...options,
+              focusResource: resource,
+              propertyPath: $rdf_subject,
+              schema: { kind: "Identifier" as const },
+            },
+          ).chain((values) => values.head()),
+          structInheritance2: $shaclPropertyFromRdf<
+            string,
+            $StringSchema<string>
+          >({
+            ...options,
+            focusResource: resource,
+            ignoreRdfType: true,
+            propertySchema: {
+              kind: "Shacl",
+              path: dataFactory.namedNode(
+                "http://example.com/structInheritance2",
+              ),
+              type: { kind: "String" as const, datatype: $xsd_string },
+            },
+            typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+          }),
+        }).chain((properties) =>
+          (
+            ((parameters) =>
+              $sequenceRecord({
+                $identifier: $convertToIdentifierProperty(
+                  parameters.$identifier,
+                  parameters.$defaultNamespace,
+                ),
+                structInheritance2: Either.of(parameters.structInheritance2),
+              }).map((object) =>
+                $monkeyPatchObject(object, {
+                  toJson: ((_object) =>
+                    JSON.parse(
+                      JSON.stringify({
+                        "@id":
+                          _object.$identifier().termType === "BlankNode"
+                            ? `_:${_object.$identifier().value}`
+                            : _object.$identifier().value,
+                        structInheritance2: $primitiveToJsonValue<string>(
+                          _object.structInheritance2,
+                        ),
+                      }),
+                    )) satisfies $ToJsonObjectFunction<
+                    {
+                      readonly $identifier: () => BlankNode | NamedNode;
+                      readonly structInheritance2: string;
+                    },
+                    { "@id": string; structInheritance2: string }
+                  >,
+                  $toString: ((_object) =>
+                    JSON.stringify(
+                      ((_object) =>
+                        $compactRecord({
+                          $identifier: _object.$identifier().toString(),
+                        }))(_object),
+                    )) satisfies $ToStringFunction<{
+                    readonly $identifier: () => BlankNode | NamedNode;
+                  }>,
+                }),
+              )) satisfies <
+              $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+            >(parameters: {
+              readonly $defaultNamespace?: $DefaultNamespaceT;
+              readonly $identifier?:
+                | (() => BlankNode | NamedNode)
+                | BlankNode
+                | NamedNode
+                | (keyof $DefaultNamespaceT & string);
+              readonly structInheritance2: string;
+            }) => Either<
+              Error,
+              {
+                readonly $identifier: () => BlankNode | NamedNode;
+                readonly structInheritance2: string;
+              }
+            >
+          )(properties),
+        )) satisfies $_FromRdfResourceFunction<{
+        readonly $identifier: () => BlankNode | NamedNode;
+        readonly structInheritance2: string;
+      }>)(resource, options).map((member1) => ({
+        ...member0,
+        ...member1,
+        $type: "StructInheritance2" as const,
+      })),
+    );
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    StructInheritance2.Identifier,
+    StructInheritance2
+  > = (parameters) => {
+    StructInheritance1._toRdfResource(parameters);
+    ((parameters) => {
+      parameters.resource.add(
+        dataFactory.namedNode("http://example.com/structInheritance2"),
+        [$literalFactory.string(parameters.object.structInheritance2)],
+        parameters.graph,
+      );
+      return parameters.resource;
+    })(parameters);
+  };
+
+  export const $toString: $ToStringFunction<StructInheritance2> = (value) =>
+    JSON.stringify([
+      StructInheritance1.$toString(value),
+      ((_object) =>
+        JSON.stringify(
+          ((_object) =>
+            $compactRecord({ $identifier: _object.$identifier().toString() }))(
+            _object,
+          ),
+        ))(value),
+    ]);
+
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: StructInheritance2.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, StructInheritance2.Discriminated> = (parameters) =>
+    StructInheritance1.create(parameters)
+      .chain((member0) =>
+        ((parameters) =>
+          $sequenceRecord({
+            $identifier: $convertToIdentifierProperty(
+              parameters.$identifier,
+              parameters.$defaultNamespace,
+            ),
+            structInheritance2: Either.of(parameters.structInheritance2),
+          }).map((object) =>
+            $monkeyPatchObject(object, {
+              toJson: ((_object) =>
+                JSON.parse(
+                  JSON.stringify({
+                    "@id":
+                      _object.$identifier().termType === "BlankNode"
+                        ? `_:${_object.$identifier().value}`
+                        : _object.$identifier().value,
+                    structInheritance2: $primitiveToJsonValue<string>(
+                      _object.structInheritance2,
+                    ),
+                  }),
+                )) satisfies $ToJsonObjectFunction<
+                {
+                  readonly $identifier: () => BlankNode | NamedNode;
+                  readonly structInheritance2: string;
+                },
+                { "@id": string; structInheritance2: string }
+              >,
+              $toString: ((_object) =>
+                JSON.stringify(
+                  ((_object) =>
+                    $compactRecord({
+                      $identifier: _object.$identifier().toString(),
+                    }))(_object),
+                )) satisfies $ToStringFunction<{
+                readonly $identifier: () => BlankNode | NamedNode;
+              }>,
+            }),
+          ))(parameters).map((member1) => ({
+          ...member0,
+          ...member1,
+          $type: "StructInheritance2" as const,
+        })),
+      )
+      .map((object) =>
+        $monkeyPatchObject(object, {
+          toJson: StructInheritance2.toJson,
+          $toString: StructInheritance2.$toString,
+        }),
+      );
+
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = StructInheritance1.CreateParameters<$DefaultNamespaceT> & {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly structInheritance2: string;
+  };
+
+  export const createUnsafe: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: StructInheritance2.CreateParameters<$DefaultNamespaceT>,
+  ) => StructInheritance2.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = StructInheritance2 & {
+    readonly $type: "StructInheritance2";
+  };
+
+  export const equals: $EqualsFunction<StructInheritance2> = (left, right) =>
+    StructInheritance1.equals(left, right) &&
+    (
+      ((left, right) =>
+        $propertyEquals(
+          { equalsFunction: $booleanEquals, name: "$identifier" },
+          [left, left.$identifier()],
+          [right, right.$identifier()],
+        ).chain(() =>
+          $propertyEquals(
+            { equalsFunction: $strictEquals, name: "structInheritance2" },
+            [left, left.structInheritance2],
+            [right, right.structInheritance2],
+          ),
+        )) satisfies $EqualsFunction<{
+        readonly $identifier: () => BlankNode | NamedNode;
+        readonly structInheritance2: string;
+      }>
+    )(left, right);
+
+  export const filter: $FilterFunction<
+    StructInheritance2.Filter,
+    StructInheritance2
+  > = (filter, value) =>
+    StructInheritance1.filter(filter, value) &&
+    (
+      ((filter, value) => {
+        if (
+          filter.$identifier !== undefined &&
+          !$filterIdentifier(filter.$identifier, value.$identifier())
+        ) {
+          return false;
+        }
+        if (
+          filter.structInheritance2 !== undefined &&
+          !$filterString(filter.structInheritance2, value.structInheritance2)
+        ) {
+          return false;
+        }
+        return true;
+      }) satisfies $FilterFunction<
+        {
+          readonly $identifier?: $IdentifierFilter;
+          readonly structInheritance2?: $StringFilter;
+        },
+        {
+          readonly $identifier: () => BlankNode | NamedNode;
+          readonly structInheritance2: string;
+        }
+      >
+    )(filter, value);
+
+  export type Filter = StructInheritance1.Filter & {
+    readonly $identifier?: $IdentifierFilter;
+    readonly structInheritance2?: $StringFilter;
+  };
+
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    StructInheritance2.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      StructInheritance1.focusSparqlConstructTriples(parameters),
+    );
+    triples = triples.concat(
+      ((parameters) => {
+        let triples: sparqljs.Triple[] = [];
+        triples = triples.concat(
+          $shaclPropertySparqlConstructTriples({
+            filter: parameters.filter?.structInheritance2,
+            focusIdentifier: parameters.focusIdentifier,
+            ignoreRdfType: true,
+            propertyName: "structInheritance2",
+            propertySchema: {
+              kind: "Shacl",
+              path: dataFactory.namedNode(
+                "http://example.com/structInheritance2",
+              ),
+              type: { kind: "String" as const, datatype: $xsd_string },
+            },
+            typeSparqlConstructTriples: (_: object) => [],
+            variablePrefix: parameters.variablePrefix,
+          }),
+        );
+        return triples;
+      })(parameters),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    StructInheritance2.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    patterns = patterns.concat(
+      StructInheritance1.focusSparqlWherePatterns(parameters),
+    );
+    patterns = patterns.concat(
+      ((parameters) => {
+        let patterns: $SparqlPattern[] = [];
+        if (parameters.focusIdentifier.termType === "Variable") {
+          patterns = patterns.concat(
+            $identifierSparqlWherePatterns({
+              filter: parameters.filter?.$identifier,
+              ignoreRdfType: true,
+              preferredLanguages: parameters.preferredLanguages,
+              propertyPatterns: [],
+              schema: { kind: "Identifier" as const },
+              valueVariable: parameters.focusIdentifier,
+              variablePrefix: parameters.variablePrefix,
+            }),
+          );
+        }
+        patterns = patterns.concat(
+          $shaclPropertySparqlWherePatterns({
+            filter: parameters.filter?.structInheritance2,
+            focusIdentifier: parameters.focusIdentifier,
+            ignoreRdfType: true,
+            preferredLanguages: parameters.preferredLanguages,
+            propertyName: "structInheritance2",
+            propertySchema: {
+              kind: "Shacl",
+              path: dataFactory.namedNode(
+                "http://example.com/structInheritance2",
+              ),
+              type: { kind: "String" as const, datatype: $xsd_string },
+            },
+            typeSparqlWherePatterns: $stringSparqlWherePatterns,
+            variablePrefix: parameters.variablePrefix,
+          }),
+        );
+        return patterns;
+      })(parameters),
+    );
+    return patterns;
+  };
+
+  export const fromJson: $FromJsonObjectFunction<
+    StructInheritance2.Json,
+    StructInheritance2.Discriminated,
+    undefined
+  > = (jsonObject) =>
+    StructInheritance1.fromJson(jsonObject).chain((member0) =>
+      ((jsonObject, options = {}) =>
+        $sequenceRecord({
+          $identifier: $identifierFromJsonString(jsonObject["@id"], {
+            ...options,
+            schema: { kind: "Identifier" as const },
+          }),
+          structInheritance2: $stringFromJsonString<string>(
+            jsonObject["structInheritance2"],
+            {
+              ...options,
+              schema: { kind: "String" as const, datatype: $xsd_string },
+            },
+          ),
+        }).chain(((parameters) =>
+          $sequenceRecord({
+            $identifier: $convertToIdentifierProperty(
+              parameters.$identifier,
+              parameters.$defaultNamespace,
+            ),
+            structInheritance2: Either.of(parameters.structInheritance2),
+          }).map((object) =>
+            $monkeyPatchObject(object, {
+              toJson: ((_object) =>
+                JSON.parse(
+                  JSON.stringify({
+                    "@id":
+                      _object.$identifier().termType === "BlankNode"
+                        ? `_:${_object.$identifier().value}`
+                        : _object.$identifier().value,
+                    structInheritance2: $primitiveToJsonValue<string>(
+                      _object.structInheritance2,
+                    ),
+                  }),
+                )) satisfies $ToJsonObjectFunction<
+                {
+                  readonly $identifier: () => BlankNode | NamedNode;
+                  readonly structInheritance2: string;
+                },
+                { "@id": string; structInheritance2: string }
+              >,
+              $toString: ((_object) =>
+                JSON.stringify(
+                  ((_object) =>
+                    $compactRecord({
+                      $identifier: _object.$identifier().toString(),
+                    }))(_object),
+                )) satisfies $ToStringFunction<{
+                readonly $identifier: () => BlankNode | NamedNode;
+              }>,
+            }),
+          )) satisfies <
+          $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+        >(parameters: {
+          readonly $defaultNamespace?: $DefaultNamespaceT;
+          readonly $identifier?:
+            | (() => BlankNode | NamedNode)
+            | BlankNode
+            | NamedNode
+            | (keyof $DefaultNamespaceT & string);
+          readonly structInheritance2: string;
+        }) => Either<
+          Error,
+          {
+            readonly $identifier: () => BlankNode | NamedNode;
+            readonly structInheritance2: string;
+          }
+        >))(jsonObject).map((member1) => ({
+        ...member0,
+        ...member1,
+        $type: "StructInheritance2" as const,
+      })),
+    );
+
+  export const fromRdfResource: $FromRdfResourceFunction<StructInheritance2.Discriminated> =
+    $wrap_FromRdfResourceFunction(StructInheritance2._fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    StructInheritance2.Discriminated,
+    StructInheritance2.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) =>
+          StructInheritance2.fromRdfResource(resource, options),
+        ),
+    );
+
+  export const hash: $HashFunction<StructInheritance2> = (hasher, value) => {
+    StructInheritance1.hash(hasher, value);
+    (
+      ((hasher, _object) => {
+        if (_object.$identifier) {
+          hasher.update(_object.$identifier().value);
+        }
+        $hashString(hasher, _object.structInheritance2);
+      }) satisfies $HashFunction<
+        Omit<
+          {
+            readonly $identifier: () => BlankNode | NamedNode;
+            readonly structInheritance2: string;
+          },
+          "$identifier"
+        > & { readonly $identifier?: () => BlankNode | NamedNode }
+      >
+    )(hasher, value);
+  };
+
+  export type Identifier = BlankNode | NamedNode;
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+  }
+
+  export const isStructInheritance2: $ObjectTypeGuardFunction<
+    StructInheritance2.Discriminated
+  > = (object): object is StructInheritance2.Discriminated =>
+    object.$type === "StructInheritance2";
+
+  export type Json = StructInheritance1.Json & {
+    "@id": string;
+    structInheritance2: string;
+  };
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return StructInheritance1.Json.schema().and(
+        z.object({ "@id": z.string().min(1), structInheritance2: z.string() }),
+      ) satisfies z.ZodType<Json>;
+    }
+  }
+
+  export const schema = {
+    kind: "ObjectIntersection" as const,
+    members: [
+      StructInheritance1.schema,
+      {
+        properties: {
+          $identifier: {
+            kind: "Identifier",
+            type: { kind: "Identifier" as const },
+          },
+          structInheritance2: {
+            kind: "Shacl",
+            path: dataFactory.namedNode(
+              "http://example.com/structInheritance2",
+            ),
+            type: { kind: "String" as const, datatype: $xsd_string },
+          },
+        },
+      } as const,
+    ] as const,
+  };
+
+  export type Schema = typeof schema;
+
+  export const sparqlConstructQuery: $SparqlConstructQueryFunction<
+    StructInheritance2.Filter
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }) => {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "structInheritance2";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        StructInheritance2.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          StructInheritance2.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  };
+
+  export const sparqlConstructQueryString: $SparqlConstructQueryStringFunction<
+    StructInheritance2.Filter
+  > = (parameters) =>
+    new sparqljs.Generator(parameters).stringify(
+      StructInheritance2.sparqlConstructQuery(parameters),
+    );
+
+  export const toJson: $ToJsonObjectFunction<
+    StructInheritance2,
+    StructInheritance2.Json
+  > = (value) => ({
+    ...StructInheritance1.toJson(value),
+    ...((_object) =>
+      JSON.parse(
+        JSON.stringify({
+          "@id":
+            _object.$identifier().termType === "BlankNode"
+              ? `_:${_object.$identifier().value}`
+              : _object.$identifier().value,
+          structInheritance2: $primitiveToJsonValue<string>(
+            _object.structInheritance2,
+          ),
+        }),
+      ))(value),
+  });
+
+  export const toLoggable: $ToLoggableFunction<StructInheritance2> = (
+    value,
+  ) => [
+    StructInheritance1.toLoggable(value),
+    ((_object) =>
+      $compactRecord({
+        $identifier: _object.$identifier().value,
+        structInheritance2: _object.structInheritance2,
+      }))(value),
+  ];
+
+  export const toRdfResource: $ToRdfResourceFunction<
+    StructInheritance2.Identifier,
+    StructInheritance2
+  > = $wrap_ToRdfResourceFunction<
+    StructInheritance2.Identifier,
+    StructInheritance2
+  >(StructInheritance2._toRdfResource);
+
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    StructInheritance2,
+    BlankNode | NamedNode
+  > = (value, options) => [
+    StructInheritance2.toRdfResource(value, {
+      graph: options.graph,
+      resourceSet: options.resourceSet,
+    }).identifier,
+  ];
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    StructInheritance2.Filter,
+    StructInheritance2.Schema
+  > = ({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      StructInheritance1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter,
+        ignoreRdfType: true,
+        schema: schema.members[0],
+      }),
+    );
+    triples = triples.concat(
+      (
+        (({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+          ((parameters) => {
+            let triples: sparqljs.Triple[] = [];
+            triples = triples.concat(
+              $shaclPropertySparqlConstructTriples({
+                filter: parameters.filter?.structInheritance2,
+                focusIdentifier: parameters.focusIdentifier,
+                ignoreRdfType: true,
+                propertyName: "structInheritance2",
+                propertySchema: {
+                  kind: "Shacl",
+                  path: dataFactory.namedNode(
+                    "http://example.com/structInheritance2",
+                  ),
+                  type: { kind: "String" as const, datatype: $xsd_string },
+                },
+                typeSparqlConstructTriples: (_: object) => [],
+                variablePrefix: parameters.variablePrefix,
+              }),
+            );
+            return triples;
+          })({
+            filter,
+            focusIdentifier: valueVariable,
+            ignoreRdfType,
+            variablePrefix,
+          })) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly $identifier?: $IdentifierFilter;
+            readonly structInheritance2?: $StringFilter;
+          },
+          {
+            properties: {
+              $identifier: {
+                readonly kind: "Identifier";
+                readonly type: $IdentifierSchema;
+              };
+              structInheritance2: {
+                readonly kind: "Shacl";
+                readonly path: $PropertyPath;
+                readonly type: $StringSchema<string>;
+              };
+            };
+          }
+        >
+      )({
+        ...otherParameters,
+        filter,
+        ignoreRdfType: true,
+        schema: schema.members[1],
+      }),
+    );
+
+    return triples;
+  };
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    StructInheritance2.Filter,
+    StructInheritance2.Schema
+  > = ({ filter, schema, ...otherParameters }) => {
+    let intersectionPatterns: $SparqlPattern[] = [];
+
+    intersectionPatterns = intersectionPatterns.concat(
+      StructInheritance1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter,
+        ignoreRdfType: true,
+        schema: schema.members[0],
+      }),
+    );
+    intersectionPatterns = intersectionPatterns.concat(
+      (
+        (({
+          filter,
+          ignoreRdfType,
+          preferredLanguages,
+          propertyPatterns,
+          valueVariable,
+          variablePrefix,
+        }) =>
+          (propertyPatterns as readonly $SparqlPattern[]).concat(
+            ((parameters) => {
+              let patterns: $SparqlPattern[] = [];
+              if (parameters.focusIdentifier.termType === "Variable") {
+                patterns = patterns.concat(
+                  $identifierSparqlWherePatterns({
+                    filter: parameters.filter?.$identifier,
+                    ignoreRdfType: true,
+                    preferredLanguages: parameters.preferredLanguages,
+                    propertyPatterns: [],
+                    schema: { kind: "Identifier" as const },
+                    valueVariable: parameters.focusIdentifier,
+                    variablePrefix: parameters.variablePrefix,
+                  }),
+                );
+              }
+              patterns = patterns.concat(
+                $shaclPropertySparqlWherePatterns({
+                  filter: parameters.filter?.structInheritance2,
+                  focusIdentifier: parameters.focusIdentifier,
+                  ignoreRdfType: true,
+                  preferredLanguages: parameters.preferredLanguages,
+                  propertyName: "structInheritance2",
+                  propertySchema: {
+                    kind: "Shacl",
+                    path: dataFactory.namedNode(
+                      "http://example.com/structInheritance2",
+                    ),
+                    type: { kind: "String" as const, datatype: $xsd_string },
+                  },
+                  typeSparqlWherePatterns: $stringSparqlWherePatterns,
+                  variablePrefix: parameters.variablePrefix,
+                }),
+              );
+              return patterns;
+            })({
+              filter,
+              focusIdentifier: valueVariable,
+              ignoreRdfType,
+              preferredLanguages,
+              variablePrefix,
+            }),
+          )) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly $identifier?: $IdentifierFilter;
+            readonly structInheritance2?: $StringFilter;
+          },
+          {
+            properties: {
+              $identifier: {
+                readonly kind: "Identifier";
+                readonly type: $IdentifierSchema;
+              };
+              structInheritance2: {
+                readonly kind: "Shacl";
+                readonly path: $PropertyPath;
+                readonly type: $StringSchema<string>;
+              };
+            };
+          }
+        >
+      )({
+        ...otherParameters,
+        filter,
+        ignoreRdfType: true,
+        schema: schema.members[1],
+      }),
+    );
+
+    return intersectionPatterns;
+  };
+}
+
+/**
+ * Struct 'inheritance' through sh:and (level 3 struct)
+ */
+export type StructInheritance3 = StructInheritance1 & {
+  readonly $identifier: () => BlankNode | NamedNode;
+
+  readonly structInheritance2: string;
+} & {
+  readonly $identifier: () => BlankNode | NamedNode;
+  readonly structInheritance3: string;
+};
+
+export namespace StructInheritance3 {
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    StructInheritance3.Discriminated
+  > = (resource, options) =>
+    StructInheritance1.fromRdfResource(resource, options).chain((member0) =>
+      $wrap_FromRdfResourceFunction(((resource, options) =>
+        $sequenceRecord({
+          $identifier: $identifierFromRdfResourceValues(
+            $rdfResourceIdentifierValues(resource),
+            {
+              ...options,
+              focusResource: resource,
+              propertyPath: $rdf_subject,
+              schema: { kind: "Identifier" as const },
+            },
+          ).chain((values) => values.head()),
+          structInheritance2: $shaclPropertyFromRdf<
+            string,
+            $StringSchema<string>
+          >({
+            ...options,
+            focusResource: resource,
+            ignoreRdfType: true,
+            propertySchema: {
+              kind: "Shacl",
+              path: dataFactory.namedNode(
+                "http://example.com/structInheritance2",
+              ),
+              type: { kind: "String" as const, datatype: $xsd_string },
+            },
+            typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+          }),
+        }).chain((properties) =>
+          (
+            ((parameters) =>
+              $sequenceRecord({
+                $identifier: $convertToIdentifierProperty(
+                  parameters.$identifier,
+                  parameters.$defaultNamespace,
+                ),
+                structInheritance2: Either.of(parameters.structInheritance2),
+              }).map((object) =>
+                $monkeyPatchObject(object, {
+                  toJson: ((_object) =>
+                    JSON.parse(
+                      JSON.stringify({
+                        "@id":
+                          _object.$identifier().termType === "BlankNode"
+                            ? `_:${_object.$identifier().value}`
+                            : _object.$identifier().value,
+                        structInheritance2: $primitiveToJsonValue<string>(
+                          _object.structInheritance2,
+                        ),
+                      }),
+                    )) satisfies $ToJsonObjectFunction<
+                    {
+                      readonly $identifier: () => BlankNode | NamedNode;
+                      readonly structInheritance2: string;
+                    },
+                    { "@id": string; structInheritance2: string }
+                  >,
+                  $toString: ((_object) =>
+                    JSON.stringify(
+                      ((_object) =>
+                        $compactRecord({
+                          $identifier: _object.$identifier().toString(),
+                        }))(_object),
+                    )) satisfies $ToStringFunction<{
+                    readonly $identifier: () => BlankNode | NamedNode;
+                  }>,
+                }),
+              )) satisfies <
+              $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+            >(parameters: {
+              readonly $defaultNamespace?: $DefaultNamespaceT;
+              readonly $identifier?:
+                | (() => BlankNode | NamedNode)
+                | BlankNode
+                | NamedNode
+                | (keyof $DefaultNamespaceT & string);
+              readonly structInheritance2: string;
+            }) => Either<
+              Error,
+              {
+                readonly $identifier: () => BlankNode | NamedNode;
+                readonly structInheritance2: string;
+              }
+            >
+          )(properties),
+        )) satisfies $_FromRdfResourceFunction<{
+        readonly $identifier: () => BlankNode | NamedNode;
+        readonly structInheritance2: string;
+      }>)(resource, options).chain((member1) =>
+        $wrap_FromRdfResourceFunction(((resource, options) =>
+          $sequenceRecord({
+            $identifier: $identifierFromRdfResourceValues(
+              $rdfResourceIdentifierValues(resource),
+              {
+                ...options,
+                focusResource: resource,
+                propertyPath: $rdf_subject,
+                schema: { kind: "Identifier" as const },
+              },
+            ).chain((values) => values.head()),
+            structInheritance3: $shaclPropertyFromRdf<
+              string,
+              $StringSchema<string>
+            >({
+              ...options,
+              focusResource: resource,
+              ignoreRdfType: true,
+              propertySchema: {
+                kind: "Shacl",
+                path: dataFactory.namedNode(
+                  "http://example.com/structInheritance3",
+                ),
+                type: { kind: "String" as const, datatype: $xsd_string },
+              },
+              typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+            }),
+          }).chain((properties) =>
+            (
+              ((parameters) =>
+                $sequenceRecord({
+                  $identifier: $convertToIdentifierProperty(
+                    parameters.$identifier,
+                    parameters.$defaultNamespace,
+                  ),
+                  structInheritance3: Either.of(parameters.structInheritance3),
+                }).map((object) =>
+                  $monkeyPatchObject(object, {
+                    toJson: ((_object) =>
+                      JSON.parse(
+                        JSON.stringify({
+                          "@id":
+                            _object.$identifier().termType === "BlankNode"
+                              ? `_:${_object.$identifier().value}`
+                              : _object.$identifier().value,
+                          structInheritance3: $primitiveToJsonValue<string>(
+                            _object.structInheritance3,
+                          ),
+                        }),
+                      )) satisfies $ToJsonObjectFunction<
+                      {
+                        readonly $identifier: () => BlankNode | NamedNode;
+                        readonly structInheritance3: string;
+                      },
+                      { "@id": string; structInheritance3: string }
+                    >,
+                    $toString: ((_object) =>
+                      JSON.stringify(
+                        ((_object) =>
+                          $compactRecord({
+                            $identifier: _object.$identifier().toString(),
+                          }))(_object),
+                      )) satisfies $ToStringFunction<{
+                      readonly $identifier: () => BlankNode | NamedNode;
+                    }>,
+                  }),
+                )) satisfies <
+                $DefaultNamespaceT extends
+                  $NamespaceBuilder = $NamespaceBuilder,
+              >(parameters: {
+                readonly $defaultNamespace?: $DefaultNamespaceT;
+                readonly $identifier?:
+                  | (() => BlankNode | NamedNode)
+                  | BlankNode
+                  | NamedNode
+                  | (keyof $DefaultNamespaceT & string);
+                readonly structInheritance3: string;
+              }) => Either<
+                Error,
+                {
+                  readonly $identifier: () => BlankNode | NamedNode;
+                  readonly structInheritance3: string;
+                }
+              >
+            )(properties),
+          )) satisfies $_FromRdfResourceFunction<{
+          readonly $identifier: () => BlankNode | NamedNode;
+          readonly structInheritance3: string;
+        }>)(resource, options).map((member2) => ({
+          ...member0,
+          ...member1,
+          ...member2,
+          $type: "StructInheritance3" as const,
+        })),
+      ),
+    );
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    StructInheritance3.Identifier,
+    StructInheritance3
+  > = (parameters) => {
+    StructInheritance1._toRdfResource(parameters);
+    ((parameters) => {
+      parameters.resource.add(
+        dataFactory.namedNode("http://example.com/structInheritance2"),
+        [$literalFactory.string(parameters.object.structInheritance2)],
+        parameters.graph,
+      );
+      return parameters.resource;
+    })(parameters);
+    ((parameters) => {
+      parameters.resource.add(
+        dataFactory.namedNode("http://example.com/structInheritance3"),
+        [$literalFactory.string(parameters.object.structInheritance3)],
+        parameters.graph,
+      );
+      return parameters.resource;
+    })(parameters);
+  };
+
+  export const $toString: $ToStringFunction<StructInheritance3> = (value) =>
+    JSON.stringify([
+      StructInheritance1.$toString(value),
+      ((_object) =>
+        JSON.stringify(
+          ((_object) =>
+            $compactRecord({ $identifier: _object.$identifier().toString() }))(
+            _object,
+          ),
+        ))(value),
+      ((_object) =>
+        JSON.stringify(
+          ((_object) =>
+            $compactRecord({ $identifier: _object.$identifier().toString() }))(
+            _object,
+          ),
+        ))(value),
+    ]);
+
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: StructInheritance3.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, StructInheritance3.Discriminated> = (parameters) =>
+    StructInheritance1.create(parameters)
+      .chain((member0) =>
+        ((parameters) =>
+          $sequenceRecord({
+            $identifier: $convertToIdentifierProperty(
+              parameters.$identifier,
+              parameters.$defaultNamespace,
+            ),
+            structInheritance2: Either.of(parameters.structInheritance2),
+          }).map((object) =>
+            $monkeyPatchObject(object, {
+              toJson: ((_object) =>
+                JSON.parse(
+                  JSON.stringify({
+                    "@id":
+                      _object.$identifier().termType === "BlankNode"
+                        ? `_:${_object.$identifier().value}`
+                        : _object.$identifier().value,
+                    structInheritance2: $primitiveToJsonValue<string>(
+                      _object.structInheritance2,
+                    ),
+                  }),
+                )) satisfies $ToJsonObjectFunction<
+                {
+                  readonly $identifier: () => BlankNode | NamedNode;
+                  readonly structInheritance2: string;
+                },
+                { "@id": string; structInheritance2: string }
+              >,
+              $toString: ((_object) =>
+                JSON.stringify(
+                  ((_object) =>
+                    $compactRecord({
+                      $identifier: _object.$identifier().toString(),
+                    }))(_object),
+                )) satisfies $ToStringFunction<{
+                readonly $identifier: () => BlankNode | NamedNode;
+              }>,
+            }),
+          ))(parameters).chain((member1) =>
+          ((parameters) =>
+            $sequenceRecord({
+              $identifier: $convertToIdentifierProperty(
+                parameters.$identifier,
+                parameters.$defaultNamespace,
+              ),
+              structInheritance3: Either.of(parameters.structInheritance3),
+            }).map((object) =>
+              $monkeyPatchObject(object, {
+                toJson: ((_object) =>
+                  JSON.parse(
+                    JSON.stringify({
+                      "@id":
+                        _object.$identifier().termType === "BlankNode"
+                          ? `_:${_object.$identifier().value}`
+                          : _object.$identifier().value,
+                      structInheritance3: $primitiveToJsonValue<string>(
+                        _object.structInheritance3,
+                      ),
+                    }),
+                  )) satisfies $ToJsonObjectFunction<
+                  {
+                    readonly $identifier: () => BlankNode | NamedNode;
+                    readonly structInheritance3: string;
+                  },
+                  { "@id": string; structInheritance3: string }
+                >,
+                $toString: ((_object) =>
+                  JSON.stringify(
+                    ((_object) =>
+                      $compactRecord({
+                        $identifier: _object.$identifier().toString(),
+                      }))(_object),
+                  )) satisfies $ToStringFunction<{
+                  readonly $identifier: () => BlankNode | NamedNode;
+                }>,
+              }),
+            ))(parameters).map((member2) => ({
+            ...member0,
+            ...member1,
+            ...member2,
+            $type: "StructInheritance3" as const,
+          })),
+        ),
+      )
+      .map((object) =>
+        $monkeyPatchObject(object, {
+          toJson: StructInheritance3.toJson,
+          $toString: StructInheritance3.$toString,
+        }),
+      );
+
+  export type CreateParameters<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  > = StructInheritance1.CreateParameters<$DefaultNamespaceT> & {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly structInheritance2: string;
+  } & {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly structInheritance3: string;
+  };
+
+  export const createUnsafe: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(
+    parameters: StructInheritance3.CreateParameters<$DefaultNamespaceT>,
+  ) => StructInheritance3.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = StructInheritance3 & {
+    readonly $type: "StructInheritance3";
+  };
+
+  export const equals: $EqualsFunction<StructInheritance3> = (left, right) =>
+    StructInheritance1.equals(left, right) &&
+    (
+      ((left, right) =>
+        $propertyEquals(
+          { equalsFunction: $booleanEquals, name: "$identifier" },
+          [left, left.$identifier()],
+          [right, right.$identifier()],
+        ).chain(() =>
+          $propertyEquals(
+            { equalsFunction: $strictEquals, name: "structInheritance2" },
+            [left, left.structInheritance2],
+            [right, right.structInheritance2],
+          ),
+        )) satisfies $EqualsFunction<{
+        readonly $identifier: () => BlankNode | NamedNode;
+        readonly structInheritance2: string;
+      }>
+    )(left, right) &&
+    (
+      ((left, right) =>
+        $propertyEquals(
+          { equalsFunction: $booleanEquals, name: "$identifier" },
+          [left, left.$identifier()],
+          [right, right.$identifier()],
+        ).chain(() =>
+          $propertyEquals(
+            { equalsFunction: $strictEquals, name: "structInheritance3" },
+            [left, left.structInheritance3],
+            [right, right.structInheritance3],
+          ),
+        )) satisfies $EqualsFunction<{
+        readonly $identifier: () => BlankNode | NamedNode;
+        readonly structInheritance3: string;
+      }>
+    )(left, right);
+
+  export const filter: $FilterFunction<
+    StructInheritance3.Filter,
+    StructInheritance3
+  > = (filter, value) =>
+    StructInheritance1.filter(filter, value) &&
+    (
+      ((filter, value) => {
+        if (
+          filter.$identifier !== undefined &&
+          !$filterIdentifier(filter.$identifier, value.$identifier())
+        ) {
+          return false;
+        }
+        if (
+          filter.structInheritance2 !== undefined &&
+          !$filterString(filter.structInheritance2, value.structInheritance2)
+        ) {
+          return false;
+        }
+        return true;
+      }) satisfies $FilterFunction<
+        {
+          readonly $identifier?: $IdentifierFilter;
+          readonly structInheritance2?: $StringFilter;
+        },
+        {
+          readonly $identifier: () => BlankNode | NamedNode;
+          readonly structInheritance2: string;
+        }
+      >
+    )(filter, value) &&
+    (
+      ((filter, value) => {
+        if (
+          filter.$identifier !== undefined &&
+          !$filterIdentifier(filter.$identifier, value.$identifier())
+        ) {
+          return false;
+        }
+        if (
+          filter.structInheritance3 !== undefined &&
+          !$filterString(filter.structInheritance3, value.structInheritance3)
+        ) {
+          return false;
+        }
+        return true;
+      }) satisfies $FilterFunction<
+        {
+          readonly $identifier?: $IdentifierFilter;
+          readonly structInheritance3?: $StringFilter;
+        },
+        {
+          readonly $identifier: () => BlankNode | NamedNode;
+          readonly structInheritance3: string;
+        }
+      >
+    )(filter, value);
+
+  export type Filter = StructInheritance1.Filter & {
+    readonly $identifier?: $IdentifierFilter;
+    readonly structInheritance2?: $StringFilter;
+  } & {
+    readonly $identifier?: $IdentifierFilter;
+    readonly structInheritance3?: $StringFilter;
+  };
+
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    StructInheritance3.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      StructInheritance1.focusSparqlConstructTriples(parameters),
+    );
+    triples = triples.concat(
+      ((parameters) => {
+        let triples: sparqljs.Triple[] = [];
+        triples = triples.concat(
+          $shaclPropertySparqlConstructTriples({
+            filter: parameters.filter?.structInheritance2,
+            focusIdentifier: parameters.focusIdentifier,
+            ignoreRdfType: true,
+            propertyName: "structInheritance2",
+            propertySchema: {
+              kind: "Shacl",
+              path: dataFactory.namedNode(
+                "http://example.com/structInheritance2",
+              ),
+              type: { kind: "String" as const, datatype: $xsd_string },
+            },
+            typeSparqlConstructTriples: (_: object) => [],
+            variablePrefix: parameters.variablePrefix,
+          }),
+        );
+        return triples;
+      })(parameters),
+    );
+    triples = triples.concat(
+      ((parameters) => {
+        let triples: sparqljs.Triple[] = [];
+        triples = triples.concat(
+          $shaclPropertySparqlConstructTriples({
+            filter: parameters.filter?.structInheritance3,
+            focusIdentifier: parameters.focusIdentifier,
+            ignoreRdfType: true,
+            propertyName: "structInheritance3",
+            propertySchema: {
+              kind: "Shacl",
+              path: dataFactory.namedNode(
+                "http://example.com/structInheritance3",
+              ),
+              type: { kind: "String" as const, datatype: $xsd_string },
+            },
+            typeSparqlConstructTriples: (_: object) => [],
+            variablePrefix: parameters.variablePrefix,
+          }),
+        );
+        return triples;
+      })(parameters),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    StructInheritance3.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    patterns = patterns.concat(
+      StructInheritance1.focusSparqlWherePatterns(parameters),
+    );
+    patterns = patterns.concat(
+      ((parameters) => {
+        let patterns: $SparqlPattern[] = [];
+        if (parameters.focusIdentifier.termType === "Variable") {
+          patterns = patterns.concat(
+            $identifierSparqlWherePatterns({
+              filter: parameters.filter?.$identifier,
+              ignoreRdfType: true,
+              preferredLanguages: parameters.preferredLanguages,
+              propertyPatterns: [],
+              schema: { kind: "Identifier" as const },
+              valueVariable: parameters.focusIdentifier,
+              variablePrefix: parameters.variablePrefix,
+            }),
+          );
+        }
+        patterns = patterns.concat(
+          $shaclPropertySparqlWherePatterns({
+            filter: parameters.filter?.structInheritance2,
+            focusIdentifier: parameters.focusIdentifier,
+            ignoreRdfType: true,
+            preferredLanguages: parameters.preferredLanguages,
+            propertyName: "structInheritance2",
+            propertySchema: {
+              kind: "Shacl",
+              path: dataFactory.namedNode(
+                "http://example.com/structInheritance2",
+              ),
+              type: { kind: "String" as const, datatype: $xsd_string },
+            },
+            typeSparqlWherePatterns: $stringSparqlWherePatterns,
+            variablePrefix: parameters.variablePrefix,
+          }),
+        );
+        return patterns;
+      })(parameters),
+    );
+    patterns = patterns.concat(
+      ((parameters) => {
+        let patterns: $SparqlPattern[] = [];
+        if (parameters.focusIdentifier.termType === "Variable") {
+          patterns = patterns.concat(
+            $identifierSparqlWherePatterns({
+              filter: parameters.filter?.$identifier,
+              ignoreRdfType: true,
+              preferredLanguages: parameters.preferredLanguages,
+              propertyPatterns: [],
+              schema: { kind: "Identifier" as const },
+              valueVariable: parameters.focusIdentifier,
+              variablePrefix: parameters.variablePrefix,
+            }),
+          );
+        }
+        patterns = patterns.concat(
+          $shaclPropertySparqlWherePatterns({
+            filter: parameters.filter?.structInheritance3,
+            focusIdentifier: parameters.focusIdentifier,
+            ignoreRdfType: true,
+            preferredLanguages: parameters.preferredLanguages,
+            propertyName: "structInheritance3",
+            propertySchema: {
+              kind: "Shacl",
+              path: dataFactory.namedNode(
+                "http://example.com/structInheritance3",
+              ),
+              type: { kind: "String" as const, datatype: $xsd_string },
+            },
+            typeSparqlWherePatterns: $stringSparqlWherePatterns,
+            variablePrefix: parameters.variablePrefix,
+          }),
+        );
+        return patterns;
+      })(parameters),
+    );
+    return patterns;
+  };
+
+  export const fromJson: $FromJsonObjectFunction<
+    StructInheritance3.Json,
+    StructInheritance3.Discriminated,
+    undefined
+  > = (jsonObject) =>
+    StructInheritance1.fromJson(jsonObject).chain((member0) =>
+      ((jsonObject, options = {}) =>
+        $sequenceRecord({
+          $identifier: $identifierFromJsonString(jsonObject["@id"], {
+            ...options,
+            schema: { kind: "Identifier" as const },
+          }),
+          structInheritance2: $stringFromJsonString<string>(
+            jsonObject["structInheritance2"],
+            {
+              ...options,
+              schema: { kind: "String" as const, datatype: $xsd_string },
+            },
+          ),
+        }).chain(((parameters) =>
+          $sequenceRecord({
+            $identifier: $convertToIdentifierProperty(
+              parameters.$identifier,
+              parameters.$defaultNamespace,
+            ),
+            structInheritance2: Either.of(parameters.structInheritance2),
+          }).map((object) =>
+            $monkeyPatchObject(object, {
+              toJson: ((_object) =>
+                JSON.parse(
+                  JSON.stringify({
+                    "@id":
+                      _object.$identifier().termType === "BlankNode"
+                        ? `_:${_object.$identifier().value}`
+                        : _object.$identifier().value,
+                    structInheritance2: $primitiveToJsonValue<string>(
+                      _object.structInheritance2,
+                    ),
+                  }),
+                )) satisfies $ToJsonObjectFunction<
+                {
+                  readonly $identifier: () => BlankNode | NamedNode;
+                  readonly structInheritance2: string;
+                },
+                { "@id": string; structInheritance2: string }
+              >,
+              $toString: ((_object) =>
+                JSON.stringify(
+                  ((_object) =>
+                    $compactRecord({
+                      $identifier: _object.$identifier().toString(),
+                    }))(_object),
+                )) satisfies $ToStringFunction<{
+                readonly $identifier: () => BlankNode | NamedNode;
+              }>,
+            }),
+          )) satisfies <
+          $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+        >(parameters: {
+          readonly $defaultNamespace?: $DefaultNamespaceT;
+          readonly $identifier?:
+            | (() => BlankNode | NamedNode)
+            | BlankNode
+            | NamedNode
+            | (keyof $DefaultNamespaceT & string);
+          readonly structInheritance2: string;
+        }) => Either<
+          Error,
+          {
+            readonly $identifier: () => BlankNode | NamedNode;
+            readonly structInheritance2: string;
+          }
+        >))(jsonObject).chain((member1) =>
+        ((jsonObject, options = {}) =>
+          $sequenceRecord({
+            $identifier: $identifierFromJsonString(jsonObject["@id"], {
+              ...options,
+              schema: { kind: "Identifier" as const },
+            }),
+            structInheritance3: $stringFromJsonString<string>(
+              jsonObject["structInheritance3"],
+              {
+                ...options,
+                schema: { kind: "String" as const, datatype: $xsd_string },
+              },
+            ),
+          }).chain(((parameters) =>
+            $sequenceRecord({
+              $identifier: $convertToIdentifierProperty(
+                parameters.$identifier,
+                parameters.$defaultNamespace,
+              ),
+              structInheritance3: Either.of(parameters.structInheritance3),
+            }).map((object) =>
+              $monkeyPatchObject(object, {
+                toJson: ((_object) =>
+                  JSON.parse(
+                    JSON.stringify({
+                      "@id":
+                        _object.$identifier().termType === "BlankNode"
+                          ? `_:${_object.$identifier().value}`
+                          : _object.$identifier().value,
+                      structInheritance3: $primitiveToJsonValue<string>(
+                        _object.structInheritance3,
+                      ),
+                    }),
+                  )) satisfies $ToJsonObjectFunction<
+                  {
+                    readonly $identifier: () => BlankNode | NamedNode;
+                    readonly structInheritance3: string;
+                  },
+                  { "@id": string; structInheritance3: string }
+                >,
+                $toString: ((_object) =>
+                  JSON.stringify(
+                    ((_object) =>
+                      $compactRecord({
+                        $identifier: _object.$identifier().toString(),
+                      }))(_object),
+                  )) satisfies $ToStringFunction<{
+                  readonly $identifier: () => BlankNode | NamedNode;
+                }>,
+              }),
+            )) satisfies <
+            $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+          >(parameters: {
+            readonly $defaultNamespace?: $DefaultNamespaceT;
+            readonly $identifier?:
+              | (() => BlankNode | NamedNode)
+              | BlankNode
+              | NamedNode
+              | (keyof $DefaultNamespaceT & string);
+            readonly structInheritance3: string;
+          }) => Either<
+            Error,
+            {
+              readonly $identifier: () => BlankNode | NamedNode;
+              readonly structInheritance3: string;
+            }
+          >))(jsonObject).map((member2) => ({
+          ...member0,
+          ...member1,
+          ...member2,
+          $type: "StructInheritance3" as const,
+        })),
+      ),
+    );
+
+  export const fromRdfResource: $FromRdfResourceFunction<StructInheritance3.Discriminated> =
+    $wrap_FromRdfResourceFunction(StructInheritance3._fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    StructInheritance3.Discriminated,
+    StructInheritance3.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) =>
+          StructInheritance3.fromRdfResource(resource, options),
+        ),
+    );
+
+  export const hash: $HashFunction<StructInheritance3> = (hasher, value) => {
+    StructInheritance1.hash(hasher, value);
+    (
+      ((hasher, _object) => {
+        if (_object.$identifier) {
+          hasher.update(_object.$identifier().value);
+        }
+        $hashString(hasher, _object.structInheritance2);
+      }) satisfies $HashFunction<
+        Omit<
+          {
+            readonly $identifier: () => BlankNode | NamedNode;
+            readonly structInheritance2: string;
+          },
+          "$identifier"
+        > & { readonly $identifier?: () => BlankNode | NamedNode }
+      >
+    )(hasher, value);
+    (
+      ((hasher, _object) => {
+        if (_object.$identifier) {
+          hasher.update(_object.$identifier().value);
+        }
+        $hashString(hasher, _object.structInheritance3);
+      }) satisfies $HashFunction<
+        Omit<
+          {
+            readonly $identifier: () => BlankNode | NamedNode;
+            readonly structInheritance3: string;
+          },
+          "$identifier"
+        > & { readonly $identifier?: () => BlankNode | NamedNode }
+      >
+    )(hasher, value);
+  };
+
+  export type Identifier = BlankNode | NamedNode;
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+  }
+
+  export const isStructInheritance3: $ObjectTypeGuardFunction<
+    StructInheritance3.Discriminated
+  > = (object): object is StructInheritance3.Discriminated =>
+    object.$type === "StructInheritance3";
+
+  export type Json = StructInheritance1.Json & {
+    "@id": string;
+    structInheritance2: string;
+  } & {
+    "@id": string;
+    structInheritance3: string;
+  };
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return StructInheritance1.Json.schema()
+        .and(
+          z.object({
+            "@id": z.string().min(1),
+            structInheritance2: z.string(),
+          }),
+        )
+        .and(
+          z.object({
+            "@id": z.string().min(1),
+            structInheritance3: z.string(),
+          }),
+        ) satisfies z.ZodType<Json>;
+    }
+  }
+
+  export const schema = {
+    kind: "ObjectIntersection" as const,
+    members: [
+      StructInheritance1.schema,
+      {
+        properties: {
+          $identifier: {
+            kind: "Identifier",
+            type: { kind: "Identifier" as const },
+          },
+          structInheritance2: {
+            kind: "Shacl",
+            path: dataFactory.namedNode(
+              "http://example.com/structInheritance2",
+            ),
+            type: { kind: "String" as const, datatype: $xsd_string },
+          },
+        },
+      } as const,
+      {
+        properties: {
+          $identifier: {
+            kind: "Identifier",
+            type: { kind: "Identifier" as const },
+          },
+          structInheritance3: {
+            kind: "Shacl",
+            path: dataFactory.namedNode(
+              "http://example.com/structInheritance3",
+            ),
+            type: { kind: "String" as const, datatype: $xsd_string },
+          },
+        },
+      } as const,
+    ] as const,
+  };
+
+  export type Schema = typeof schema;
+
+  export const sparqlConstructQuery: $SparqlConstructQueryFunction<
+    StructInheritance3.Filter
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }) => {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "structInheritance3";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        StructInheritance3.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          StructInheritance3.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  };
+
+  export const sparqlConstructQueryString: $SparqlConstructQueryStringFunction<
+    StructInheritance3.Filter
+  > = (parameters) =>
+    new sparqljs.Generator(parameters).stringify(
+      StructInheritance3.sparqlConstructQuery(parameters),
+    );
+
+  export const toJson: $ToJsonObjectFunction<
+    StructInheritance3,
+    StructInheritance3.Json
+  > = (value) => ({
+    ...StructInheritance1.toJson(value),
+    ...((_object) =>
+      JSON.parse(
+        JSON.stringify({
+          "@id":
+            _object.$identifier().termType === "BlankNode"
+              ? `_:${_object.$identifier().value}`
+              : _object.$identifier().value,
+          structInheritance2: $primitiveToJsonValue<string>(
+            _object.structInheritance2,
+          ),
+        }),
+      ))(value),
+    ...((_object) =>
+      JSON.parse(
+        JSON.stringify({
+          "@id":
+            _object.$identifier().termType === "BlankNode"
+              ? `_:${_object.$identifier().value}`
+              : _object.$identifier().value,
+          structInheritance3: $primitiveToJsonValue<string>(
+            _object.structInheritance3,
+          ),
+        }),
+      ))(value),
+  });
+
+  export const toLoggable: $ToLoggableFunction<StructInheritance3> = (
+    value,
+  ) => [
+    StructInheritance1.toLoggable(value),
+    ((_object) =>
+      $compactRecord({
+        $identifier: _object.$identifier().value,
+        structInheritance2: _object.structInheritance2,
+      }))(value),
+    ((_object) =>
+      $compactRecord({
+        $identifier: _object.$identifier().value,
+        structInheritance3: _object.structInheritance3,
+      }))(value),
+  ];
+
+  export const toRdfResource: $ToRdfResourceFunction<
+    StructInheritance3.Identifier,
+    StructInheritance3
+  > = $wrap_ToRdfResourceFunction<
+    StructInheritance3.Identifier,
+    StructInheritance3
+  >(StructInheritance3._toRdfResource);
+
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    StructInheritance3,
+    BlankNode | NamedNode
+  > = (value, options) => [
+    StructInheritance3.toRdfResource(value, {
+      graph: options.graph,
+      resourceSet: options.resourceSet,
+    }).identifier,
+  ];
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    StructInheritance3.Filter,
+    StructInheritance3.Schema
+  > = ({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      StructInheritance1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter,
+        ignoreRdfType: true,
+        schema: schema.members[0],
+      }),
+    );
+    triples = triples.concat(
+      (
+        (({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+          ((parameters) => {
+            let triples: sparqljs.Triple[] = [];
+            triples = triples.concat(
+              $shaclPropertySparqlConstructTriples({
+                filter: parameters.filter?.structInheritance2,
+                focusIdentifier: parameters.focusIdentifier,
+                ignoreRdfType: true,
+                propertyName: "structInheritance2",
+                propertySchema: {
+                  kind: "Shacl",
+                  path: dataFactory.namedNode(
+                    "http://example.com/structInheritance2",
+                  ),
+                  type: { kind: "String" as const, datatype: $xsd_string },
+                },
+                typeSparqlConstructTriples: (_: object) => [],
+                variablePrefix: parameters.variablePrefix,
+              }),
+            );
+            return triples;
+          })({
+            filter,
+            focusIdentifier: valueVariable,
+            ignoreRdfType,
+            variablePrefix,
+          })) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly $identifier?: $IdentifierFilter;
+            readonly structInheritance2?: $StringFilter;
+          },
+          {
+            properties: {
+              $identifier: {
+                readonly kind: "Identifier";
+                readonly type: $IdentifierSchema;
+              };
+              structInheritance2: {
+                readonly kind: "Shacl";
+                readonly path: $PropertyPath;
+                readonly type: $StringSchema<string>;
+              };
+            };
+          }
+        >
+      )({
+        ...otherParameters,
+        filter,
+        ignoreRdfType: true,
+        schema: schema.members[1],
+      }),
+    );
+    triples = triples.concat(
+      (
+        (({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+          ((parameters) => {
+            let triples: sparqljs.Triple[] = [];
+            triples = triples.concat(
+              $shaclPropertySparqlConstructTriples({
+                filter: parameters.filter?.structInheritance3,
+                focusIdentifier: parameters.focusIdentifier,
+                ignoreRdfType: true,
+                propertyName: "structInheritance3",
+                propertySchema: {
+                  kind: "Shacl",
+                  path: dataFactory.namedNode(
+                    "http://example.com/structInheritance3",
+                  ),
+                  type: { kind: "String" as const, datatype: $xsd_string },
+                },
+                typeSparqlConstructTriples: (_: object) => [],
+                variablePrefix: parameters.variablePrefix,
+              }),
+            );
+            return triples;
+          })({
+            filter,
+            focusIdentifier: valueVariable,
+            ignoreRdfType,
+            variablePrefix,
+          })) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly $identifier?: $IdentifierFilter;
+            readonly structInheritance3?: $StringFilter;
+          },
+          {
+            properties: {
+              $identifier: {
+                readonly kind: "Identifier";
+                readonly type: $IdentifierSchema;
+              };
+              structInheritance3: {
+                readonly kind: "Shacl";
+                readonly path: $PropertyPath;
+                readonly type: $StringSchema<string>;
+              };
+            };
+          }
+        >
+      )({
+        ...otherParameters,
+        filter,
+        ignoreRdfType: true,
+        schema: schema.members[2],
+      }),
+    );
+
+    return triples;
+  };
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    StructInheritance3.Filter,
+    StructInheritance3.Schema
+  > = ({ filter, schema, ...otherParameters }) => {
+    let intersectionPatterns: $SparqlPattern[] = [];
+
+    intersectionPatterns = intersectionPatterns.concat(
+      StructInheritance1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter,
+        ignoreRdfType: true,
+        schema: schema.members[0],
+      }),
+    );
+    intersectionPatterns = intersectionPatterns.concat(
+      (
+        (({
+          filter,
+          ignoreRdfType,
+          preferredLanguages,
+          propertyPatterns,
+          valueVariable,
+          variablePrefix,
+        }) =>
+          (propertyPatterns as readonly $SparqlPattern[]).concat(
+            ((parameters) => {
+              let patterns: $SparqlPattern[] = [];
+              if (parameters.focusIdentifier.termType === "Variable") {
+                patterns = patterns.concat(
+                  $identifierSparqlWherePatterns({
+                    filter: parameters.filter?.$identifier,
+                    ignoreRdfType: true,
+                    preferredLanguages: parameters.preferredLanguages,
+                    propertyPatterns: [],
+                    schema: { kind: "Identifier" as const },
+                    valueVariable: parameters.focusIdentifier,
+                    variablePrefix: parameters.variablePrefix,
+                  }),
+                );
+              }
+              patterns = patterns.concat(
+                $shaclPropertySparqlWherePatterns({
+                  filter: parameters.filter?.structInheritance2,
+                  focusIdentifier: parameters.focusIdentifier,
+                  ignoreRdfType: true,
+                  preferredLanguages: parameters.preferredLanguages,
+                  propertyName: "structInheritance2",
+                  propertySchema: {
+                    kind: "Shacl",
+                    path: dataFactory.namedNode(
+                      "http://example.com/structInheritance2",
+                    ),
+                    type: { kind: "String" as const, datatype: $xsd_string },
+                  },
+                  typeSparqlWherePatterns: $stringSparqlWherePatterns,
+                  variablePrefix: parameters.variablePrefix,
+                }),
+              );
+              return patterns;
+            })({
+              filter,
+              focusIdentifier: valueVariable,
+              ignoreRdfType,
+              preferredLanguages,
+              variablePrefix,
+            }),
+          )) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly $identifier?: $IdentifierFilter;
+            readonly structInheritance2?: $StringFilter;
+          },
+          {
+            properties: {
+              $identifier: {
+                readonly kind: "Identifier";
+                readonly type: $IdentifierSchema;
+              };
+              structInheritance2: {
+                readonly kind: "Shacl";
+                readonly path: $PropertyPath;
+                readonly type: $StringSchema<string>;
+              };
+            };
+          }
+        >
+      )({
+        ...otherParameters,
+        filter,
+        ignoreRdfType: true,
+        schema: schema.members[1],
+      }),
+    );
+    intersectionPatterns = intersectionPatterns.concat(
+      (
+        (({
+          filter,
+          ignoreRdfType,
+          preferredLanguages,
+          propertyPatterns,
+          valueVariable,
+          variablePrefix,
+        }) =>
+          (propertyPatterns as readonly $SparqlPattern[]).concat(
+            ((parameters) => {
+              let patterns: $SparqlPattern[] = [];
+              if (parameters.focusIdentifier.termType === "Variable") {
+                patterns = patterns.concat(
+                  $identifierSparqlWherePatterns({
+                    filter: parameters.filter?.$identifier,
+                    ignoreRdfType: true,
+                    preferredLanguages: parameters.preferredLanguages,
+                    propertyPatterns: [],
+                    schema: { kind: "Identifier" as const },
+                    valueVariable: parameters.focusIdentifier,
+                    variablePrefix: parameters.variablePrefix,
+                  }),
+                );
+              }
+              patterns = patterns.concat(
+                $shaclPropertySparqlWherePatterns({
+                  filter: parameters.filter?.structInheritance3,
+                  focusIdentifier: parameters.focusIdentifier,
+                  ignoreRdfType: true,
+                  preferredLanguages: parameters.preferredLanguages,
+                  propertyName: "structInheritance3",
+                  propertySchema: {
+                    kind: "Shacl",
+                    path: dataFactory.namedNode(
+                      "http://example.com/structInheritance3",
+                    ),
+                    type: { kind: "String" as const, datatype: $xsd_string },
+                  },
+                  typeSparqlWherePatterns: $stringSparqlWherePatterns,
+                  variablePrefix: parameters.variablePrefix,
+                }),
+              );
+              return patterns;
+            })({
+              filter,
+              focusIdentifier: valueVariable,
+              ignoreRdfType,
+              preferredLanguages,
+              variablePrefix,
+            }),
+          )) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly $identifier?: $IdentifierFilter;
+            readonly structInheritance3?: $StringFilter;
+          },
+          {
+            properties: {
+              $identifier: {
+                readonly kind: "Identifier";
+                readonly type: $IdentifierSchema;
+              };
+              structInheritance3: {
+                readonly kind: "Shacl";
+                readonly path: $PropertyPath;
+                readonly type: $StringSchema<string>;
+              };
+            };
+          }
+        >
+      )({
+        ...otherParameters,
+        filter,
+        ignoreRdfType: true,
+        schema: schema.members[2],
+      }),
+    );
+
+    return intersectionPatterns;
+  };
+}
+
+/**
  * Node shape that sh:and's other struct node shapes. This will be generated as an intersection type or flattened into a single type.
  */
 export type StructIntersection = StructIntersectionMember1 &
@@ -62613,9 +65120,9 @@ export namespace StructIntersection {
     StructIntersection.Json,
     StructIntersection.Discriminated,
     undefined
-  > = (value) =>
-    StructIntersectionMember1.fromJson(value).chain((member0) =>
-      StructIntersectionMember2.fromJson(value).map((member1) => ({
+  > = (jsonObject) =>
+    StructIntersectionMember1.fromJson(jsonObject).chain((member0) =>
+      StructIntersectionMember2.fromJson(jsonObject).map((member1) => ({
         ...member0,
         ...member1,
         $type: "StructIntersection" as const,
@@ -62665,8 +65172,7 @@ export namespace StructIntersection {
     }
 
     export function schema() {
-      return z.intersection(
-        StructIntersectionMember1.Json.schema(),
+      return StructIntersectionMember1.Json.schema().and(
         StructIntersectionMember2.Json.schema(),
       ) satisfies z.ZodType<Json>;
     }
@@ -62867,12 +65373,15 @@ export type $Object =
   | RecursiveDiscriminatedUnionMember2.Discriminated
   | StructDiscriminatedUnionMember1.Discriminated
   | StructDiscriminatedUnionMember2.Discriminated
+  | StructInheritance1.Discriminated
   | StructIntersectionMember1.Discriminated
   | StructIntersectionMember2.Discriminated
   | TargetClassStruct.Discriminated
   | TermsStruct.Discriminated
   | UnionDiscriminantsStruct.Discriminated
-  | StructIntersection.Discriminated;
+  | StructIntersection.Discriminated
+  | StructInheritance2.Discriminated
+  | StructInheritance3.Discriminated;
 
 export namespace $Object {
   export function equals(left: $Object, right: $Object): $EqualsResult {
@@ -63074,6 +65583,8 @@ export namespace $Object {
           left,
           right as StructDiscriminatedUnionMember2,
         );
+      case "StructInheritance1":
+        return StructInheritance1.equals(left, right as StructInheritance1);
       case "StructIntersectionMember1":
         return StructIntersectionMember1.equals(
           left,
@@ -63095,6 +65606,10 @@ export namespace $Object {
         );
       case "StructIntersection":
         return StructIntersection.equals(left, right as StructIntersection);
+      case "StructInheritance2":
+        return StructInheritance2.equals(left, right as StructInheritance2);
+      case "StructInheritance3":
+        return StructInheritance3.equals(left, right as StructInheritance3);
       default:
         left satisfies never;
         throw new Error("should never reach this point");
@@ -63256,6 +65771,9 @@ export namespace $Object {
       case "StructDiscriminatedUnionMember2":
         StructDiscriminatedUnionMember2.hash(hasher, object);
         break;
+      case "StructInheritance1":
+        StructInheritance1.hash(hasher, object);
+        break;
       case "StructIntersectionMember1":
         StructIntersectionMember1.hash(hasher, object);
         break;
@@ -63273,6 +65791,12 @@ export namespace $Object {
         break;
       case "StructIntersection":
         StructIntersection.hash(hasher, object);
+        break;
+      case "StructInheritance2":
+        StructInheritance2.hash(hasher, object);
+        break;
+      case "StructInheritance3":
+        StructInheritance3.hash(hasher, object);
         break;
       default:
         object satisfies never;
@@ -63528,6 +66052,11 @@ export namespace $Object {
           ...StructDiscriminatedUnionMember2.toJson(object),
           $type: "StructDiscriminatedUnionMember2" as const,
         };
+      case "StructInheritance1":
+        return {
+          ...StructInheritance1.toJson(object),
+          $type: "StructInheritance1" as const,
+        };
       case "StructIntersectionMember1":
         return {
           ...StructIntersectionMember1.toJson(object),
@@ -63554,6 +66083,16 @@ export namespace $Object {
         return {
           ...StructIntersection.toJson(object),
           $type: "StructIntersection" as const,
+        };
+      case "StructInheritance2":
+        return {
+          ...StructInheritance2.toJson(object),
+          $type: "StructInheritance2" as const,
+        };
+      case "StructInheritance3":
+        return {
+          ...StructInheritance3.toJson(object),
+          $type: "StructInheritance3" as const,
         };
       default:
         object satisfies never;
@@ -63689,6 +66228,8 @@ export namespace $Object {
         return StructDiscriminatedUnionMember1.toRdfResource(object, options);
       case "StructDiscriminatedUnionMember2":
         return StructDiscriminatedUnionMember2.toRdfResource(object, options);
+      case "StructInheritance1":
+        return StructInheritance1.toRdfResource(object, options);
       case "StructIntersectionMember1":
         return StructIntersectionMember1.toRdfResource(object, options);
       case "StructIntersectionMember2":
@@ -63701,6 +66242,10 @@ export namespace $Object {
         return UnionDiscriminantsStruct.toRdfResource(object, options);
       case "StructIntersection":
         return StructIntersection.toRdfResource(object, options);
+      case "StructInheritance2":
+        return StructInheritance2.toRdfResource(object, options);
+      case "StructInheritance3":
+        return StructInheritance3.toRdfResource(object, options);
       default:
         object satisfies never;
         throw new Error("should never reach this point");
@@ -63811,6 +66356,8 @@ export namespace $Object {
         return StructDiscriminatedUnionMember1.$toString(object);
       case "StructDiscriminatedUnionMember2":
         return StructDiscriminatedUnionMember2.$toString(object);
+      case "StructInheritance1":
+        return StructInheritance1.$toString(object);
       case "StructIntersectionMember1":
         return StructIntersectionMember1.$toString(object);
       case "StructIntersectionMember2":
@@ -63823,6 +66370,10 @@ export namespace $Object {
         return UnionDiscriminantsStruct.$toString(object);
       case "StructIntersection":
         return StructIntersection.$toString(object);
+      case "StructInheritance2":
+        return StructInheritance2.$toString(object);
+      case "StructInheritance3":
+        return StructInheritance3.$toString(object);
       default:
         object satisfies never;
         throw new Error("should never reach this point");
@@ -64035,6 +66586,64 @@ export interface $ObjectSet {
       StructIntersection.Identifier
     >,
   ): Promise<Either<Error, readonly StructIntersection[]>>;
+
+  structInheritance2(
+    identifier: StructInheritance2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructInheritance2>>;
+
+  structInheritance2Count(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructInheritance2.Filter,
+        StructInheritance2.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  structInheritance2Identifiers(
+    query?: $ObjectSet.Query<
+      StructInheritance2.Filter,
+      StructInheritance2.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance2.Identifier[]>>;
+
+  structInheritance2s(
+    query?: $ObjectSet.Query<
+      StructInheritance2.Filter,
+      StructInheritance2.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance2[]>>;
+
+  structInheritance3(
+    identifier: StructInheritance3.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructInheritance3>>;
+
+  structInheritance3Count(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructInheritance3.Filter,
+        StructInheritance3.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  structInheritance3Identifiers(
+    query?: $ObjectSet.Query<
+      StructInheritance3.Filter,
+      StructInheritance3.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance3.Identifier[]>>;
+
+  structInheritance3s(
+    query?: $ObjectSet.Query<
+      StructInheritance3.Filter,
+      StructInheritance3.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance3[]>>;
 
   anonymousTypesStruct(
     identifier: AnonymousTypesStruct.Identifier,
@@ -65369,6 +67978,35 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly StructDiscriminatedUnionMember2[]>>;
 
+  structInheritance1(
+    identifier: StructInheritance1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructInheritance1>>;
+
+  structInheritance1Count(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructInheritance1.Filter,
+        StructInheritance1.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  structInheritance1Identifiers(
+    query?: $ObjectSet.Query<
+      StructInheritance1.Filter,
+      StructInheritance1.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance1.Identifier[]>>;
+
+  structInheritance1s(
+    query?: $ObjectSet.Query<
+      StructInheritance1.Filter,
+      StructInheritance1.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance1[]>>;
+
   structIntersectionMember1(
     identifier: StructIntersectionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -66263,6 +68901,186 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: StructIntersection.filter,
         fromRdfResource: StructIntersection.fromRdfResource,
+        fromRdfTypes: [],
+      },
+      query,
+    );
+  }
+
+  async structInheritance2(
+    identifier: StructInheritance2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructInheritance2>> {
+    return this.structInheritance2Sync(identifier, options);
+  }
+
+  structInheritance2Sync(
+    identifier: StructInheritance2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, StructInheritance2> {
+    return this.structInheritance2sSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async structInheritance2Count(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructInheritance2.Filter,
+        StructInheritance2.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.structInheritance2CountSync(query);
+  }
+
+  structInheritance2CountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructInheritance2.Filter,
+        StructInheritance2.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.structInheritance2sSync(query).map((objects) => objects.length);
+  }
+
+  async structInheritance2Identifiers(
+    query?: $ObjectSet.Query<
+      StructInheritance2.Filter,
+      StructInheritance2.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance2.Identifier[]>> {
+    return this.structInheritance2IdentifiersSync(query);
+  }
+
+  structInheritance2IdentifiersSync(
+    query?: $ObjectSet.Query<
+      StructInheritance2.Filter,
+      StructInheritance2.Identifier
+    >,
+  ): Either<Error, readonly StructInheritance2.Identifier[]> {
+    return this.structInheritance2sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async structInheritance2s(
+    query?: $ObjectSet.Query<
+      StructInheritance2.Filter,
+      StructInheritance2.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance2[]>> {
+    return this.structInheritance2sSync(query);
+  }
+
+  structInheritance2sSync(
+    query?: $ObjectSet.Query<
+      StructInheritance2.Filter,
+      StructInheritance2.Identifier
+    >,
+  ): Either<Error, readonly StructInheritance2[]> {
+    return this.#objectsSync<
+      StructInheritance2,
+      StructInheritance2.Filter,
+      StructInheritance2.Identifier
+    >(
+      {
+        filter: StructInheritance2.filter,
+        fromRdfResource: StructInheritance2.fromRdfResource,
+        fromRdfTypes: [],
+      },
+      query,
+    );
+  }
+
+  async structInheritance3(
+    identifier: StructInheritance3.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructInheritance3>> {
+    return this.structInheritance3Sync(identifier, options);
+  }
+
+  structInheritance3Sync(
+    identifier: StructInheritance3.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, StructInheritance3> {
+    return this.structInheritance3sSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async structInheritance3Count(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructInheritance3.Filter,
+        StructInheritance3.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.structInheritance3CountSync(query);
+  }
+
+  structInheritance3CountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructInheritance3.Filter,
+        StructInheritance3.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.structInheritance3sSync(query).map((objects) => objects.length);
+  }
+
+  async structInheritance3Identifiers(
+    query?: $ObjectSet.Query<
+      StructInheritance3.Filter,
+      StructInheritance3.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance3.Identifier[]>> {
+    return this.structInheritance3IdentifiersSync(query);
+  }
+
+  structInheritance3IdentifiersSync(
+    query?: $ObjectSet.Query<
+      StructInheritance3.Filter,
+      StructInheritance3.Identifier
+    >,
+  ): Either<Error, readonly StructInheritance3.Identifier[]> {
+    return this.structInheritance3sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async structInheritance3s(
+    query?: $ObjectSet.Query<
+      StructInheritance3.Filter,
+      StructInheritance3.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance3[]>> {
+    return this.structInheritance3sSync(query);
+  }
+
+  structInheritance3sSync(
+    query?: $ObjectSet.Query<
+      StructInheritance3.Filter,
+      StructInheritance3.Identifier
+    >,
+  ): Either<Error, readonly StructInheritance3[]> {
+    return this.#objectsSync<
+      StructInheritance3,
+      StructInheritance3.Filter,
+      StructInheritance3.Identifier
+    >(
+      {
+        filter: StructInheritance3.filter,
+        fromRdfResource: StructInheritance3.fromRdfResource,
         fromRdfTypes: [],
       },
       query,
@@ -70590,6 +73408,96 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async structInheritance1(
+    identifier: StructInheritance1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructInheritance1>> {
+    return this.structInheritance1Sync(identifier, options);
+  }
+
+  structInheritance1Sync(
+    identifier: StructInheritance1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, StructInheritance1> {
+    return this.structInheritance1sSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async structInheritance1Count(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructInheritance1.Filter,
+        StructInheritance1.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.structInheritance1CountSync(query);
+  }
+
+  structInheritance1CountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructInheritance1.Filter,
+        StructInheritance1.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.structInheritance1sSync(query).map((objects) => objects.length);
+  }
+
+  async structInheritance1Identifiers(
+    query?: $ObjectSet.Query<
+      StructInheritance1.Filter,
+      StructInheritance1.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance1.Identifier[]>> {
+    return this.structInheritance1IdentifiersSync(query);
+  }
+
+  structInheritance1IdentifiersSync(
+    query?: $ObjectSet.Query<
+      StructInheritance1.Filter,
+      StructInheritance1.Identifier
+    >,
+  ): Either<Error, readonly StructInheritance1.Identifier[]> {
+    return this.structInheritance1sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async structInheritance1s(
+    query?: $ObjectSet.Query<
+      StructInheritance1.Filter,
+      StructInheritance1.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance1[]>> {
+    return this.structInheritance1sSync(query);
+  }
+
+  structInheritance1sSync(
+    query?: $ObjectSet.Query<
+      StructInheritance1.Filter,
+      StructInheritance1.Identifier
+    >,
+  ): Either<Error, readonly StructInheritance1[]> {
+    return this.#objectsSync<
+      StructInheritance1,
+      StructInheritance1.Filter,
+      StructInheritance1.Identifier
+    >(
+      {
+        filter: StructInheritance1.filter,
+        fromRdfResource: StructInheritance1.fromRdfResource,
+        fromRdfTypes: [],
+      },
+      query,
+    );
+  }
+
   async structIntersectionMember1(
     identifier: StructIntersectionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -71701,6 +74609,110 @@ export class $SparqlObjectSet implements $ObjectSet {
       StructIntersection.Filter,
       StructIntersection.Identifier
     >(StructIntersection, query);
+  }
+
+  async structInheritance2(
+    identifier: StructInheritance2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructInheritance2>> {
+    return (
+      await this.structInheritance2s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async structInheritance2Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        StructInheritance2.Filter,
+        StructInheritance2.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      StructInheritance2.Filter,
+      StructInheritance2.Identifier
+    >(StructInheritance2, query);
+  }
+
+  async structInheritance2Identifiers(
+    query?: $SparqlObjectSet.Query<
+      StructInheritance2.Filter,
+      StructInheritance2.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance2.Identifier[]>> {
+    return this.#objectIdentifiers<
+      StructInheritance2.Filter,
+      StructInheritance2.Identifier
+    >(StructInheritance2, query);
+  }
+
+  async structInheritance2s(
+    query?: $SparqlObjectSet.Query<
+      StructInheritance2.Filter,
+      StructInheritance2.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance2[]>> {
+    return this.#objects<
+      StructInheritance2,
+      StructInheritance2.Filter,
+      StructInheritance2.Identifier
+    >(StructInheritance2, query);
+  }
+
+  async structInheritance3(
+    identifier: StructInheritance3.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructInheritance3>> {
+    return (
+      await this.structInheritance3s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async structInheritance3Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        StructInheritance3.Filter,
+        StructInheritance3.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      StructInheritance3.Filter,
+      StructInheritance3.Identifier
+    >(StructInheritance3, query);
+  }
+
+  async structInheritance3Identifiers(
+    query?: $SparqlObjectSet.Query<
+      StructInheritance3.Filter,
+      StructInheritance3.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance3.Identifier[]>> {
+    return this.#objectIdentifiers<
+      StructInheritance3.Filter,
+      StructInheritance3.Identifier
+    >(StructInheritance3, query);
+  }
+
+  async structInheritance3s(
+    query?: $SparqlObjectSet.Query<
+      StructInheritance3.Filter,
+      StructInheritance3.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance3[]>> {
+    return this.#objects<
+      StructInheritance3,
+      StructInheritance3.Filter,
+      StructInheritance3.Identifier
+    >(StructInheritance3, query);
   }
 
   async anonymousTypesStruct(
@@ -74196,6 +77208,58 @@ export class $SparqlObjectSet implements $ObjectSet {
       StructDiscriminatedUnionMember2.Filter,
       StructDiscriminatedUnionMember2.Identifier
     >(StructDiscriminatedUnionMember2, query);
+  }
+
+  async structInheritance1(
+    identifier: StructInheritance1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructInheritance1>> {
+    return (
+      await this.structInheritance1s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async structInheritance1Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        StructInheritance1.Filter,
+        StructInheritance1.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      StructInheritance1.Filter,
+      StructInheritance1.Identifier
+    >(StructInheritance1, query);
+  }
+
+  async structInheritance1Identifiers(
+    query?: $SparqlObjectSet.Query<
+      StructInheritance1.Filter,
+      StructInheritance1.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance1.Identifier[]>> {
+    return this.#objectIdentifiers<
+      StructInheritance1.Filter,
+      StructInheritance1.Identifier
+    >(StructInheritance1, query);
+  }
+
+  async structInheritance1s(
+    query?: $SparqlObjectSet.Query<
+      StructInheritance1.Filter,
+      StructInheritance1.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructInheritance1[]>> {
+    return this.#objects<
+      StructInheritance1,
+      StructInheritance1.Filter,
+      StructInheritance1.Identifier
+    >(StructInheritance1, query);
   }
 
   async structIntersectionMember1(
