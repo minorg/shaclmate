@@ -46,6 +46,11 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:class properties" ;
     sh:property [
+        rdfs:comment "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:path :singleClass
+    ], [
         rdfs:comment "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
         sh:class :UndefinedClass1, :UndefinedClass2 ;
         sh:maxCount 1 ;
@@ -68,11 +73,6 @@
         sh:maxCount 1 ;
         sh:node :PartialStruct ;
         sh:path :nodeClass2
-    ], [
-        rdfs:comment "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:path :singleClass
     ] .
 
 :ConvertibleTypesStruct
@@ -152,65 +152,6 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:xone (union) properties over both permutations of two sh:datatype node shapes. These unions are common in actual models." ;
     sh:property [
-        rdfs:comment "Named datatype discriminated union 1" ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:node :DatatypeDiscriminatedUnion1 ;
-        sh:path :namedDatatypeDiscriminatedUnion1
-    ], [
-        rdfs:comment "Named datatype discriminated union 2" ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:node :DatatypeDiscriminatedUnion2 ;
-        sh:path :namedDatatypeDiscriminatedUnion2
-    ], 
-    [
-        rdfs:comment "Integer or string. These don't need discriminant values because they're different types in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :integerOrString ;
-        sh:xone ([
-                sh:datatype xsd:integer
-            ]
-            [
-                sh:datatype xsd:string
-            ]
-        )
-    ], [
-        rdfs:comment "JavaScript primitive (https://developer.mozilla.org/en-US/docs/Glossary/Primitive). These don't need discriminant values because they're different typeofs in JavaScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :jsPrimitive ;
-        sh:xone ([
-                rdfs:comment "JavaScript boolean" ;
-                sh:datatype xsd:boolean
-            ]
-            [
-                rdfs:comment "JavaScript number" ;
-                sh:datatype xsd:double
-            ]
-            [
-                rdfs:comment "JavaScript bigint" ;
-                sh:datatype xsd:integer
-            ]
-            [
-                rdfs:comment "JavaScript string" ;
-                sh:datatype xsd:string
-            ]
-        )
-    ], [
-        rdfs:comment "rdf:langString or string. These don't need discriminant values because they're different types in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :langStringOrString ;
-        sh:xone ([
-                sh:datatype rdf:langString
-            ]
-            [
-                sh:datatype xsd:string
-            ]
-        )
-    ], [
         rdfs:comment "String or date. These don't need discriminant values because they're different types in TypeScript." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
@@ -305,6 +246,64 @@
         sh:path :decimalOrString ;
         sh:xone ([
                 sh:datatype xsd:decimal
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        rdfs:comment "Named datatype discriminated union 1" ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :DatatypeDiscriminatedUnion1 ;
+        sh:path :namedDatatypeDiscriminatedUnion1
+    ], [
+        rdfs:comment "Named datatype discriminated union 2" ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :DatatypeDiscriminatedUnion2 ;
+        sh:path :namedDatatypeDiscriminatedUnion2
+    ], [
+        rdfs:comment "Integer or string. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :integerOrString ;
+        sh:xone ([
+                sh:datatype xsd:integer
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        rdfs:comment "JavaScript primitive (https://developer.mozilla.org/en-US/docs/Glossary/Primitive). These don't need discriminant values because they're different typeofs in JavaScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :jsPrimitive ;
+        sh:xone ([
+                rdfs:comment "JavaScript boolean" ;
+                sh:datatype xsd:boolean
+            ]
+            [
+                rdfs:comment "JavaScript number" ;
+                sh:datatype xsd:double
+            ]
+            [
+                rdfs:comment "JavaScript bigint" ;
+                sh:datatype xsd:integer
+            ]
+            [
+                rdfs:comment "JavaScript string" ;
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        rdfs:comment "rdf:langString or string. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :langStringOrString ;
+        sh:xone ([
+                sh:datatype rdf:langString
             ]
             [
                 sh:datatype xsd:string
@@ -1285,6 +1284,44 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:minCount 1 ;
         sh:path :structDiscriminatedUnionMember2Distinct
     ] .
+
+:StructInheritance1
+    a sh:NodeShape ;
+    rdfs:comment "Struct 'inheritance' through sh:and (level 1 struct)" ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :structInheritance1
+    ] .
+
+:StructInheritance2
+    a sh:NodeShape ;
+    rdfs:comment "Struct 'inheritance' through sh:and (level 2 struct)" ;
+    sh:and (:StructInheritance1
+        [
+            sh:property [
+                sh:datatype xsd:string ;
+                sh:maxCount 1 ;
+                sh:minCount 1 ;
+                sh:path :structInheritance2
+            ]
+        ]
+    ) .
+
+:StructInheritance3
+    a sh:NodeShape ;
+    rdfs:comment "Struct 'inheritance' through sh:and (level 3 struct)" ;
+    sh:and (:StructInheritance2
+        [
+            sh:property [
+                sh:datatype xsd:string ;
+                sh:maxCount 1 ;
+                sh:minCount 1 ;
+                sh:path :structInheritance3
+            ]
+        ]
+    ) .
 
 :StructIntersection
     a sh:NodeShape ;
