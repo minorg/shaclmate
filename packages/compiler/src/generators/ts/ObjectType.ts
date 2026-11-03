@@ -483,7 +483,7 @@ export class ObjectType extends AbstractStructuredType {
         staticModuleDeclarations["Discriminated"] =
           code`export type Discriminated = ${name} & { readonly ${discriminantProperty.name}: ${literalOf(discriminantProperty.values[0])} };`;
       });
-      ObjectType_typeGuardFunction.call(this).ifJust(addFunctionDeclaration);
+      this.typeGuardFunction.ifJust(addFunctionDeclaration);
     }
 
     return staticModuleDeclarations;

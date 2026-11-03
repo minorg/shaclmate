@@ -20,6 +20,7 @@ import {
 import { ObjectIntersectionType_toJsonObjectFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_toJsonObjectFunction.js";
 import { ObjectIntersectionType_toRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_toRdfResourceFunction.js";
 import { ObjectIntersectionType_toRdfResourceValuesFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_toRdfResourceValuesFunction.js";
+import { ObjectIntersectionType_typeGuardFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_typeGuardFunction.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import { ObjectType_sparqlConstructQueryFunction } from "./_ObjectType/ObjectType_sparqlConstructQueryFunction.js";
@@ -164,6 +165,11 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
   }
 
   @Memoize()
+  get typeGuardFunction(): Maybe<Callable> {
+    return ObjectIntersectionType_typeGuardFunction.call(this);
+  }
+
+  @Memoize()
   protected get createUnsafeFunction(): Callable {
     return ObjectIntersectionType_createUnsafeFunction.call(this);
   }
@@ -211,6 +217,7 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
         staticModuleDeclarations["Discriminated"] =
           code`export type Discriminated = ${name} & { readonly ${discriminantProperty.name}: ${literalOf(discriminantProperty.values[0])} };`;
       });
+      this.typeGuardFunction.ifJust(addFunctionDeclaration);
     }
 
     return staticModuleDeclarations;

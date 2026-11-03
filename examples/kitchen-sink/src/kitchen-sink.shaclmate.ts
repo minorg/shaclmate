@@ -62647,6 +62647,11 @@ export namespace StructIntersection {
     export const parse = $parseIdentifier;
   }
 
+  export const isStructIntersection: $ObjectTypeGuardFunction<
+    StructIntersection.Discriminated
+  > = (object): object is StructIntersection.Discriminated =>
+    object.$type === "StructIntersection";
+
   export type Json = StructIntersectionMember1.Json &
     StructIntersectionMember2.Json;
 
