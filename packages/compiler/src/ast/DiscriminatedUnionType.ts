@@ -21,7 +21,9 @@ export class DiscriminatedUnionType<
         (member) =>
           member.type.kind === "Struct" ||
           (member.type.kind === "DiscriminatedUnion" &&
-            member.type.isStructDiscriminatedUnionType()),
+            member.type.isStructDiscriminatedUnionType()) ||
+          (member.type.kind === "Intersection" &&
+            member.type.isStructIntersectionType()),
       )
     );
   }
