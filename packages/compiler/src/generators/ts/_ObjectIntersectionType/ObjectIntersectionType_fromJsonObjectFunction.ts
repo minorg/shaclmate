@@ -5,11 +5,11 @@ export function ObjectIntersectionType_fromJsonObjectFunctionExpression(
   this: ObjectIntersectionType,
 ): Code {
   return code`\
-(value) =>
+(jsonObject) =>
     ${joinCode(
       this.members.map(
         (member, memberI) => code`
-${member.type.fromJsonObjectFunction.unannotatedUsage}(value).${memberI + 1 < this.members.length ? "chain" : "map"}(member${memberI} =>`,
+${member.type.fromJsonObjectFunction.unannotatedUsage}(jsonObject).${memberI + 1 < this.members.length ? "chain" : "map"}(member${memberI} =>`,
       ),
     )} ({ ${joinCode(
       this.members
