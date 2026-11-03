@@ -2,7 +2,7 @@ import type { Logger } from "@rdfx/logger";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
+import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { Reusables } from "./Reusables.js";
 import type { TsGenerator } from "./TsGenerator.js";
@@ -19,7 +19,7 @@ import {
  */
 export class UberObjectDiscriminatedUnionType {
   private readonly configuration: TsGenerator.Configuration;
-  private readonly members: readonly ObjectType[];
+  private readonly members: readonly UberObjectDiscriminatedUnionType.Member[];
   private readonly reusables: Reusables;
 
   constructor({
@@ -29,12 +29,17 @@ export class UberObjectDiscriminatedUnionType {
   }: {
     configuration: TsGenerator.Configuration;
     logger: Logger;
-    members: readonly ObjectType[];
+    members: readonly UberObjectDiscriminatedUnionType.Member[];
     reusables: Reusables;
   }) {
     this.configuration = configuration;
-    this.members = members.filter((member) => !member.extern);
-    invariant(this.members.every((member) => member.name.isJust()));
+    this.members = members;
+    invariant(
+      this.members.every(
+        (member) =>
+          member.name.isJust() && (member.kind !== "Object" || !member.extern),
+      ),
+    );
     this.reusables = reusables;
   }
 
@@ -121,7 +126,7 @@ ${this.memberTypeSwitch({
     code`\
 return {
   ...(${member.toJsonObjectFunction.annotatedUsage})(object),
-  ${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}: ${literalOf(member.discriminatedType.unsafeCoerce().discriminantProperty.values[0])}
+  ${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}: ${literalOf(member.discriminatedType.unsafeCoerce().discriminantProperty.values[0])} as const
 };`,
   variables: { value: code`object` },
 })}
@@ -197,19 +202,27 @@ ${this.memberTypeSwitch({
     caseBlock,
     variables,
   }: {
-    caseBlock: (member: ObjectType) => Code;
+    caseBlock: (member: UberObjectDiscriminatedUnionType.Member) => Code;
     variables: { value: Code };
   }) {
     return code`\
 switch (${variables.value}.${this.configuration.objectDiscriminantProperty.name}) {
 ${joinCode(
-  this.members.map(
-    (member) =>
-      code`case "${member.discriminatedType.unsafeCoerce().discriminantProperty.values[0]}": ${caseBlock(member)}`,
+  this.members.flatMap((member) =>
+    member.discriminatedType
+      .unsafeCoerce()
+      .discriminantProperty.values.map(
+        (discriminantPropertyValue) =>
+          code`case ${literalOf(discriminantPropertyValue)}: ${caseBlock(member)}`,
+      ),
   ),
   { on: "\n" },
 )}
 default: ${variables.value} satisfies never; throw new Error("should never reach this point");
 }`;
   }
+}
+
+export namespace UberObjectDiscriminatedUnionType {
+  export type Member = ObjectIntersectionType | ObjectType;
 }

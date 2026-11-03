@@ -112,7 +112,11 @@ export class TsGenerator implements Generator {
       new UberObjectDiscriminatedUnionType({
         configuration,
         logger: this.logger,
-        members: tsNamedObjectTypes,
+        members: (
+          tsNamedObjectTypes.filter(
+            (tsNamedObjectType) => !tsNamedObjectType.extern,
+          ) as readonly UberObjectDiscriminatedUnionType.Member[]
+        ).concat(tsNamedObjectIntersectionTypes),
         reusables,
       }).declaration.toList(),
     );
