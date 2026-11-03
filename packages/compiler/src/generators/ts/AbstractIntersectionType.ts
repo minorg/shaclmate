@@ -136,6 +136,7 @@ export abstract class AbstractIntersectionType<
 }
 
 export namespace AbstractIntersectionType {
+  export type DiscriminatedType = AbstractCompoundType.DiscriminatedType;
   export type JsonType = AbstractCompoundType.JsonType;
   export interface Member<TypeT extends Type> {
     readonly type: TypeT;

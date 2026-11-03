@@ -1,5 +1,5 @@
 import type { ObjectIntersectionType } from "../ObjectIntersectionType.js";
-import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
 export function ObjectIntersectionType_fromJsonObjectFunctionExpression(
   this: ObjectIntersectionType,
@@ -12,7 +12,22 @@ export function ObjectIntersectionType_fromJsonObjectFunctionExpression(
 ${member.type.fromJsonObjectFunction.unannotatedUsage}(value).${memberI + 1 < this.members.length ? "chain" : "map"}(member${memberI} =>`,
       ),
     )} ({ ${joinCode(
-      this.members.map((_, memberI) => code`...member${memberI}`),
+      this.members
+        .map((_, memberI) => code`...member${memberI}`)
+        .concat(
+          this.discriminatedType
+            .map(
+              ({ discriminantProperty }) =>
+                code`${discriminantProperty.name}: ${literalOf(discriminantProperty.values[0])} as const`,
+            )
+            .toList(),
+        ),
       { on: "," },
     )} }) ${")".repeat(this.members.length)}`;
+}
+
+export function ObjectIntersectionType_fromJsonObjectFunctionType(
+  this: ObjectIntersectionType,
+): Code {
+  return code`${this.reusables.snippets.FromJsonObjectFunction}<${this.jsonObjectType.expression}, ${this.discriminatedType.map((discriminatedType) => discriminatedType.expression).orDefault(this.expression)}, undefined>`;
 }

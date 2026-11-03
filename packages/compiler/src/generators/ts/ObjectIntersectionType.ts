@@ -1,4 +1,4 @@
-import { Maybe } from "purify-ts";
+import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { ObjectIntersectionType__fromRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType__fromRdfResourceFunction.js";
@@ -8,9 +8,15 @@ import { ObjectIntersectionType_createFunctionParameters } from "./_ObjectInters
 import { ObjectIntersectionType_createUnsafeFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_createUnsafeFunction.js";
 import { ObjectIntersectionType_focusSparqlConstructTriplesFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_focusSparqlConstructTriplesFunction.js";
 import { ObjectIntersectionType_focusSparqlWherePatternsFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_focusSparqlWherePatternsFunction.js";
-import { ObjectIntersectionType_fromJsonObjectFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_fromJsonObjectFunction.js";
+import {
+  ObjectIntersectionType_fromJsonObjectFunctionExpression,
+  ObjectIntersectionType_fromJsonObjectFunctionType,
+} from "./_ObjectIntersectionType/ObjectIntersectionType_fromJsonObjectFunction.js";
 import { ObjectIntersectionType_fromRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_fromRdfResourceFunction.js";
-import { ObjectIntersectionType_fromRdfResourceValuesFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_fromRdfResourceValuesFunction.js";
+import {
+  ObjectIntersectionType_fromRdfResourceValuesFunctionExpression,
+  ObjectIntersectionType_fromRdfResourceValuesFunctionType,
+} from "./_ObjectIntersectionType/ObjectIntersectionType_fromRdfResourceValuesFunction.js";
 import { ObjectIntersectionType_toJsonObjectFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_toJsonObjectFunction.js";
 import { ObjectIntersectionType_toRdfResourceFunction } from "./_ObjectIntersectionType/ObjectIntersectionType_toRdfResourceFunction.js";
 import { ObjectIntersectionType_toRdfResourceValuesFunctionExpression } from "./_ObjectIntersectionType/ObjectIntersectionType_toRdfResourceValuesFunction.js";
@@ -25,20 +31,23 @@ import { DeclaredCallable } from "./DeclaredCallable.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import type { ObjectType } from "./ObjectType.js";
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType> {
   protected override fromJsonObjectFunctionExpression =
     ObjectIntersectionType_fromJsonObjectFunctionExpression;
+  protected override fromJsonObjectFunctionType =
+    ObjectIntersectionType_fromJsonObjectFunctionType;
   protected override fromRdfResourceValuesFunctionExpression =
     ObjectIntersectionType_fromRdfResourceValuesFunctionExpression;
+  protected override fromRdfResourceValuesFunctionType =
+    ObjectIntersectionType_fromRdfResourceValuesFunctionType;
   protected override toJsonObjectFunctionExpression =
     ObjectIntersectionType_toJsonObjectFunctionExpression;
   protected override toRdfResourceValuesFunctionExpression =
     ObjectIntersectionType_toRdfResourceValuesFunctionExpression;
 
-  override readonly discriminatedType: AbstractIntersectionType<ObjectType>["discriminatedType"] =
-    Maybe.empty();
+  readonly discriminatedType: Maybe<AbstractIntersectionType.DiscriminatedType>;
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
   override readonly kind = "ObjectIntersection";
 
@@ -49,6 +58,13 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
     identifierType: BlankNodeType | IdentifierType | IriType;
   } & ConstructorParameters<typeof AbstractIntersectionType<ObjectType>>[0]) {
     super(superParameters);
+    this.discriminatedType = this.name.map((name) => ({
+      discriminantProperty: {
+        name: this.configuration.objectDiscriminantProperty.name,
+        values: [name],
+      },
+      expression: code`${name}.Discriminated`,
+    }));
     this.identifierType = identifierType;
   }
 
@@ -188,6 +204,13 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
     if (this.configuration.features.has("Object.toRdf")) {
       addFunctionDeclaration(this._toRdfResourceFunction);
       addFunctionDeclaration(this.toRdfResourceFunction);
+    }
+
+    if (this.configuration.features.has("Object.type")) {
+      this.discriminatedType.ifJust(({ discriminantProperty }) => {
+        staticModuleDeclarations["Discriminated"] =
+          code`export type Discriminated = ${name} & { readonly ${discriminantProperty.name}: ${literalOf(discriminantProperty.values[0])} };`;
+      });
     }
 
     return staticModuleDeclarations;

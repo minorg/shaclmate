@@ -62506,12 +62506,16 @@ export type StructIntersection = StructIntersectionMember1 &
 
 export namespace StructIntersection {
   export const _fromRdfResource: $_FromRdfResourceFunction<
-    StructIntersection
+    StructIntersection.Discriminated
   > = (resource, options) =>
     StructIntersectionMember1.fromRdfResource(resource, options).chain(
       (member0) =>
         StructIntersectionMember2.fromRdfResource(resource, options).map(
-          (member1) => ({ ...member0, ...member1 }),
+          (member1) => ({
+            ...member0,
+            ...member1,
+            $type: "StructIntersection" as const,
+          }),
         ),
     );
 
@@ -62533,12 +62537,13 @@ export namespace StructIntersection {
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(
     parameters: StructIntersection.CreateParameters<$DefaultNamespaceT>,
-  ) => Either<Error, StructIntersection> = (parameters) =>
+  ) => Either<Error, StructIntersection.Discriminated> = (parameters) =>
     StructIntersectionMember1.create(parameters)
       .chain((member0) =>
         StructIntersectionMember2.create(parameters).map((member1) => ({
           ...member0,
           ...member1,
+          $type: "StructIntersection" as const,
         })),
       )
       .map((object) =>
@@ -62557,7 +62562,12 @@ export namespace StructIntersection {
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(
     parameters: StructIntersection.CreateParameters<$DefaultNamespaceT>,
-  ) => StructIntersection = (parameters) => create(parameters).unsafeCoerce();
+  ) => StructIntersection.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = StructIntersection & {
+    readonly $type: "StructIntersection";
+  };
 
   export const equals: $EqualsFunction<StructIntersection> = (left, right) =>
     StructIntersectionMember1.equals(left, right) &&
@@ -62601,21 +62611,22 @@ export namespace StructIntersection {
 
   export const fromJson: $FromJsonObjectFunction<
     StructIntersection.Json,
-    StructIntersection,
+    StructIntersection.Discriminated,
     undefined
   > = (value) =>
     StructIntersectionMember1.fromJson(value).chain((member0) =>
       StructIntersectionMember2.fromJson(value).map((member1) => ({
         ...member0,
         ...member1,
+        $type: "StructIntersection" as const,
       })),
     );
 
-  export const fromRdfResource: $FromRdfResourceFunction<StructIntersection> =
+  export const fromRdfResource: $FromRdfResourceFunction<StructIntersection.Discriminated> =
     $wrap_FromRdfResourceFunction(StructIntersection._fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    StructIntersection,
+    StructIntersection.Discriminated,
     StructIntersection.Schema
   > = (values, options) =>
     values.chainMap((value) =>
