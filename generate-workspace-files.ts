@@ -7,7 +7,7 @@ import type { CompilerOptions } from "typescript";
 
 const VERSION = "4.0.94";
 
-const rdfxVersion = "0.0.57";
+const rdfxVersion = "0.0.58";
 const vitestVersion = "~4.1.5";
 
 const externalDependencies = {
@@ -23,6 +23,7 @@ const externalDependencies = {
   "@rdfjs/namespace": "~2.0.1",
   "@rdfjs/types": "~2.0.1",
   "@rdfx/collection": rdfxVersion,
+  "@rdfx/curie": rdfxVersion,
   "@rdfx/data-factory": rdfxVersion,
   "@rdfx/fs": rdfxVersion,
   "@rdfx/literal": rdfxVersion,
@@ -31,6 +32,7 @@ const externalDependencies = {
   "@rdfx/resource": rdfxVersion,
   "@rdfx/sparql-client": rdfxVersion,
   "@rdfx/serializer": rdfxVersion,
+  "@rdfx/string": rdfxVersion,
   "@rdfx/testing": rdfxVersion,
   "@sindresorhus/base62": "~0.1.0",
   "@tpluscode/rdf-ns-builders": "~4.3.0",
@@ -317,10 +319,12 @@ const workspaces = {
         external: [
           "@rdfjs/types",
           "@rdfx/collection",
+          "@rdfx/curie",
           "@rdfx/data-factory",
           "@rdfx/literal",
           "@rdfx/logger",
           "@rdfx/resource",
+          "@rdfx/string",
           "@sindresorhus/base62",
           "@tpluscode/rdf-ns-builders",
           "change-case",
@@ -336,7 +340,7 @@ const workspaces = {
         internal: ["shacl-ast"],
       },
       devDependencies: {
-        external: ["@rdfx/fs", "@rdfx/serializer"],
+        external: ["@rdfx/fs", "typescript"],
         // internal: ["kitchen-sink-example"],
       },
       tsconfig: {
@@ -350,17 +354,24 @@ const workspaces = {
     "shacl-ast": {
       dependencies: {
         external: [
-          "@rdfx/collection",
           "@rdfjs/types",
           "@rdfx/data-factory",
           "@rdfx/resource",
+          "@rdfx/string",
           "@tpluscode/rdf-ns-builders",
           "purify-ts",
-          "typescript-memoize",
         ],
       },
       devDependencies: {
-        external: ["@rdfx/literal", "ts-invariant"],
+        external: [
+          "@rdfjs/namespace",
+          "@rdfx/collection",
+          "@rdfx/fs",
+          "@rdfx/literal",
+          "@rdfx/testing",
+          "@types/rdfjs__namespace",
+          "ts-invariant",
+        ],
       },
       tsconfig: publishTsconfig,
     },
