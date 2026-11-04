@@ -1,13 +1,12 @@
 import type { BlankNode, DatasetCore, NamedNode } from "@rdfjs/types";
-import { type PrefixMap, TermMap } from "@rdfx/collection";
+import { datasetFactory, type PrefixMap, TermMap } from "@rdfx/collection";
+import { shrinkQuads } from "@rdfx/curie";
 import dataFactory from "@rdfx/data-factory";
 import type { Logger } from "@rdfx/logger";
 import { ResourceSet } from "@rdfx/resource";
-import { AbstractShapesGraph, curieDataset } from "@shaclmate/shacl-ast";
-
+import { AbstractShapesGraph } from "@shaclmate/shacl-ast";
 import { Either } from "purify-ts";
 import type { Ast } from "../ast/Ast.js";
-
 import { Compiler } from "../Compiler.js";
 import type { Generator } from "../generators/Generator.js";
 import { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
@@ -19,12 +18,17 @@ export class ShapesGraph extends AbstractShapesGraph<
   generated.PropertyGroup,
   generated.PropertyShape
 > {
+  readonly #curieReferenceCounts: Record<string, number> = {};
   private readonly servicesByIdentifier: TermMap<
     BlankNode | NamedNode,
     generated.Service
   > = new TermMap();
 
   protected readonly typeFunctions = typeFunctions;
+
+  get curieReferenceCounts(): Readonly<Record<string, number>> {
+    return this.#curieReferenceCounts;
+  }
 
   get services(): readonly generated.Service[] {
     return [...this.servicesByIdentifier.values()];
@@ -37,14 +41,22 @@ export class ShapesGraph extends AbstractShapesGraph<
       prefixMap?: PrefixMap;
     },
   ): Either<Error, ShapesGraph> {
+    const shapesGraph = new ShapesGraph();
+
     if (options?.prefixMap) {
-      dataset = curieDataset(dataset, options.prefixMap);
+      dataset = datasetFactory.dataset([
+        ...shrinkQuads(dataset, {
+          dataFactory,
+          prefixMap: options.prefixMap,
+          referenceCounts: shapesGraph.curieReferenceCounts,
+        }),
+      ]);
     }
 
     return AbstractShapesGraph._fromDataset(
       dataset,
       options,
-      new ShapesGraph(),
+      shapesGraph,
     ).chain((shapesGraph) => {
       const resourceSet = new ResourceSet({ dataFactory, dataset });
 

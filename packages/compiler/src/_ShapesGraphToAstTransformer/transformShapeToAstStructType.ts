@@ -190,7 +190,7 @@ export function transformShapeToAstStructType(
         fromRdfType,
         identifierType,
         label: nodeShape.label,
-        name: shapeAstTypeName(nodeShape),
+        name: shapeAstTypeName.call(this, nodeShape),
         shapeIdentifier: nodeShape.$identifier(),
         synthetic: false,
         toRdfTypes,
