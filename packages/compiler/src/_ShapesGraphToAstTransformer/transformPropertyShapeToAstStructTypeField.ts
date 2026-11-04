@@ -1,5 +1,6 @@
+import { Curie } from "@rdfx/curie";
 import dataFactory from "@rdfx/data-factory";
-import { Curie, type NodeKind } from "@shaclmate/shacl-ast";
+import type { NodeKind } from "@shaclmate/shacl-ast";
 import { sh } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";

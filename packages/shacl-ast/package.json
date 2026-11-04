@@ -1,33 +1,31 @@
 {
   "dependencies": {
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/collection": "0.0.57",
-    "@rdfx/data-factory": "0.0.57",
-    "@rdfx/resource": "0.0.57",
+    "@rdfx/data-factory": "0.0.59",
+    "@rdfx/resource": "0.0.59",
+    "@rdfx/string": "0.0.59",
     "@tpluscode/rdf-ns-builders": "~4.3.0",
-    "purify-ts": "~2.1.4",
-    "typescript-memoize": "~1.1.1"
+    "purify-ts": "~2.1.4"
   },
   "devDependencies": {
-    "@rdfx/literal": "0.0.57",
+    "@rdfjs/namespace": "~2.0.1",
+    "@rdfx/collection": "0.0.59",
+    "@rdfx/fs": "0.0.59",
+    "@rdfx/literal": "0.0.59",
+    "@rdfx/testing": "0.0.59",
+    "@types/rdfjs__namespace": "~2.0.10",
     "ts-invariant": "~0.10.3"
   },
   "files": [
     "README.md",
     "dist/AbstractShapesGraph.d.ts",
     "dist/AbstractShapesGraph.js",
-    "dist/Curie.d.ts",
-    "dist/Curie.js",
-    "dist/CurieFactory.d.ts",
-    "dist/CurieFactory.js",
     "dist/IdentifierNodeKind.d.ts",
     "dist/IdentifierNodeKind.js",
     "dist/NodeKind.d.ts",
     "dist/NodeKind.js",
     "dist/ShapesGraph.d.ts",
     "dist/ShapesGraph.js",
-    "dist/curieDataset.d.ts",
-    "dist/curieDataset.js",
     "dist/index.d.ts",
     "dist/index.js",
     "dist/shacl-ast.shaclmate.d.ts",

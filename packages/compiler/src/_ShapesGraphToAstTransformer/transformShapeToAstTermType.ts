@@ -33,7 +33,7 @@ export function transformShapeToAstTermType(
 
       const astAbstractTypeProperties = {
         comment: Maybe.empty(),
-        name: shapeAstTypeName(shape),
+        name: shapeAstTypeName.call(this, shape),
         label: Maybe.empty(),
         shapeIdentifier: shape.$identifier(),
       };
