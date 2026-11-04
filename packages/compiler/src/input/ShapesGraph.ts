@@ -1,6 +1,6 @@
-import type { BlankNode, DatasetCore, NamedNode } from "@rdfjs/types";
+import type { BlankNode, DatasetCore, NamedNode, Term } from "@rdfjs/types";
 import { datasetFactory, type PrefixMap, TermMap } from "@rdfx/collection";
-import { shrinkQuads } from "@rdfx/curie";
+import { Curie } from "@rdfx/curie";
 import dataFactory from "@rdfx/data-factory";
 import type { Logger } from "@rdfx/logger";
 import { ResourceSet } from "@rdfx/resource";
@@ -18,7 +18,7 @@ export class ShapesGraph extends AbstractShapesGraph<
   generated.PropertyGroup,
   generated.PropertyShape
 > {
-  readonly #curieReferenceCounts: Record<string, number> = {};
+  readonly #uniqueCurieReferences = new Set<string>();
   private readonly servicesByIdentifier: TermMap<
     BlankNode | NamedNode,
     generated.Service
@@ -26,8 +26,8 @@ export class ShapesGraph extends AbstractShapesGraph<
 
   protected readonly typeFunctions = typeFunctions;
 
-  get curieReferenceCounts(): Readonly<Record<string, number>> {
-    return this.#curieReferenceCounts;
+  get uniqueCurieReferences(): ReadonlySet<string> {
+    return this.#uniqueCurieReferences;
   }
 
   get services(): readonly generated.Service[] {
@@ -44,13 +44,48 @@ export class ShapesGraph extends AbstractShapesGraph<
     const shapesGraph = new ShapesGraph();
 
     if (options?.prefixMap) {
-      dataset = datasetFactory.dataset([
-        ...shrinkQuads(dataset, {
-          dataFactory,
-          prefixMap: options.prefixMap,
-          referenceCounts: shapesGraph.curieReferenceCounts,
-        }),
-      ]);
+      const curieCache = new Map<string, Curie | NamedNode>();
+      const curieDataset = datasetFactory.dataset();
+      const curieReferenceCounts: Record<string, number> = {};
+
+      const shrinkTerm = <TermT extends Term>(term: TermT): TermT => {
+        if (term.termType !== "NamedNode") {
+          return term;
+        }
+
+        const cachedCurie = curieCache.get(term.value);
+        if (cachedCurie) {
+          return cachedCurie as TermT;
+        }
+        const curie = Curie.fromIri(term, {
+          prefixMap: options.prefixMap!,
+        }).extract();
+        if (curie) {
+          curieReferenceCounts[curie.reference] =
+            (curieReferenceCounts[curie.reference] ?? 0) + 1;
+        }
+        curieCache.set(term.value, curie ?? term);
+        return (curie ?? term) as TermT;
+      };
+
+      for (const quad of dataset) {
+        curieDataset.add(
+          dataFactory.quad(
+            shrinkTerm(quad.subject),
+            quad.predicate,
+            shrinkTerm(quad.object),
+            quad.graph,
+          ),
+        );
+      }
+
+      for (const [reference, count] of Object.entries(curieReferenceCounts)) {
+        if (count === 1) {
+          shapesGraph.#uniqueCurieReferences.add(reference);
+        }
+      }
+
+      dataset = curieDataset;
     }
 
     return AbstractShapesGraph._fromDataset(

@@ -24,10 +24,7 @@ export function shapeAstTypeName(
 
   // CURIE shape identifier
   if (shapeIdentifier instanceof Curie) {
-    if (
-      (this.shapesGraph.curieReferenceCounts[shapeIdentifier.reference] ??
-        0) === 1
-    ) {
+    if (this.shapesGraph.uniqueCurieReferences.has(shapeIdentifier.reference)) {
       return Maybe.of(shapeIdentifier.reference);
     }
 
