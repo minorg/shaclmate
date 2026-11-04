@@ -1,18 +1,18 @@
 {
   "dependencies": {
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/data-factory": "0.0.58",
-    "@rdfx/resource": "0.0.58",
-    "@rdfx/string": "0.0.58",
+    "@rdfx/data-factory": "0.0.59",
+    "@rdfx/resource": "0.0.59",
+    "@rdfx/string": "0.0.59",
     "@tpluscode/rdf-ns-builders": "~4.3.0",
     "purify-ts": "~2.1.4"
   },
   "devDependencies": {
     "@rdfjs/namespace": "~2.0.1",
-    "@rdfx/collection": "0.0.58",
-    "@rdfx/fs": "0.0.58",
-    "@rdfx/literal": "0.0.58",
-    "@rdfx/testing": "0.0.58",
+    "@rdfx/collection": "0.0.59",
+    "@rdfx/fs": "0.0.59",
+    "@rdfx/literal": "0.0.59",
+    "@rdfx/testing": "0.0.59",
     "@types/rdfjs__namespace": "~2.0.10",
     "ts-invariant": "~0.10.3"
   },

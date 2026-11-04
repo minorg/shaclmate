@@ -7,7 +7,7 @@ import type { CompilerOptions } from "typescript";
 
 const VERSION = "4.0.94";
 
-const rdfxVersion = "0.0.58";
+const rdfxVersion = "0.0.59";
 const vitestVersion = "~4.1.5";
 
 const externalDependencies = {
