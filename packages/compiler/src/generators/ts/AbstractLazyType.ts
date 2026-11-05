@@ -79,8 +79,8 @@ export abstract class AbstractLazyType<
 
   override get fromJsonValueFunction(): AbstractType["fromJsonValueFunction"] {
     return new InlineCallable(
-      code`(jsonValue, { objectSet, schema, ...otherOptions }) => ${this.partialType.fromJsonValueFunction.annotatedUsage}(jsonValue, { objectSet, schema: schema.partialType, ...otherOptions })
-        .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: objectSet ? ${this.objectSetResolverFunctionExpressions({ variables: { objectSet: code`objectSet` } })} : ${this.reusables.snippets.missingResolver} }))`,
+      code`(jsonValue, fromJsonValueOptions) => ${this.partialType.fromJsonValueFunction.annotatedUsage}(jsonValue, { ...fromJsonValueOptions, schema: fromJsonValueOptions.schema.partialType })
+        .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.resolverFunctionExpression({ variables: { factoryFunctionOptions: code`fromJsonValueOptions` } })} }))`,
       {
         type: code`${this.reusables.snippets.FromJsonValueFunction}<${this.jsonValueType.expression}, ${this.expression}, ${this.schema}>`,
       },
@@ -89,8 +89,8 @@ export abstract class AbstractLazyType<
 
   override get fromJsonObjectFunction(): AbstractType["fromJsonObjectFunction"] {
     return new InlineCallable(
-      code`(jsonObject, { objectSet, schema, ...otherOptions }) => ${this.partialType.fromJsonObjectFunction.annotatedUsage}(jsonObject, { objectSet, schema: schema.partialType, ...otherOptions })
-        .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: objectSet ? ${this.objectSetResolverFunctionExpressions({ variables: { objectSet: code`objectSet` } })} : ${this.reusables.snippets.missingResolver} }))`,
+      code`(jsonObject, fromJsonObjectOptions) => ${this.partialType.fromJsonObjectFunction.annotatedUsage}(jsonObject, { ...fromJsonObjectOptions, schema: fromJsonObjectOptions.schema.partialType })
+        .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.resolverFunctionExpression({ variables: { factoryFunctionOptions: code`fromJsonObjectOptions` } })} }))`,
       {
         type: code`${this.reusables.snippets.FromJsonObjectFunction}<${this.jsonObjectType.expression}, ${this.expression}, ${this.schema}>`,
       },
@@ -101,9 +101,9 @@ export abstract class AbstractLazyType<
   override get fromRdfResourceValuesFunction(): Callable {
     return new InlineCallable(
       code`\
-  (values, { objectSet, schema, ...otherOptions }) =>
-    ${this.partialType.fromRdfResourceValuesFunction.annotatedUsage}(values, { objectSet, schema: schema.partialType, ...otherOptions })
-      .map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.objectSetResolverFunctionExpressions({ variables: { objectSet: code`objectSet` } })} })))`,
+  (values, fromRdfResourceValuesOptions) =>
+    ${this.partialType.fromRdfResourceValuesFunction.annotatedUsage}(values, { ...fromRdfResourceValuesOptions, schema: fromRdfResourceValuesOptions.schema.partialType })
+      .map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.resolverFunctionExpression({ variables: { factoryFunctionOptions: code`fromRdfResourceValuesOptions` } })} })))`,
       {
         type: code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`,
       },
@@ -231,8 +231,26 @@ export abstract class AbstractLazyType<
     });
   }
 
-  protected abstract objectSetResolverFunctionExpressions(parameters: {
-    variables: { objectSet: Code };
+  protected resolverFunctionExpression({
+    variables,
+  }: {
+    variables: { factoryFunctionOptions: Code };
+  }): Code {
+    if (!this.configuration.features.has("ObjectSet")) {
+      return code`${this.reusables.snippets.missingResolver}`;
+    }
+    return code`\
+(partial, resolverOptions) => {
+  const objectSet = ${variables.factoryFunctionOptions}?.objectSet;
+  if (!objectSet) {
+    return ${this.reusables.snippets.missingResolver}();
+  }
+  return ${this.objectSetResolveExpression({ variables: { objectSet: code`objectSet`, partial: code`partial`, resolverOptions: code`resolverOptions` } })};
+}`;
+  }
+
+  protected abstract objectSetResolveExpression(parameters: {
+    variables: { objectSet: Code; partial: Code; resolverOptions: Code };
   }): Code;
 
   protected resolveToPartialFunction<

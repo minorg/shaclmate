@@ -57,12 +57,10 @@ ${this.reusables.snippets.convertToLazySet}<
     });
   }
 
-  protected override objectSetResolverFunctionExpressions({
+  protected override objectSetResolveExpression({
     variables,
-  }: {
-    variables: { objectSet: Code };
-  }): Code {
-    return code`(partials, options) => ${variables.objectSet}.${this.resolveType.itemType.objectSetMethodNames.objects}({ identifiers: partials.map(partial => partial.${this.partialItemType.identifierProperty.unsafeCoerce().name}()), ...options })`;
+  }: Parameters<Super["objectSetResolveExpression"]>[0]): Code {
+    return code`${variables.objectSet}.${this.resolveType.itemType.objectSetMethodNames.objects}({ identifiers: ${variables.partial}.map(partial => partial.${this.partialItemType.identifierProperty.unsafeCoerce().name}()), ...${variables.resolverOptions} })`;
   }
 
   @Memoize()

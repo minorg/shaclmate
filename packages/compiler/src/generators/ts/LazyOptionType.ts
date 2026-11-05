@@ -13,10 +13,7 @@ export class LazyOptionType extends AbstractLazyType<
   protected readonly partialItemType = this.partialType.itemType;
   protected readonly resolveItemType = this.resolveType.itemType;
 
-  override readonly graphqlArgs: AbstractLazyType<
-    OptionType<AbstractLazyType.ItemTypeConstraint>,
-    OptionType<AbstractLazyType.ItemTypeConstraint>
-  >["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.empty();
   override readonly kind = "LazyOption";
 
   @Memoize()
@@ -63,22 +60,20 @@ ${this.reusables.snippets.convertToLazyOption}<
     };
   }
 
-  protected override objectSetResolverFunctionExpressions({
+  protected override objectSetResolveExpression({
     variables,
-  }: {
-    variables: { objectSet: Code };
-  }): Code {
-    return code`(partial, options) => ${variables.objectSet}.${this.resolveItemType.objectSetMethodNames.object}(partial.${this.partialItemType.identifierProperty.unsafeCoerce().name}(), options)`;
+  }: Parameters<Super["objectSetResolveExpression"]>[0]): Code {
+    return code`${variables.objectSet}.${this.resolveItemType.objectSetMethodNames.object}(${variables.partial}.${this.partialItemType.identifierProperty.unsafeCoerce().name}(), ${variables.resolverOptions})`;
   }
 
   override graphqlResolveExpression({
     variables,
-  }: Parameters<
-    AbstractLazyType<
-      OptionType<AbstractLazyType.ItemTypeConstraint>,
-      OptionType<AbstractLazyType.ItemTypeConstraint>
-    >["graphqlResolveExpression"]
-  >[0]): Code {
+  }: Parameters<Super["graphqlResolveExpression"]>[0]): Code {
     return code`${variables.value}.resolve().then(either => either.unsafeCoerce().extractNullable())`;
   }
 }
+
+type Super = AbstractLazyType<
+  OptionType<AbstractLazyType.ItemTypeConstraint>,
+  OptionType<AbstractLazyType.ItemTypeConstraint>
+>;
