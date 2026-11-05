@@ -45,10 +45,6 @@ export abstract class AbstractLazyType<
     this.resolveType = resolveType;
   }
 
-  get jsonValueType(): AbstractType["jsonValueType"] {
-    return this.partialType.jsonValueType;
-  }
-
   @Memoize()
   override get equalsFunction(): Callable {
     return new InlineCallable(
@@ -57,10 +53,6 @@ export abstract class AbstractLazyType<
         type: code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`,
       },
     );
-  }
-
-  get jsonObjectType(): AbstractType["jsonObjectType"] {
-    return this.partialType.jsonObjectType;
   }
 
   @Memoize()
@@ -77,22 +69,22 @@ export abstract class AbstractLazyType<
     return this.partialType.filterType;
   }
 
-  override get fromJsonValueFunction(): AbstractType["fromJsonValueFunction"] {
-    return new InlineCallable(
-      code`(jsonValue, fromJsonValueOptions) => ${this.partialType.fromJsonValueFunction.annotatedUsage}(jsonValue, { ...fromJsonValueOptions, schema: fromJsonValueOptions.schema.partialType })
-        .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.resolverFunctionExpression({ variables: { factoryFunctionOptions: code`fromJsonValueOptions` } })} }))`,
-      {
-        type: code`${this.reusables.snippets.FromJsonValueFunction}<${this.jsonValueType.expression}, ${this.expression}, ${this.schema}>`,
-      },
-    );
-  }
-
   override get fromJsonObjectFunction(): AbstractType["fromJsonObjectFunction"] {
     return new InlineCallable(
       code`(jsonObject, fromJsonObjectOptions) => ${this.partialType.fromJsonObjectFunction.annotatedUsage}(jsonObject, { ...fromJsonObjectOptions, schema: fromJsonObjectOptions.schema.partialType })
         .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.resolverFunctionExpression({ variables: { factoryFunctionOptions: code`fromJsonObjectOptions` } })} }))`,
       {
         type: code`${this.reusables.snippets.FromJsonObjectFunction}<${this.jsonObjectType.expression}, ${this.expression}, ${this.schema}>`,
+      },
+    );
+  }
+
+  override get fromJsonValueFunction(): AbstractType["fromJsonValueFunction"] {
+    return new InlineCallable(
+      code`(jsonValue, fromJsonValueOptions) => ${this.partialType.fromJsonValueFunction.annotatedUsage}(jsonValue, { ...fromJsonValueOptions, schema: fromJsonValueOptions.schema.partialType })
+        .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.resolverFunctionExpression({ variables: { factoryFunctionOptions: code`fromJsonValueOptions` } })} }))`,
+      {
+        type: code`${this.reusables.snippets.FromJsonValueFunction}<${this.jsonValueType.expression}, ${this.expression}, ${this.schema}>`,
       },
     );
   }
@@ -136,6 +128,14 @@ export abstract class AbstractLazyType<
     ];
   }
 
+  get jsonObjectType(): AbstractType["jsonObjectType"] {
+    return this.partialType.jsonObjectType;
+  }
+
+  get jsonValueType(): AbstractType["jsonValueType"] {
+    return this.partialType.jsonValueType;
+  }
+
   get recursive(): boolean {
     return this.partialType.recursive;
   }
@@ -152,20 +152,20 @@ export abstract class AbstractLazyType<
     }}`;
   }
 
-  override get toJsonValueFunction(): AbstractType["toJsonValueFunction"] {
-    return new InlineCallable(
-      code`(value) => ${this.partialType.toJsonValueFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
-      {
-        type: code`${this.reusables.snippets.ToJsonValueFunction}<${this.expression}, ${this.jsonValueType.expression}>`,
-      },
-    );
-  }
-
   override get toJsonObjectFunction(): AbstractType["toJsonObjectFunction"] {
     return new InlineCallable(
       code`(value) => ${this.partialType.toJsonObjectFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
       {
         type: code`${this.reusables.snippets.ToJsonObjectFunction}<${this.expression}, ${this.jsonValueType.expression}>`,
+      },
+    );
+  }
+
+  override get toJsonValueFunction(): AbstractType["toJsonValueFunction"] {
+    return new InlineCallable(
+      code`(value) => ${this.partialType.toJsonValueFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
+      {
+        type: code`${this.reusables.snippets.ToJsonValueFunction}<${this.expression}, ${this.jsonValueType.expression}>`,
       },
     );
   }
@@ -231,24 +231,6 @@ export abstract class AbstractLazyType<
     });
   }
 
-  protected resolverFunctionExpression({
-    variables,
-  }: {
-    variables: { factoryFunctionOptions: Code };
-  }): Code {
-    if (!this.configuration.features.has("ObjectSet")) {
-      return code`${this.reusables.snippets.missingResolver}`;
-    }
-    return code`\
-(partial, resolverOptions) => {
-  const objectSet = ${variables.factoryFunctionOptions}?.objectSet;
-  if (!objectSet) {
-    return ${this.reusables.snippets.missingResolver}();
-  }
-  return ${this.objectSetResolveExpression({ variables: { objectSet: code`objectSet`, partial: code`partial`, resolverOptions: code`resolverOptions` } })};
-}`;
-  }
-
   protected abstract objectSetResolveExpression(parameters: {
     variables: { objectSet: Code; partial: Code; resolverOptions: Code };
   }): Code;
@@ -307,6 +289,24 @@ export abstract class AbstractLazyType<
       code`default: ${variables.resolvedObjectDiscriminatedUnion} satisfies never; throw new Error("unrecognized type");`,
     );
     return code`switch (${variables.resolvedObjectDiscriminatedUnion}.${resolvedObjectDiscriminatedUnionType.discriminatedType.unsafeCoerce().discriminantProperty.name}) { ${joinCode(caseBlocks)} }`;
+  }
+
+  protected resolverFunctionExpression({
+    variables,
+  }: {
+    variables: { factoryFunctionOptions: Code };
+  }): Code {
+    if (!this.configuration.features.has("ObjectSet")) {
+      return code`${this.reusables.snippets.missingResolver}`;
+    }
+    return code`\
+(partial, resolverOptions) => {
+  const objectSet = ${variables.factoryFunctionOptions}?.objectSet;
+  if (!objectSet) {
+    return ${this.reusables.snippets.missingResolver}();
+  }
+  return ${this.objectSetResolveExpression({ variables: { objectSet: code`objectSet`, partial: code`partial`, resolverOptions: code`resolverOptions` } })};
+}`;
   }
 }
 
