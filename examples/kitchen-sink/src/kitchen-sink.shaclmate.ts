@@ -29205,16 +29205,12 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalLazyToResolvedBlankNodeOrIriIdentifier,
-        typeFromRdfResourceValues: (
-          values,
-          { objectSet, schema, ...otherOptions },
-        ) =>
+        typeFromRdfResourceValues: (values, fromRdfResourceValuesOptions) =>
           $maybeFromRdfResourceValues<$DefaultPartial, $DefaultPartial.Schema>(
             $DefaultPartial.fromRdfResourceValues,
           )(values, {
-            objectSet,
-            schema: schema.partialType,
-            ...otherOptions,
+            ...fromRdfResourceValuesOptions,
+            schema: fromRdfResourceValuesOptions.schema.partialType,
           }).map((values) =>
             values.map(
               (partial) =>
@@ -29223,11 +29219,16 @@ export namespace LazyPropertiesStruct {
                   LazilyResolvedBlankNodeOrIriIdentifierStruct
                 >({
                   partial,
-                  resolver: (partial, options) =>
-                    objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
+                  resolver: (partial, resolverOptions) => {
+                    const objectSet = fromRdfResourceValuesOptions?.objectSet;
+                    if (!objectSet) {
+                      return $missingResolver();
+                    }
+                    return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
                       partial.$identifier(),
-                      options,
-                    ),
+                      resolverOptions,
+                    );
+                  },
                 }),
             ),
           ),
@@ -29245,16 +29246,12 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalLazyToResolvedDiscriminatedUnion,
-        typeFromRdfResourceValues: (
-          values,
-          { objectSet, schema, ...otherOptions },
-        ) =>
+        typeFromRdfResourceValues: (values, fromRdfResourceValuesOptions) =>
           $maybeFromRdfResourceValues<$DefaultPartial, $DefaultPartial.Schema>(
             $DefaultPartial.fromRdfResourceValues,
           )(values, {
-            objectSet,
-            schema: schema.partialType,
-            ...otherOptions,
+            ...fromRdfResourceValuesOptions,
+            schema: fromRdfResourceValuesOptions.schema.partialType,
           }).map((values) =>
             values.map(
               (partial) =>
@@ -29263,11 +29260,16 @@ export namespace LazyPropertiesStruct {
                   LazilyResolvedDiscriminatedUnion
                 >({
                   partial,
-                  resolver: (partial, options) =>
-                    objectSet.lazilyResolvedDiscriminatedUnion(
+                  resolver: (partial, resolverOptions) => {
+                    const objectSet = fromRdfResourceValuesOptions?.objectSet;
+                    if (!objectSet) {
+                      return $missingResolver();
+                    }
+                    return objectSet.lazilyResolvedDiscriminatedUnion(
                       partial.$identifier(),
-                      options,
-                    ),
+                      resolverOptions,
+                    );
+                  },
                 }),
             ),
           ),
@@ -29285,17 +29287,13 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalLazyToResolvedIriIdentifier,
-        typeFromRdfResourceValues: (
-          values,
-          { objectSet, schema, ...otherOptions },
-        ) =>
+        typeFromRdfResourceValues: (values, fromRdfResourceValuesOptions) =>
           $maybeFromRdfResourceValues<
             $NamedDefaultPartial,
             $NamedDefaultPartial.Schema
           >($NamedDefaultPartial.fromRdfResourceValues)(values, {
-            objectSet,
-            schema: schema.partialType,
-            ...otherOptions,
+            ...fromRdfResourceValuesOptions,
+            schema: fromRdfResourceValuesOptions.schema.partialType,
           }).map((values) =>
             values.map(
               (partial) =>
@@ -29304,11 +29302,16 @@ export namespace LazyPropertiesStruct {
                   LazilyResolvedIriIdentifierStruct
                 >({
                   partial,
-                  resolver: (partial, options) =>
-                    objectSet.lazilyResolvedIriIdentifierStruct(
+                  resolver: (partial, resolverOptions) => {
+                    const objectSet = fromRdfResourceValuesOptions?.objectSet;
+                    if (!objectSet) {
+                      return $missingResolver();
+                    }
+                    return objectSet.lazilyResolvedIriIdentifierStruct(
                       partial.$identifier(),
-                      options,
-                    ),
+                      resolverOptions,
+                    );
+                  },
                 }),
             ),
           ),
@@ -29330,17 +29333,13 @@ export namespace LazyPropertiesStruct {
           propertySchema:
             LazyPropertiesStruct.schema.properties
               .optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion,
-          typeFromRdfResourceValues: (
-            values,
-            { objectSet, schema, ...otherOptions },
-          ) =>
+          typeFromRdfResourceValues: (values, fromRdfResourceValuesOptions) =>
             $maybeFromRdfResourceValues<
               PartialDiscriminatedUnion,
               PartialDiscriminatedUnion.Schema
             >(PartialDiscriminatedUnion.fromRdfResourceValues)(values, {
-              objectSet,
-              schema: schema.partialType,
-              ...otherOptions,
+              ...fromRdfResourceValuesOptions,
+              schema: fromRdfResourceValuesOptions.schema.partialType,
             }).map((values) =>
               values.map(
                 (partial) =>
@@ -29349,11 +29348,16 @@ export namespace LazyPropertiesStruct {
                     LazilyResolvedDiscriminatedUnion
                   >({
                     partial,
-                    resolver: (partial, options) =>
-                      objectSet.lazilyResolvedDiscriminatedUnion(
+                    resolver: (partial, resolverOptions) => {
+                      const objectSet = fromRdfResourceValuesOptions?.objectSet;
+                      if (!objectSet) {
+                        return $missingResolver();
+                      }
+                      return objectSet.lazilyResolvedDiscriminatedUnion(
                         partial.$identifier(),
-                        options,
-                      ),
+                        resolverOptions,
+                      );
+                    },
                   }),
               ),
             ),
@@ -29371,16 +29375,12 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalPartialToResolvedBlankNodeOrIriIdentifier,
-        typeFromRdfResourceValues: (
-          values,
-          { objectSet, schema, ...otherOptions },
-        ) =>
+        typeFromRdfResourceValues: (values, fromRdfResourceValuesOptions) =>
           $maybeFromRdfResourceValues<PartialStruct, PartialStruct.Schema>(
             PartialStruct.fromRdfResourceValues,
           )(values, {
-            objectSet,
-            schema: schema.partialType,
-            ...otherOptions,
+            ...fromRdfResourceValuesOptions,
+            schema: fromRdfResourceValuesOptions.schema.partialType,
           }).map((values) =>
             values.map(
               (partial) =>
@@ -29389,11 +29389,16 @@ export namespace LazyPropertiesStruct {
                   LazilyResolvedBlankNodeOrIriIdentifierStruct
                 >({
                   partial,
-                  resolver: (partial, options) =>
-                    objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
+                  resolver: (partial, resolverOptions) => {
+                    const objectSet = fromRdfResourceValuesOptions?.objectSet;
+                    if (!objectSet) {
+                      return $missingResolver();
+                    }
+                    return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
                       partial.$identifier(),
-                      options,
-                    ),
+                      resolverOptions,
+                    );
+                  },
                 }),
             ),
           ),
@@ -29408,16 +29413,12 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalPartialToResolvedDiscriminatedUnion,
-        typeFromRdfResourceValues: (
-          values,
-          { objectSet, schema, ...otherOptions },
-        ) =>
+        typeFromRdfResourceValues: (values, fromRdfResourceValuesOptions) =>
           $maybeFromRdfResourceValues<PartialStruct, PartialStruct.Schema>(
             PartialStruct.fromRdfResourceValues,
           )(values, {
-            objectSet,
-            schema: schema.partialType,
-            ...otherOptions,
+            ...fromRdfResourceValuesOptions,
+            schema: fromRdfResourceValuesOptions.schema.partialType,
           }).map((values) =>
             values.map(
               (partial) =>
@@ -29426,11 +29427,16 @@ export namespace LazyPropertiesStruct {
                   LazilyResolvedDiscriminatedUnion
                 >({
                   partial,
-                  resolver: (partial, options) =>
-                    objectSet.lazilyResolvedDiscriminatedUnion(
+                  resolver: (partial, resolverOptions) => {
+                    const objectSet = fromRdfResourceValuesOptions?.objectSet;
+                    if (!objectSet) {
+                      return $missingResolver();
+                    }
+                    return objectSet.lazilyResolvedDiscriminatedUnion(
                       partial.$identifier(),
-                      options,
-                    ),
+                      resolverOptions,
+                    );
+                  },
                 }),
             ),
           ),
@@ -29445,15 +29451,11 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .requiredLazyToResolvedBlankNodeOrIriIdentifier,
-        typeFromRdfResourceValues: (
-          values,
-          { objectSet, schema, ...otherOptions },
-        ) =>
+        typeFromRdfResourceValues: (values, fromRdfResourceValuesOptions) =>
           $DefaultPartial
             .fromRdfResourceValues(values, {
-              objectSet,
-              schema: schema.partialType,
-              ...otherOptions,
+              ...fromRdfResourceValuesOptions,
+              schema: fromRdfResourceValuesOptions.schema.partialType,
             })
             .map((values) =>
               values.map(
@@ -29463,11 +29465,16 @@ export namespace LazyPropertiesStruct {
                     LazilyResolvedBlankNodeOrIriIdentifierStruct
                   >({
                     partial,
-                    resolver: (partial, options) =>
-                      objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
+                    resolver: (partial, resolverOptions) => {
+                      const objectSet = fromRdfResourceValuesOptions?.objectSet;
+                      if (!objectSet) {
+                        return $missingResolver();
+                      }
+                      return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
                         partial.$identifier(),
-                        options,
-                      ),
+                        resolverOptions,
+                      );
+                    },
                   }),
               ),
             ),
@@ -29482,14 +29489,10 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .requiredPartialToResolvedBlankNodeOrIriIdentifier,
-        typeFromRdfResourceValues: (
-          values,
-          { objectSet, schema, ...otherOptions },
-        ) =>
+        typeFromRdfResourceValues: (values, fromRdfResourceValuesOptions) =>
           PartialStruct.fromRdfResourceValues(values, {
-            objectSet,
-            schema: schema.partialType,
-            ...otherOptions,
+            ...fromRdfResourceValuesOptions,
+            schema: fromRdfResourceValuesOptions.schema.partialType,
           }).map((values) =>
             values.map(
               (partial) =>
@@ -29498,11 +29501,16 @@ export namespace LazyPropertiesStruct {
                   LazilyResolvedBlankNodeOrIriIdentifierStruct
                 >({
                   partial,
-                  resolver: (partial, options) =>
-                    objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
+                  resolver: (partial, resolverOptions) => {
+                    const objectSet = fromRdfResourceValuesOptions?.objectSet;
+                    if (!objectSet) {
+                      return $missingResolver();
+                    }
+                    return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
                       partial.$identifier(),
-                      options,
-                    ),
+                      resolverOptions,
+                    );
+                  },
                 }),
             ),
           ),
@@ -29520,16 +29528,12 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .setLazyToResolvedBlankNodeOrIriIdentifier,
-        typeFromRdfResourceValues: (
-          values,
-          { objectSet, schema, ...otherOptions },
-        ) =>
+        typeFromRdfResourceValues: (values, fromRdfResourceValuesOptions) =>
           $setFromRdfResourceValues<$DefaultPartial, $DefaultPartial.Schema>(
             $DefaultPartial.fromRdfResourceValues,
           )(values, {
-            objectSet,
-            schema: schema.partialType,
-            ...otherOptions,
+            ...fromRdfResourceValuesOptions,
+            schema: fromRdfResourceValuesOptions.schema.partialType,
           }).map((values) =>
             values.map(
               (partials) =>
@@ -29538,13 +29542,20 @@ export namespace LazyPropertiesStruct {
                   LazilyResolvedBlankNodeOrIriIdentifierStruct
                 >({
                   partials,
-                  resolver: (partials, options) =>
-                    objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs({
-                      identifiers: partials.map((partial) =>
-                        partial.$identifier(),
-                      ),
-                      ...options,
-                    }),
+                  resolver: (partial, resolverOptions) => {
+                    const objectSet = fromRdfResourceValuesOptions?.objectSet;
+                    if (!objectSet) {
+                      return $missingResolver();
+                    }
+                    return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs(
+                      {
+                        identifiers: partial.map((partial) =>
+                          partial.$identifier(),
+                        ),
+                        ...resolverOptions,
+                      },
+                    );
+                  },
                 }),
             ),
           ),
@@ -29562,16 +29573,12 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .setPartialToResolvedBlankNodeOrIriIdentifier,
-        typeFromRdfResourceValues: (
-          values,
-          { objectSet, schema, ...otherOptions },
-        ) =>
+        typeFromRdfResourceValues: (values, fromRdfResourceValuesOptions) =>
           $setFromRdfResourceValues<PartialStruct, PartialStruct.Schema>(
             PartialStruct.fromRdfResourceValues,
           )(values, {
-            objectSet,
-            schema: schema.partialType,
-            ...otherOptions,
+            ...fromRdfResourceValuesOptions,
+            schema: fromRdfResourceValuesOptions.schema.partialType,
           }).map((values) =>
             values.map(
               (partials) =>
@@ -29580,13 +29587,20 @@ export namespace LazyPropertiesStruct {
                   LazilyResolvedBlankNodeOrIriIdentifierStruct
                 >({
                   partials,
-                  resolver: (partials, options) =>
-                    objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs({
-                      identifiers: partials.map((partial) =>
-                        partial.$identifier(),
-                      ),
-                      ...options,
-                    }),
+                  resolver: (partial, resolverOptions) => {
+                    const objectSet = fromRdfResourceValuesOptions?.objectSet;
+                    if (!objectSet) {
+                      return $missingResolver();
+                    }
+                    return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs(
+                      {
+                        identifiers: partial.map((partial) =>
+                          partial.$identifier(),
+                        ),
+                        ...resolverOptions,
+                      },
+                    );
+                  },
                 }),
             ),
           ),
@@ -30695,12 +30709,11 @@ export namespace LazyPropertiesStruct {
       }),
       optionalLazyToResolvedBlankNodeOrIriIdentifier: ((
         jsonValue,
-        { objectSet, schema, ...otherOptions },
+        fromJsonValueOptions,
       ) =>
         $maybeFromJsonValue($DefaultPartial.fromJson)(jsonValue, {
-          objectSet,
-          schema: schema.partialType,
-          ...otherOptions,
+          ...fromJsonValueOptions,
+          schema: fromJsonValueOptions.schema.partialType,
         }).map(
           (partial) =>
             new $LazyOption<
@@ -30708,13 +30721,16 @@ export namespace LazyPropertiesStruct {
               LazilyResolvedBlankNodeOrIriIdentifierStruct
             >({
               partial,
-              resolver: objectSet
-                ? (partial, options) =>
-                    objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
-                      partial.$identifier(),
-                      options,
-                    )
-                : $missingResolver,
+              resolver: (partial, resolverOptions) => {
+                const objectSet = fromJsonValueOptions?.objectSet;
+                if (!objectSet) {
+                  return $missingResolver();
+                }
+                return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
+                  partial.$identifier(),
+                  resolverOptions,
+                );
+              },
             }),
         ))(jsonObject["optionalLazyToResolvedBlankNodeOrIriIdentifier"], {
         ...options,
@@ -30724,23 +30740,25 @@ export namespace LazyPropertiesStruct {
       }),
       optionalLazyToResolvedDiscriminatedUnion: ((
         jsonValue,
-        { objectSet, schema, ...otherOptions },
+        fromJsonValueOptions,
       ) =>
         $maybeFromJsonValue($DefaultPartial.fromJson)(jsonValue, {
-          objectSet,
-          schema: schema.partialType,
-          ...otherOptions,
+          ...fromJsonValueOptions,
+          schema: fromJsonValueOptions.schema.partialType,
         }).map(
           (partial) =>
             new $LazyOption<$DefaultPartial, LazilyResolvedDiscriminatedUnion>({
               partial,
-              resolver: objectSet
-                ? (partial, options) =>
-                    objectSet.lazilyResolvedDiscriminatedUnion(
-                      partial.$identifier(),
-                      options,
-                    )
-                : $missingResolver,
+              resolver: (partial, resolverOptions) => {
+                const objectSet = fromJsonValueOptions?.objectSet;
+                if (!objectSet) {
+                  return $missingResolver();
+                }
+                return objectSet.lazilyResolvedDiscriminatedUnion(
+                  partial.$identifier(),
+                  resolverOptions,
+                );
+              },
             }),
         ))(jsonObject["optionalLazyToResolvedDiscriminatedUnion"], {
         ...options,
@@ -30748,14 +30766,10 @@ export namespace LazyPropertiesStruct {
           LazyPropertiesStruct.schema.properties
             .optionalLazyToResolvedDiscriminatedUnion.type,
       }),
-      optionalLazyToResolvedIriIdentifier: ((
-        jsonValue,
-        { objectSet, schema, ...otherOptions },
-      ) =>
+      optionalLazyToResolvedIriIdentifier: ((jsonValue, fromJsonValueOptions) =>
         $maybeFromJsonValue($NamedDefaultPartial.fromJson)(jsonValue, {
-          objectSet,
-          schema: schema.partialType,
-          ...otherOptions,
+          ...fromJsonValueOptions,
+          schema: fromJsonValueOptions.schema.partialType,
         }).map(
           (partial) =>
             new $LazyOption<
@@ -30763,13 +30777,16 @@ export namespace LazyPropertiesStruct {
               LazilyResolvedIriIdentifierStruct
             >({
               partial,
-              resolver: objectSet
-                ? (partial, options) =>
-                    objectSet.lazilyResolvedIriIdentifierStruct(
-                      partial.$identifier(),
-                      options,
-                    )
-                : $missingResolver,
+              resolver: (partial, resolverOptions) => {
+                const objectSet = fromJsonValueOptions?.objectSet;
+                if (!objectSet) {
+                  return $missingResolver();
+                }
+                return objectSet.lazilyResolvedIriIdentifierStruct(
+                  partial.$identifier(),
+                  resolverOptions,
+                );
+              },
             }),
         ))(jsonObject["optionalLazyToResolvedIriIdentifier"], {
         ...options,
@@ -30779,12 +30796,11 @@ export namespace LazyPropertiesStruct {
       }),
       optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion: ((
         jsonValue,
-        { objectSet, schema, ...otherOptions },
+        fromJsonValueOptions,
       ) =>
         $maybeFromJsonValue(PartialDiscriminatedUnion.fromJson)(jsonValue, {
-          objectSet,
-          schema: schema.partialType,
-          ...otherOptions,
+          ...fromJsonValueOptions,
+          schema: fromJsonValueOptions.schema.partialType,
         }).map(
           (partial) =>
             new $LazyOption<
@@ -30792,13 +30808,16 @@ export namespace LazyPropertiesStruct {
               LazilyResolvedDiscriminatedUnion
             >({
               partial,
-              resolver: objectSet
-                ? (partial, options) =>
-                    objectSet.lazilyResolvedDiscriminatedUnion(
-                      partial.$identifier(),
-                      options,
-                    )
-                : $missingResolver,
+              resolver: (partial, resolverOptions) => {
+                const objectSet = fromJsonValueOptions?.objectSet;
+                if (!objectSet) {
+                  return $missingResolver();
+                }
+                return objectSet.lazilyResolvedDiscriminatedUnion(
+                  partial.$identifier(),
+                  resolverOptions,
+                );
+              },
             }),
         ))(
         jsonObject[
@@ -30814,12 +30833,11 @@ export namespace LazyPropertiesStruct {
       ),
       optionalPartialToResolvedBlankNodeOrIriIdentifier: ((
         jsonValue,
-        { objectSet, schema, ...otherOptions },
+        fromJsonValueOptions,
       ) =>
         $maybeFromJsonValue(PartialStruct.fromJson)(jsonValue, {
-          objectSet,
-          schema: schema.partialType,
-          ...otherOptions,
+          ...fromJsonValueOptions,
+          schema: fromJsonValueOptions.schema.partialType,
         }).map(
           (partial) =>
             new $LazyOption<
@@ -30827,13 +30845,16 @@ export namespace LazyPropertiesStruct {
               LazilyResolvedBlankNodeOrIriIdentifierStruct
             >({
               partial,
-              resolver: objectSet
-                ? (partial, options) =>
-                    objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
-                      partial.$identifier(),
-                      options,
-                    )
-                : $missingResolver,
+              resolver: (partial, resolverOptions) => {
+                const objectSet = fromJsonValueOptions?.objectSet;
+                if (!objectSet) {
+                  return $missingResolver();
+                }
+                return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
+                  partial.$identifier(),
+                  resolverOptions,
+                );
+              },
             }),
         ))(jsonObject["optionalPartialToResolvedBlankNodeOrIriIdentifier"], {
         ...options,
@@ -30843,23 +30864,25 @@ export namespace LazyPropertiesStruct {
       }),
       optionalPartialToResolvedDiscriminatedUnion: ((
         jsonValue,
-        { objectSet, schema, ...otherOptions },
+        fromJsonValueOptions,
       ) =>
         $maybeFromJsonValue(PartialStruct.fromJson)(jsonValue, {
-          objectSet,
-          schema: schema.partialType,
-          ...otherOptions,
+          ...fromJsonValueOptions,
+          schema: fromJsonValueOptions.schema.partialType,
         }).map(
           (partial) =>
             new $LazyOption<PartialStruct, LazilyResolvedDiscriminatedUnion>({
               partial,
-              resolver: objectSet
-                ? (partial, options) =>
-                    objectSet.lazilyResolvedDiscriminatedUnion(
-                      partial.$identifier(),
-                      options,
-                    )
-                : $missingResolver,
+              resolver: (partial, resolverOptions) => {
+                const objectSet = fromJsonValueOptions?.objectSet;
+                if (!objectSet) {
+                  return $missingResolver();
+                }
+                return objectSet.lazilyResolvedDiscriminatedUnion(
+                  partial.$identifier(),
+                  resolverOptions,
+                );
+              },
             }),
         ))(jsonObject["optionalPartialToResolvedDiscriminatedUnion"], {
         ...options,
@@ -30869,13 +30892,12 @@ export namespace LazyPropertiesStruct {
       }),
       requiredLazyToResolvedBlankNodeOrIriIdentifier: ((
         jsonValue,
-        { objectSet, schema, ...otherOptions },
+        fromJsonValueOptions,
       ) =>
         $DefaultPartial
           .fromJson(jsonValue, {
-            objectSet,
-            schema: schema.partialType,
-            ...otherOptions,
+            ...fromJsonValueOptions,
+            schema: fromJsonValueOptions.schema.partialType,
           })
           .map(
             (partial) =>
@@ -30884,13 +30906,16 @@ export namespace LazyPropertiesStruct {
                 LazilyResolvedBlankNodeOrIriIdentifierStruct
               >({
                 partial,
-                resolver: objectSet
-                  ? (partial, options) =>
-                      objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
-                        partial.$identifier(),
-                        options,
-                      )
-                  : $missingResolver,
+                resolver: (partial, resolverOptions) => {
+                  const objectSet = fromJsonValueOptions?.objectSet;
+                  if (!objectSet) {
+                    return $missingResolver();
+                  }
+                  return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
+                    partial.$identifier(),
+                    resolverOptions,
+                  );
+                },
               }),
           ))(jsonObject["requiredLazyToResolvedBlankNodeOrIriIdentifier"], {
         ...options,
@@ -30900,12 +30925,11 @@ export namespace LazyPropertiesStruct {
       }),
       requiredPartialToResolvedBlankNodeOrIriIdentifier: ((
         jsonValue,
-        { objectSet, schema, ...otherOptions },
+        fromJsonValueOptions,
       ) =>
         PartialStruct.fromJson(jsonValue, {
-          objectSet,
-          schema: schema.partialType,
-          ...otherOptions,
+          ...fromJsonValueOptions,
+          schema: fromJsonValueOptions.schema.partialType,
         }).map(
           (partial) =>
             new $Lazy<
@@ -30913,13 +30937,16 @@ export namespace LazyPropertiesStruct {
               LazilyResolvedBlankNodeOrIriIdentifierStruct
             >({
               partial,
-              resolver: objectSet
-                ? (partial, options) =>
-                    objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
-                      partial.$identifier(),
-                      options,
-                    )
-                : $missingResolver,
+              resolver: (partial, resolverOptions) => {
+                const objectSet = fromJsonValueOptions?.objectSet;
+                if (!objectSet) {
+                  return $missingResolver();
+                }
+                return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
+                  partial.$identifier(),
+                  resolverOptions,
+                );
+              },
             }),
         ))(jsonObject["requiredPartialToResolvedBlankNodeOrIriIdentifier"], {
         ...options,
@@ -30929,12 +30956,11 @@ export namespace LazyPropertiesStruct {
       }),
       setLazyToResolvedBlankNodeOrIriIdentifier: ((
         jsonValue,
-        { objectSet, schema, ...otherOptions },
+        fromJsonValueOptions,
       ) =>
         $arrayFromJsonArray($DefaultPartial.fromJson)(jsonValue, {
-          objectSet,
-          schema: schema.partialType,
-          ...otherOptions,
+          ...fromJsonValueOptions,
+          schema: fromJsonValueOptions.schema.partialType,
         }).map(
           (partials) =>
             new $LazySet<
@@ -30942,15 +30968,16 @@ export namespace LazyPropertiesStruct {
               LazilyResolvedBlankNodeOrIriIdentifierStruct
             >({
               partials,
-              resolver: objectSet
-                ? (partials, options) =>
-                    objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs({
-                      identifiers: partials.map((partial) =>
-                        partial.$identifier(),
-                      ),
-                      ...options,
-                    })
-                : $missingResolver,
+              resolver: (partial, resolverOptions) => {
+                const objectSet = fromJsonValueOptions?.objectSet;
+                if (!objectSet) {
+                  return $missingResolver();
+                }
+                return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs({
+                  identifiers: partial.map((partial) => partial.$identifier()),
+                  ...resolverOptions,
+                });
+              },
             }),
         ))(jsonObject["setLazyToResolvedBlankNodeOrIriIdentifier"], {
         ...options,
@@ -30960,12 +30987,11 @@ export namespace LazyPropertiesStruct {
       }),
       setPartialToResolvedBlankNodeOrIriIdentifier: ((
         jsonValue,
-        { objectSet, schema, ...otherOptions },
+        fromJsonValueOptions,
       ) =>
         $arrayFromJsonArray(PartialStruct.fromJson)(jsonValue, {
-          objectSet,
-          schema: schema.partialType,
-          ...otherOptions,
+          ...fromJsonValueOptions,
+          schema: fromJsonValueOptions.schema.partialType,
         }).map(
           (partials) =>
             new $LazySet<
@@ -30973,15 +30999,16 @@ export namespace LazyPropertiesStruct {
               LazilyResolvedBlankNodeOrIriIdentifierStruct
             >({
               partials,
-              resolver: objectSet
-                ? (partials, options) =>
-                    objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs({
-                      identifiers: partials.map((partial) =>
-                        partial.$identifier(),
-                      ),
-                      ...options,
-                    })
-                : $missingResolver,
+              resolver: (partial, resolverOptions) => {
+                const objectSet = fromJsonValueOptions?.objectSet;
+                if (!objectSet) {
+                  return $missingResolver();
+                }
+                return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs({
+                  identifiers: partial.map((partial) => partial.$identifier()),
+                  ...resolverOptions,
+                });
+              },
             }),
         ))(jsonObject["setPartialToResolvedBlankNodeOrIriIdentifier"], {
         ...options,

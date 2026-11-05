@@ -56,12 +56,10 @@ ${this.reusables.snippets.convertToLazy}<
     return code`${variables.value}.resolve().then(either => either.unsafeCoerce())`;
   }
 
-  protected override objectSetResolverFunctionExpressions({
+  protected override objectSetResolveExpression({
     variables,
-  }: {
-    variables: { objectSet: Code };
-  }): Code {
-    return code`(partial, options) => ${variables.objectSet}.${this.resolveItemType.objectSetMethodNames.object}(partial.${this.partialItemType.identifierProperty.unsafeCoerce().name}(), options)`;
+  }: Parameters<Super["objectSetResolveExpression"]>[0]): Code {
+    return code`${variables.objectSet}.${this.resolveItemType.objectSetMethodNames.object}(${variables.partial}.${this.partialItemType.identifierProperty.unsafeCoerce().name}(), ${variables.resolverOptions})`;
   }
 }
 
