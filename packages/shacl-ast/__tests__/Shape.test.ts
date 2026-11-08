@@ -1,6 +1,6 @@
 import dataFactory from "@rdfx/data-factory";
 import { beforeAll, describe, it } from "vitest";
-import type { Shape } from "../src/shacl-ast.shaclmate.js";
+import type { NodeShape, PropertyShape } from "../src/shacl-ast.shaclmate.js";
 import "@rdfx/testing";
 import { LiteralFactory } from "@rdfx/literal";
 import { sh } from "@tpluscode/rdf-ns-builders";
@@ -25,7 +25,7 @@ describe("Shape", async () => {
     ),
   })) {
     describe(id, () => {
-      let shape: Shape;
+      let shape: NodeShape | PropertyShape;
       let shapesGraph: ShapesGraph;
 
       beforeAll(() => {
