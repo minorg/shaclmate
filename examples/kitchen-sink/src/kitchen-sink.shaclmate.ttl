@@ -418,22 +418,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :explicitRdfTypeString
     ] .
 
-:FlattenDiscriminatedUnion
-    a sh:NodeShape ;
-    rdfs:comment "Node shape that unions a node shape and another union of node shapes. Generated code will usually flatten these." ;
-    sh:xone (:StructDiscriminatedUnion
-        :FlattenDiscriminatedUnionMember3
-    ) .
-
-:FlattenDiscriminatedUnionMember3
-    a owl:Class, sh:NodeShape ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :flattenDiscriminatedUnionMember3String
-    ] .
-
 :HasValuesStruct
     a sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:hasValue properties." ;
