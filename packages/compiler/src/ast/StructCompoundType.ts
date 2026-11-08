@@ -15,6 +15,17 @@ export type StructCompoundType =
   | StructDiscriminatedUnionType;
 
 export namespace StructCompoundType {
+  export function hasIdentifierField(
+    structCompoundType: StructCompoundType | StructType,
+  ): boolean {
+    if (structCompoundType.kind === "Struct") {
+      return structCompoundType.identifierField.isJust();
+    }
+    return structCompoundType.members.every((member) =>
+      hasIdentifierField(member.type),
+    );
+  }
+
   export function identifierType(
     structCompoundType: StructCompoundType | StructType,
   ): Either<Error, BlankNodeType | IdentifierType | IriType> {
