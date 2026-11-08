@@ -19512,572 +19512,6 @@ export namespace ExplicitRdfTypeStruct {
     );
 }
 
-export type FlattenDiscriminatedUnionMember3 = {
-  readonly $identifier: () => FlattenDiscriminatedUnionMember3.Identifier;
-
-  readonly flattenDiscriminatedUnionMember3String: string;
-};
-
-export namespace FlattenDiscriminatedUnionMember3 {
-  export const _fromRdfResource: $_FromRdfResourceFunction<
-    FlattenDiscriminatedUnionMember3.Discriminated
-  > = (resource, options) =>
-    $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
-          ...options,
-          focusResource: resource,
-          propertyPath: $rdf_subject,
-          schema:
-            FlattenDiscriminatedUnionMember3.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
-      $rdfType: !options.ignoreRdfType
-        ? $ensureRdfResourceType(
-            resource,
-            [
-              FlattenDiscriminatedUnionMember3.schema.properties.$rdfType
-                .fromRdfType,
-            ],
-            {
-              graph: options.graph,
-            },
-          )
-        : Right(true as const),
-      flattenDiscriminatedUnionMember3String: $shaclPropertyFromRdf<
-        string,
-        $StringSchema<string>
-      >({
-        ...options,
-        focusResource: resource,
-        ignoreRdfType: true,
-        propertySchema:
-          FlattenDiscriminatedUnionMember3.schema.properties
-            .flattenDiscriminatedUnionMember3String,
-        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-      }),
-    }).chain((properties) =>
-      FlattenDiscriminatedUnionMember3.create(properties),
-    );
-
-  export const _toRdfResource: $_ToRdfResourceFunction<
-    FlattenDiscriminatedUnionMember3.Identifier,
-    FlattenDiscriminatedUnionMember3
-  > = (parameters) => {
-    if (!parameters.ignoreRdfType) {
-      parameters.resource.add(
-        $rdf_type,
-        FlattenDiscriminatedUnionMember3.schema.properties.$rdfType.toRdfTypes,
-        parameters.graph,
-      );
-    }
-    parameters.resource.add(
-      FlattenDiscriminatedUnionMember3.schema.properties
-        .flattenDiscriminatedUnionMember3String.path,
-      [
-        $literalFactory.string(
-          parameters.object.flattenDiscriminatedUnionMember3String,
-        ),
-      ],
-      parameters.graph,
-    );
-    return parameters.resource;
-  };
-
-  export const $toString: $ToStringFunction<
-    Pick<FlattenDiscriminatedUnionMember3, "$identifier">
-  > = (_flattenDiscriminatedUnionMember3) =>
-    `FlattenDiscriminatedUnionMember3(${JSON.stringify(
-      FlattenDiscriminatedUnionMember3.toStringRecord(
-        _flattenDiscriminatedUnionMember3,
-      ),
-    )})`;
-
-  export const create: <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(
-    parameters: FlattenDiscriminatedUnionMember3.CreateParameters<$DefaultNamespaceT>,
-  ) => Either<Error, FlattenDiscriminatedUnionMember3.Discriminated> = (
-    parameters,
-  ) =>
-    $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
-      $type: Right("FlattenDiscriminatedUnionMember3" as const),
-      flattenDiscriminatedUnionMember3String: Either.of(
-        parameters.flattenDiscriminatedUnionMember3String,
-      ),
-    }).map((object) =>
-      $monkeyPatchObject(object, {
-        toJson: FlattenDiscriminatedUnionMember3.toJson,
-        $toString: FlattenDiscriminatedUnionMember3.$toString,
-      }),
-    );
-
-  export type CreateParameters<
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  > = {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => FlattenDiscriminatedUnionMember3.Identifier)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly flattenDiscriminatedUnionMember3String: string;
-  };
-
-  export const createUnsafe: <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(
-    parameters: FlattenDiscriminatedUnionMember3.CreateParameters<$DefaultNamespaceT>,
-  ) => FlattenDiscriminatedUnionMember3.Discriminated = (parameters) =>
-    create(parameters).unsafeCoerce();
-
-  export type Discriminated = FlattenDiscriminatedUnionMember3 & {
-    readonly $type: "FlattenDiscriminatedUnionMember3";
-  };
-
-  export const equals: $EqualsFunction<FlattenDiscriminatedUnionMember3> = (
-    left,
-    right,
-  ) =>
-    $propertyEquals(
-      { equalsFunction: $booleanEquals, name: "$identifier" },
-      [left, left.$identifier()],
-      [right, right.$identifier()],
-    ).chain(() =>
-      $propertyEquals(
-        {
-          equalsFunction: $strictEquals,
-          name: "flattenDiscriminatedUnionMember3String",
-        },
-        [left, left.flattenDiscriminatedUnionMember3String],
-        [right, right.flattenDiscriminatedUnionMember3String],
-      ),
-    );
-
-  export const filter: $FilterFunction<
-    FlattenDiscriminatedUnionMember3.Filter,
-    FlattenDiscriminatedUnionMember3
-  > = (filter, value) => {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.flattenDiscriminatedUnionMember3String !== undefined &&
-      !$filterString(
-        filter.flattenDiscriminatedUnionMember3String,
-        value.flattenDiscriminatedUnionMember3String,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  };
-
-  export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly flattenDiscriminatedUnionMember3String?: $StringFilter;
-  };
-
-  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    FlattenDiscriminatedUnionMember3.Filter
-  > = (parameters) => {
-    let triples: sparqljs.Triple[] = [];
-    triples = triples.concat(
-      parameters.ignoreRdfType
-        ? []
-        : [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $rdf_type,
-              object: dataFactory.variable!(
-                `${parameters.variablePrefix}RdfType`,
-              ),
-            },
-            {
-              subject: dataFactory.variable!(
-                `${parameters.variablePrefix}RdfType`,
-              ),
-              predicate: $rdfs_subClassOf,
-              object: dataFactory.variable!(
-                `${parameters.variablePrefix}RdfClass`,
-              ),
-            },
-          ],
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.flattenDiscriminatedUnionMember3String,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "flattenDiscriminatedUnionMember3String",
-        propertySchema:
-          FlattenDiscriminatedUnionMember3.schema.properties
-            .flattenDiscriminatedUnionMember3String,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return triples;
-  };
-
-  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    FlattenDiscriminatedUnionMember3.Filter
-  > = (parameters) => {
-    let patterns: $SparqlPattern[] = [];
-    if (parameters.focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: parameters.filter?.$identifier,
-          ignoreRdfType: true,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema:
-            FlattenDiscriminatedUnionMember3.schema.properties.$identifier.type,
-          valueVariable: parameters.focusIdentifier,
-          variablePrefix: parameters.variablePrefix,
-        }),
-      );
-    }
-    patterns = patterns.concat(
-      parameters.ignoreRdfType
-        ? []
-        : [
-            $sparqlInstancesOfPattern({
-              rdfType:
-                FlattenDiscriminatedUnionMember3.schema.properties.$rdfType
-                  .fromRdfType,
-              subject: parameters.focusIdentifier,
-            }),
-            {
-              triples: [
-                {
-                  subject: parameters.focusIdentifier,
-                  predicate: $rdf_type,
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfType`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              patterns: [
-                {
-                  triples: [
-                    {
-                      subject: dataFactory.variable!(
-                        `${parameters.variablePrefix}RdfType`,
-                      ),
-                      predicate: {
-                        items: [$rdfs_subClassOf],
-                        pathType: "+" as const,
-                        type: "path" as const,
-                      },
-                      object: dataFactory.variable!(
-                        `${parameters.variablePrefix}RdfClass`,
-                      ),
-                    },
-                  ],
-                  type: "bgp" as const,
-                },
-              ],
-              type: "optional" as const,
-            },
-          ],
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.flattenDiscriminatedUnionMember3String,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "flattenDiscriminatedUnionMember3String",
-        propertySchema:
-          FlattenDiscriminatedUnionMember3.schema.properties
-            .flattenDiscriminatedUnionMember3String,
-        typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return patterns;
-  };
-
-  export const fromJson: $FromJsonObjectFunction<
-    FlattenDiscriminatedUnionMember3.Json,
-    FlattenDiscriminatedUnionMember3.Discriminated,
-    undefined
-  > = (jsonObject, options = {}) =>
-    $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
-        ...options,
-        schema:
-          FlattenDiscriminatedUnionMember3.schema.properties.$identifier.type,
-      }),
-      flattenDiscriminatedUnionMember3String: $stringFromJsonString<string>(
-        jsonObject["flattenDiscriminatedUnionMember3String"],
-        {
-          ...options,
-          schema:
-            FlattenDiscriminatedUnionMember3.schema.properties
-              .flattenDiscriminatedUnionMember3String.type,
-        },
-      ),
-    }).chain(FlattenDiscriminatedUnionMember3.create);
-
-  export const fromRdfResource: $FromRdfResourceFunction<FlattenDiscriminatedUnionMember3.Discriminated> =
-    $wrap_FromRdfResourceFunction(
-      FlattenDiscriminatedUnionMember3._fromRdfResource,
-    );
-
-  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    FlattenDiscriminatedUnionMember3.Discriminated,
-    FlattenDiscriminatedUnionMember3.Schema
-  > = (values, options) =>
-    values.chainMap((value) =>
-      value
-        .toResource()
-        .chain((resource) =>
-          FlattenDiscriminatedUnionMember3.fromRdfResource(resource, options),
-        ),
-    );
-
-  export const hash: $HashFunction<
-    Omit<FlattenDiscriminatedUnionMember3, "$identifier"> & {
-      readonly $identifier?: () => FlattenDiscriminatedUnionMember3.Identifier;
-    }
-  > = (hasher, _flattenDiscriminatedUnionMember3) => {
-    if (_flattenDiscriminatedUnionMember3.$identifier) {
-      hasher.update(_flattenDiscriminatedUnionMember3.$identifier().value);
-    }
-    $hashString(
-      hasher,
-      _flattenDiscriminatedUnionMember3.flattenDiscriminatedUnionMember3String,
-    );
-  };
-
-  export type Identifier = BlankNode | NamedNode;
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-  }
-
-  export const isFlattenDiscriminatedUnionMember3: $ObjectTypeGuardFunction<
-    FlattenDiscriminatedUnionMember3.Discriminated
-  > = (object): object is FlattenDiscriminatedUnionMember3.Discriminated =>
-    object.$type === "FlattenDiscriminatedUnionMember3";
-
-  export type Json = {
-    "@id": string;
-    "@type": string;
-    flattenDiscriminatedUnionMember3String: string;
-  };
-
-  export namespace Json {
-    export function parse(json: unknown): Either<Error, Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        "@type": z.string(),
-        flattenDiscriminatedUnionMember3String: z.string(),
-      }) satisfies z.ZodType<Json>;
-    }
-
-    export const uiSchema = (_options?: { scopePrefix?: string }): any => {
-      return {
-        elements: [
-          {
-            label: "Identifier",
-            scope: `${_options?.scopePrefix ?? "#"}/properties/@id`,
-            type: "Control",
-          },
-          {
-            scope: `${_options?.scopePrefix ?? "#"}/properties/flattenDiscriminatedUnionMember3String`,
-            type: "Control",
-          },
-        ],
-        type: "Group",
-        label: "FlattenDiscriminatedUnionMember3",
-      };
-    };
-  }
-
-  export const schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
-      $rdfType: {
-        fromRdfType: dataFactory.namedNode(
-          "http://example.com/FlattenDiscriminatedUnionMember3",
-        ),
-        kind: "RdfType",
-        toRdfTypes: [
-          dataFactory.namedNode(
-            "http://example.com/FlattenDiscriminatedUnionMember3",
-          ),
-        ],
-      },
-      flattenDiscriminatedUnionMember3String: {
-        kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/flattenDiscriminatedUnionMember3String",
-        ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
-    },
-  } as const;
-
-  export type Schema = typeof schema;
-
-  export const sparqlConstructQuery: $SparqlConstructQueryFunction<
-    FlattenDiscriminatedUnionMember3.Filter
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }) => {
-    const variablePrefix =
-      subject.termType === "Variable"
-        ? subject.value
-        : "flattenDiscriminatedUnionMember3";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        FlattenDiscriminatedUnionMember3.focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          FlattenDiscriminatedUnionMember3.focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  };
-
-  export const sparqlConstructQueryString: $SparqlConstructQueryStringFunction<
-    FlattenDiscriminatedUnionMember3.Filter
-  > = (parameters) =>
-    new sparqljs.Generator(parameters).stringify(
-      FlattenDiscriminatedUnionMember3.sparqlConstructQuery(parameters),
-    );
-
-  export const toJson: $ToJsonObjectFunction<
-    FlattenDiscriminatedUnionMember3,
-    FlattenDiscriminatedUnionMember3.Json
-  > = (_flattenDiscriminatedUnionMember3) =>
-    JSON.parse(
-      JSON.stringify({
-        "@id":
-          _flattenDiscriminatedUnionMember3.$identifier().termType ===
-          "BlankNode"
-            ? `_:${_flattenDiscriminatedUnionMember3.$identifier().value}`
-            : _flattenDiscriminatedUnionMember3.$identifier().value,
-        "@type": "http://example.com/FlattenDiscriminatedUnionMember3",
-        flattenDiscriminatedUnionMember3String: $primitiveToJsonValue<string>(
-          _flattenDiscriminatedUnionMember3.flattenDiscriminatedUnionMember3String,
-        ),
-      }),
-    );
-
-  export const toLoggable: $ToLoggableFunction<
-    FlattenDiscriminatedUnionMember3
-  > = (_flattenDiscriminatedUnionMember3) =>
-    $compactRecord({
-      $identifier: _flattenDiscriminatedUnionMember3.$identifier().value,
-      flattenDiscriminatedUnionMember3String:
-        _flattenDiscriminatedUnionMember3.flattenDiscriminatedUnionMember3String,
-    });
-
-  export const toRdfResource: $ToRdfResourceFunction<
-    FlattenDiscriminatedUnionMember3.Identifier,
-    FlattenDiscriminatedUnionMember3
-  > = $wrap_ToRdfResourceFunction<
-    FlattenDiscriminatedUnionMember3.Identifier,
-    FlattenDiscriminatedUnionMember3
-  >(FlattenDiscriminatedUnionMember3._toRdfResource);
-
-  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    FlattenDiscriminatedUnionMember3,
-    BlankNode | NamedNode
-  > = (value, options) => [
-    FlattenDiscriminatedUnionMember3.toRdfResource(value, {
-      graph: options.graph,
-      resourceSet: options.resourceSet,
-    }).identifier,
-  ];
-
-  export const toStringRecord: $ToStringRecordFunction<
-    Pick<FlattenDiscriminatedUnionMember3, "$identifier">
-  > = (_flattenDiscriminatedUnionMember3) =>
-    $compactRecord({
-      $identifier: _flattenDiscriminatedUnionMember3.$identifier().toString(),
-    });
-
-  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    FlattenDiscriminatedUnionMember3.Filter,
-    FlattenDiscriminatedUnionMember3.Schema
-  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    FlattenDiscriminatedUnionMember3.focusSparqlConstructTriples({
-      filter,
-      focusIdentifier: valueVariable,
-      ignoreRdfType,
-      variablePrefix,
-    });
-
-  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    FlattenDiscriminatedUnionMember3.Filter,
-    FlattenDiscriminatedUnionMember3.Schema
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    propertyPatterns,
-    valueVariable,
-    variablePrefix,
-  }) =>
-    (propertyPatterns as readonly $SparqlPattern[]).concat(
-      FlattenDiscriminatedUnionMember3.focusSparqlWherePatterns({
-        filter,
-        focusIdentifier: valueVariable,
-        ignoreRdfType,
-        preferredLanguages,
-        variablePrefix,
-      }),
-    );
-}
-
 /**
  * Struct node shape with sh:hasValue properties.
  */
@@ -59363,711 +58797,6 @@ export namespace DatatypeDiscriminatedUnion2 {
 }
 
 /**
- * Node shape that unions a node shape and another union of node shapes. Generated code will usually flatten these.
- */
-export type FlattenDiscriminatedUnion =
-  | StructDiscriminatedUnionMember1.Discriminated
-  | StructDiscriminatedUnionMember2.Discriminated
-  | FlattenDiscriminatedUnionMember3.Discriminated;
-
-export namespace FlattenDiscriminatedUnion {
-  export const $toString: $ToStringFunction<FlattenDiscriminatedUnion> = (
-    value,
-  ) => {
-    if (value["$type"] === "StructDiscriminatedUnionMember1") {
-      return StructDiscriminatedUnionMember1.$toString(value);
-    }
-    if (value["$type"] === "StructDiscriminatedUnionMember2") {
-      return StructDiscriminatedUnionMember2.$toString(value);
-    }
-    if (value["$type"] === "FlattenDiscriminatedUnionMember3") {
-      return FlattenDiscriminatedUnionMember3.$toString(value);
-    }
-
-    throw new Error("unable to serialize to string");
-  };
-
-  export const equals: $EqualsFunction<FlattenDiscriminatedUnion> = (
-    left,
-    right,
-  ) => {
-    if (
-      left["$type"] === "StructDiscriminatedUnionMember1" &&
-      right["$type"] === "StructDiscriminatedUnionMember1"
-    ) {
-      return StructDiscriminatedUnionMember1.equals(
-        left as StructDiscriminatedUnionMember1,
-        right as StructDiscriminatedUnionMember1,
-      );
-    }
-    if (
-      left["$type"] === "StructDiscriminatedUnionMember2" &&
-      right["$type"] === "StructDiscriminatedUnionMember2"
-    ) {
-      return StructDiscriminatedUnionMember2.equals(
-        left as StructDiscriminatedUnionMember2,
-        right as StructDiscriminatedUnionMember2,
-      );
-    }
-    if (
-      left["$type"] === "FlattenDiscriminatedUnionMember3" &&
-      right["$type"] === "FlattenDiscriminatedUnionMember3"
-    ) {
-      return FlattenDiscriminatedUnionMember3.equals(
-        left as FlattenDiscriminatedUnionMember3,
-        right as FlattenDiscriminatedUnionMember3,
-      );
-    }
-
-    return Left({
-      left,
-      right,
-      propertyName: "type",
-      propertyValuesUnequal: {
-        left: typeof left,
-        right: typeof right,
-        type: "boolean" as const,
-      },
-      type: "property" as const,
-    });
-  };
-
-  export const filter: $FilterFunction<
-    FlattenDiscriminatedUnion.Filter,
-    FlattenDiscriminatedUnion
-  > = (filter, value) => {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.on?.["StructDiscriminatedUnionMember1"] !== undefined &&
-      value["$type"] === "StructDiscriminatedUnionMember1"
-    ) {
-      if (
-        !StructDiscriminatedUnionMember1.filter(
-          filter.on["StructDiscriminatedUnionMember1"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["StructDiscriminatedUnionMember2"] !== undefined &&
-      value["$type"] === "StructDiscriminatedUnionMember2"
-    ) {
-      if (
-        !StructDiscriminatedUnionMember2.filter(
-          filter.on["StructDiscriminatedUnionMember2"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["FlattenDiscriminatedUnionMember3"] !== undefined &&
-      value["$type"] === "FlattenDiscriminatedUnionMember3"
-    ) {
-      if (
-        !FlattenDiscriminatedUnionMember3.filter(
-          filter.on["FlattenDiscriminatedUnionMember3"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly on?: {
-      readonly StructDiscriminatedUnionMember1?: StructDiscriminatedUnionMember1.Filter;
-      readonly StructDiscriminatedUnionMember2?: StructDiscriminatedUnionMember2.Filter;
-      readonly FlattenDiscriminatedUnionMember3?: FlattenDiscriminatedUnionMember3.Filter;
-    };
-  };
-
-  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    FlattenDiscriminatedUnion.Filter
-  > = ({ filter, focusIdentifier, variablePrefix }) => [
-    ...StructDiscriminatedUnionMember1.focusSparqlConstructTriples({
-      filter: filter?.on?.StructDiscriminatedUnionMember1,
-      focusIdentifier,
-      ignoreRdfType: false,
-      variablePrefix: `${variablePrefix}StructDiscriminatedUnionMember1`,
-    }).concat(),
-    ...StructDiscriminatedUnionMember2.focusSparqlConstructTriples({
-      filter: filter?.on?.StructDiscriminatedUnionMember2,
-      focusIdentifier,
-      ignoreRdfType: false,
-      variablePrefix: `${variablePrefix}StructDiscriminatedUnionMember2`,
-    }).concat(),
-    ...FlattenDiscriminatedUnionMember3.focusSparqlConstructTriples({
-      filter: filter?.on?.FlattenDiscriminatedUnionMember3,
-      focusIdentifier,
-      ignoreRdfType: false,
-      variablePrefix: `${variablePrefix}FlattenDiscriminatedUnionMember3`,
-    }).concat(),
-  ];
-
-  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    FlattenDiscriminatedUnion.Filter
-  > = ({ filter, focusIdentifier, preferredLanguages, variablePrefix }) => {
-    let patterns: $SparqlPattern[] = [];
-    if (focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: filter?.$identifier,
-          ignoreRdfType: false,
-          preferredLanguages,
-          propertyPatterns: [],
-          schema: { kind: "Identifier" as const },
-          valueVariable: focusIdentifier,
-          variablePrefix,
-        }),
-      );
-    }
-    patterns.push({
-      patterns: [
-        {
-          patterns: StructDiscriminatedUnionMember1.focusSparqlWherePatterns({
-            filter: filter?.on?.StructDiscriminatedUnionMember1,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}StructDiscriminatedUnionMember1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: StructDiscriminatedUnionMember2.focusSparqlWherePatterns({
-            filter: filter?.on?.StructDiscriminatedUnionMember2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}StructDiscriminatedUnionMember2`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: FlattenDiscriminatedUnionMember3.focusSparqlWherePatterns({
-            filter: filter?.on?.FlattenDiscriminatedUnionMember3,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}FlattenDiscriminatedUnionMember3`,
-          }).concat(),
-          type: "group",
-        },
-      ],
-      type: "union",
-    });
-    return patterns;
-  };
-
-  export const fromJson: $FromJsonObjectFunction<
-    FlattenDiscriminatedUnion.Json,
-    FlattenDiscriminatedUnion,
-    undefined
-  > = (value, options) => {
-    if (value.$type === "StructDiscriminatedUnionMember1") {
-      return StructDiscriminatedUnionMember1.fromJson(value, {
-        ...options,
-        schema:
-          FlattenDiscriminatedUnion.schema.members[
-            "StructDiscriminatedUnionMember1"
-          ].type,
-      }) as Either<Error, FlattenDiscriminatedUnion>;
-    }
-    if (value.$type === "StructDiscriminatedUnionMember2") {
-      return StructDiscriminatedUnionMember2.fromJson(value, {
-        ...options,
-        schema:
-          FlattenDiscriminatedUnion.schema.members[
-            "StructDiscriminatedUnionMember2"
-          ].type,
-      }) as Either<Error, FlattenDiscriminatedUnion>;
-    }
-    if (value.$type === "FlattenDiscriminatedUnionMember3") {
-      return FlattenDiscriminatedUnionMember3.fromJson(value, {
-        ...options,
-        schema:
-          FlattenDiscriminatedUnion.schema.members[
-            "FlattenDiscriminatedUnionMember3"
-          ].type,
-      }) as Either<Error, FlattenDiscriminatedUnion>;
-    }
-
-    throw new Error("unable to deserialize JSON");
-  };
-
-  export const fromRdfResource: $FromRdfResourceFunction<
-    FlattenDiscriminatedUnion
-  > = (resource, options) =>
-    (
-      StructDiscriminatedUnionMember1.fromRdfResource(resource, {
-        ...options,
-        ignoreRdfType: false,
-      }) as Either<Error, FlattenDiscriminatedUnion>
-    )
-      .altLazy(
-        () =>
-          StructDiscriminatedUnionMember2.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, FlattenDiscriminatedUnion>,
-      )
-      .altLazy(
-        () =>
-          FlattenDiscriminatedUnionMember3.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, FlattenDiscriminatedUnion>,
-      );
-
-  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    FlattenDiscriminatedUnion,
-    FlattenDiscriminatedUnion.Schema
-  > = (inputValues, options) => {
-    const memberInputValues: Resource.Values[] = Array.from({ length: 3 }).map(
-      () =>
-        Resource.Values.empty({
-          focusResource: inputValues.focusResource,
-          propertyPath: inputValues.propertyPath,
-        }),
-    );
-    for (const inputValue of inputValues) {
-      const inputValueAsValues = inputValue.toValues();
-      let memberOutputValuesEither: Either<Error, unknown> | undefined;
-      for (let memberI = 0; memberI < 3; memberI++) {
-        if (memberI === 0) {
-          memberOutputValuesEither =
-            StructDiscriminatedUnionMember1.fromRdfResourceValues(
-              inputValueAsValues,
-              {
-                ...options,
-                ignoreRdfType: false,
-                schema:
-                  options.schema.members["StructDiscriminatedUnionMember1"]
-                    .type,
-              },
-            );
-          if (memberOutputValuesEither.isRight()) {
-            memberInputValues[memberI] =
-              memberInputValues[memberI].concat(inputValue);
-            break;
-          }
-        } else if (memberI === 1) {
-          memberOutputValuesEither =
-            StructDiscriminatedUnionMember2.fromRdfResourceValues(
-              inputValueAsValues,
-              {
-                ...options,
-                ignoreRdfType: false,
-                schema:
-                  options.schema.members["StructDiscriminatedUnionMember2"]
-                    .type,
-              },
-            );
-          if (memberOutputValuesEither.isRight()) {
-            memberInputValues[memberI] =
-              memberInputValues[memberI].concat(inputValue);
-            break;
-          }
-        } else if (memberI === 2) {
-          memberOutputValuesEither =
-            FlattenDiscriminatedUnionMember3.fromRdfResourceValues(
-              inputValueAsValues,
-              {
-                ...options,
-                ignoreRdfType: false,
-                schema:
-                  options.schema.members["FlattenDiscriminatedUnionMember3"]
-                    .type,
-              },
-            );
-          if (memberOutputValuesEither.isRight()) {
-            memberInputValues[memberI] =
-              memberInputValues[memberI].concat(inputValue);
-            break;
-          }
-        }
-      }
-      if (memberOutputValuesEither!.isLeft()) {
-        return memberOutputValuesEither;
-      }
-    }
-
-    let collectedOutputValues: Resource.Values<FlattenDiscriminatedUnion> =
-      Resource.Values.empty({
-        focusResource: inputValues.focusResource,
-        propertyPath: inputValues.propertyPath,
-      });
-    for (let memberI = 0; memberI < 3; memberI++) {
-      if (memberInputValues[memberI].length === 0) {
-        continue;
-      }
-      switch (memberI) {
-        case 0:
-          collectedOutputValues = collectedOutputValues.concat(
-            ...StructDiscriminatedUnionMember1.fromRdfResourceValues(
-              memberInputValues[memberI],
-              {
-                ...options,
-                ignoreRdfType: false,
-                schema:
-                  options.schema.members["StructDiscriminatedUnionMember1"]
-                    .type,
-              },
-            ).unsafeCoerce(),
-          );
-          break;
-        case 1:
-          collectedOutputValues = collectedOutputValues.concat(
-            ...StructDiscriminatedUnionMember2.fromRdfResourceValues(
-              memberInputValues[memberI],
-              {
-                ...options,
-                ignoreRdfType: false,
-                schema:
-                  options.schema.members["StructDiscriminatedUnionMember2"]
-                    .type,
-              },
-            ).unsafeCoerce(),
-          );
-          break;
-        case 2:
-          collectedOutputValues = collectedOutputValues.concat(
-            ...FlattenDiscriminatedUnionMember3.fromRdfResourceValues(
-              memberInputValues[memberI],
-              {
-                ...options,
-                ignoreRdfType: false,
-                schema:
-                  options.schema.members["FlattenDiscriminatedUnionMember3"]
-                    .type,
-              },
-            ).unsafeCoerce(),
-          );
-          break;
-      }
-    }
-    return Right(collectedOutputValues);
-  };
-
-  export const hash: $HashFunction<FlattenDiscriminatedUnion> = (
-    hasher,
-    value,
-  ) => {
-    if (value["$type"] === "StructDiscriminatedUnionMember1") {
-      StructDiscriminatedUnionMember1.hash(hasher, value);
-      return;
-    }
-    if (value["$type"] === "StructDiscriminatedUnionMember2") {
-      StructDiscriminatedUnionMember2.hash(hasher, value);
-      return;
-    }
-    if (value["$type"] === "FlattenDiscriminatedUnionMember3") {
-      FlattenDiscriminatedUnionMember3.hash(hasher, value);
-      return;
-    }
-  };
-
-  export type Identifier = BlankNode | NamedNode;
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-  }
-
-  export const isFlattenDiscriminatedUnion: $ObjectTypeGuardFunction<
-    FlattenDiscriminatedUnion
-  > = (object): object is FlattenDiscriminatedUnion =>
-    StructDiscriminatedUnionMember1.isStructDiscriminatedUnionMember1(object) ||
-    StructDiscriminatedUnionMember2.isStructDiscriminatedUnionMember2(object) ||
-    FlattenDiscriminatedUnionMember3.isFlattenDiscriminatedUnionMember3(object);
-
-  export type Json =
-    | (StructDiscriminatedUnionMember1.Json & {
-        $type: "StructDiscriminatedUnionMember1";
-      })
-    | (StructDiscriminatedUnionMember2.Json & {
-        $type: "StructDiscriminatedUnionMember2";
-      })
-    | (FlattenDiscriminatedUnionMember3.Json & {
-        $type: "FlattenDiscriminatedUnionMember3";
-      });
-
-  export namespace Json {
-    export function parse(json: unknown): Either<Error, Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z.discriminatedUnion("$type", [
-        StructDiscriminatedUnionMember1.Json.schema().extend({
-          $type: z.literal("StructDiscriminatedUnionMember1"),
-        }),
-        StructDiscriminatedUnionMember2.Json.schema().extend({
-          $type: z.literal("StructDiscriminatedUnionMember2"),
-        }),
-        FlattenDiscriminatedUnionMember3.Json.schema().extend({
-          $type: z.literal("FlattenDiscriminatedUnionMember3"),
-        }),
-      ]) satisfies z.ZodType<Json>;
-    }
-  }
-
-  export const schema = {
-    kind: "ObjectDiscriminatedUnion" as const,
-    members: {
-      StructDiscriminatedUnionMember1: {
-        discriminantValues: ["StructDiscriminatedUnionMember1"],
-        type: StructDiscriminatedUnionMember1.schema,
-      },
-      StructDiscriminatedUnionMember2: {
-        discriminantValues: ["StructDiscriminatedUnionMember2"],
-        type: StructDiscriminatedUnionMember2.schema,
-      },
-      FlattenDiscriminatedUnionMember3: {
-        discriminantValues: ["FlattenDiscriminatedUnionMember3"],
-        type: FlattenDiscriminatedUnionMember3.schema,
-      },
-    },
-    properties: {},
-  } as const;
-
-  export type Schema = typeof schema;
-
-  export const sparqlConstructQuery: $SparqlConstructQueryFunction<
-    FlattenDiscriminatedUnion.Filter
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }) => {
-    const variablePrefix =
-      subject.termType === "Variable"
-        ? subject.value
-        : "flattenDiscriminatedUnion";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        FlattenDiscriminatedUnion.focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          FlattenDiscriminatedUnion.focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  };
-
-  export const sparqlConstructQueryString: $SparqlConstructQueryStringFunction<
-    FlattenDiscriminatedUnion.Filter
-  > = (parameters) =>
-    new sparqljs.Generator(parameters).stringify(
-      FlattenDiscriminatedUnion.sparqlConstructQuery(parameters),
-    );
-
-  export const toJson: $ToJsonObjectFunction<
-    FlattenDiscriminatedUnion,
-    FlattenDiscriminatedUnion.Json
-  > = (value) => {
-    if (value["$type"] === "StructDiscriminatedUnionMember1") {
-      return {
-        ...StructDiscriminatedUnionMember1.toJson(value),
-        $type: "StructDiscriminatedUnionMember1",
-      };
-    }
-    if (value["$type"] === "StructDiscriminatedUnionMember2") {
-      return {
-        ...StructDiscriminatedUnionMember2.toJson(value),
-        $type: "StructDiscriminatedUnionMember2",
-      };
-    }
-    if (value["$type"] === "FlattenDiscriminatedUnionMember3") {
-      return {
-        ...FlattenDiscriminatedUnionMember3.toJson(value),
-        $type: "FlattenDiscriminatedUnionMember3",
-      };
-    }
-
-    throw new Error("unable to serialize to JSON");
-  };
-
-  export const toLoggable: $ToLoggableFunction<FlattenDiscriminatedUnion> = (
-    value,
-  ) => {
-    if (value["$type"] === "StructDiscriminatedUnionMember1") {
-      return StructDiscriminatedUnionMember1.toLoggable(value);
-    }
-    if (value["$type"] === "StructDiscriminatedUnionMember2") {
-      return StructDiscriminatedUnionMember2.toLoggable(value);
-    }
-    if (value["$type"] === "FlattenDiscriminatedUnionMember3") {
-      return FlattenDiscriminatedUnionMember3.toLoggable(value);
-    }
-
-    throw new Error("unable to serialize to loggable");
-  };
-
-  export const toRdfResource: $ToRdfResourceFunction<
-    FlattenDiscriminatedUnion.Identifier,
-    FlattenDiscriminatedUnion
-  > = (object, options) => {
-    if (
-      StructDiscriminatedUnionMember1.isStructDiscriminatedUnionMember1(object)
-    ) {
-      return StructDiscriminatedUnionMember1.toRdfResource(object, options);
-    }
-    if (
-      StructDiscriminatedUnionMember2.isStructDiscriminatedUnionMember2(object)
-    ) {
-      return StructDiscriminatedUnionMember2.toRdfResource(object, options);
-    }
-    if (
-      FlattenDiscriminatedUnionMember3.isFlattenDiscriminatedUnionMember3(
-        object,
-      )
-    ) {
-      return FlattenDiscriminatedUnionMember3.toRdfResource(object, options);
-    }
-    throw new Error("unrecognized type");
-  };
-
-  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    FlattenDiscriminatedUnion,
-    BlankNode | NamedNode
-  > = (value, _options): (BlankNode | NamedNode)[] => {
-    if (value["$type"] === "StructDiscriminatedUnionMember1") {
-      return StructDiscriminatedUnionMember1.toRdfResourceValues(value, {
-        graph: _options.graph,
-        propertyPath: _options.propertyPath,
-        resource: _options.resource,
-        resourceSet: _options.resourceSet,
-      });
-    }
-    if (value["$type"] === "StructDiscriminatedUnionMember2") {
-      return StructDiscriminatedUnionMember2.toRdfResourceValues(value, {
-        graph: _options.graph,
-        propertyPath: _options.propertyPath,
-        resource: _options.resource,
-        resourceSet: _options.resourceSet,
-      });
-    }
-    if (value["$type"] === "FlattenDiscriminatedUnionMember3") {
-      return FlattenDiscriminatedUnionMember3.toRdfResourceValues(value, {
-        graph: _options.graph,
-        propertyPath: _options.propertyPath,
-        resource: _options.resource,
-        resourceSet: _options.resourceSet,
-      });
-    }
-
-    throw new Error("unable to serialize to RDF");
-  };
-
-  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    FlattenDiscriminatedUnion.Filter,
-    FlattenDiscriminatedUnion.Schema
-  > = ({ ignoreRdfType, filter, schema, ...otherParameters }) => {
-    let triples: sparqljs.Triple[] = [];
-
-    triples = triples.concat(
-      StructDiscriminatedUnionMember1.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["StructDiscriminatedUnionMember1"],
-        ignoreRdfType: false,
-        schema: schema.members["StructDiscriminatedUnionMember1"].type,
-      }),
-    );
-    triples = triples.concat(
-      StructDiscriminatedUnionMember2.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["StructDiscriminatedUnionMember2"],
-        ignoreRdfType: false,
-        schema: schema.members["StructDiscriminatedUnionMember2"].type,
-      }),
-    );
-    triples = triples.concat(
-      FlattenDiscriminatedUnionMember3.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["FlattenDiscriminatedUnionMember3"],
-        ignoreRdfType: false,
-        schema: schema.members["FlattenDiscriminatedUnionMember3"].type,
-      }),
-    );
-
-    return triples;
-  };
-
-  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    FlattenDiscriminatedUnion.Filter,
-    FlattenDiscriminatedUnion.Schema
-  > = ({ filter, schema, ...otherParameters }) => {
-    const unionPatterns: sparqljs.GroupPattern[] = [];
-
-    unionPatterns.push({
-      patterns: StructDiscriminatedUnionMember1.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["StructDiscriminatedUnionMember1"],
-        ignoreRdfType: false,
-        schema: schema.members["StructDiscriminatedUnionMember1"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: StructDiscriminatedUnionMember2.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["StructDiscriminatedUnionMember2"],
-        ignoreRdfType: false,
-        schema: schema.members["StructDiscriminatedUnionMember2"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: FlattenDiscriminatedUnionMember3.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["FlattenDiscriminatedUnionMember3"],
-        ignoreRdfType: false,
-        schema: schema.members["FlattenDiscriminatedUnionMember3"].type,
-      }).concat(),
-      type: "group",
-    });
-
-    return [{ patterns: unionPatterns, type: "union" }];
-  };
-}
-
-/**
  * Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.
  */
 export type LazilyResolvedDiscriminatedUnion =
@@ -60452,14 +59181,7 @@ export namespace LazilyResolvedDiscriminatedUnion {
         type: LazilyResolvedDiscriminatedUnionMember2.schema,
       },
     },
-    properties: {
-      lazilyResolved: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/lazilyResolved"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
-    },
-  } as const;
+  };
 
   export type Schema = typeof schema;
 
@@ -61044,8 +59766,7 @@ export namespace NoRdfTypeDiscriminatedUnion {
         type: NoRdfTypeDiscriminatedUnionMember2.schema,
       },
     },
-    properties: {},
-  } as const;
+  };
 
   export type Schema = typeof schema;
 
@@ -61608,14 +60329,7 @@ export namespace PartialDiscriminatedUnion {
         type: PartialDiscriminatedUnionMember2.schema,
       },
     },
-    properties: {
-      lazilyResolved: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/lazilyResolved"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
-    },
-  } as const;
+  };
 
   export type Schema = typeof schema;
 
@@ -62184,8 +60898,7 @@ export namespace RecursiveDiscriminatedUnion {
         type: RecursiveDiscriminatedUnionMember2.schema,
       },
     },
-    properties: {},
-  } as const;
+  };
 
   export type Schema = typeof schema;
 
@@ -62746,16 +61459,7 @@ export namespace StructDiscriminatedUnion {
         type: StructDiscriminatedUnionMember2.schema,
       },
     },
-    properties: {
-      structDiscriminatedUnionMemberCommon: {
-        kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/structDiscriminatedUnionMemberCommon",
-        ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
-    },
-  } as const;
+  };
 
   export type Schema = typeof schema;
 
@@ -63725,12 +62429,9 @@ export namespace StructInheritance2 {
 /**
  * Struct 'inheritance' through sh:and (level 3 struct)
  */
-export type StructInheritance3 = StructInheritance1 & {
+export type StructInheritance3 = StructInheritance2 & {
   readonly $identifier: () => BlankNode | NamedNode;
 
-  readonly structInheritance2: string;
-} & {
-  readonly $identifier: () => BlankNode | NamedNode;
   readonly structInheritance3: string;
 };
 
@@ -63738,7 +62439,7 @@ export namespace StructInheritance3 {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     StructInheritance3.Discriminated
   > = (resource, options) =>
-    StructInheritance1.fromRdfResource(resource, options).chain((member0) =>
+    StructInheritance2.fromRdfResource(resource, options).chain((member0) =>
       $wrap_FromRdfResourceFunction(((resource, options) =>
         $sequenceRecord({
           $identifier: $identifierFromRdfResourceValues(
@@ -63750,7 +62451,7 @@ export namespace StructInheritance3 {
               schema: { kind: "Identifier" as const },
             },
           ).chain((values) => values.head()),
-          structInheritance2: $shaclPropertyFromRdf<
+          structInheritance3: $shaclPropertyFromRdf<
             string,
             $StringSchema<string>
           >({
@@ -63760,7 +62461,7 @@ export namespace StructInheritance3 {
             propertySchema: {
               kind: "Shacl",
               path: dataFactory.namedNode(
-                "http://example.com/structInheritance2",
+                "http://example.com/structInheritance3",
               ),
               type: { kind: "String" as const, datatype: $xsd_string },
             },
@@ -63774,7 +62475,7 @@ export namespace StructInheritance3 {
                   parameters.$identifier,
                   parameters.$defaultNamespace,
                 ),
-                structInheritance2: Either.of(parameters.structInheritance2),
+                structInheritance3: Either.of(parameters.structInheritance3),
               }).map((object) =>
                 $monkeyPatchObject(object, {
                   toJson: ((_object) =>
@@ -63784,16 +62485,16 @@ export namespace StructInheritance3 {
                           _object.$identifier().termType === "BlankNode"
                             ? `_:${_object.$identifier().value}`
                             : _object.$identifier().value,
-                        structInheritance2: $primitiveToJsonValue<string>(
-                          _object.structInheritance2,
+                        structInheritance3: $primitiveToJsonValue<string>(
+                          _object.structInheritance3,
                         ),
                       }),
                     )) satisfies $ToJsonObjectFunction<
                     {
                       readonly $identifier: () => BlankNode | NamedNode;
-                      readonly structInheritance2: string;
+                      readonly structInheritance3: string;
                     },
-                    { "@id": string; structInheritance2: string }
+                    { "@id": string; structInheritance3: string }
                   >,
                   $toString: ((_object) =>
                     JSON.stringify(
@@ -63814,129 +62515,30 @@ export namespace StructInheritance3 {
                 | BlankNode
                 | NamedNode
                 | (keyof $DefaultNamespaceT & string);
-              readonly structInheritance2: string;
+              readonly structInheritance3: string;
             }) => Either<
               Error,
               {
                 readonly $identifier: () => BlankNode | NamedNode;
-                readonly structInheritance2: string;
+                readonly structInheritance3: string;
               }
             >
           )(properties),
         )) satisfies $_FromRdfResourceFunction<{
         readonly $identifier: () => BlankNode | NamedNode;
-        readonly structInheritance2: string;
-      }>)(resource, options).chain((member1) =>
-        $wrap_FromRdfResourceFunction(((resource, options) =>
-          $sequenceRecord({
-            $identifier: $identifierFromRdfResourceValues(
-              $rdfResourceIdentifierValues(resource),
-              {
-                ...options,
-                focusResource: resource,
-                propertyPath: $rdf_subject,
-                schema: { kind: "Identifier" as const },
-              },
-            ).chain((values) => values.head()),
-            structInheritance3: $shaclPropertyFromRdf<
-              string,
-              $StringSchema<string>
-            >({
-              ...options,
-              focusResource: resource,
-              ignoreRdfType: true,
-              propertySchema: {
-                kind: "Shacl",
-                path: dataFactory.namedNode(
-                  "http://example.com/structInheritance3",
-                ),
-                type: { kind: "String" as const, datatype: $xsd_string },
-              },
-              typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-            }),
-          }).chain((properties) =>
-            (
-              ((parameters) =>
-                $sequenceRecord({
-                  $identifier: $convertToIdentifierProperty(
-                    parameters.$identifier,
-                    parameters.$defaultNamespace,
-                  ),
-                  structInheritance3: Either.of(parameters.structInheritance3),
-                }).map((object) =>
-                  $monkeyPatchObject(object, {
-                    toJson: ((_object) =>
-                      JSON.parse(
-                        JSON.stringify({
-                          "@id":
-                            _object.$identifier().termType === "BlankNode"
-                              ? `_:${_object.$identifier().value}`
-                              : _object.$identifier().value,
-                          structInheritance3: $primitiveToJsonValue<string>(
-                            _object.structInheritance3,
-                          ),
-                        }),
-                      )) satisfies $ToJsonObjectFunction<
-                      {
-                        readonly $identifier: () => BlankNode | NamedNode;
-                        readonly structInheritance3: string;
-                      },
-                      { "@id": string; structInheritance3: string }
-                    >,
-                    $toString: ((_object) =>
-                      JSON.stringify(
-                        ((_object) =>
-                          $compactRecord({
-                            $identifier: _object.$identifier().toString(),
-                          }))(_object),
-                      )) satisfies $ToStringFunction<{
-                      readonly $identifier: () => BlankNode | NamedNode;
-                    }>,
-                  }),
-                )) satisfies <
-                $DefaultNamespaceT extends
-                  $NamespaceBuilder = $NamespaceBuilder,
-              >(parameters: {
-                readonly $defaultNamespace?: $DefaultNamespaceT;
-                readonly $identifier?:
-                  | (() => BlankNode | NamedNode)
-                  | BlankNode
-                  | NamedNode
-                  | (keyof $DefaultNamespaceT & string);
-                readonly structInheritance3: string;
-              }) => Either<
-                Error,
-                {
-                  readonly $identifier: () => BlankNode | NamedNode;
-                  readonly structInheritance3: string;
-                }
-              >
-            )(properties),
-          )) satisfies $_FromRdfResourceFunction<{
-          readonly $identifier: () => BlankNode | NamedNode;
-          readonly structInheritance3: string;
-        }>)(resource, options).map((member2) => ({
-          ...member0,
-          ...member1,
-          ...member2,
-          $type: "StructInheritance3" as const,
-        })),
-      ),
+        readonly structInheritance3: string;
+      }>)(resource, options).map((member1) => ({
+        ...member0,
+        ...member1,
+        $type: "StructInheritance3" as const,
+      })),
     );
 
   export const _toRdfResource: $_ToRdfResourceFunction<
     StructInheritance3.Identifier,
     StructInheritance3
   > = (parameters) => {
-    StructInheritance1._toRdfResource(parameters);
-    ((parameters) => {
-      parameters.resource.add(
-        dataFactory.namedNode("http://example.com/structInheritance2"),
-        [$literalFactory.string(parameters.object.structInheritance2)],
-        parameters.graph,
-      );
-      return parameters.resource;
-    })(parameters);
+    StructInheritance2._toRdfResource(parameters);
     ((parameters) => {
       parameters.resource.add(
         dataFactory.namedNode("http://example.com/structInheritance3"),
@@ -63949,14 +62551,7 @@ export namespace StructInheritance3 {
 
   export const $toString: $ToStringFunction<StructInheritance3> = (value) =>
     JSON.stringify([
-      StructInheritance1.$toString(value),
-      ((_object) =>
-        JSON.stringify(
-          ((_object) =>
-            $compactRecord({ $identifier: _object.$identifier().toString() }))(
-            _object,
-          ),
-        ))(value),
+      StructInheritance2.$toString(value),
       ((_object) =>
         JSON.stringify(
           ((_object) =>
@@ -63971,7 +62566,7 @@ export namespace StructInheritance3 {
   >(
     parameters: StructInheritance3.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, StructInheritance3.Discriminated> = (parameters) =>
-    StructInheritance1.create(parameters)
+    StructInheritance2.create(parameters)
       .chain((member0) =>
         ((parameters) =>
           $sequenceRecord({
@@ -63979,7 +62574,7 @@ export namespace StructInheritance3 {
               parameters.$identifier,
               parameters.$defaultNamespace,
             ),
-            structInheritance2: Either.of(parameters.structInheritance2),
+            structInheritance3: Either.of(parameters.structInheritance3),
           }).map((object) =>
             $monkeyPatchObject(object, {
               toJson: ((_object) =>
@@ -63989,16 +62584,16 @@ export namespace StructInheritance3 {
                       _object.$identifier().termType === "BlankNode"
                         ? `_:${_object.$identifier().value}`
                         : _object.$identifier().value,
-                    structInheritance2: $primitiveToJsonValue<string>(
-                      _object.structInheritance2,
+                    structInheritance3: $primitiveToJsonValue<string>(
+                      _object.structInheritance3,
                     ),
                   }),
                 )) satisfies $ToJsonObjectFunction<
                 {
                   readonly $identifier: () => BlankNode | NamedNode;
-                  readonly structInheritance2: string;
+                  readonly structInheritance3: string;
                 },
-                { "@id": string; structInheritance2: string }
+                { "@id": string; structInheritance3: string }
               >,
               $toString: ((_object) =>
                 JSON.stringify(
@@ -64010,51 +62605,11 @@ export namespace StructInheritance3 {
                 readonly $identifier: () => BlankNode | NamedNode;
               }>,
             }),
-          ))(parameters).chain((member1) =>
-          ((parameters) =>
-            $sequenceRecord({
-              $identifier: $convertToIdentifierProperty(
-                parameters.$identifier,
-                parameters.$defaultNamespace,
-              ),
-              structInheritance3: Either.of(parameters.structInheritance3),
-            }).map((object) =>
-              $monkeyPatchObject(object, {
-                toJson: ((_object) =>
-                  JSON.parse(
-                    JSON.stringify({
-                      "@id":
-                        _object.$identifier().termType === "BlankNode"
-                          ? `_:${_object.$identifier().value}`
-                          : _object.$identifier().value,
-                      structInheritance3: $primitiveToJsonValue<string>(
-                        _object.structInheritance3,
-                      ),
-                    }),
-                  )) satisfies $ToJsonObjectFunction<
-                  {
-                    readonly $identifier: () => BlankNode | NamedNode;
-                    readonly structInheritance3: string;
-                  },
-                  { "@id": string; structInheritance3: string }
-                >,
-                $toString: ((_object) =>
-                  JSON.stringify(
-                    ((_object) =>
-                      $compactRecord({
-                        $identifier: _object.$identifier().toString(),
-                      }))(_object),
-                  )) satisfies $ToStringFunction<{
-                  readonly $identifier: () => BlankNode | NamedNode;
-                }>,
-              }),
-            ))(parameters).map((member2) => ({
-            ...member0,
-            ...member1,
-            ...member2,
-            $type: "StructInheritance3" as const,
-          })),
-        ),
+          ))(parameters).map((member1) => ({
+          ...member0,
+          ...member1,
+          $type: "StructInheritance3" as const,
+        })),
       )
       .map((object) =>
         $monkeyPatchObject(object, {
@@ -64065,15 +62620,7 @@ export namespace StructInheritance3 {
 
   export type CreateParameters<
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  > = StructInheritance1.CreateParameters<$DefaultNamespaceT> & {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => BlankNode | NamedNode)
-      | BlankNode
-      | NamedNode
-      | (keyof $DefaultNamespaceT & string);
-    readonly structInheritance2: string;
-  } & {
+  > = StructInheritance2.CreateParameters<$DefaultNamespaceT> & {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => BlankNode | NamedNode)
@@ -64095,24 +62642,7 @@ export namespace StructInheritance3 {
   };
 
   export const equals: $EqualsFunction<StructInheritance3> = (left, right) =>
-    StructInheritance1.equals(left, right) &&
-    (
-      ((left, right) =>
-        $propertyEquals(
-          { equalsFunction: $booleanEquals, name: "$identifier" },
-          [left, left.$identifier()],
-          [right, right.$identifier()],
-        ).chain(() =>
-          $propertyEquals(
-            { equalsFunction: $strictEquals, name: "structInheritance2" },
-            [left, left.structInheritance2],
-            [right, right.structInheritance2],
-          ),
-        )) satisfies $EqualsFunction<{
-        readonly $identifier: () => BlankNode | NamedNode;
-        readonly structInheritance2: string;
-      }>
-    )(left, right) &&
+    StructInheritance2.equals(left, right) &&
     (
       ((left, right) =>
         $propertyEquals(
@@ -64135,33 +62665,7 @@ export namespace StructInheritance3 {
     StructInheritance3.Filter,
     StructInheritance3
   > = (filter, value) =>
-    StructInheritance1.filter(filter, value) &&
-    (
-      ((filter, value) => {
-        if (
-          filter.$identifier !== undefined &&
-          !$filterIdentifier(filter.$identifier, value.$identifier())
-        ) {
-          return false;
-        }
-        if (
-          filter.structInheritance2 !== undefined &&
-          !$filterString(filter.structInheritance2, value.structInheritance2)
-        ) {
-          return false;
-        }
-        return true;
-      }) satisfies $FilterFunction<
-        {
-          readonly $identifier?: $IdentifierFilter;
-          readonly structInheritance2?: $StringFilter;
-        },
-        {
-          readonly $identifier: () => BlankNode | NamedNode;
-          readonly structInheritance2: string;
-        }
-      >
-    )(filter, value) &&
+    StructInheritance2.filter(filter, value) &&
     (
       ((filter, value) => {
         if (
@@ -64189,10 +62693,7 @@ export namespace StructInheritance3 {
       >
     )(filter, value);
 
-  export type Filter = StructInheritance1.Filter & {
-    readonly $identifier?: $IdentifierFilter;
-    readonly structInheritance2?: $StringFilter;
-  } & {
+  export type Filter = StructInheritance2.Filter & {
     readonly $identifier?: $IdentifierFilter;
     readonly structInheritance3?: $StringFilter;
   };
@@ -64202,30 +62703,7 @@ export namespace StructInheritance3 {
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
-      StructInheritance1.focusSparqlConstructTriples(parameters),
-    );
-    triples = triples.concat(
-      ((parameters) => {
-        let triples: sparqljs.Triple[] = [];
-        triples = triples.concat(
-          $shaclPropertySparqlConstructTriples({
-            filter: parameters.filter?.structInheritance2,
-            focusIdentifier: parameters.focusIdentifier,
-            ignoreRdfType: true,
-            propertyName: "structInheritance2",
-            propertySchema: {
-              kind: "Shacl",
-              path: dataFactory.namedNode(
-                "http://example.com/structInheritance2",
-              ),
-              type: { kind: "String" as const, datatype: $xsd_string },
-            },
-            typeSparqlConstructTriples: (_: object) => [],
-            variablePrefix: parameters.variablePrefix,
-          }),
-        );
-        return triples;
-      })(parameters),
+      StructInheritance2.focusSparqlConstructTriples(parameters),
     );
     triples = triples.concat(
       ((parameters) => {
@@ -64258,44 +62736,7 @@ export namespace StructInheritance3 {
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
     patterns = patterns.concat(
-      StructInheritance1.focusSparqlWherePatterns(parameters),
-    );
-    patterns = patterns.concat(
-      ((parameters) => {
-        let patterns: $SparqlPattern[] = [];
-        if (parameters.focusIdentifier.termType === "Variable") {
-          patterns = patterns.concat(
-            $identifierSparqlWherePatterns({
-              filter: parameters.filter?.$identifier,
-              ignoreRdfType: true,
-              preferredLanguages: parameters.preferredLanguages,
-              propertyPatterns: [],
-              schema: { kind: "Identifier" as const },
-              valueVariable: parameters.focusIdentifier,
-              variablePrefix: parameters.variablePrefix,
-            }),
-          );
-        }
-        patterns = patterns.concat(
-          $shaclPropertySparqlWherePatterns({
-            filter: parameters.filter?.structInheritance2,
-            focusIdentifier: parameters.focusIdentifier,
-            ignoreRdfType: true,
-            preferredLanguages: parameters.preferredLanguages,
-            propertyName: "structInheritance2",
-            propertySchema: {
-              kind: "Shacl",
-              path: dataFactory.namedNode(
-                "http://example.com/structInheritance2",
-              ),
-              type: { kind: "String" as const, datatype: $xsd_string },
-            },
-            typeSparqlWherePatterns: $stringSparqlWherePatterns,
-            variablePrefix: parameters.variablePrefix,
-          }),
-        );
-        return patterns;
-      })(parameters),
+      StructInheritance2.focusSparqlWherePatterns(parameters),
     );
     patterns = patterns.concat(
       ((parameters) => {
@@ -64342,15 +62783,15 @@ export namespace StructInheritance3 {
     StructInheritance3.Discriminated,
     undefined
   > = (jsonObject) =>
-    StructInheritance1.fromJson(jsonObject).chain((member0) =>
+    StructInheritance2.fromJson(jsonObject).chain((member0) =>
       ((jsonObject, options = {}) =>
         $sequenceRecord({
           $identifier: $identifierFromJsonString(jsonObject["@id"], {
             ...options,
             schema: { kind: "Identifier" as const },
           }),
-          structInheritance2: $stringFromJsonString<string>(
-            jsonObject["structInheritance2"],
+          structInheritance3: $stringFromJsonString<string>(
+            jsonObject["structInheritance3"],
             {
               ...options,
               schema: { kind: "String" as const, datatype: $xsd_string },
@@ -64362,7 +62803,7 @@ export namespace StructInheritance3 {
               parameters.$identifier,
               parameters.$defaultNamespace,
             ),
-            structInheritance2: Either.of(parameters.structInheritance2),
+            structInheritance3: Either.of(parameters.structInheritance3),
           }).map((object) =>
             $monkeyPatchObject(object, {
               toJson: ((_object) =>
@@ -64372,16 +62813,16 @@ export namespace StructInheritance3 {
                       _object.$identifier().termType === "BlankNode"
                         ? `_:${_object.$identifier().value}`
                         : _object.$identifier().value,
-                    structInheritance2: $primitiveToJsonValue<string>(
-                      _object.structInheritance2,
+                    structInheritance3: $primitiveToJsonValue<string>(
+                      _object.structInheritance3,
                     ),
                   }),
                 )) satisfies $ToJsonObjectFunction<
                 {
                   readonly $identifier: () => BlankNode | NamedNode;
-                  readonly structInheritance2: string;
+                  readonly structInheritance3: string;
                 },
-                { "@id": string; structInheritance2: string }
+                { "@id": string; structInheritance3: string }
               >,
               $toString: ((_object) =>
                 JSON.stringify(
@@ -64402,87 +62843,18 @@ export namespace StructInheritance3 {
             | BlankNode
             | NamedNode
             | (keyof $DefaultNamespaceT & string);
-          readonly structInheritance2: string;
+          readonly structInheritance3: string;
         }) => Either<
           Error,
           {
             readonly $identifier: () => BlankNode | NamedNode;
-            readonly structInheritance2: string;
-          }
-        >))(jsonObject).chain((member1) =>
-        ((jsonObject, options = {}) =>
-          $sequenceRecord({
-            $identifier: $identifierFromJsonString(jsonObject["@id"], {
-              ...options,
-              schema: { kind: "Identifier" as const },
-            }),
-            structInheritance3: $stringFromJsonString<string>(
-              jsonObject["structInheritance3"],
-              {
-                ...options,
-                schema: { kind: "String" as const, datatype: $xsd_string },
-              },
-            ),
-          }).chain(((parameters) =>
-            $sequenceRecord({
-              $identifier: $convertToIdentifierProperty(
-                parameters.$identifier,
-                parameters.$defaultNamespace,
-              ),
-              structInheritance3: Either.of(parameters.structInheritance3),
-            }).map((object) =>
-              $monkeyPatchObject(object, {
-                toJson: ((_object) =>
-                  JSON.parse(
-                    JSON.stringify({
-                      "@id":
-                        _object.$identifier().termType === "BlankNode"
-                          ? `_:${_object.$identifier().value}`
-                          : _object.$identifier().value,
-                      structInheritance3: $primitiveToJsonValue<string>(
-                        _object.structInheritance3,
-                      ),
-                    }),
-                  )) satisfies $ToJsonObjectFunction<
-                  {
-                    readonly $identifier: () => BlankNode | NamedNode;
-                    readonly structInheritance3: string;
-                  },
-                  { "@id": string; structInheritance3: string }
-                >,
-                $toString: ((_object) =>
-                  JSON.stringify(
-                    ((_object) =>
-                      $compactRecord({
-                        $identifier: _object.$identifier().toString(),
-                      }))(_object),
-                  )) satisfies $ToStringFunction<{
-                  readonly $identifier: () => BlankNode | NamedNode;
-                }>,
-              }),
-            )) satisfies <
-            $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-          >(parameters: {
-            readonly $defaultNamespace?: $DefaultNamespaceT;
-            readonly $identifier?:
-              | (() => BlankNode | NamedNode)
-              | BlankNode
-              | NamedNode
-              | (keyof $DefaultNamespaceT & string);
             readonly structInheritance3: string;
-          }) => Either<
-            Error,
-            {
-              readonly $identifier: () => BlankNode | NamedNode;
-              readonly structInheritance3: string;
-            }
-          >))(jsonObject).map((member2) => ({
-          ...member0,
-          ...member1,
-          ...member2,
-          $type: "StructInheritance3" as const,
-        })),
-      ),
+          }
+        >))(jsonObject).map((member1) => ({
+        ...member0,
+        ...member1,
+        $type: "StructInheritance3" as const,
+      })),
     );
 
   export const fromRdfResource: $FromRdfResourceFunction<StructInheritance3.Discriminated> =
@@ -64501,23 +62873,7 @@ export namespace StructInheritance3 {
     );
 
   export const hash: $HashFunction<StructInheritance3> = (hasher, value) => {
-    StructInheritance1.hash(hasher, value);
-    (
-      ((hasher, _object) => {
-        if (_object.$identifier) {
-          hasher.update(_object.$identifier().value);
-        }
-        $hashString(hasher, _object.structInheritance2);
-      }) satisfies $HashFunction<
-        Omit<
-          {
-            readonly $identifier: () => BlankNode | NamedNode;
-            readonly structInheritance2: string;
-          },
-          "$identifier"
-        > & { readonly $identifier?: () => BlankNode | NamedNode }
-      >
-    )(hasher, value);
+    StructInheritance2.hash(hasher, value);
     (
       ((hasher, _object) => {
         if (_object.$identifier) {
@@ -64546,10 +62902,7 @@ export namespace StructInheritance3 {
   > = (object): object is StructInheritance3.Discriminated =>
     object.$type === "StructInheritance3";
 
-  export type Json = StructInheritance1.Json & {
-    "@id": string;
-    structInheritance2: string;
-  } & {
+  export type Json = StructInheritance2.Json & {
     "@id": string;
     structInheritance3: string;
   };
@@ -64564,41 +62917,16 @@ export namespace StructInheritance3 {
     }
 
     export function schema() {
-      return StructInheritance1.Json.schema()
-        .and(
-          z.object({
-            "@id": z.string().min(1),
-            structInheritance2: z.string(),
-          }),
-        )
-        .and(
-          z.object({
-            "@id": z.string().min(1),
-            structInheritance3: z.string(),
-          }),
-        ) satisfies z.ZodType<Json>;
+      return StructInheritance2.Json.schema().and(
+        z.object({ "@id": z.string().min(1), structInheritance3: z.string() }),
+      ) satisfies z.ZodType<Json>;
     }
   }
 
   export const schema = {
     kind: "ObjectIntersection" as const,
     members: [
-      StructInheritance1.schema,
-      {
-        properties: {
-          $identifier: {
-            kind: "Identifier",
-            type: { kind: "Identifier" as const },
-          },
-          structInheritance2: {
-            kind: "Shacl",
-            path: dataFactory.namedNode(
-              "http://example.com/structInheritance2",
-            ),
-            type: { kind: "String" as const, datatype: $xsd_string },
-          },
-        },
-      } as const,
+      StructInheritance2.schema,
       {
         properties: {
           $identifier: {
@@ -64670,19 +62998,7 @@ export namespace StructInheritance3 {
     StructInheritance3,
     StructInheritance3.Json
   > = (value) => ({
-    ...StructInheritance1.toJson(value),
-    ...((_object) =>
-      JSON.parse(
-        JSON.stringify({
-          "@id":
-            _object.$identifier().termType === "BlankNode"
-              ? `_:${_object.$identifier().value}`
-              : _object.$identifier().value,
-          structInheritance2: $primitiveToJsonValue<string>(
-            _object.structInheritance2,
-          ),
-        }),
-      ))(value),
+    ...StructInheritance2.toJson(value),
     ...((_object) =>
       JSON.parse(
         JSON.stringify({
@@ -64700,12 +63016,7 @@ export namespace StructInheritance3 {
   export const toLoggable: $ToLoggableFunction<StructInheritance3> = (
     value,
   ) => [
-    StructInheritance1.toLoggable(value),
-    ((_object) =>
-      $compactRecord({
-        $identifier: _object.$identifier().value,
-        structInheritance2: _object.structInheritance2,
-      }))(value),
+    StructInheritance2.toLoggable(value),
     ((_object) =>
       $compactRecord({
         $identifier: _object.$identifier().value,
@@ -64738,65 +63049,11 @@ export namespace StructInheritance3 {
     let triples: sparqljs.Triple[] = [];
 
     triples = triples.concat(
-      StructInheritance1.valueSparqlConstructTriples({
+      StructInheritance2.valueSparqlConstructTriples({
         ...otherParameters,
         filter,
         ignoreRdfType: true,
         schema: schema.members[0],
-      }),
-    );
-    triples = triples.concat(
-      (
-        (({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-          ((parameters) => {
-            let triples: sparqljs.Triple[] = [];
-            triples = triples.concat(
-              $shaclPropertySparqlConstructTriples({
-                filter: parameters.filter?.structInheritance2,
-                focusIdentifier: parameters.focusIdentifier,
-                ignoreRdfType: true,
-                propertyName: "structInheritance2",
-                propertySchema: {
-                  kind: "Shacl",
-                  path: dataFactory.namedNode(
-                    "http://example.com/structInheritance2",
-                  ),
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-                typeSparqlConstructTriples: (_: object) => [],
-                variablePrefix: parameters.variablePrefix,
-              }),
-            );
-            return triples;
-          })({
-            filter,
-            focusIdentifier: valueVariable,
-            ignoreRdfType,
-            variablePrefix,
-          })) satisfies $ValueSparqlConstructTriplesFunction<
-          {
-            readonly $identifier?: $IdentifierFilter;
-            readonly structInheritance2?: $StringFilter;
-          },
-          {
-            properties: {
-              $identifier: {
-                readonly kind: "Identifier";
-                readonly type: $IdentifierSchema;
-              };
-              structInheritance2: {
-                readonly kind: "Shacl";
-                readonly path: $PropertyPath;
-                readonly type: $StringSchema<string>;
-              };
-            };
-          }
-        >
-      )({
-        ...otherParameters,
-        filter,
-        ignoreRdfType: true,
-        schema: schema.members[1],
       }),
     );
     triples = triples.concat(
@@ -64850,7 +63107,7 @@ export namespace StructInheritance3 {
         ...otherParameters,
         filter,
         ignoreRdfType: true,
-        schema: schema.members[2],
+        schema: schema.members[1],
       }),
     );
 
@@ -64864,89 +63121,11 @@ export namespace StructInheritance3 {
     let intersectionPatterns: $SparqlPattern[] = [];
 
     intersectionPatterns = intersectionPatterns.concat(
-      StructInheritance1.valueSparqlWherePatterns({
+      StructInheritance2.valueSparqlWherePatterns({
         ...otherParameters,
         filter,
         ignoreRdfType: true,
         schema: schema.members[0],
-      }),
-    );
-    intersectionPatterns = intersectionPatterns.concat(
-      (
-        (({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          propertyPatterns,
-          valueVariable,
-          variablePrefix,
-        }) =>
-          (propertyPatterns as readonly $SparqlPattern[]).concat(
-            ((parameters) => {
-              let patterns: $SparqlPattern[] = [];
-              if (parameters.focusIdentifier.termType === "Variable") {
-                patterns = patterns.concat(
-                  $identifierSparqlWherePatterns({
-                    filter: parameters.filter?.$identifier,
-                    ignoreRdfType: true,
-                    preferredLanguages: parameters.preferredLanguages,
-                    propertyPatterns: [],
-                    schema: { kind: "Identifier" as const },
-                    valueVariable: parameters.focusIdentifier,
-                    variablePrefix: parameters.variablePrefix,
-                  }),
-                );
-              }
-              patterns = patterns.concat(
-                $shaclPropertySparqlWherePatterns({
-                  filter: parameters.filter?.structInheritance2,
-                  focusIdentifier: parameters.focusIdentifier,
-                  ignoreRdfType: true,
-                  preferredLanguages: parameters.preferredLanguages,
-                  propertyName: "structInheritance2",
-                  propertySchema: {
-                    kind: "Shacl",
-                    path: dataFactory.namedNode(
-                      "http://example.com/structInheritance2",
-                    ),
-                    type: { kind: "String" as const, datatype: $xsd_string },
-                  },
-                  typeSparqlWherePatterns: $stringSparqlWherePatterns,
-                  variablePrefix: parameters.variablePrefix,
-                }),
-              );
-              return patterns;
-            })({
-              filter,
-              focusIdentifier: valueVariable,
-              ignoreRdfType,
-              preferredLanguages,
-              variablePrefix,
-            }),
-          )) satisfies $ValueSparqlWherePatternsFunction<
-          {
-            readonly $identifier?: $IdentifierFilter;
-            readonly structInheritance2?: $StringFilter;
-          },
-          {
-            properties: {
-              $identifier: {
-                readonly kind: "Identifier";
-                readonly type: $IdentifierSchema;
-              };
-              structInheritance2: {
-                readonly kind: "Shacl";
-                readonly path: $PropertyPath;
-                readonly type: $StringSchema<string>;
-              };
-            };
-          }
-        >
-      )({
-        ...otherParameters,
-        filter,
-        ignoreRdfType: true,
-        schema: schema.members[1],
       }),
     );
     intersectionPatterns = intersectionPatterns.concat(
@@ -65024,7 +63203,7 @@ export namespace StructInheritance3 {
         ...otherParameters,
         filter,
         ignoreRdfType: true,
-        schema: schema.members[2],
+        schema: schema.members[1],
       }),
     );
 
@@ -65348,6 +63527,696 @@ export namespace StructIntersection {
   };
 }
 
+/**
+ * Node shape that sh:xone's struct node shapes and a struct intersection node shape
+ */
+export type StructIntersectionDiscriminatedUnion =
+  | StructDiscriminatedUnionMember1.Discriminated
+  | StructDiscriminatedUnionMember2.Discriminated
+  | StructIntersection.Discriminated;
+
+export namespace StructIntersectionDiscriminatedUnion {
+  export const $toString: $ToStringFunction<
+    StructIntersectionDiscriminatedUnion
+  > = (value) => {
+    if (value["$type"] === "StructDiscriminatedUnionMember1") {
+      return StructDiscriminatedUnionMember1.$toString(value);
+    }
+    if (value["$type"] === "StructDiscriminatedUnionMember2") {
+      return StructDiscriminatedUnionMember2.$toString(value);
+    }
+    if (value["$type"] === "StructIntersection") {
+      return StructIntersection.$toString(value);
+    }
+
+    throw new Error("unable to serialize to string");
+  };
+
+  export const equals: $EqualsFunction<StructIntersectionDiscriminatedUnion> = (
+    left,
+    right,
+  ) => {
+    if (
+      left["$type"] === "StructDiscriminatedUnionMember1" &&
+      right["$type"] === "StructDiscriminatedUnionMember1"
+    ) {
+      return StructDiscriminatedUnionMember1.equals(
+        left as StructDiscriminatedUnionMember1,
+        right as StructDiscriminatedUnionMember1,
+      );
+    }
+    if (
+      left["$type"] === "StructDiscriminatedUnionMember2" &&
+      right["$type"] === "StructDiscriminatedUnionMember2"
+    ) {
+      return StructDiscriminatedUnionMember2.equals(
+        left as StructDiscriminatedUnionMember2,
+        right as StructDiscriminatedUnionMember2,
+      );
+    }
+    if (
+      left["$type"] === "StructIntersection" &&
+      right["$type"] === "StructIntersection"
+    ) {
+      return StructIntersection.equals(
+        left as StructIntersection,
+        right as StructIntersection,
+      );
+    }
+
+    return Left({
+      left,
+      right,
+      propertyName: "type",
+      propertyValuesUnequal: {
+        left: typeof left,
+        right: typeof right,
+        type: "boolean" as const,
+      },
+      type: "property" as const,
+    });
+  };
+
+  export const filter: $FilterFunction<
+    StructIntersectionDiscriminatedUnion.Filter,
+    StructIntersectionDiscriminatedUnion
+  > = (filter, value) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.on?.["StructDiscriminatedUnionMember1"] !== undefined &&
+      value["$type"] === "StructDiscriminatedUnionMember1"
+    ) {
+      if (
+        !StructDiscriminatedUnionMember1.filter(
+          filter.on["StructDiscriminatedUnionMember1"],
+          value,
+        )
+      ) {
+        return false;
+      }
+    }
+    if (
+      filter.on?.["StructDiscriminatedUnionMember2"] !== undefined &&
+      value["$type"] === "StructDiscriminatedUnionMember2"
+    ) {
+      if (
+        !StructDiscriminatedUnionMember2.filter(
+          filter.on["StructDiscriminatedUnionMember2"],
+          value,
+        )
+      ) {
+        return false;
+      }
+    }
+    if (
+      filter.on?.["StructIntersection"] !== undefined &&
+      value["$type"] === "StructIntersection"
+    ) {
+      if (!StructIntersection.filter(filter.on["StructIntersection"], value)) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly on?: {
+      readonly StructDiscriminatedUnionMember1?: StructDiscriminatedUnionMember1.Filter;
+      readonly StructDiscriminatedUnionMember2?: StructDiscriminatedUnionMember2.Filter;
+      readonly StructIntersection?: StructIntersection.Filter;
+    };
+  };
+
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    StructIntersectionDiscriminatedUnion.Filter
+  > = ({ filter, focusIdentifier, variablePrefix }) => [
+    ...StructDiscriminatedUnionMember1.focusSparqlConstructTriples({
+      filter: filter?.on?.StructDiscriminatedUnionMember1,
+      focusIdentifier,
+      ignoreRdfType: false,
+      variablePrefix: `${variablePrefix}StructDiscriminatedUnionMember1`,
+    }).concat(),
+    ...StructDiscriminatedUnionMember2.focusSparqlConstructTriples({
+      filter: filter?.on?.StructDiscriminatedUnionMember2,
+      focusIdentifier,
+      ignoreRdfType: false,
+      variablePrefix: `${variablePrefix}StructDiscriminatedUnionMember2`,
+    }).concat(),
+    ...StructIntersection.focusSparqlConstructTriples({
+      filter: filter?.on?.StructIntersection,
+      focusIdentifier,
+      ignoreRdfType: false,
+      variablePrefix: `${variablePrefix}StructIntersection`,
+    }).concat(),
+  ];
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    StructIntersectionDiscriminatedUnion.Filter
+  > = ({ filter, focusIdentifier, preferredLanguages, variablePrefix }) => {
+    let patterns: $SparqlPattern[] = [];
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: filter?.$identifier,
+          ignoreRdfType: false,
+          preferredLanguages,
+          propertyPatterns: [],
+          schema: { kind: "Identifier" as const },
+          valueVariable: focusIdentifier,
+          variablePrefix,
+        }),
+      );
+    }
+    patterns.push({
+      patterns: [
+        {
+          patterns: StructDiscriminatedUnionMember1.focusSparqlWherePatterns({
+            filter: filter?.on?.StructDiscriminatedUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}StructDiscriminatedUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: StructDiscriminatedUnionMember2.focusSparqlWherePatterns({
+            filter: filter?.on?.StructDiscriminatedUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}StructDiscriminatedUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: StructIntersection.focusSparqlWherePatterns({
+            filter: filter?.on?.StructIntersection,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}StructIntersection`,
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
+  };
+
+  export const fromJson: $FromJsonObjectFunction<
+    StructIntersectionDiscriminatedUnion.Json,
+    StructIntersectionDiscriminatedUnion,
+    undefined
+  > = (value, options) => {
+    if (value.$type === "StructDiscriminatedUnionMember1") {
+      return StructDiscriminatedUnionMember1.fromJson(value, {
+        ...options,
+        schema:
+          StructIntersectionDiscriminatedUnion.schema.members[
+            "StructDiscriminatedUnionMember1"
+          ].type,
+      }) as Either<Error, StructIntersectionDiscriminatedUnion>;
+    }
+    if (value.$type === "StructDiscriminatedUnionMember2") {
+      return StructDiscriminatedUnionMember2.fromJson(value, {
+        ...options,
+        schema:
+          StructIntersectionDiscriminatedUnion.schema.members[
+            "StructDiscriminatedUnionMember2"
+          ].type,
+      }) as Either<Error, StructIntersectionDiscriminatedUnion>;
+    }
+    if (value.$type === "StructIntersection") {
+      return StructIntersection.fromJson(value, {
+        ...options,
+        schema:
+          StructIntersectionDiscriminatedUnion.schema.members[
+            "StructIntersection"
+          ].type,
+      }) as Either<Error, StructIntersectionDiscriminatedUnion>;
+    }
+
+    throw new Error("unable to deserialize JSON");
+  };
+
+  export const fromRdfResource: $FromRdfResourceFunction<
+    StructIntersectionDiscriminatedUnion
+  > = (resource, options) =>
+    (
+      StructDiscriminatedUnionMember1.fromRdfResource(resource, {
+        ...options,
+        ignoreRdfType: false,
+      }) as Either<Error, StructIntersectionDiscriminatedUnion>
+    )
+      .altLazy(
+        () =>
+          StructDiscriminatedUnionMember2.fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, StructIntersectionDiscriminatedUnion>,
+      )
+      .altLazy(
+        () =>
+          StructIntersection.fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, StructIntersectionDiscriminatedUnion>,
+      );
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    StructIntersectionDiscriminatedUnion,
+    StructIntersectionDiscriminatedUnion.Schema
+  > = (inputValues, options) => {
+    const memberInputValues: Resource.Values[] = Array.from({ length: 3 }).map(
+      () =>
+        Resource.Values.empty({
+          focusResource: inputValues.focusResource,
+          propertyPath: inputValues.propertyPath,
+        }),
+    );
+    for (const inputValue of inputValues) {
+      const inputValueAsValues = inputValue.toValues();
+      let memberOutputValuesEither: Either<Error, unknown> | undefined;
+      for (let memberI = 0; memberI < 3; memberI++) {
+        if (memberI === 0) {
+          memberOutputValuesEither =
+            StructDiscriminatedUnionMember1.fromRdfResourceValues(
+              inputValueAsValues,
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["StructDiscriminatedUnionMember1"]
+                    .type,
+              },
+            );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        } else if (memberI === 1) {
+          memberOutputValuesEither =
+            StructDiscriminatedUnionMember2.fromRdfResourceValues(
+              inputValueAsValues,
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["StructDiscriminatedUnionMember2"]
+                    .type,
+              },
+            );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        } else if (memberI === 2) {
+          memberOutputValuesEither = StructIntersection.fromRdfResourceValues(
+            inputValueAsValues,
+            {
+              ...options,
+              ignoreRdfType: false,
+              schema: options.schema.members["StructIntersection"].type,
+            },
+          );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        }
+      }
+      if (memberOutputValuesEither!.isLeft()) {
+        return memberOutputValuesEither;
+      }
+    }
+
+    let collectedOutputValues: Resource.Values<StructIntersectionDiscriminatedUnion> =
+      Resource.Values.empty({
+        focusResource: inputValues.focusResource,
+        propertyPath: inputValues.propertyPath,
+      });
+    for (let memberI = 0; memberI < 3; memberI++) {
+      if (memberInputValues[memberI].length === 0) {
+        continue;
+      }
+      switch (memberI) {
+        case 0:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...StructDiscriminatedUnionMember1.fromRdfResourceValues(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["StructDiscriminatedUnionMember1"]
+                    .type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+        case 1:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...StructDiscriminatedUnionMember2.fromRdfResourceValues(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["StructDiscriminatedUnionMember2"]
+                    .type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+        case 2:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...StructIntersection.fromRdfResourceValues(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema: options.schema.members["StructIntersection"].type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+      }
+    }
+    return Right(collectedOutputValues);
+  };
+
+  export const hash: $HashFunction<StructIntersectionDiscriminatedUnion> = (
+    hasher,
+    value,
+  ) => {
+    if (value["$type"] === "StructDiscriminatedUnionMember1") {
+      StructDiscriminatedUnionMember1.hash(hasher, value);
+      return;
+    }
+    if (value["$type"] === "StructDiscriminatedUnionMember2") {
+      StructDiscriminatedUnionMember2.hash(hasher, value);
+      return;
+    }
+    if (value["$type"] === "StructIntersection") {
+      StructIntersection.hash(hasher, value);
+      return;
+    }
+  };
+
+  export type Identifier = BlankNode | NamedNode;
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+  }
+
+  export const isStructIntersectionDiscriminatedUnion: $ObjectTypeGuardFunction<
+    StructIntersectionDiscriminatedUnion
+  > = (object): object is StructIntersectionDiscriminatedUnion =>
+    StructDiscriminatedUnionMember1.isStructDiscriminatedUnionMember1(object) ||
+    StructDiscriminatedUnionMember2.isStructDiscriminatedUnionMember2(object) ||
+    StructIntersection.isStructIntersection(object);
+
+  export type Json =
+    | (StructDiscriminatedUnionMember1.Json & {
+        $type: "StructDiscriminatedUnionMember1";
+      })
+    | (StructDiscriminatedUnionMember2.Json & {
+        $type: "StructDiscriminatedUnionMember2";
+      })
+    | (StructIntersection.Json & { $type: "StructIntersection" });
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.discriminatedUnion("$type", [
+        StructDiscriminatedUnionMember1.Json.schema().extend({
+          $type: z.literal("StructDiscriminatedUnionMember1"),
+        }),
+        StructDiscriminatedUnionMember2.Json.schema().extend({
+          $type: z.literal("StructDiscriminatedUnionMember2"),
+        }),
+        z.object({
+          ...StructIntersectionMember1.Json.schema().shape,
+          ...StructIntersectionMember2.Json.schema().shape,
+          $type: z.literal("StructIntersection"),
+        }),
+      ]) satisfies z.ZodType<Json>;
+    }
+  }
+
+  export const schema = {
+    kind: "ObjectDiscriminatedUnion" as const,
+    members: {
+      StructDiscriminatedUnionMember1: {
+        discriminantValues: ["StructDiscriminatedUnionMember1"],
+        type: StructDiscriminatedUnionMember1.schema,
+      },
+      StructDiscriminatedUnionMember2: {
+        discriminantValues: ["StructDiscriminatedUnionMember2"],
+        type: StructDiscriminatedUnionMember2.schema,
+      },
+      StructIntersection: {
+        discriminantValues: ["StructIntersection"],
+        type: StructIntersection.schema,
+      },
+    },
+  };
+
+  export type Schema = typeof schema;
+
+  export const sparqlConstructQuery: $SparqlConstructQueryFunction<
+    StructIntersectionDiscriminatedUnion.Filter
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }) => {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "structIntersectionDiscriminatedUnion";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        StructIntersectionDiscriminatedUnion.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          StructIntersectionDiscriminatedUnion.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  };
+
+  export const sparqlConstructQueryString: $SparqlConstructQueryStringFunction<
+    StructIntersectionDiscriminatedUnion.Filter
+  > = (parameters) =>
+    new sparqljs.Generator(parameters).stringify(
+      StructIntersectionDiscriminatedUnion.sparqlConstructQuery(parameters),
+    );
+
+  export const toJson: $ToJsonObjectFunction<
+    StructIntersectionDiscriminatedUnion,
+    StructIntersectionDiscriminatedUnion.Json
+  > = (value) => {
+    if (value["$type"] === "StructDiscriminatedUnionMember1") {
+      return {
+        ...StructDiscriminatedUnionMember1.toJson(value),
+        $type: "StructDiscriminatedUnionMember1",
+      };
+    }
+    if (value["$type"] === "StructDiscriminatedUnionMember2") {
+      return {
+        ...StructDiscriminatedUnionMember2.toJson(value),
+        $type: "StructDiscriminatedUnionMember2",
+      };
+    }
+    if (value["$type"] === "StructIntersection") {
+      return {
+        ...StructIntersection.toJson(value),
+        $type: "StructIntersection",
+      };
+    }
+
+    throw new Error("unable to serialize to JSON");
+  };
+
+  export const toLoggable: $ToLoggableFunction<
+    StructIntersectionDiscriminatedUnion
+  > = (value) => {
+    if (value["$type"] === "StructDiscriminatedUnionMember1") {
+      return StructDiscriminatedUnionMember1.toLoggable(value);
+    }
+    if (value["$type"] === "StructDiscriminatedUnionMember2") {
+      return StructDiscriminatedUnionMember2.toLoggable(value);
+    }
+    if (value["$type"] === "StructIntersection") {
+      return StructIntersection.toLoggable(value);
+    }
+
+    throw new Error("unable to serialize to loggable");
+  };
+
+  export const toRdfResource: $ToRdfResourceFunction<
+    StructIntersectionDiscriminatedUnion.Identifier,
+    StructIntersectionDiscriminatedUnion
+  > = (object, options) => {
+    if (
+      StructDiscriminatedUnionMember1.isStructDiscriminatedUnionMember1(object)
+    ) {
+      return StructDiscriminatedUnionMember1.toRdfResource(object, options);
+    }
+    if (
+      StructDiscriminatedUnionMember2.isStructDiscriminatedUnionMember2(object)
+    ) {
+      return StructDiscriminatedUnionMember2.toRdfResource(object, options);
+    }
+    if (StructIntersection.isStructIntersection(object)) {
+      return StructIntersection.toRdfResource(object, options);
+    }
+    throw new Error("unrecognized type");
+  };
+
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    StructIntersectionDiscriminatedUnion,
+    BlankNode | NamedNode
+  > = (value, _options): (BlankNode | NamedNode)[] => {
+    if (value["$type"] === "StructDiscriminatedUnionMember1") {
+      return StructDiscriminatedUnionMember1.toRdfResourceValues(value, {
+        graph: _options.graph,
+        propertyPath: _options.propertyPath,
+        resource: _options.resource,
+        resourceSet: _options.resourceSet,
+      });
+    }
+    if (value["$type"] === "StructDiscriminatedUnionMember2") {
+      return StructDiscriminatedUnionMember2.toRdfResourceValues(value, {
+        graph: _options.graph,
+        propertyPath: _options.propertyPath,
+        resource: _options.resource,
+        resourceSet: _options.resourceSet,
+      });
+    }
+    if (value["$type"] === "StructIntersection") {
+      return StructIntersection.toRdfResourceValues(value, {
+        graph: _options.graph,
+        propertyPath: _options.propertyPath,
+        resource: _options.resource,
+        resourceSet: _options.resourceSet,
+      });
+    }
+
+    throw new Error("unable to serialize to RDF");
+  };
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    StructIntersectionDiscriminatedUnion.Filter,
+    StructIntersectionDiscriminatedUnion.Schema
+  > = ({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      StructDiscriminatedUnionMember1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["StructDiscriminatedUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["StructDiscriminatedUnionMember1"].type,
+      }),
+    );
+    triples = triples.concat(
+      StructDiscriminatedUnionMember2.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["StructDiscriminatedUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["StructDiscriminatedUnionMember2"].type,
+      }),
+    );
+    triples = triples.concat(
+      StructIntersection.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["StructIntersection"],
+        ignoreRdfType: false,
+        schema: schema.members["StructIntersection"].type,
+      }),
+    );
+
+    return triples;
+  };
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    StructIntersectionDiscriminatedUnion.Filter,
+    StructIntersectionDiscriminatedUnion.Schema
+  > = ({ filter, schema, ...otherParameters }) => {
+    const unionPatterns: sparqljs.GroupPattern[] = [];
+
+    unionPatterns.push({
+      patterns: StructDiscriminatedUnionMember1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["StructDiscriminatedUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["StructDiscriminatedUnionMember1"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: StructDiscriminatedUnionMember2.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["StructDiscriminatedUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["StructDiscriminatedUnionMember2"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: StructIntersection.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["StructIntersection"],
+        ignoreRdfType: false,
+        schema: schema.members["StructIntersection"].type,
+      }).concat(),
+      type: "group",
+    });
+
+    return [{ patterns: unionPatterns, type: "union" }];
+  };
+}
+
 export type $Object =
   | $DefaultPartial.Discriminated
   | $NamedDefaultPartial.Discriminated
@@ -65363,7 +64232,6 @@ export type $Object =
   | DisplayStruct.Discriminated
   | ExplicitFromToRdfTypesStruct.Discriminated
   | ExplicitRdfTypeStruct.Discriminated
-  | FlattenDiscriminatedUnionMember3.Discriminated
   | HasValuesStruct.Discriminated
   | IgnoredPropertiesStruct.Discriminated
   | IndirectRecursiveStruct.Discriminated
@@ -65478,11 +64346,6 @@ export namespace $Object {
         return ExplicitRdfTypeStruct.equals(
           left,
           right as ExplicitRdfTypeStruct,
-        );
-      case "FlattenDiscriminatedUnionMember3":
-        return FlattenDiscriminatedUnionMember3.equals(
-          left,
-          right as FlattenDiscriminatedUnionMember3,
         );
       case "HasValuesStruct":
         return HasValuesStruct.equals(left, right as HasValuesStruct);
@@ -65686,9 +64549,6 @@ export namespace $Object {
         break;
       case "ExplicitRdfTypeStruct":
         ExplicitRdfTypeStruct.hash(hasher, object);
-        break;
-      case "FlattenDiscriminatedUnionMember3":
-        FlattenDiscriminatedUnionMember3.hash(hasher, object);
         break;
       case "HasValuesStruct":
         HasValuesStruct.hash(hasher, object);
@@ -65899,11 +64759,6 @@ export namespace $Object {
         return {
           ...ExplicitRdfTypeStruct.toJson(object),
           $type: "ExplicitRdfTypeStruct" as const,
-        };
-      case "FlattenDiscriminatedUnionMember3":
-        return {
-          ...FlattenDiscriminatedUnionMember3.toJson(object),
-          $type: "FlattenDiscriminatedUnionMember3" as const,
         };
       case "HasValuesStruct":
         return {
@@ -66160,8 +65015,6 @@ export namespace $Object {
         return ExplicitFromToRdfTypesStruct.toRdfResource(object, options);
       case "ExplicitRdfTypeStruct":
         return ExplicitRdfTypeStruct.toRdfResource(object, options);
-      case "FlattenDiscriminatedUnionMember3":
-        return FlattenDiscriminatedUnionMember3.toRdfResource(object, options);
       case "HasValuesStruct":
         return HasValuesStruct.toRdfResource(object, options);
       case "IgnoredPropertiesStruct":
@@ -66309,8 +65162,6 @@ export namespace $Object {
         return ExplicitFromToRdfTypesStruct.$toString(object);
       case "ExplicitRdfTypeStruct":
         return ExplicitRdfTypeStruct.$toString(object);
-      case "FlattenDiscriminatedUnionMember3":
-        return FlattenDiscriminatedUnionMember3.$toString(object);
       case "HasValuesStruct":
         return HasValuesStruct.$toString(object);
       case "IgnoredPropertiesStruct":
@@ -66409,35 +65260,6 @@ export namespace $Object {
 }
 
 export interface $ObjectSet {
-  flattenDiscriminatedUnion(
-    identifier: FlattenDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, FlattenDiscriminatedUnion>>;
-
-  flattenDiscriminatedUnionCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        FlattenDiscriminatedUnion.Filter,
-        FlattenDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  flattenDiscriminatedUnionIdentifiers(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion.Identifier[]>>;
-
-  flattenDiscriminatedUnions(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion[]>>;
-
   lazilyResolvedDiscriminatedUnion(
     identifier: LazilyResolvedDiscriminatedUnion.Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -66584,6 +65406,37 @@ export interface $ObjectSet {
       StructDiscriminatedUnion.Identifier
     >,
   ): Promise<Either<Error, readonly StructDiscriminatedUnion[]>>;
+
+  structIntersectionDiscriminatedUnion(
+    identifier: StructIntersectionDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructIntersectionDiscriminatedUnion>>;
+
+  structIntersectionDiscriminatedUnionCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructIntersectionDiscriminatedUnion.Filter,
+        StructIntersectionDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  structIntersectionDiscriminatedUnionIdentifiers(
+    query?: $ObjectSet.Query<
+      StructIntersectionDiscriminatedUnion.Filter,
+      StructIntersectionDiscriminatedUnion.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly StructIntersectionDiscriminatedUnion.Identifier[]>
+  >;
+
+  structIntersectionDiscriminatedUnions(
+    query?: $ObjectSet.Query<
+      StructIntersectionDiscriminatedUnion.Filter,
+      StructIntersectionDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructIntersectionDiscriminatedUnion[]>>;
 
   structIntersection(
     identifier: StructIntersection.Identifier,
@@ -66976,37 +65829,6 @@ export interface $ObjectSet {
       ExplicitRdfTypeStruct.Identifier
     >,
   ): Promise<Either<Error, readonly ExplicitRdfTypeStruct[]>>;
-
-  flattenDiscriminatedUnionMember3(
-    identifier: FlattenDiscriminatedUnionMember3.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, FlattenDiscriminatedUnionMember3>>;
-
-  flattenDiscriminatedUnionMember3Count(
-    query?: Pick<
-      $ObjectSet.Query<
-        FlattenDiscriminatedUnionMember3.Filter,
-        FlattenDiscriminatedUnionMember3.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  flattenDiscriminatedUnionMember3Identifiers(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnionMember3.Filter,
-      FlattenDiscriminatedUnionMember3.Identifier
-    >,
-  ): Promise<
-    Either<Error, readonly FlattenDiscriminatedUnionMember3.Identifier[]>
-  >;
-
-  flattenDiscriminatedUnionMember3s(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnionMember3.Filter,
-      FlattenDiscriminatedUnionMember3.Identifier
-    >,
-  ): Promise<Either<Error, readonly FlattenDiscriminatedUnionMember3[]>>;
 
   hasValuesStruct(
     identifier: HasValuesStruct.Identifier,
@@ -68208,119 +67030,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     });
   }
 
-  async flattenDiscriminatedUnion(
-    identifier: FlattenDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, FlattenDiscriminatedUnion>> {
-    return this.flattenDiscriminatedUnionSync(identifier, options);
-  }
-
-  flattenDiscriminatedUnionSync(
-    identifier: FlattenDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, FlattenDiscriminatedUnion> {
-    return this.flattenDiscriminatedUnionsSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async flattenDiscriminatedUnionCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        FlattenDiscriminatedUnion.Filter,
-        FlattenDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.flattenDiscriminatedUnionCountSync(query);
-  }
-
-  flattenDiscriminatedUnionCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        FlattenDiscriminatedUnion.Filter,
-        FlattenDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.flattenDiscriminatedUnionsSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async flattenDiscriminatedUnionIdentifiers(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion.Identifier[]>> {
-    return this.flattenDiscriminatedUnionIdentifiersSync(query);
-  }
-
-  flattenDiscriminatedUnionIdentifiersSync(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >,
-  ): Either<Error, readonly FlattenDiscriminatedUnion.Identifier[]> {
-    return this.flattenDiscriminatedUnionsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async flattenDiscriminatedUnions(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion[]>> {
-    return this.flattenDiscriminatedUnionsSync(query);
-  }
-
-  flattenDiscriminatedUnionsSync(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >,
-  ): Either<Error, readonly FlattenDiscriminatedUnion[]> {
-    return this.#objectDiscriminatedUnionsSync<
-      FlattenDiscriminatedUnion,
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >(
-      [
-        {
-          filter: FlattenDiscriminatedUnion.filter,
-          fromRdfResource: StructDiscriminatedUnionMember1.fromRdfResource,
-          fromRdfTypes: [
-            StructDiscriminatedUnionMember1.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-        },
-        {
-          filter: FlattenDiscriminatedUnion.filter,
-          fromRdfResource: StructDiscriminatedUnionMember2.fromRdfResource,
-          fromRdfTypes: [
-            StructDiscriminatedUnionMember2.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-        },
-        {
-          filter: FlattenDiscriminatedUnion.filter,
-          fromRdfResource: FlattenDiscriminatedUnionMember3.fromRdfResource,
-          fromRdfTypes: [
-            FlattenDiscriminatedUnionMember3.schema.properties.$rdfType
-              .fromRdfType,
-          ],
-        },
-      ],
-      query,
-    );
-  }
-
   async lazilyResolvedDiscriminatedUnion(
     identifier: LazilyResolvedDiscriminatedUnion.Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -68838,6 +67547,118 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
             StructDiscriminatedUnionMember2.schema.properties.$rdfType
               .fromRdfType,
           ],
+        },
+      ],
+      query,
+    );
+  }
+
+  async structIntersectionDiscriminatedUnion(
+    identifier: StructIntersectionDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructIntersectionDiscriminatedUnion>> {
+    return this.structIntersectionDiscriminatedUnionSync(identifier, options);
+  }
+
+  structIntersectionDiscriminatedUnionSync(
+    identifier: StructIntersectionDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, StructIntersectionDiscriminatedUnion> {
+    return this.structIntersectionDiscriminatedUnionsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async structIntersectionDiscriminatedUnionCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructIntersectionDiscriminatedUnion.Filter,
+        StructIntersectionDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.structIntersectionDiscriminatedUnionCountSync(query);
+  }
+
+  structIntersectionDiscriminatedUnionCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        StructIntersectionDiscriminatedUnion.Filter,
+        StructIntersectionDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.structIntersectionDiscriminatedUnionsSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async structIntersectionDiscriminatedUnionIdentifiers(
+    query?: $ObjectSet.Query<
+      StructIntersectionDiscriminatedUnion.Filter,
+      StructIntersectionDiscriminatedUnion.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly StructIntersectionDiscriminatedUnion.Identifier[]>
+  > {
+    return this.structIntersectionDiscriminatedUnionIdentifiersSync(query);
+  }
+
+  structIntersectionDiscriminatedUnionIdentifiersSync(
+    query?: $ObjectSet.Query<
+      StructIntersectionDiscriminatedUnion.Filter,
+      StructIntersectionDiscriminatedUnion.Identifier
+    >,
+  ): Either<Error, readonly StructIntersectionDiscriminatedUnion.Identifier[]> {
+    return this.structIntersectionDiscriminatedUnionsSync(query).map(
+      (objects) => objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async structIntersectionDiscriminatedUnions(
+    query?: $ObjectSet.Query<
+      StructIntersectionDiscriminatedUnion.Filter,
+      StructIntersectionDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructIntersectionDiscriminatedUnion[]>> {
+    return this.structIntersectionDiscriminatedUnionsSync(query);
+  }
+
+  structIntersectionDiscriminatedUnionsSync(
+    query?: $ObjectSet.Query<
+      StructIntersectionDiscriminatedUnion.Filter,
+      StructIntersectionDiscriminatedUnion.Identifier
+    >,
+  ): Either<Error, readonly StructIntersectionDiscriminatedUnion[]> {
+    return this.#objectDiscriminatedUnionsSync<
+      StructIntersectionDiscriminatedUnion,
+      StructIntersectionDiscriminatedUnion.Filter,
+      StructIntersectionDiscriminatedUnion.Identifier
+    >(
+      [
+        {
+          filter: StructIntersectionDiscriminatedUnion.filter,
+          fromRdfResource: StructDiscriminatedUnionMember1.fromRdfResource,
+          fromRdfTypes: [
+            StructDiscriminatedUnionMember1.schema.properties.$rdfType
+              .fromRdfType,
+          ],
+        },
+        {
+          filter: StructIntersectionDiscriminatedUnion.filter,
+          fromRdfResource: StructDiscriminatedUnionMember2.fromRdfResource,
+          fromRdfTypes: [
+            StructDiscriminatedUnionMember2.schema.properties.$rdfType
+              .fromRdfType,
+          ],
+        },
+        {
+          filter: StructIntersectionDiscriminatedUnion.filter,
+          fromRdfResource: StructIntersection.fromRdfResource,
+          fromRdfTypes: [],
         },
       ],
       query,
@@ -70105,103 +68926,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         fromRdfResource: ExplicitRdfTypeStruct.fromRdfResource,
         fromRdfTypes: [
           ExplicitRdfTypeStruct.schema.properties.$rdfType.fromRdfType,
-        ],
-      },
-      query,
-    );
-  }
-
-  async flattenDiscriminatedUnionMember3(
-    identifier: FlattenDiscriminatedUnionMember3.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, FlattenDiscriminatedUnionMember3>> {
-    return this.flattenDiscriminatedUnionMember3Sync(identifier, options);
-  }
-
-  flattenDiscriminatedUnionMember3Sync(
-    identifier: FlattenDiscriminatedUnionMember3.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, FlattenDiscriminatedUnionMember3> {
-    return this.flattenDiscriminatedUnionMember3sSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async flattenDiscriminatedUnionMember3Count(
-    query?: Pick<
-      $ObjectSet.Query<
-        FlattenDiscriminatedUnionMember3.Filter,
-        FlattenDiscriminatedUnionMember3.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.flattenDiscriminatedUnionMember3CountSync(query);
-  }
-
-  flattenDiscriminatedUnionMember3CountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        FlattenDiscriminatedUnionMember3.Filter,
-        FlattenDiscriminatedUnionMember3.Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.flattenDiscriminatedUnionMember3sSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async flattenDiscriminatedUnionMember3Identifiers(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnionMember3.Filter,
-      FlattenDiscriminatedUnionMember3.Identifier
-    >,
-  ): Promise<
-    Either<Error, readonly FlattenDiscriminatedUnionMember3.Identifier[]>
-  > {
-    return this.flattenDiscriminatedUnionMember3IdentifiersSync(query);
-  }
-
-  flattenDiscriminatedUnionMember3IdentifiersSync(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnionMember3.Filter,
-      FlattenDiscriminatedUnionMember3.Identifier
-    >,
-  ): Either<Error, readonly FlattenDiscriminatedUnionMember3.Identifier[]> {
-    return this.flattenDiscriminatedUnionMember3sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async flattenDiscriminatedUnionMember3s(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnionMember3.Filter,
-      FlattenDiscriminatedUnionMember3.Identifier
-    >,
-  ): Promise<Either<Error, readonly FlattenDiscriminatedUnionMember3[]>> {
-    return this.flattenDiscriminatedUnionMember3sSync(query);
-  }
-
-  flattenDiscriminatedUnionMember3sSync(
-    query?: $ObjectSet.Query<
-      FlattenDiscriminatedUnionMember3.Filter,
-      FlattenDiscriminatedUnionMember3.Identifier
-    >,
-  ): Either<Error, readonly FlattenDiscriminatedUnionMember3[]> {
-    return this.#objectsSync<
-      FlattenDiscriminatedUnionMember3,
-      FlattenDiscriminatedUnionMember3.Filter,
-      FlattenDiscriminatedUnionMember3.Identifier
-    >(
-      {
-        filter: FlattenDiscriminatedUnionMember3.filter,
-        fromRdfResource: FlattenDiscriminatedUnionMember3.fromRdfResource,
-        fromRdfTypes: [
-          FlattenDiscriminatedUnionMember3.schema.properties.$rdfType
-            .fromRdfType,
         ],
       },
       query,
@@ -74272,58 +72996,6 @@ export class $SparqlObjectSet implements $ObjectSet {
     this.#sparqlClient = sparqlClient;
   }
 
-  async flattenDiscriminatedUnion(
-    identifier: FlattenDiscriminatedUnion.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, FlattenDiscriminatedUnion>> {
-    return (
-      await this.flattenDiscriminatedUnions({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async flattenDiscriminatedUnionCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        FlattenDiscriminatedUnion.Filter,
-        FlattenDiscriminatedUnion.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.#objectCount<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >(FlattenDiscriminatedUnion, query);
-  }
-
-  async flattenDiscriminatedUnionIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion.Identifier[]>> {
-    return this.#objectIdentifiers<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >(FlattenDiscriminatedUnion, query);
-  }
-
-  async flattenDiscriminatedUnions(
-    query?: $SparqlObjectSet.Query<
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >,
-  ): Promise<Either<Error, readonly FlattenDiscriminatedUnion[]>> {
-    return this.#objects<
-      FlattenDiscriminatedUnion,
-      FlattenDiscriminatedUnion.Filter,
-      FlattenDiscriminatedUnion.Identifier
-    >(FlattenDiscriminatedUnion, query);
-  }
-
   async lazilyResolvedDiscriminatedUnion(
     identifier: LazilyResolvedDiscriminatedUnion.Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -74584,6 +73256,60 @@ export class $SparqlObjectSet implements $ObjectSet {
       StructDiscriminatedUnion.Filter,
       StructDiscriminatedUnion.Identifier
     >(StructDiscriminatedUnion, query);
+  }
+
+  async structIntersectionDiscriminatedUnion(
+    identifier: StructIntersectionDiscriminatedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, StructIntersectionDiscriminatedUnion>> {
+    return (
+      await this.structIntersectionDiscriminatedUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async structIntersectionDiscriminatedUnionCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        StructIntersectionDiscriminatedUnion.Filter,
+        StructIntersectionDiscriminatedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      StructIntersectionDiscriminatedUnion.Filter,
+      StructIntersectionDiscriminatedUnion.Identifier
+    >(StructIntersectionDiscriminatedUnion, query);
+  }
+
+  async structIntersectionDiscriminatedUnionIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      StructIntersectionDiscriminatedUnion.Filter,
+      StructIntersectionDiscriminatedUnion.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly StructIntersectionDiscriminatedUnion.Identifier[]>
+  > {
+    return this.#objectIdentifiers<
+      StructIntersectionDiscriminatedUnion.Filter,
+      StructIntersectionDiscriminatedUnion.Identifier
+    >(StructIntersectionDiscriminatedUnion, query);
+  }
+
+  async structIntersectionDiscriminatedUnions(
+    query?: $SparqlObjectSet.Query<
+      StructIntersectionDiscriminatedUnion.Filter,
+      StructIntersectionDiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly StructIntersectionDiscriminatedUnion[]>> {
+    return this.#objects<
+      StructIntersectionDiscriminatedUnion,
+      StructIntersectionDiscriminatedUnion.Filter,
+      StructIntersectionDiscriminatedUnion.Identifier
+    >(StructIntersectionDiscriminatedUnion, query);
   }
 
   async structIntersection(
@@ -75306,60 +74032,6 @@ export class $SparqlObjectSet implements $ObjectSet {
       ExplicitRdfTypeStruct.Filter,
       ExplicitRdfTypeStruct.Identifier
     >(ExplicitRdfTypeStruct, query);
-  }
-
-  async flattenDiscriminatedUnionMember3(
-    identifier: FlattenDiscriminatedUnionMember3.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, FlattenDiscriminatedUnionMember3>> {
-    return (
-      await this.flattenDiscriminatedUnionMember3s({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async flattenDiscriminatedUnionMember3Count(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        FlattenDiscriminatedUnionMember3.Filter,
-        FlattenDiscriminatedUnionMember3.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.#objectCount<
-      FlattenDiscriminatedUnionMember3.Filter,
-      FlattenDiscriminatedUnionMember3.Identifier
-    >(FlattenDiscriminatedUnionMember3, query);
-  }
-
-  async flattenDiscriminatedUnionMember3Identifiers(
-    query?: $SparqlObjectSet.Query<
-      FlattenDiscriminatedUnionMember3.Filter,
-      FlattenDiscriminatedUnionMember3.Identifier
-    >,
-  ): Promise<
-    Either<Error, readonly FlattenDiscriminatedUnionMember3.Identifier[]>
-  > {
-    return this.#objectIdentifiers<
-      FlattenDiscriminatedUnionMember3.Filter,
-      FlattenDiscriminatedUnionMember3.Identifier
-    >(FlattenDiscriminatedUnionMember3, query);
-  }
-
-  async flattenDiscriminatedUnionMember3s(
-    query?: $SparqlObjectSet.Query<
-      FlattenDiscriminatedUnionMember3.Filter,
-      FlattenDiscriminatedUnionMember3.Identifier
-    >,
-  ): Promise<Either<Error, readonly FlattenDiscriminatedUnionMember3[]>> {
-    return this.#objects<
-      FlattenDiscriminatedUnionMember3,
-      FlattenDiscriminatedUnionMember3.Filter,
-      FlattenDiscriminatedUnionMember3.Identifier
-    >(FlattenDiscriminatedUnionMember3, query);
   }
 
   async hasValuesStruct(
