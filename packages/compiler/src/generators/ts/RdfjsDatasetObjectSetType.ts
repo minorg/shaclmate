@@ -1,5 +1,6 @@
 import { Memoize } from "typescript-memoize";
 import { AbstractObjectSetType } from "./AbstractObjectSetType.js";
+import type { Callable } from "./Callable.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
@@ -100,6 +101,9 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
             | ObjectDiscriminatedUnionType
             | ObjectIntersectionType
             | ObjectType,
+          options?: {
+            filterFunction?: Callable;
+          },
         ): Code => {
           let fromRdfTypeVariables: readonly Code[];
           switch (namedObjectType.kind) {
@@ -115,7 +119,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
               break;
           }
 
-          return code`{ filter: ${namedObjectType.filterFunction.annotatedUsage}, fromRdfResource: ${namedObjectType.expression}.fromRdfResource, fromRdfTypes: ${arrayOf(...fromRdfTypeVariables)} }`;
+          return code`{ filter: ${(options?.filterFunction ?? namedObjectType.filterFunction).annotatedUsage}, fromRdfResource: ${namedObjectType.expression}.fromRdfResource, fromRdfTypes: ${arrayOf(...fromRdfTypeVariables)} }`;
         };
 
         switch (namedObjectType.kind) {
@@ -130,7 +134,11 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
 ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.expression}[]> {
   return this.#objectDiscriminatedUnionsSync<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>([
     ${joinCode(
-      namedObjectType.members.map((member) => runtimeObjectType(member.type)),
+      namedObjectType.members.map((member) =>
+        runtimeObjectType(member.type, {
+          filterFunction: namedObjectType.filterFunction,
+        }),
+      ),
       { on: ", " },
     )}
   ], query);
