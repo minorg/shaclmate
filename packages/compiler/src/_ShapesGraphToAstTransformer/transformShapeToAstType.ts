@@ -3,6 +3,7 @@ import type * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type { ShapeStack } from "./ShapeStack.js";
+import { transformShapeNodeConstraintToAstType } from "./transformShapeNodeConstraintToAstType.js";
 import { transformShapeToAstCompoundType } from "./transformShapeToAstCompoundType.js";
 import { transformShapeToAstListType } from "./transformShapeToAstListType.js";
 import { transformShapeToAstStructType } from "./transformShapeToAstStructType.js";
@@ -11,6 +12,7 @@ import { transformShapeToAstTermType } from "./transformShapeToAstTermType.js";
 const tryTransformShapeToAstTypeMethods = [
   transformShapeToAstListType, // List type must be before compound type since a list shape uses sh:xone
   transformShapeToAstCompoundType,
+  transformShapeNodeConstraintToAstType,
   transformShapeToAstStructType,
 ];
 

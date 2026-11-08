@@ -201,32 +201,6 @@ export const harnesses = {
     }),
     kitchenSink.ExplicitRdfTypeStruct,
   ),
-  flattenDiscriminatedUnionMember1: new Harness(
-    kitchenSink.StructDiscriminatedUnionMember1.createUnsafe({
-      $identifier,
-      structDiscriminatedUnionMemberCommon: "test common property",
-      structDiscriminatedUnionMember1Distinct: "test member 1",
-    }),
-    kitchenSink.FlattenDiscriminatedUnion,
-    "FlattenDiscriminatedUnion",
-  ),
-  flattenDiscriminatedUnionMember2: new Harness(
-    kitchenSink.StructDiscriminatedUnionMember2.createUnsafe({
-      $identifier,
-      structDiscriminatedUnionMemberCommon: "test common property",
-      structDiscriminatedUnionMember2Distinct: "test member 2",
-    }),
-    kitchenSink.FlattenDiscriminatedUnion,
-    "FlattenDiscriminatedUnion",
-  ),
-  flattenDiscriminatedUnionMember3: new Harness(
-    kitchenSink.FlattenDiscriminatedUnionMember3.createUnsafe({
-      $identifier,
-      flattenDiscriminatedUnionMember3String: "test",
-    }),
-    kitchenSink.FlattenDiscriminatedUnion,
-    "FlattenDiscriminatedUnion",
-  ),
   indirectRecursiveStruct: new Harness(
     kitchenSink.IndirectRecursiveStruct.createUnsafe({
       indirectRecursiveHelper:
@@ -679,6 +653,34 @@ export const harnesses = {
       structIntersectionMember2Distinct: "test2",
     }),
     kitchenSink.StructIntersection,
+  ),
+  structIntersectionDiscriminatedUnion1: new Harness(
+    kitchenSink.StructDiscriminatedUnionMember1.createUnsafe({
+      $identifier,
+      structDiscriminatedUnionMemberCommon: "test common parent",
+      structDiscriminatedUnionMember1Distinct: "test",
+    }),
+    kitchenSink.StructIntersectionDiscriminatedUnion,
+    "StructIntersectionDiscriminatedUnion",
+  ),
+  structIntersectionDiscriminatedUnion2: new Harness(
+    kitchenSink.StructDiscriminatedUnionMember2.createUnsafe({
+      $identifier,
+      structDiscriminatedUnionMemberCommon: "test common parent",
+      structDiscriminatedUnionMember2Distinct: "test",
+    }),
+    kitchenSink.StructIntersectionDiscriminatedUnion,
+    "StructIntersectionDiscriminatedUnion",
+  ),
+  structIntersectionDiscriminatedUnion3: new Harness(
+    kitchenSink.StructIntersection.createUnsafe({
+      $identifier,
+      structIntersectionMemberCommon: "test common",
+      structIntersectionMember1Distinct: "test1",
+      structIntersectionMember2Distinct: "test2",
+    }),
+    kitchenSink.StructIntersectionDiscriminatedUnion,
+    "StructIntersectionDiscriminatedUnion",
   ),
   targetClassStruct: new Harness(
     kitchenSink.TargetClassStruct.createUnsafe({

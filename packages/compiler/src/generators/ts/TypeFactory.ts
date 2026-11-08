@@ -132,7 +132,7 @@ export class TypeFactory {
     }
 
     const objectDiscriminatedUnionIdentifierType = this.createIdentifierType(
-      ast.StructCompoundType.identifierType(astType),
+      ast.StructCompoundType.identifierType(astType).unsafeCoerce(),
     );
 
     const objectDiscriminatedUnionTypeName = astType.name.map((name) =>
@@ -142,38 +142,31 @@ export class TypeFactory {
     const objectDiscriminatedUnionType = new ObjectDiscriminatedUnionType({
       ...this.constructorParameters,
       comment: astType.comment,
-      identifierProperty:
-        astType.isStructDiscriminatedUnionType() &&
-        astType.members.every((member) => {
-          switch (member.type.kind) {
-            case "DiscriminatedUnion":
-              return member.type.members.every((member) =>
-                member.type.identifierField.isJust(),
-              );
-            case "Struct":
-              return member.type.identifierField.isJust();
-            default:
-              member.type satisfies never;
-              throw new Error("should never reach this point");
-          }
-        })
-          ? Maybe.of(
-              new ObjectType.IdentifierProperty({
-                ...this.constructorParameters,
-                name: `${this.configuration.syntheticNamePrefix}identifier`,
-                objectType: { name: objectDiscriminatedUnionTypeName },
-                type: objectDiscriminatedUnionIdentifierType,
-              }),
-            )
-          : Maybe.empty(),
+      identifierProperty: ast.StructCompoundType.hasIdentifierField(astType)
+        ? Maybe.of(
+            new ObjectType.IdentifierProperty({
+              ...this.constructorParameters,
+              name: `${this.configuration.syntheticNamePrefix}identifier`,
+              objectType: { name: objectDiscriminatedUnionTypeName },
+              type: objectDiscriminatedUnionIdentifierType,
+            }),
+          )
+        : Maybe.empty(),
       identifierType: objectDiscriminatedUnionIdentifierType,
       label: astType.label,
-      members: ast.StructCompoundType.memberStructTypes(astType).map(
-        (astStructType) => ({
+      members: astType.members.map((member) => {
+        const type = this.createType(member.type);
+        invariant(
+          type.kind === "ObjectDiscriminatedUnion" ||
+            type.kind === "ObjectIntersection" ||
+            type.kind === "Object",
+          type.kind,
+        );
+        return {
           discriminantValue: Maybe.empty(),
-          type: this.createObjectType(astStructType),
-        }),
-      ),
+          type: type,
+        };
+      }),
       name: objectDiscriminatedUnionTypeName,
       recursive: astType.recursive,
       shapeIdentifier: astType.shapeIdentifier,
@@ -202,7 +195,7 @@ export class TypeFactory {
     }
 
     const objectIntersectionIdentifierType = this.createIdentifierType(
-      ast.StructCompoundType.identifierType(astType),
+      ast.StructCompoundType.identifierType(astType).unsafeCoerce(),
     );
 
     const objectIntersectionTypeName = astType.name.map((name) =>
@@ -212,37 +205,26 @@ export class TypeFactory {
     const objectIntersectionType = new ObjectIntersectionType({
       ...this.constructorParameters,
       comment: astType.comment,
-      identifierProperty:
-        astType.isStructIntersectionType() &&
-        astType.members.every((member) => {
-          switch (member.type.kind) {
-            case "Intersection":
-              return member.type.members.every((member) =>
-                member.type.identifierField.isJust(),
-              );
-            case "Struct":
-              return member.type.identifierField.isJust();
-            default:
-              member.type satisfies never;
-              throw new Error("should never reach this point");
-          }
-        })
-          ? Maybe.of(
-              new ObjectType.IdentifierProperty({
-                ...this.constructorParameters,
-                name: `${this.configuration.syntheticNamePrefix}identifier`,
-                objectType: { name: objectIntersectionTypeName },
-                type: objectIntersectionIdentifierType,
-              }),
-            )
-          : Maybe.empty(),
+      identifierProperty: ast.StructCompoundType.hasIdentifierField(astType)
+        ? Maybe.of(
+            new ObjectType.IdentifierProperty({
+              ...this.constructorParameters,
+              name: `${this.configuration.syntheticNamePrefix}identifier`,
+              objectType: { name: objectIntersectionTypeName },
+              type: objectIntersectionIdentifierType,
+            }),
+          )
+        : Maybe.empty(),
       identifierType: objectIntersectionIdentifierType,
       label: astType.label,
-      members: ast.StructCompoundType.memberStructTypes(astType).map(
-        (astStructType) => ({
-          type: this.createObjectType(astStructType),
-        }),
-      ),
+      members: astType.members.map((member) => {
+        const type = this.createType(member.type);
+        invariant(
+          type.kind === "ObjectIntersection" || type.kind === "Object",
+          type.kind,
+        );
+        return { type };
+      }),
       name: objectIntersectionTypeName,
       recursive: astType.recursive,
       shapeIdentifier: astType.shapeIdentifier,

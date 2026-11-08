@@ -5,7 +5,6 @@ import { ObjectDiscriminatedUnionType_focusSparqlConstructTriplesFunction } from
 import { ObjectDiscriminatedUnionType_focusSparqlWherePatternsFunction } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_focusSparqlWherePatternsFunction.js";
 import { ObjectDiscriminatedUnionType_fromRdfResourceFunction } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_fromRdfResourceFunction.js";
 import { ObjectDiscriminatedUnionType_graphqlTypeExpression } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_graphqlTypeExpression.js";
-import { ObjectDiscriminatedUnionType_schemaExpression } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_schemaExpression.js";
 import { ObjectDiscriminatedUnionType_toRdfResourceFunction } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_toRdfResourceFunction.js";
 import { ObjectDiscriminatedUnionType_typeGuardFunction } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_typeGuardFunction.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
@@ -18,13 +17,11 @@ import type { Callable } from "./Callable.js";
 import { DeclaredCallable } from "./DeclaredCallable.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
+import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
-export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType<ObjectType> {
-  protected override schemaExpression =
-    ObjectDiscriminatedUnionType_schemaExpression;
-
+export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType<ObjectDiscriminatedUnionType.MemberType> {
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
   override readonly kind = "ObjectDiscriminatedUnion";
 
@@ -34,7 +31,7 @@ export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType
   }: {
     identifierType: BlankNodeType | IdentifierType | IriType;
   } & ConstructorParameters<
-    typeof AbstractDiscriminatedUnionType<ObjectType>
+    typeof AbstractDiscriminatedUnionType<ObjectDiscriminatedUnionType.MemberType>
   >[0]) {
     super(superParameters);
     this.identifierType = identifierType;
@@ -57,6 +54,23 @@ export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType
   @Memoize()
   get fromRdfResourceFunction(): Callable {
     return ObjectDiscriminatedUnionType_fromRdfResourceFunction.call(this);
+  }
+
+  @Memoize()
+  get fromRdfTypeVariables(): readonly Code[] {
+    return this.members.flatMap((member) => {
+      switch (member.type.kind) {
+        case "Object":
+          return member.type.fromRdfTypeVariable.toList();
+        case "ObjectDiscriminatedUnion":
+          return member.type.fromRdfTypeVariables;
+        case "ObjectIntersection":
+          return [];
+        default:
+          member.type satisfies never;
+          throw new RangeError("should never reach this point");
+      }
+    });
   }
 
   @Memoize()
@@ -166,4 +180,11 @@ export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType
 
     return staticModuleDeclarations;
   }
+}
+
+export namespace ObjectDiscriminatedUnionType {
+  export type MemberType =
+    | ObjectDiscriminatedUnionType
+    | ObjectIntersectionType
+    | ObjectType;
 }

@@ -12,7 +12,6 @@ import type { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
 import { transformPropertyShapeToAstStructTypeField } from "./transformPropertyShapeToAstStructTypeField.js";
-import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 function isStructTypeFieldRequired(field: {
   kind: ast.StructType.Field["kind"];
@@ -99,19 +98,9 @@ export function transformShapeToAstStructType(
   this: ShapesGraphToAstTransformer,
   shape: input.UndiscriminatedShape,
   shapeStack: ShapeStack,
-): Either<Error, Maybe<ast.Type>> {
+): Either<Error, Maybe<ast.StructType>> {
   shapeStack.push(shape);
   try {
-    // If the shape has an sh:node itself then transform that instead
-    if (shape.node.isJust()) {
-      return this.shapesGraph
-        .nodeShape(shape.node.unsafeCoerce())
-        .chain((nodeShape) =>
-          transformShapeToAstType.call(this, nodeShape, shapeStack),
-        )
-        .map(Maybe.of);
-    }
-
     if (!isNodeShape(shape)) {
       return Either.of(Maybe.empty());
     }

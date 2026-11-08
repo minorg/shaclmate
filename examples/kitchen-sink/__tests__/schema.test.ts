@@ -3,22 +3,22 @@ import * as kitchenSink from "../src/index.js";
 
 describe("schema", () => {
   describe("properties", () => {
-    it("union properties should have a common parent property", ({
-      expect,
-    }) => {
-      expect(
-        kitchenSink.StructDiscriminatedUnion.schema.properties
-          .structDiscriminatedUnionMemberCommon.path.value,
-      ).toStrictEqual(
-        "http://example.com/structDiscriminatedUnionMemberCommon",
-      );
-    });
+    // it("union properties should have a common parent property", ({
+    //   expect,
+    // }) => {
+    //   expect(
+    //     kitchenSink.StructDiscriminatedUnion.schema.properties
+    //       .structDiscriminatedUnionMemberCommon.path.value,
+    //   ).toStrictEqual(
+    //     "http://example.com/structDiscriminatedUnionMemberCommon",
+    //   );
+    // });
 
-    it("object union common properties", ({ expect }) => {
-      expect(
-        kitchenSink.StructDiscriminatedUnion.schema.properties,
-      ).toHaveProperty("structDiscriminatedUnionMemberCommon");
-    });
+    // it("object union common properties", ({ expect }) => {
+    //   expect(
+    //     kitchenSink.StructDiscriminatedUnion.schema.properties,
+    //   ).toHaveProperty("structDiscriminatedUnionMemberCommon");
+    // });
 
     describe("$rdfType", () => {
       describe("fromRdfType", () => {

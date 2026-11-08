@@ -1,8 +1,10 @@
-import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractObjectSetType } from "./AbstractObjectSetType.js";
 import type { Callable } from "./Callable.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
+import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
+import type { ObjectType } from "./ObjectType.js";
+import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class RdfjsDatasetObjectSetType extends AbstractObjectSetType {
   @Memoize()
@@ -95,20 +97,36 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
         ];
 
         const runtimeObjectType = (
-          filterFunction: Callable,
-          namedObjectType: {
-            expression: Code;
-            fromRdfTypeVariable: Maybe<Code>;
+          namedObjectType:
+            | ObjectDiscriminatedUnionType
+            | ObjectIntersectionType
+            | ObjectType,
+          options?: {
+            filterFunction?: Callable;
           },
         ): Code => {
-          return code`{ filter: ${filterFunction.annotatedUsage}, fromRdfResource: ${namedObjectType.expression}.fromRdfResource, fromRdfTypes: ${namedObjectType.fromRdfTypeVariable.map((fromRdfTypeVariable) => code`[${fromRdfTypeVariable}]`).orDefault(code`[]`)} }`;
+          let fromRdfTypeVariables: readonly Code[];
+          switch (namedObjectType.kind) {
+            case "Object":
+              fromRdfTypeVariables =
+                namedObjectType.fromRdfTypeVariable.toList();
+              break;
+            case "ObjectDiscriminatedUnion":
+              fromRdfTypeVariables = namedObjectType.fromRdfTypeVariables;
+              break;
+            case "ObjectIntersection":
+              fromRdfTypeVariables = [];
+              break;
+          }
+
+          return code`{ filter: ${(options?.filterFunction ?? namedObjectType.filterFunction).annotatedUsage}, fromRdfResource: ${namedObjectType.expression}.fromRdfResource, fromRdfTypes: ${arrayOf(...fromRdfTypeVariables)} }`;
         };
 
         switch (namedObjectType.kind) {
           case "Object": {
             return delegatingMethods.concat(code`\
 ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.expression}[]> {
-  return this.#objectsSync<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType(namedObjectType.filterFunction, namedObjectType)}, query);
+  return this.#objectsSync<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType(namedObjectType)}, query);
 }`);
           }
           case "ObjectDiscriminatedUnion":
@@ -117,7 +135,9 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
   return this.#objectDiscriminatedUnionsSync<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>([
     ${joinCode(
       namedObjectType.members.map((member) =>
-        runtimeObjectType(namedObjectType.filterFunction, member.type),
+        runtimeObjectType(member.type, {
+          filterFunction: namedObjectType.filterFunction,
+        }),
       ),
       { on: ", " },
     )}
@@ -127,11 +147,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
             return delegatingMethods.concat(code`\
 ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.expression}[]> {
   return this.#objectsSync<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType(
-    namedObjectType.filterFunction,
-    {
-      expression: namedObjectType.expression,
-      fromRdfTypeVariable: Maybe.empty(),
-    },
+    namedObjectType,
   )}, query);
 }`);
           default:
