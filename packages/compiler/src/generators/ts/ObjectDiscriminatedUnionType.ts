@@ -61,6 +61,23 @@ export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType
   }
 
   @Memoize()
+  get fromRdfTypeVariables(): readonly Code[] {
+    return this.members.flatMap((member) => {
+      switch (member.type.kind) {
+        case "Object":
+          return member.type.fromRdfTypeVariable.toList();
+        case "ObjectDiscriminatedUnion":
+          return member.type.fromRdfTypeVariables;
+        case "ObjectIntersection":
+          return [];
+        default:
+          member.type satisfies never;
+          throw new RangeError("should never reach this point");
+      }
+    });
+  }
+
+  @Memoize()
   get identifierTypeAlias(): Code {
     return this.name.map((name) => code`${name}.Identifier`).unsafeCoerce();
   }
