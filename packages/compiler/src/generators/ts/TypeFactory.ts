@@ -132,7 +132,7 @@ export class TypeFactory {
     }
 
     const objectDiscriminatedUnionIdentifierType = this.createIdentifierType(
-      ast.StructCompoundType.identifierType(astType),
+      ast.StructCompoundType.identifierType(astType).unsafeCoerce(),
     );
 
     const objectDiscriminatedUnionTypeName = astType.name.map((name) =>
@@ -202,7 +202,7 @@ export class TypeFactory {
     }
 
     const objectIntersectionIdentifierType = this.createIdentifierType(
-      ast.StructCompoundType.identifierType(astType),
+      ast.StructCompoundType.identifierType(astType).unsafeCoerce(),
     );
 
     const objectIntersectionTypeName = astType.name.map((name) =>
