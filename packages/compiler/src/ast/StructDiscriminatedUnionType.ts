@@ -1,11 +1,13 @@
 import type { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
-import type { IntersectionType } from "./IntersectionType.js";
+import type { StructIntersectionType } from "./StructIntersectionType.js";
 import type { StructType } from "./StructType.js";
 
-type StructDiscriminatedUnionMemberType =
-  | DiscriminatedUnionType<StructDiscriminatedUnionMemberType>
-  | IntersectionType<StructDiscriminatedUnionMemberType>
-  | StructType;
-
 export type StructDiscriminatedUnionType =
-  DiscriminatedUnionType<StructDiscriminatedUnionMemberType>;
+  DiscriminatedUnionType<StructDiscriminatedUnionType.MemberType>;
+
+export namespace StructDiscriminatedUnionType {
+  export type MemberType =
+    | DiscriminatedUnionType<MemberType>
+    | StructIntersectionType
+    | StructType;
+}
