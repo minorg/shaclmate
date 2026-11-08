@@ -34,7 +34,7 @@ import type { IriType } from "./IriType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
-export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType> {
+export class ObjectIntersectionType extends AbstractIntersectionType<ObjectIntersectionType.MemberType> {
   protected override fromJsonObjectFunctionExpression =
     ObjectIntersectionType_fromJsonObjectFunctionExpression;
   protected override fromJsonObjectFunctionType =
@@ -57,7 +57,9 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
     ...superParameters
   }: {
     identifierType: BlankNodeType | IdentifierType | IriType;
-  } & ConstructorParameters<typeof AbstractIntersectionType<ObjectType>>[0]) {
+  } & ConstructorParameters<
+    typeof AbstractIntersectionType<ObjectIntersectionType.MemberType>
+  >[0]) {
     super(superParameters);
     this.discriminatedType = this.name.map((name) => ({
       discriminantProperty: {
@@ -112,7 +114,7 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
   }
 
   @Memoize()
-  override get jsonObjectType(): AbstractIntersectionType<ObjectType>["jsonObjectType"] {
+  override get jsonObjectType(): AbstractIntersectionType<ObjectIntersectionType.MemberType>["jsonObjectType"] {
     return this.jsonTypeFactory.createJsonIntersectionType(
       this.members.map((member) => member.type.jsonObjectType),
       {
@@ -122,7 +124,7 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
     );
   }
 
-  get jsonValueType(): AbstractIntersectionType<ObjectType>["jsonValueType"] {
+  get jsonValueType(): AbstractIntersectionType<ObjectIntersectionType.MemberType>["jsonValueType"] {
     return this.jsonObjectType;
   }
 
@@ -222,4 +224,8 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
 
     return staticModuleDeclarations;
   }
+}
+
+export namespace ObjectIntersectionType {
+  export type MemberType = ObjectIntersectionType | ObjectType;
 }

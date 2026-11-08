@@ -18,10 +18,11 @@ import type { Callable } from "./Callable.js";
 import { DeclaredCallable } from "./DeclaredCallable.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
+import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
-export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType<ObjectType> {
+export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType<ObjectDiscriminatedUnionType.MemberType> {
   protected override schemaExpression =
     ObjectDiscriminatedUnionType_schemaExpression;
 
@@ -34,7 +35,7 @@ export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType
   }: {
     identifierType: BlankNodeType | IdentifierType | IriType;
   } & ConstructorParameters<
-    typeof AbstractDiscriminatedUnionType<ObjectType>
+    typeof AbstractDiscriminatedUnionType<ObjectDiscriminatedUnionType.MemberType>
   >[0]) {
     super(superParameters);
     this.identifierType = identifierType;
@@ -166,4 +167,11 @@ export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType
 
     return staticModuleDeclarations;
   }
+}
+
+export namespace ObjectDiscriminatedUnionType {
+  export type MemberType =
+    | ObjectDiscriminatedUnionType
+    | ObjectIntersectionType
+    | ObjectType;
 }
