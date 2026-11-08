@@ -5,7 +5,6 @@ import { ObjectDiscriminatedUnionType_focusSparqlConstructTriplesFunction } from
 import { ObjectDiscriminatedUnionType_focusSparqlWherePatternsFunction } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_focusSparqlWherePatternsFunction.js";
 import { ObjectDiscriminatedUnionType_fromRdfResourceFunction } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_fromRdfResourceFunction.js";
 import { ObjectDiscriminatedUnionType_graphqlTypeExpression } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_graphqlTypeExpression.js";
-import { ObjectDiscriminatedUnionType_schemaExpression } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_schemaExpression.js";
 import { ObjectDiscriminatedUnionType_toRdfResourceFunction } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_toRdfResourceFunction.js";
 import { ObjectDiscriminatedUnionType_typeGuardFunction } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_typeGuardFunction.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
@@ -23,9 +22,6 @@ import type { ObjectType } from "./ObjectType.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType<ObjectDiscriminatedUnionType.MemberType> {
-  protected override schemaExpression =
-    ObjectDiscriminatedUnionType_schemaExpression;
-
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
   override readonly kind = "ObjectDiscriminatedUnion";
 
