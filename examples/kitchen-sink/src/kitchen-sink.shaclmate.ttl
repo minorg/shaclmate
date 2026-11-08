@@ -46,6 +46,12 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:class properties" ;
     sh:property [
+        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:node :PartialStruct ;
+        sh:path :nodeClass2
+    ], [
         rdfs:comment "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
         sh:class :UndefinedClass ;
         sh:maxCount 1 ;
@@ -67,12 +73,6 @@
         sh:maxCount 1 ;
         sh:node :NonClassStruct ;
         sh:path :nodeClass1
-    ], [
-        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:node :PartialStruct ;
-        sh:path :nodeClass2
     ] .
 
 :ConvertibleTypesStruct
@@ -152,42 +152,6 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:xone (union) properties over both permutations of two sh:datatype node shapes. These unions are common in actual models." ;
     sh:property [
-        rdfs:comment "String or date. These don't need discriminant values because they're different types in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :stringOrDate ;
-        sh:xone ([
-                sh:datatype xsd:string
-            ]
-            [
-                sh:datatype xsd:date
-            ]
-        )
-    ], [
-        rdfs:comment "String or decimal. These don't need discriminant values because they're different types in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :stringOrDecimal ;
-        sh:xone ([
-                sh:datatype xsd:string
-            ]
-            [
-                sh:datatype xsd:decimal
-            ]
-        )
-    ], [
-        rdfs:comment "String or integer. These don't need discriminant values because they're different types in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :stringOrInteger ;
-        sh:xone ([
-                sh:datatype xsd:string
-            ]
-            [
-                sh:datatype xsd:integer
-            ]
-        )
-    ], [
         rdfs:comment "String or rdf:langString. These don't need discriminant values because they're different types in TypeScript." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
@@ -307,6 +271,42 @@
             ]
             [
                 sh:datatype xsd:string
+            ]
+        )
+    ], [
+        rdfs:comment "String or date. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :stringOrDate ;
+        sh:xone ([
+                sh:datatype xsd:string
+            ]
+            [
+                sh:datatype xsd:date
+            ]
+        )
+    ], [
+        rdfs:comment "String or decimal. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :stringOrDecimal ;
+        sh:xone ([
+                sh:datatype xsd:string
+            ]
+            [
+                sh:datatype xsd:decimal
+            ]
+        )
+    ], [
+        rdfs:comment "String or integer. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :stringOrInteger ;
+        sh:xone ([
+                sh:datatype xsd:string
+            ]
+            [
+                sh:datatype xsd:integer
             ]
         )
     ] .
@@ -1312,6 +1312,14 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     rdfs:comment "Node shape that sh:and's other struct node shapes. This will be generated as an intersection type or flattened into a single type." ;
     sh:and (:StructIntersectionMember1
         :StructIntersectionMember2
+    ) .
+
+:StructIntersectionDiscriminatedUnion
+    a sh:NodeShape ;
+    rdfs:comment "Node shape that sh:xone's struct node shapes and a struct intersection node shape" ;
+    sh:xone (:StructDiscriminatedUnionMember1
+        :StructDiscriminatedUnionMember2
+        :StructIntersection
     ) .
 
 :StructIntersectionMember-common
