@@ -165,9 +165,9 @@ export abstract class AbstractShapesGraph<
         ) {
           continue;
         }
-        shapesGraph.typeFunctions.Ontology.fromRdfResource(ontologyResource, {
-          ignoreRdfType: true,
-        }).ifRight((ontology) =>
+        shapesGraph.typeFunctions.Ontology.fromRdfResource(
+          ontologyResource,
+        ).ifRight((ontology) =>
           shapesGraph.ontologiesByIdentifier.set(
             ontology.$identifier(),
             ontology,
@@ -194,7 +194,6 @@ export abstract class AbstractShapesGraph<
 
         shapesGraph.typeFunctions.PropertyGroup.fromRdfResource(
           resourceSet.resource(propertyGroupResource.identifier),
-          { ignoreRdfType: true },
         ).ifRight((propertyGroup) =>
           shapesGraph.propertyGroupsByIdentifier.set(
             propertyGroup.$identifier(),
@@ -343,9 +342,6 @@ export abstract class AbstractShapesGraph<
             shapeNode,
             shapesGraph.typeFunctions.PropertyShape.fromRdfResource(
               resourceSet.resource(shapeNode),
-              {
-                ignoreRdfType: true,
-              },
             ).unsafeCoerce(),
           );
         } else {
@@ -354,9 +350,6 @@ export abstract class AbstractShapesGraph<
             shapeNode,
             shapesGraph.typeFunctions.NodeShape.fromRdfResource(
               resourceSet.resource(shapeNode),
-              {
-                ignoreRdfType: true,
-              },
             ).unsafeCoerce(),
           );
         }
