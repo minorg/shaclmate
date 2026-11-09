@@ -6,8 +6,8 @@
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-shaclmate:NodeShape
-    sh:property shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:NodeShape-tsImports, shaclmate:Shape-ignore, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
+shaclmate:BaseShape
+    sh:property shaclmate:Shape-ignore, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
 
 shaclmate:NodeShape-discriminantValue
     a sh:PropertyShape ;
@@ -57,6 +57,7 @@ shaclmate:NodeShape-rdfType
 
 shaclmate:NodeShape-toRdfTypes
     a sh:PropertyShape ;
+    sh:name "toRdfTypes" ;
     sh:nodeKind sh:IRI ;
     sh:path shaclmate:toRdfType .
 
@@ -65,6 +66,9 @@ shaclmate:NodeShape-tsImports
     sh:datatype xsd:string ;
     sh:name "tsImports" ;
     sh:path shaclmate:tsImport .
+
+shaclmate:NodeShapeSpecificProperties
+    sh:property shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:NodeShape-tsImports .
 
 shaclmate:Operation
     a rdfs:Class, sh:NodeShape ;
@@ -267,9 +271,6 @@ shaclmate:OperationResultHttpBindingContentType
     sh:in ("application/json"
     ) .
 
-shaclmate:PropertyShape
-    sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve, shaclmate:Shape-ignore, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
-
 shaclmate:PropertyShape-display
     a sh:PropertyShape ;
     rdfs:comment "Whether to include this property in a toString()-type display, defaults to false" ;
@@ -284,6 +285,9 @@ shaclmate:PropertyShape-resolve
     sh:name "resolve" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path shaclmate:resolve .
+
+shaclmate:PropertyShapeSpecificProperties
+    sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve .
 
 shaclmate:Service
     a rdfs:Class, sh:NodeShape ;
