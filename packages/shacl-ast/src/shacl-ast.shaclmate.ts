@@ -952,15 +952,6 @@ export namespace NodeShape {
           schema: NodeShape.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
-      $rdfType: !options.ignoreRdfType
-        ? $ensureRdfResourceType(
-            resource,
-            [NodeShape.schema.properties.$rdfType.fromRdfType],
-            {
-              graph: options.graph,
-            },
-          )
-        : Right(true as const),
       and: $shaclPropertyFromRdf<
         Maybe<readonly (BlankNode | NamedNode)[]>,
         $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
@@ -2016,15 +2007,6 @@ export namespace NodeShape {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      $rdfType: {
-        fromRdfType: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#NodeShape",
-        ),
-        kind: "RdfType",
-        toRdfTypes: [
-          dataFactory.namedNode("http://www.w3.org/ns/shacl#NodeShape"),
-        ],
-      },
       and: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
@@ -2357,15 +2339,6 @@ export namespace Ontology {
           schema: Ontology.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
-      $rdfType: !options.ignoreRdfType
-        ? $ensureRdfResourceType(
-            resource,
-            [Ontology.schema.properties.$rdfType.fromRdfType],
-            {
-              graph: options.graph,
-            },
-          )
-        : Right(true as const),
       comment: $shaclPropertyFromRdf<
         Maybe<string>,
         $MaybeSchema<$StringSchema<string>>
@@ -2481,15 +2454,6 @@ export namespace Ontology {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      $rdfType: {
-        fromRdfType: dataFactory.namedNode(
-          "http://www.w3.org/2002/07/owl#Ontology",
-        ),
-        kind: "RdfType",
-        toRdfTypes: [
-          dataFactory.namedNode("http://www.w3.org/2002/07/owl#Ontology"),
-        ],
-      },
       comment: {
         kind: "Shacl",
         path: $rdfs_comment,
@@ -2542,15 +2506,6 @@ export namespace PropertyGroup {
           schema: PropertyGroup.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
-      $rdfType: !options.ignoreRdfType
-        ? $ensureRdfResourceType(
-            resource,
-            [PropertyGroup.schema.properties.$rdfType.fromRdfType],
-            {
-              graph: options.graph,
-            },
-          )
-        : Right(true as const),
       comment: $shaclPropertyFromRdf<
         Maybe<string>,
         $MaybeSchema<$StringSchema<string>>
@@ -2669,15 +2624,6 @@ export namespace PropertyGroup {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
-      },
-      $rdfType: {
-        fromRdfType: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#PropertyGroup",
-        ),
-        kind: "RdfType",
-        toRdfTypes: [
-          dataFactory.namedNode("http://www.w3.org/ns/shacl#PropertyGroup"),
-        ],
       },
       comment: {
         kind: "Shacl",
@@ -2828,15 +2774,6 @@ export namespace PropertyShape {
           schema: PropertyShape.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
-      $rdfType: !options.ignoreRdfType
-        ? $ensureRdfResourceType(
-            resource,
-            [PropertyShape.schema.properties.$rdfType.fromRdfType],
-            {
-              graph: options.graph,
-            },
-          )
-        : Right(true as const),
       and: $shaclPropertyFromRdf<
         Maybe<readonly (BlankNode | NamedNode)[]>,
         $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
@@ -4163,15 +4100,6 @@ export namespace PropertyShape {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      $rdfType: {
-        fromRdfType: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#PropertyShape",
-        ),
-        kind: "RdfType",
-        toRdfTypes: [
-          dataFactory.namedNode("http://www.w3.org/ns/shacl#PropertyShape"),
-        ],
-      },
       and: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
@@ -5318,266 +5246,7 @@ export namespace Shape {
         type: PropertyShape.schema,
       },
     },
-    properties: {
-      and: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
-        type: {
-          kind: "Option" as const,
-          itemType: {
-            kind: "List" as const,
-            itemType: { kind: "Identifier" as const },
-          },
-        },
-      },
-      classes: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
-        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
-      },
-      comment: {
-        kind: "Shacl",
-        path: $rdfs_comment,
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
-      datatype: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#datatype"),
-        type: { kind: "Option" as const, itemType: { kind: "Iri" as const } },
-      },
-      deactivated: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#deactivated"),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
-        },
-      },
-      flags: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
-      hasValues: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue"),
-        type: {
-          kind: "Set" as const,
-          itemType: { kind: "Term" as const, types: ["NamedNode", "Literal"] },
-        },
-      },
-      in_: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
-        type: {
-          kind: "Option" as const,
-          itemType: {
-            kind: "List" as const,
-            itemType: {
-              kind: "Term" as const,
-              types: ["NamedNode", "Literal"],
-            },
-          },
-        },
-      },
-      isDefinedBy: {
-        kind: "Shacl",
-        path: $rdfs_isDefinedBy,
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "Identifier" as const },
-        },
-      },
-      label: {
-        kind: "Shacl",
-        path: $rdfs_label,
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
-      languageIn: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#languageIn"),
-        type: {
-          kind: "Option" as const,
-          itemType: {
-            kind: "List" as const,
-            itemType: { kind: "String" as const, datatype: $xsd_string },
-          },
-        },
-      },
-      maxExclusive: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxExclusive"),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "Literal" as const },
-        },
-      },
-      maxInclusive: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxInclusive"),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "Literal" as const },
-        },
-      },
-      maxLength: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "BigInt" as const, datatype: $xsd_integer },
-        },
-      },
-      message: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#message"),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
-      minExclusive: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minExclusive"),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "Literal" as const },
-        },
-      },
-      minInclusive: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minInclusive"),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "Literal" as const },
-        },
-      },
-      minLength: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "BigInt" as const, datatype: $xsd_integer },
-        },
-      },
-      node: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#node"),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "Identifier" as const },
-        },
-      },
-      nodeKind: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
-        type: {
-          kind: "Option" as const,
-          itemType: {
-            kind: "Iri" as const,
-            in: [
-              dataFactory.namedNode("http://www.w3.org/ns/shacl#BlankNode"),
-              dataFactory.namedNode(
-                "http://www.w3.org/ns/shacl#BlankNodeOrIRI",
-              ),
-              dataFactory.namedNode(
-                "http://www.w3.org/ns/shacl#BlankNodeOrLiteral",
-              ),
-              dataFactory.namedNode("http://www.w3.org/ns/shacl#IRI"),
-              dataFactory.namedNode("http://www.w3.org/ns/shacl#IRIOrLiteral"),
-              dataFactory.namedNode("http://www.w3.org/ns/shacl#Literal"),
-            ] as const,
-          },
-        },
-      },
-      not: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#not"),
-        type: {
-          kind: "Set" as const,
-          itemType: { kind: "Identifier" as const },
-        },
-      },
-      or: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#or"),
-        type: {
-          kind: "Option" as const,
-          itemType: {
-            kind: "List" as const,
-            itemType: { kind: "Identifier" as const },
-          },
-        },
-      },
-      pattern: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
-      severity: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#severity"),
-        get type() {
-          return {
-            kind: "Option" as const,
-            get itemType() {
-              return Severity.schema;
-            },
-          };
-        },
-      },
-      targetClasses: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#targetClass"),
-        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
-      },
-      targetNodes: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#targetNode"),
-        type: {
-          kind: "Set" as const,
-          itemType: { kind: "Term" as const, types: ["NamedNode", "Literal"] },
-        },
-      },
-      targetObjectsOf: {
-        kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#targetObjectsOf",
-        ),
-        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
-      },
-      targetSubjectsOf: {
-        kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#targetSubjectsOf",
-        ),
-        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
-      },
-      xone: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
-        type: {
-          kind: "Option" as const,
-          itemType: {
-            kind: "List" as const,
-            itemType: { kind: "Identifier" as const },
-          },
-        },
-      },
-    },
-  } as const;
+  };
 
   export type Schema = typeof schema;
 }
