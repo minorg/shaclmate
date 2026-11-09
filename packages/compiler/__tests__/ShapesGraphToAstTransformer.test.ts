@@ -82,10 +82,17 @@ describe("ShapesGraphToAstTransformer", () => {
           const namedIntersectionTypes = ast.namedTypes.filter(
             (_) => _.kind === "Intersection",
           );
-          if (id === "kitchenSinkExample") {
-            expect(namedIntersectionTypes).toHaveLength(3);
-          } else {
-            expect(namedIntersectionTypes).toHaveLength(0);
+          switch (id) {
+            case "compilerInput":
+            case "shaclShacl":
+              expect(namedIntersectionTypes).toHaveLength(2);
+              break;
+            case "kitchenSinkExample":
+              expect(namedIntersectionTypes).toHaveLength(3);
+              break;
+            default:
+              expect(namedIntersectionTypes).toHaveLength(0);
+              break;
           }
         });
 
