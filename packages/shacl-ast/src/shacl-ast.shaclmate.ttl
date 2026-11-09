@@ -11,15 +11,6 @@
     rdfs:label "SHACL for shacl-ast" ;
     rdfs:seeAlso <https://www.w3.org/TR/shacl/#shacl-shacl> .
 
-shaclmate:BaseNodeShape
-    shaclmate:name "BaseNodeShape" ;
-    sh:property shaclmate:NodeShape-closed, shaclmate:NodeShape-ignoredProperties, shaclmate:NodeShape-properties, shaclmate:NodeShape-subClassOf, shaclmate:NodeShape-types .
-
-shaclmate:BasePropertyShape
-    shaclmate:name "BasePropertyShape" ;
-    a sh:NodeShape ;
-    sh:property shaclmate:PropertyShape-defaultValue, shaclmate:PropertyShape-description, shaclmate:PropertyShape-disjoint, shaclmate:PropertyShape-equals, shaclmate:PropertyShape-groups, shaclmate:PropertyShape-lessThan, shaclmate:PropertyShape-lessThanOrEquals, shaclmate:PropertyShape-maxCount, shaclmate:PropertyShape-minCount, shaclmate:PropertyShape-name, shaclmate:PropertyShape-order, shaclmate:PropertyShape-path, shaclmate:PropertyShape-qualifiedMaxCount, shaclmate:PropertyShape-qualifiedMinCount, shaclmate:PropertyShape-qualifiedValueShape, shaclmate:PropertyShape-qualifiedValueShapesDisjoint, shaclmate:PropertyShape-uniqueLang .
-
 shaclmate:BaseShape
     shaclmate:name "BaseShape" ;
     a sh:NodeShape ;
@@ -89,7 +80,7 @@ shaclmate:NodeShape
     shaclmate:name "NodeShape" ;
     a sh:NodeShape ;
     sh:and (shaclmate:BaseShape
-        shaclmate:BaseNodeShape
+        shaclmate:NodeShapeSpecificProperties
     ) .
 
 shaclmate:NodeShape-closed
@@ -121,6 +112,10 @@ shaclmate:NodeShape-types
     sh:nodeKind sh:IRI ;
     sh:path rdf:type .
 
+shaclmate:NodeShapeSpecificProperties
+    shaclmate:name "NodeShapeSpecificProperties" ;
+    sh:property shaclmate:NodeShape-closed, shaclmate:NodeShape-ignoredProperties, shaclmate:NodeShape-properties, shaclmate:NodeShape-subClassOf, shaclmate:NodeShape-types .
+
 shaclmate:Ontology
     shaclmate:name "Ontology" ;
     a sh:NodeShape ;
@@ -141,7 +136,7 @@ shaclmate:PropertyShape
     shaclmate:name "PropertyShape" ;
     a sh:NodeShape ;
     sh:and (shaclmate:BaseShape
-        shaclmate:BasePropertyShape
+        shaclmate:PropertyShapeSpecificProperties
     ) .
 
 shaclmate:PropertyShape-defaultValue
@@ -244,6 +239,11 @@ shaclmate:PropertyShape-uniqueLang
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
     sh:path sh:uniqueLang .
+
+shaclmate:PropertyShapeSpecificProperties
+    shaclmate:name "PropertyShapeSpecificProperties" ;
+    a sh:NodeShape ;
+    sh:property shaclmate:PropertyShape-defaultValue, shaclmate:PropertyShape-description, shaclmate:PropertyShape-disjoint, shaclmate:PropertyShape-equals, shaclmate:PropertyShape-groups, shaclmate:PropertyShape-lessThan, shaclmate:PropertyShape-lessThanOrEquals, shaclmate:PropertyShape-maxCount, shaclmate:PropertyShape-minCount, shaclmate:PropertyShape-name, shaclmate:PropertyShape-order, shaclmate:PropertyShape-path, shaclmate:PropertyShape-qualifiedMaxCount, shaclmate:PropertyShape-qualifiedMinCount, shaclmate:PropertyShape-qualifiedValueShape, shaclmate:PropertyShape-qualifiedValueShapesDisjoint, shaclmate:PropertyShape-uniqueLang .
 
 shaclmate:Severity
     shaclmate:name "Severity" ;
