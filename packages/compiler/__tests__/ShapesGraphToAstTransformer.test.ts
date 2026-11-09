@@ -184,9 +184,6 @@ describe("ShapesGraphToAstTransformer", () => {
           case "inversePathNodeKindConflict":
             expect(errorMessage).includes("inverse paths can only");
             break;
-          case "noRequiredProperty":
-            expect(errorMessage).includes("no required properties");
-            break;
           case "compilerInput":
           case "featureCombinations":
           case "graphqlExample":
