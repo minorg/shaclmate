@@ -144,14 +144,6 @@ export const testShapesGraphs = {
     kind: "stress",
   },
 
-  noRequiredProperty: {
-    description: "Error: node shape without a required property or rdf:type",
-    filePaths: [
-      path.join(thisDirectoryPath, "no-required-property.shaclmate.ttl"),
-    ],
-    kind: "error",
-  },
-
   objectDiscriminantProperty: {
     description:
       "Change the object discriminant property to 'termType' to get nice discriminated unions between objects and RDF/JS terms",

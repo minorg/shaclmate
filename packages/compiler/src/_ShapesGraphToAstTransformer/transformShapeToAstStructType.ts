@@ -13,53 +13,6 @@ import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
 import { transformPropertyShapeToAstStructTypeField } from "./transformPropertyShapeToAstStructTypeField.js";
 
-function isStructTypeFieldRequired(field: {
-  kind: ast.StructType.Field["kind"];
-  type: ast.StructType.Field["type"];
-}): boolean {
-  switch (field.kind) {
-    case "Identifier":
-      return field.type.kind === "Iri";
-    case "Shacl": {
-      switch (field.type.kind) {
-        case "DiscriminatedUnion":
-          return field.type.members.every((member) =>
-            isStructTypeFieldRequired({ kind: "Shacl", type: member.type }),
-          );
-        case "DefaultValue":
-          return false;
-        case "Intersection":
-          return field.type.members.every((member) =>
-            isStructTypeFieldRequired({ kind: "Shacl", type: member.type }),
-          );
-        case "LazyOption":
-          return false;
-        case "LazySet":
-          return field.type.partialType.minCount > 0n;
-        case "Option":
-          return false;
-        case "Set":
-          return field.type.minCount > 0;
-        case "BlankNode":
-        case "Identifier":
-        case "Iri":
-        case "Lazy":
-        case "List":
-        case "Literal":
-        case "Struct":
-        case "Term":
-          return true;
-        default:
-          field.type satisfies never;
-          throw new Error("should never reach this point");
-      }
-    }
-    default:
-      field.kind satisfies never;
-      throw new Error("should never reach this point");
-  }
-}
-
 function transformNodeShapeNodeKindsToAstIdentifierType(
   this: ShapesGraphToAstTransformer,
   nodeKinds: ReadonlySet<NodeKind>,
@@ -226,18 +179,6 @@ export function transformShapeToAstStructType(
           if (fieldEither.isLeft()) {
             return fieldEither;
           }
-        }
-
-        if (
-          !structType.extern &&
-          structType.fromRdfType.isNothing() &&
-          !structType.fields.some(isStructTypeFieldRequired)
-        ) {
-          return Left(
-            new Error(
-              `${nodeShape} has no required properties and no implicitly required rdf:type`,
-            ),
-          );
         }
 
         structType.sortFields();
