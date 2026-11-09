@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "4.0.96",
+    "@shaclmate/shacl-ast": "4.0.97",
     "@rdfjs/types": "~2.0.1",
     "@rdfx/collection": "0.0.59",
     "@rdfx/curie": "0.0.59",
@@ -46,8 +46,12 @@
     "dist/_ShapesGraphToAstTransformer/shapeNodeKinds.js",
     "dist/_ShapesGraphToAstTransformer/shapeOntology.d.ts",
     "dist/_ShapesGraphToAstTransformer/shapeOntology.js",
+    "dist/_ShapesGraphToAstTransformer/synthesizePartialAstStructType.d.ts",
+    "dist/_ShapesGraphToAstTransformer/synthesizePartialAstStructType.js",
     "dist/_ShapesGraphToAstTransformer/transformPropertyShapeToAstStructTypeField.d.ts",
     "dist/_ShapesGraphToAstTransformer/transformPropertyShapeToAstStructTypeField.js",
+    "dist/_ShapesGraphToAstTransformer/transformShapeNodeConstraintToAstType.d.ts",
+    "dist/_ShapesGraphToAstTransformer/transformShapeNodeConstraintToAstType.js",
     "dist/_ShapesGraphToAstTransformer/transformShapeToAstCompoundType.d.ts",
     "dist/_ShapesGraphToAstTransformer/transformShapeToAstCompoundType.js",
     "dist/_ShapesGraphToAstTransformer/transformShapeToAstListType.d.ts",
@@ -330,8 +334,6 @@
     "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_fromRdfResourceFunction.js",
     "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_graphqlTypeExpression.d.ts",
     "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_graphqlTypeExpression.js",
-    "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_schemaExpression.d.ts",
-    "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_schemaExpression.js",
     "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_toRdfResourceFunction.d.ts",
     "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_toRdfResourceFunction.js",
     "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_typeGuardFunction.d.ts",
@@ -972,5 +974,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.96"
+  "version": "4.0.97"
 }
