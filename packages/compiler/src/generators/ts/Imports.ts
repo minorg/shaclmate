@@ -42,6 +42,7 @@ export class Imports {
   readonly NTriplesTerm = imp("NTriplesTerm@@rdfx/string");
   readonly Quad = imp("t:Quad@@rdfjs/types");
   readonly Quad_Graph = imp("t:Quad_Graph@@rdfjs/types");
+  readonly PrefixMap = imp("t:PrefixMap@@rdfx/collection");
   readonly RdfxResourcePropertyPath = imp(
     "PropertyPath:RdfxResourcePropertyPath@@rdfx/resource",
   );
