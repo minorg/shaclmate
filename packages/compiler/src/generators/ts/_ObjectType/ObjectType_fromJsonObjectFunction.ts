@@ -19,8 +19,14 @@ export function ObjectType_fromJsonObjectFunctionExpression(
   );
   invariant(propertyInitializers.length > 0);
 
+  let optionsParameter = optionsVariable;
+  this.name.ifNothing(() => {
+    optionsParameter = code`${optionsParameter}: Parameters<${ObjectType_fromJsonObjectFunctionType.call(this)}>[1]`;
+  });
+  optionsParameter = code`${optionsParameter} = {}`;
+
   return code`\
-(${variables.jsonObject}, ${variables.options}${this.name.map(() => " = {}").orDefault("")}) => ${this.reusables.snippets.sequenceRecord}({ ${joinCode(propertyInitializers, { on: "," })} }).chain(${this.createFunction.annotatedUsage})`;
+(${variables.jsonObject}, ${optionsParameter}) => ${this.reusables.snippets.sequenceRecord}({ ${joinCode(propertyInitializers, { on: "," })} }).chain(${this.createFunction.annotatedUsage})`;
 }
 
 export function ObjectType_fromJsonObjectFunctionType(this: ObjectType): Code {

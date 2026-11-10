@@ -1950,8 +1950,7 @@ export function $iriFromString(
   }
 
   // Absolute IRIs with scheme:// always win over prefixes with the same name.
-  const scheme = prefix.toLowerCase();
-  switch (scheme) {
+  switch (prefix.toLowerCase()) {
     case "file":
     case "ftp":
     case "http":
@@ -5876,7 +5875,19 @@ export namespace AnonymousTypesStruct {
         ...options,
         schema: AnonymousTypesStruct.schema.properties.$identifier.type,
       }),
-      anonymousStruct: $maybeFromJsonValue(((jsonObject, options = {}) =>
+      anonymousStruct: $maybeFromJsonValue(((
+        jsonObject,
+        options: Parameters<
+          $FromJsonFunction<
+            { "@id": string; anonymousStructString: string },
+            {
+              readonly $identifier: () => BlankNode | NamedNode;
+              readonly anonymousStructString: string;
+            },
+            undefined
+          >
+        >[1] = {},
+      ) =>
         $sequenceRecord({
           $identifier: $identifierFromJsonString(jsonObject["@id"], {
             ...options,
@@ -62016,7 +62027,19 @@ export namespace StructInheritance2 {
     undefined
   > = (jsonObject) =>
     StructInheritance1.fromJson(jsonObject).chain((member0) =>
-      ((jsonObject, options = {}) =>
+      ((
+        jsonObject,
+        options: Parameters<
+          $FromJsonFunction<
+            { "@id": string; structInheritance2: string },
+            {
+              readonly $identifier: () => BlankNode | NamedNode;
+              readonly structInheritance2: string;
+            },
+            undefined
+          >
+        >[1] = {},
+      ) =>
         $sequenceRecord({
           $identifier: $identifierFromJsonString(jsonObject["@id"], {
             ...options,
@@ -62801,7 +62824,19 @@ export namespace StructInheritance3 {
     undefined
   > = (jsonObject) =>
     StructInheritance2.fromJson(jsonObject).chain((member0) =>
-      ((jsonObject, options = {}) =>
+      ((
+        jsonObject,
+        options: Parameters<
+          $FromJsonFunction<
+            { "@id": string; structInheritance3: string },
+            {
+              readonly $identifier: () => BlankNode | NamedNode;
+              readonly structInheritance3: string;
+            },
+            undefined
+          >
+        >[1] = {},
+      ) =>
         $sequenceRecord({
           $identifier: $identifierFromJsonString(jsonObject["@id"], {
             ...options,

@@ -285,8 +285,7 @@ export function $iriFromString(
   }
 
   // Absolute IRIs with scheme:// always win over prefixes with the same name.
-  const scheme = prefix.toLowerCase();
-  switch (scheme) {
+  switch (prefix.toLowerCase()) {
     case "file":
     case "ftp":
     case "http":
@@ -873,7 +872,23 @@ export namespace FormStruct {
         ...options,
         schema: FormStruct.schema.properties.emptyStringSetProperty.type,
       }),
-      nestedStructProperty: ((jsonObject, options) =>
+      nestedStructProperty: ((
+        jsonObject,
+        options: Parameters<
+          $FromJsonFunction<
+            { "@id": string; requiredStringProperty: string },
+            {
+              readonly $identifier: () => BlankNode | NamedNode;
+
+              /**
+               * Required string
+               */
+              readonly requiredStringProperty: string;
+            },
+            undefined
+          >
+        >[1] = {},
+      ) =>
         $sequenceRecord({
           $identifier: $identifierFromJsonString(jsonObject["@id"], {
             ...options,
