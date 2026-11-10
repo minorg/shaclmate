@@ -61,8 +61,7 @@ export function ${syntheticNamePrefix}iriFromString(
   }
 
   // Absolute IRIs with scheme:// always win over prefixes with the same name.
-  const scheme = prefix.toLowerCase();
-  switch (scheme) {
+  switch (prefix.toLowerCase()) {
 ${joinCode(leadingDoubleSlashSchemes.map((scheme) => code`    case ${literalOf(scheme)}:`, { on: "\n" }))}
     if (path.startsWith("//")) {
       return ${imports.Right}(${imports.dataFactory}.namedNode(string));
