@@ -18,7 +18,7 @@ function ${syntheticNamePrefix}convertToIdentifierProperty<DefaultNamespaceT ext
       return ${imports.Either}.of(() => captureIdentifier);
     }
     case "string": {
-      const captureIdentifier = defaultNamespace ? defaultNamespace(identifier) : ${imports.dataFactory}.namedNode(identifier);
+      const captureIdentifier = ${snippets.iriFromString}(identifier, { defaultNamespace });
       return ${imports.Either}.of(() => captureIdentifier);
     }
     case "undefined": {
