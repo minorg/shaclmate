@@ -9,6 +9,6 @@ export const snippets_identifierFromJsonString: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}identifierFromJsonString`,
     code`\
-const ${syntheticNamePrefix}identifierFromJsonString: ${snippets.FromJsonValueFunction}<string, ${imports.BlankNode} | ${imports.NamedNode}, ${snippets.IdentifierSchema}> = 
+const ${syntheticNamePrefix}identifierFromJsonString: ${snippets.FromJsonFunction}<string, ${imports.BlankNode} | ${imports.NamedNode}, ${snippets.IdentifierSchema}> = 
   (jsonString, options) => jsonString.startsWith("_:") ? ${snippets.blankNodeFromJsonString}(jsonString, options) as ${imports.Either}<Error, ${imports.BlankNode} | ${imports.NamedNode}> : ${snippets.iriFromJsonString}(jsonString, options) as ${imports.Either}<Error, ${imports.BlankNode} | ${imports.NamedNode}>;`,
   );

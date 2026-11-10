@@ -8,7 +8,7 @@ export const snippets_defaultValueFromJsonValue: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}defaultValueFromJsonValue`,
     code`\
-function ${syntheticNamePrefix}defaultValueFromJsonValue<ItemJsonValueT, ItemT, ItemSchemaT>(itemFromJsonValue: ${snippets.FromJsonValueFunction}<ItemJsonValueT, ItemT, ItemSchemaT>): ${snippets.FromJsonValueFunction}<ItemJsonValueT, ItemT, ${snippets.DefaultValueSchema}<ItemSchemaT>> {
+function ${syntheticNamePrefix}defaultValueFromJsonValue<ItemJsonValueT, ItemT, ItemSchemaT>(itemFromJsonValue: ${snippets.FromJsonFunction}<ItemJsonValueT, ItemT, ItemSchemaT>): ${snippets.FromJsonFunction}<ItemJsonValueT, ItemT, ${snippets.DefaultValueSchema}<ItemSchemaT>> {
   return (jsonValue, options) => {
     const { schema, ...otherOptions } = options;
     return itemFromJsonValue(jsonValue, { schema: schema.itemType, ...otherOptions });

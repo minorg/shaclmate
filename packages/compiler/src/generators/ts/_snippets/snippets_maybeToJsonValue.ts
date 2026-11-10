@@ -9,7 +9,7 @@ export const snippets_maybeToJsonValue: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}maybeToJsonValue`,
     code`\
-function ${syntheticNamePrefix}maybeToJsonValue<ItemT, ItemJsonValueT>(itemToJsonValue: ${snippets.ToJsonValueFunction}<ItemT, ItemJsonValueT>): ${snippets.ToJsonValueFunction}<${imports.Maybe}<ItemT>, ItemJsonValueT | undefined> {
+function ${syntheticNamePrefix}maybeToJsonValue<ItemT, ItemJsonValueT>(itemToJsonValue: ${snippets.ToJsonFunction}<ItemT, ItemJsonValueT>): ${snippets.ToJsonFunction}<${imports.Maybe}<ItemT>, ItemJsonValueT | undefined> {
   return (value) => value.map(value => itemToJsonValue(value)).extract();
 }`,
   );

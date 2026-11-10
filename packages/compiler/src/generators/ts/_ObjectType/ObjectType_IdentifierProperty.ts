@@ -153,7 +153,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
       if (nodeKinds.has("BlankNode")) {
         conversionFunction = code`${this.reusables.snippets.convertToBlankNodeIdentifierProperty}`;
       } else if (this.type.in_.length > 0) {
-        conversionFunction = code`${this.reusables.snippets.convertToInIriIdentifierProperty}<${joinCode(
+        conversionFunction = code`${this.reusables.snippets.convertToIriLiteralIdentifierProperty}<${joinCode(
           this.type.in_.map((in_) => code`${literalOf(in_.value)}`),
           { on: " | " },
         )}>`;

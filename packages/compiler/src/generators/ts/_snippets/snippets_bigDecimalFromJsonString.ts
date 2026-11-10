@@ -9,6 +9,6 @@ export const snippets_bigDecimalFromJsonString: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}bigDecimalFromJsonString`,
     code`\
-const ${syntheticNamePrefix}bigDecimalFromJsonString: ${snippets.FromJsonValueFunction}<string, ${imports.BigDecimal}, ${snippets.NumericSchema}<${imports.BigDecimal}>> = 
+const ${syntheticNamePrefix}bigDecimalFromJsonString: ${snippets.FromJsonFunction}<string, ${imports.BigDecimal}, ${snippets.NumericSchema}<${imports.BigDecimal}>> = 
   (jsonValue) => ${imports.Either}.encase(() => new ${imports.BigDecimal}(jsonValue));`,
   );

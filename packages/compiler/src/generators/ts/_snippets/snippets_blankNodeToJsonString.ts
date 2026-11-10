@@ -9,6 +9,6 @@ export const snippets_blankNodeToJsonString: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}blankNodeToJsonString`,
     code`\
-const ${syntheticNamePrefix}blankNodeToJsonString: ${snippets.ToJsonValueFunction}<${imports.BlankNode}, string> =
+const ${syntheticNamePrefix}blankNodeToJsonString: ${snippets.ToJsonFunction}<${imports.BlankNode}, string> =
   (blankNode) => \`_:\${blankNode.value}\`;`,
   );

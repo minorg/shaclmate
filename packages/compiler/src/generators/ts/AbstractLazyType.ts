@@ -74,7 +74,7 @@ export abstract class AbstractLazyType<
       code`(jsonObject, fromJsonObjectOptions) => ${this.partialType.fromJsonObjectFunction.annotatedUsage}(jsonObject, { ...fromJsonObjectOptions, schema: fromJsonObjectOptions.schema.partialType })
         .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.resolverFunctionExpression({ variables: { factoryFunctionOptions: code`fromJsonObjectOptions` } })} }))`,
       {
-        type: code`${this.reusables.snippets.FromJsonObjectFunction}<${this.jsonObjectType.expression}, ${this.expression}, ${this.schema}>`,
+        type: code`${this.reusables.snippets.FromJsonFunction}<${this.jsonObjectType.expression}, ${this.expression}, ${this.schema}>`,
       },
     );
   }
@@ -84,7 +84,7 @@ export abstract class AbstractLazyType<
       code`(jsonValue, fromJsonValueOptions) => ${this.partialType.fromJsonValueFunction.annotatedUsage}(jsonValue, { ...fromJsonValueOptions, schema: fromJsonValueOptions.schema.partialType })
         .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.resolverFunctionExpression({ variables: { factoryFunctionOptions: code`fromJsonValueOptions` } })} }))`,
       {
-        type: code`${this.reusables.snippets.FromJsonValueFunction}<${this.jsonValueType.expression}, ${this.expression}, ${this.schema}>`,
+        type: code`${this.reusables.snippets.FromJsonFunction}<${this.jsonValueType.expression}, ${this.expression}, ${this.schema}>`,
       },
     );
   }
@@ -156,7 +156,7 @@ export abstract class AbstractLazyType<
     return new InlineCallable(
       code`(value) => ${this.partialType.toJsonObjectFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
       {
-        type: code`${this.reusables.snippets.ToJsonObjectFunction}<${this.expression}, ${this.jsonValueType.expression}>`,
+        type: code`${this.reusables.snippets.ToJsonFunction}<${this.expression}, ${this.jsonValueType.expression}>`,
       },
     );
   }
@@ -165,7 +165,7 @@ export abstract class AbstractLazyType<
     return new InlineCallable(
       code`(value) => ${this.partialType.toJsonValueFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
       {
-        type: code`${this.reusables.snippets.ToJsonValueFunction}<${this.expression}, ${this.jsonValueType.expression}>`,
+        type: code`${this.reusables.snippets.ToJsonFunction}<${this.expression}, ${this.jsonValueType.expression}>`,
       },
     );
   }

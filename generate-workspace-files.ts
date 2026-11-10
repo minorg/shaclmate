@@ -283,10 +283,12 @@ const workspaces = {
       },
       devDependencies: {
         external: [
+          "@rdfjs/namespace",
           "@rdfx/fs",
           "@rdfx/serializer",
           "@rdfx/sparql-client",
           "@tpluscode/rdf-ns-builders",
+          "@types/rdfjs__namespace",
           "@types/sparqljs",
           "js-sha256",
           "oxigraph",

@@ -14,7 +14,7 @@ function ${syntheticNamePrefix}convertToIdentifier<DefaultNamespaceT extends ${s
     case "object":
       return ${imports.Either}.of(value);
     case "string":
-      return ${imports.Either}.of(defaultNamespace ? defaultNamespace(value) : ${imports.dataFactory}.namedNode(value));
+      return ${snippets.iriFromString}(value, { defaultNamespace });
     case "undefined":
       return ${imports.Either}.of(${imports.dataFactory}.blankNode());
   }

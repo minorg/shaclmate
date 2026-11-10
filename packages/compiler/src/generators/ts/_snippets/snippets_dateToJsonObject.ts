@@ -9,7 +9,7 @@ export const snippets_dateToJsonObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}dateToJsonObject`,
     code`\
-function ${syntheticNamePrefix}dateToJsonObject(datatype: ${imports.NamedNode}): ${snippets.ToJsonObjectFunction}<Date, ${snippets.TypedLiteralJsonObject}> {
+function ${syntheticNamePrefix}dateToJsonObject(datatype: ${imports.NamedNode}): ${snippets.ToJsonFunction}<Date, ${snippets.TypedLiteralJsonObject}> {
   return (value) => ${snippets.typedLiteralToJsonObject}(${snippets.literalFactory}.date(value, datatype));
 }`,
   );

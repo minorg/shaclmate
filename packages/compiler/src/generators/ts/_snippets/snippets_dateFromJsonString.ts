@@ -9,6 +9,6 @@ export const snippets_dateFromJsonString: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}dateFromJsonString`,
     code`\
-const ${syntheticNamePrefix}dateFromJsonString: ${snippets.FromJsonValueFunction}<string, Date, ${snippets.DateSchema}> = 
+const ${syntheticNamePrefix}dateFromJsonString: ${snippets.FromJsonFunction}<string, Date, ${snippets.DateSchema}> = 
   (jsonValue) => ${imports.Either}.encase(() => new Date(jsonValue));`,
   );

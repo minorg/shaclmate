@@ -9,6 +9,6 @@ export const snippets_dateFromJsonObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}dateFromJsonObject`,
     code`\
-const ${syntheticNamePrefix}dateFromJsonObject: ${snippets.FromJsonObjectFunction}<${snippets.TypedLiteralJsonObject}, Date, undefined> = 
+const ${syntheticNamePrefix}dateFromJsonObject: ${snippets.FromJsonFunction}<${snippets.TypedLiteralJsonObject}, Date, undefined> = 
   (jsonObject) => ${snippets.literalFromJsonObject}(jsonObject).chain(${imports.LiteralDecoder}.decodeDateLiteral);`,
   );

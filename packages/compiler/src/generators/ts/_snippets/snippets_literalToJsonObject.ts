@@ -10,7 +10,7 @@ export const snippets_literalToJsonObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}literalToJsonObject`,
     code`\
-const ${syntheticNamePrefix}literalToJsonObject: ${snippets.ToJsonObjectFunction}<${imports.Literal}, ${snippets.LiteralJsonObject}> =
+const ${syntheticNamePrefix}literalToJsonObject: ${snippets.ToJsonFunction}<${imports.Literal}, ${snippets.LiteralJsonObject}> =
   (literal) => {
     const jsonObject: ${snippets.LiteralJsonObject} = { "@value": literal.value };
     if (literal.language.length > 0) {

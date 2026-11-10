@@ -9,7 +9,7 @@ export const snippets_booleanFromJsonObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}booleanFromJsonObject`,
     code`\
-function ${syntheticNamePrefix}booleanFromJsonObject<BooleanT extends boolean>(jsonObject: ${snippets.TypedLiteralJsonObject}, options: Parameters<${snippets.FromJsonObjectFunction}<${snippets.TypedLiteralJsonObject}, BooleanT, ${snippets.BooleanSchema}<BooleanT>>>[1]): ${imports.Either}<Error, BooleanT> {
+function ${syntheticNamePrefix}booleanFromJsonObject<BooleanT extends boolean>(jsonObject: ${snippets.TypedLiteralJsonObject}, options: Parameters<${snippets.FromJsonFunction}<${snippets.TypedLiteralJsonObject}, BooleanT, ${snippets.BooleanSchema}<BooleanT>>>[1]): ${imports.Either}<Error, BooleanT> {
   const { schema } = options;
   return ${snippets.literalFromJsonObject}(jsonObject)
     .chain(${imports.LiteralDecoder}.decodeBooleanLiteral)

@@ -9,7 +9,7 @@ export const snippets_termToJsonObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}termToJsonObject`,
     code`\
-const ${syntheticNamePrefix}termToJsonObject: ${snippets.ToJsonObjectFunction}<${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}, ${snippets.TermJsonObject}> =
+const ${syntheticNamePrefix}termToJsonObject: ${snippets.ToJsonFunction}<${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}, ${snippets.TermJsonObject}> =
   (term) => {
     switch (term.termType) {
       case "BlankNode":

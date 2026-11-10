@@ -21,8 +21,7 @@ import { snippets_EqualsResult } from "./_snippets/snippets_EqualsResult.js";
 import { snippets_FilterFunction } from "./_snippets/snippets_FilterFunction.js";
 import { snippets_FocusSparqlConstructTriplesFunction } from "./_snippets/snippets_FocusSparqlConstructTriplesFunction.js";
 import { snippets_FocusSparqlWherePatternsFunction } from "./_snippets/snippets_FocusSparqlWherePatternsFunction.js";
-import { snippets_FromJsonObjectFunction } from "./_snippets/snippets_FromJsonObjectFunction.js";
-import { snippets_FromJsonValueFunction } from "./_snippets/snippets_FromJsonValueFunction.js";
+import { snippets_FromJsonFunction } from "./_snippets/snippets_FromJsonFunction.js";
 import { snippets_FromRdfResourceFunction } from "./_snippets/snippets_FromRdfResourceFunction.js";
 import { snippets_FromRdfResourceValuesFunction } from "./_snippets/snippets_FromRdfResourceValuesFunction.js";
 import { snippets_HashFunction } from "./_snippets/snippets_HashFunction.js";
@@ -61,8 +60,7 @@ import { snippets_StringSchema } from "./_snippets/snippets_StringSchema.js";
 import { snippets_TermFilter } from "./_snippets/snippets_TermFilter.js";
 import { snippets_TermJsonObject } from "./_snippets/snippets_TermJsonObject.js";
 import { snippets_TermSchema } from "./_snippets/snippets_TermSchema.js";
-import { snippets_ToJsonObjectFunction } from "./_snippets/snippets_ToJsonObjectFunction.js";
-import { snippets_ToJsonValueFunction } from "./_snippets/snippets_ToJsonValueFunction.js";
+import { snippets_ToJsonFunction } from "./_snippets/snippets_ToJsonFunction.js";
 import { snippets_ToLoggableFunction } from "./_snippets/snippets_ToLoggableFunction.js";
 import { snippets_ToRdfResourceFunction } from "./_snippets/snippets_ToRdfResourceFunction.js";
 import { snippets_ToRdfResourceValuesFunction } from "./_snippets/snippets_ToRdfResourceValuesFunction.js";
@@ -111,10 +109,10 @@ import { snippets_convertToBlankNode } from "./_snippets/snippets_convertToBlank
 import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty.js";
 import { snippets_convertToIdentifier } from "./_snippets/snippets_convertToIdentifier.js";
 import { snippets_convertToIdentifierProperty } from "./_snippets/snippets_convertToIdentifierProperty.js";
-import { snippets_convertToInIri } from "./_snippets/snippets_convertToInIri.js";
-import { snippets_convertToInIriIdentifierProperty } from "./_snippets/snippets_convertToInIriIdentifierProperty.js";
 import { snippets_convertToIri } from "./_snippets/snippets_convertToIri.js";
 import { snippets_convertToIriIdentifierProperty } from "./_snippets/snippets_convertToIriIdentifierProperty.js";
+import { snippets_convertToIriLiteral } from "./_snippets/snippets_convertToIriLiteral.js";
+import { snippets_convertToIriLiteralIdentifierProperty } from "./_snippets/snippets_convertToIriLiteralIdentifierProperty.js";
 import { snippets_convertToLangString } from "./_snippets/snippets_convertToLangString.js";
 import { snippets_convertToLazy } from "./_snippets/snippets_convertToLazy.js";
 import { snippets_convertToLazyOption } from "./_snippets/snippets_convertToLazyOption.js";
@@ -182,6 +180,9 @@ import { snippets_intFromRdfResourceValues } from "./_snippets/snippets_intFromR
 import { snippets_iriFromJsonObject } from "./_snippets/snippets_iriFromJsonObject.js";
 import { snippets_iriFromJsonString } from "./_snippets/snippets_iriFromJsonString.js";
 import { snippets_iriFromRdfResourceValues } from "./_snippets/snippets_iriFromRdfResourceValues.js";
+import { snippets_iriFromString } from "./_snippets/snippets_iriFromString.js";
+import { snippets_iriLiteralFromJsonObject } from "./_snippets/snippets_iriLiteralFromJsonObject.js";
+import { snippets_iriLiteralFromJsonString } from "./_snippets/snippets_iriLiteralFromJsonString.js";
 import { snippets_iriSparqlWherePatterns } from "./_snippets/snippets_iriSparqlWherePatterns.js";
 import { snippets_iriToJsonObject } from "./_snippets/snippets_iriToJsonObject.js";
 import { snippets_iriToJsonString } from "./_snippets/snippets_iriToJsonString.js";
@@ -364,13 +365,8 @@ export class Snippets {
   }
 
   @Memoize()
-  get FromJsonObjectFunction(): Snippet {
-    return this.snippet(snippets_FromJsonObjectFunction);
-  }
-
-  @Memoize()
-  get FromJsonValueFunction(): Snippet {
-    return this.snippet(snippets_FromJsonValueFunction);
+  get FromJsonFunction(): Snippet {
+    return this.snippet(snippets_FromJsonFunction);
   }
 
   @Memoize()
@@ -564,13 +560,8 @@ export class Snippets {
   }
 
   @Memoize()
-  get ToJsonObjectFunction(): Snippet {
-    return this.snippet(snippets_ToJsonObjectFunction);
-  }
-
-  @Memoize()
-  get ToJsonValueFunction(): Snippet {
-    return this.snippet(snippets_ToJsonValueFunction);
+  get ToJsonFunction(): Snippet {
+    return this.snippet(snippets_ToJsonFunction);
   }
 
   @Memoize()
@@ -814,16 +805,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get convertToInIri(): Snippet {
-    return this.snippet(snippets_convertToInIri);
-  }
-
-  @Memoize()
-  get convertToInIriIdentifierProperty(): Snippet {
-    return this.snippet(snippets_convertToInIriIdentifierProperty);
-  }
-
-  @Memoize()
   get convertToIri(): Snippet {
     return this.snippet(snippets_convertToIri);
   }
@@ -831,6 +812,16 @@ export class Snippets {
   @Memoize()
   get convertToIriIdentifierProperty(): Snippet {
     return this.snippet(snippets_convertToIriIdentifierProperty);
+  }
+
+  @Memoize()
+  get convertToIriLiteral(): Snippet {
+    return this.snippet(snippets_convertToIriLiteral);
+  }
+
+  @Memoize()
+  get convertToIriLiteralIdentifierProperty(): Snippet {
+    return this.snippet(snippets_convertToIriLiteralIdentifierProperty);
   }
 
   @Memoize()
@@ -1166,6 +1157,21 @@ export class Snippets {
   @Memoize()
   get iriFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_iriFromRdfResourceValues);
+  }
+
+  @Memoize()
+  get iriFromString(): Snippet {
+    return this.snippet(snippets_iriFromString);
+  }
+
+  @Memoize()
+  get iriLiteralFromJsonObject(): Snippet {
+    return this.snippet(snippets_iriLiteralFromJsonObject);
+  }
+
+  @Memoize()
+  get iriLiteralFromJsonString(): Snippet {
+    return this.snippet(snippets_iriLiteralFromJsonString);
   }
 
   @Memoize()

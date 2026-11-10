@@ -8,6 +8,6 @@ export const snippets_bigIntToJsonString: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}bigIntToJsonString`,
     code`\
-const ${syntheticNamePrefix}bigIntToJsonString: ${snippets.ToJsonValueFunction}<bigint, string> =
+const ${syntheticNamePrefix}bigIntToJsonString: ${snippets.ToJsonFunction}<bigint, string> =
   (bigInt) => bigInt.toString();`,
   );
