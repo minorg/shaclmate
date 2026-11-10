@@ -9,6 +9,6 @@ export const snippets_langStringFromJsonObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}langStringFromJsonObject`,
     code`\
-const ${syntheticNamePrefix}langStringFromJsonObject: ${snippets.FromJsonObjectFunction}<${snippets.LangStringJsonObject}, ${imports.Literal}, ${snippets.LangStringSchema}> = 
+const ${syntheticNamePrefix}langStringFromJsonObject: ${snippets.FromJsonFunction}<${snippets.LangStringJsonObject}, ${imports.Literal}, ${snippets.LangStringSchema}> = 
   (jsonObject) => ${imports.Either}.of<Error, ${imports.Literal}>(${imports.dataFactory}.literal(jsonObject["@value"], jsonObject["@language"]))`,
   );

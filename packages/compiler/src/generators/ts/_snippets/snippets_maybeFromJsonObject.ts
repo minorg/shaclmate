@@ -9,7 +9,7 @@ export const snippets_maybeFromJsonObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}maybeFromJsonObject`,
     code`\
-function ${syntheticNamePrefix}maybeFromJsonObject<ItemJsonObjectT extends object, ItemT, ItemSchemaT>(itemFromJsonObject: ${snippets.FromJsonObjectFunction}<ItemJsonObjectT, ItemT, ItemSchemaT>): ${snippets.FromJsonObjectFunction}<ItemJsonObjectT | undefined, ${imports.Maybe}<ItemT>, ${snippets.MaybeSchema}<ItemSchemaT>> {
+function ${syntheticNamePrefix}maybeFromJsonObject<ItemJsonObjectT extends object, ItemT, ItemSchemaT>(itemFromJsonObject: ${snippets.FromJsonFunction}<ItemJsonObjectT, ItemT, ItemSchemaT>): ${snippets.FromJsonFunction}<ItemJsonObjectT | undefined, ${imports.Maybe}<ItemT>, ${snippets.MaybeSchema}<ItemSchemaT>> {
   return (value, options) => {
     if (value === undefined) {
       return ${imports.Either}.of(${imports.Maybe}.empty());

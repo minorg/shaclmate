@@ -9,7 +9,7 @@ export const snippets_intFromJsonObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}intFromJsonObject`,
     code`\
-function ${syntheticNamePrefix}intFromJsonObject<IntT extends number>(jsonObject: ${snippets.TypedLiteralJsonObject}, options: Parameters<${snippets.FromJsonObjectFunction}<${snippets.TypedLiteralJsonObject}, IntT, ${snippets.NumericSchema}<IntT>>>[1]): ${imports.Either}<Error, IntT> {
+function ${syntheticNamePrefix}intFromJsonObject<IntT extends number>(jsonObject: ${snippets.TypedLiteralJsonObject}, options: Parameters<${snippets.FromJsonFunction}<${snippets.TypedLiteralJsonObject}, IntT, ${snippets.NumericSchema}<IntT>>>[1]): ${imports.Either}<Error, IntT> {
   const { schema } = options;
   return ${snippets.literalFromJsonObject}(jsonObject)
     .chain(${imports.LiteralDecoder}.decodeIntLiteral)

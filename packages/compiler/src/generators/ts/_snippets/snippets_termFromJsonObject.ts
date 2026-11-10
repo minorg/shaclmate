@@ -9,7 +9,7 @@ export const snippets_termFromJsonObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}termFromJsonObject`,
     code`\
-function ${syntheticNamePrefix}termFromJsonObject<TermT extends ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}>(jsonObject: ${snippets.TermJsonObject}, options: Parameters<${snippets.FromJsonObjectFunction}<${snippets.TermJsonObject}, TermT, ${snippets.TermSchema}<TermT>>>[1]): ${imports.Either}<Error, TermT> {
+function ${syntheticNamePrefix}termFromJsonObject<TermT extends ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}>(jsonObject: ${snippets.TermJsonObject}, options: Parameters<${snippets.FromJsonFunction}<${snippets.TermJsonObject}, TermT, ${snippets.TermSchema}<TermT>>>[1]): ${imports.Either}<Error, TermT> {
   const { schema } = options;
 
   for (const termType of schema.types) {

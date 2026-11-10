@@ -29,5 +29,5 @@ ${member.type.fromJsonObjectFunction.unannotatedUsage}(jsonObject).${memberI + 1
 export function ObjectIntersectionType_fromJsonObjectFunctionType(
   this: ObjectIntersectionType,
 ): Code {
-  return code`${this.reusables.snippets.FromJsonObjectFunction}<${this.jsonObjectType.expression}, ${this.discriminatedType.map((discriminatedType) => discriminatedType.expression).orDefault(this.expression)}, undefined>`;
+  return code`${this.reusables.snippets.FromJsonFunction}<${this.jsonObjectType.expression}, ${this.discriminatedType.map((discriminatedType) => discriminatedType.expression).orDefault(this.expression)}, undefined>`;
 }

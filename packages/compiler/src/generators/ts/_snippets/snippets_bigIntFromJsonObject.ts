@@ -9,7 +9,7 @@ export const snippets_bigIntFromJsonObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}bigIntFromJsonObject`,
     code`\
-function ${syntheticNamePrefix}bigIntFromJsonObject<BigIntT extends bigint>(jsonObject: ${snippets.TypedLiteralJsonObject}, options: Parameters<${snippets.FromJsonObjectFunction}<${snippets.TypedLiteralJsonObject}, BigIntT, ${snippets.NumericSchema}<BigIntT>>>[1]): ${imports.Either}<Error, BigIntT> {
+function ${syntheticNamePrefix}bigIntFromJsonObject<BigIntT extends bigint>(jsonObject: ${snippets.TypedLiteralJsonObject}, options: Parameters<${snippets.FromJsonFunction}<${snippets.TypedLiteralJsonObject}, BigIntT, ${snippets.NumericSchema}<BigIntT>>>[1]): ${imports.Either}<Error, BigIntT> {
   const { schema } = options;
   return ${snippets.literalFromJsonObject}(jsonObject)
     .chain(${imports.LiteralDecoder}.decodeBigIntLiteral)

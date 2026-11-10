@@ -92,8 +92,7 @@ import { snippets_errorToProblemDetailsJson } from "./_snippets/snippets_errorTo
 import { snippets_FilterFunction } from "./_snippets/snippets_FilterFunction.js";
 import { snippets_FocusSparqlConstructTriplesFunction } from "./_snippets/snippets_FocusSparqlConstructTriplesFunction.js";
 import { snippets_FocusSparqlWherePatternsFunction } from "./_snippets/snippets_FocusSparqlWherePatternsFunction.js";
-import { snippets_FromJsonObjectFunction } from "./_snippets/snippets_FromJsonObjectFunction.js";
-import { snippets_FromJsonValueFunction } from "./_snippets/snippets_FromJsonValueFunction.js";
+import { snippets_FromJsonFunction } from "./_snippets/snippets_FromJsonFunction.js";
 import { snippets_FromRdfResourceFunction } from "./_snippets/snippets_FromRdfResourceFunction.js";
 import { snippets_FromRdfResourceValuesFunction } from "./_snippets/snippets_FromRdfResourceValuesFunction.js";
 import { snippets_filterArray } from "./_snippets/snippets_filterArray.js";
@@ -363,13 +362,8 @@ export class Snippets {
   }
 
   @Memoize()
-  get FromJsonObjectFunction(): Snippet {
-    return this.snippet(snippets_FromJsonObjectFunction);
-  }
-
-  @Memoize()
-  get FromJsonValueFunction(): Snippet {
-    return this.snippet(snippets_FromJsonValueFunction);
+  get FromJsonFunction(): Snippet {
+    return this.snippet(snippets_FromJsonFunction);
   }
 
   @Memoize()

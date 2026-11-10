@@ -9,7 +9,7 @@ export const snippets_arrayFromJsonArray: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}arrayFromJsonArray`,
     code`\
-function ${syntheticNamePrefix}arrayFromJsonArray<ItemJsonValueT, ItemT, ItemSchemaT>(itemFromJsonValue: ${snippets.FromJsonValueFunction}<ItemJsonValueT, ItemT, ItemSchemaT>): ${snippets.FromJsonValueFunction}<ItemJsonValueT[] | undefined, ItemT[], ${snippets.CollectionSchema}<ItemSchemaT>> {
+function ${syntheticNamePrefix}arrayFromJsonArray<ItemJsonValueT, ItemT, ItemSchemaT>(itemFromJsonValue: ${snippets.FromJsonFunction}<ItemJsonValueT, ItemT, ItemSchemaT>): ${snippets.FromJsonFunction}<ItemJsonValueT[] | undefined, ItemT[], ${snippets.CollectionSchema}<ItemSchemaT>> {
   return (jsonArray, options) => {
     if (jsonArray === undefined) {
       return ${imports.Either}.of([]);

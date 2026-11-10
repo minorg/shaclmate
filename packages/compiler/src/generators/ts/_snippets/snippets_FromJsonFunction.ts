@@ -1,15 +1,15 @@
 import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-export const snippets_FromJsonValueFunction: SnippetFactory = ({
+export const snippets_FromJsonFunction: SnippetFactory = ({
   configuration,
   imports,
   syntheticNamePrefix,
 }) =>
   conditionalOutput(
-    `${syntheticNamePrefix}FromJsonValueFunction`,
+    `${syntheticNamePrefix}FromJsonFunction`,
     code`\
-export type ${syntheticNamePrefix}FromJsonValueFunction<JsonValueT, ValueT, ValueSchemaT> = 
+export type ${syntheticNamePrefix}FromJsonFunction<JsonValueT, ValueT, ValueSchemaT> = 
   [ValueSchemaT] extends [undefined]
   ? (
       jsonValue: JsonValueT,
