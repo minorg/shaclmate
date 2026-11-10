@@ -8,6 +8,6 @@ export const snippets_dateToJsonString: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}dateToJsonString`,
     code`\
-const ${syntheticNamePrefix}dateToJsonString: ${snippets.ToJsonValueFunction}<Date, string> =
+const ${syntheticNamePrefix}dateToJsonString: ${snippets.ToJsonFunction}<Date, string> =
   (date) => ${snippets.toIsoDateString}(date);`,
   );

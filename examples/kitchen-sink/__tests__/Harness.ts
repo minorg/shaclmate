@@ -5,7 +5,7 @@ import type {
   $FromJsonObjectFunction,
   $FromRdfResourceFunction,
   $HashFunction,
-  $ToJsonObjectFunction,
+  $ToJsonFunction,
   $ToRdfResourceFunction,
   $ToStringFunction,
 } from "../src/index.js";
@@ -28,7 +28,7 @@ export class Harness<
       sparqlConstructQueryString: (parameters: {
         subject: NamedNode | Variable;
       }) => string;
-      toJson: $ToJsonObjectFunction<T, any>;
+      toJson: $ToJsonFunction<T, any>;
       toRdfResource: $ToRdfResourceFunction<Resource.Identifier, T>;
       $toString: $ToStringFunction<T>;
     }>,

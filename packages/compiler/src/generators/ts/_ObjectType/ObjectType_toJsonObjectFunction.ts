@@ -21,5 +21,5 @@ export function ObjectType_toJsonObjectFunctionExpression(
 }
 
 export function ObjectType_toJsonObjectFunctionType(this: ObjectType): Code {
-  return code`${this.reusables.snippets.ToJsonObjectFunction}<${this.expression}, ${this.jsonObjectType.expression}>`;
+  return code`${this.reusables.snippets.ToJsonFunction}<${this.expression}, ${this.jsonObjectType.expression}>`;
 }

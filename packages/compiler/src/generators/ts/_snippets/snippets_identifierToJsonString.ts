@@ -9,6 +9,6 @@ export const snippets_identifierToJsonString: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}identifierToJsonString`,
     code`\
-const ${syntheticNamePrefix}identifierToJsonString: ${snippets.ToJsonValueFunction}<${imports.BlankNode} | ${imports.NamedNode}, string> =
+const ${syntheticNamePrefix}identifierToJsonString: ${snippets.ToJsonFunction}<${imports.BlankNode} | ${imports.NamedNode}, string> =
   (identifier) => identifier.termType === "BlankNode" ? ${snippets.blankNodeToJsonString}(identifier) : ${snippets.iriToJsonString}(identifier);`,
   );

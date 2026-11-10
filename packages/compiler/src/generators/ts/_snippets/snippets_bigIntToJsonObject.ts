@@ -9,7 +9,7 @@ export const snippets_bigIntToJsonObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}bigIntToJsonObject`,
     code`\
-function ${syntheticNamePrefix}bigIntToJsonObject(datatype: ${imports.NamedNode}): ${snippets.ToJsonObjectFunction}<bigint, ${snippets.TypedLiteralJsonObject}> {
+function ${syntheticNamePrefix}bigIntToJsonObject(datatype: ${imports.NamedNode}): ${snippets.ToJsonFunction}<bigint, ${snippets.TypedLiteralJsonObject}> {
   return (value) => ${snippets.typedLiteralToJsonObject}(${snippets.literalFactory}.bigint(value, datatype));
 }`,
   );

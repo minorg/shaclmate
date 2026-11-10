@@ -307,7 +307,7 @@ export abstract class AbstractStructuredType extends AbstractType {
   protected abstract toJsonObjectFunctionExpression(): Code;
 
   protected toJsonObjectFunctionType(): Code {
-    return code`${this.reusables.snippets.ToJsonObjectFunction}<${this.expression}, ${this.jsonObjectType.expression}>`;
+    return code`${this.reusables.snippets.ToJsonFunction}<${this.expression}, ${this.jsonObjectType.expression}>`;
   }
 
   protected abstract toLoggableFunctionExpression(): Code;

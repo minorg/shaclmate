@@ -156,7 +156,7 @@ export abstract class AbstractLazyType<
     return new InlineCallable(
       code`(value) => ${this.partialType.toJsonObjectFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
       {
-        type: code`${this.reusables.snippets.ToJsonObjectFunction}<${this.expression}, ${this.jsonValueType.expression}>`,
+        type: code`${this.reusables.snippets.ToJsonFunction}<${this.expression}, ${this.jsonValueType.expression}>`,
       },
     );
   }
@@ -165,7 +165,7 @@ export abstract class AbstractLazyType<
     return new InlineCallable(
       code`(value) => ${this.partialType.toJsonValueFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
       {
-        type: code`${this.reusables.snippets.ToJsonValueFunction}<${this.expression}, ${this.jsonValueType.expression}>`,
+        type: code`${this.reusables.snippets.ToJsonFunction}<${this.expression}, ${this.jsonValueType.expression}>`,
       },
     );
   }

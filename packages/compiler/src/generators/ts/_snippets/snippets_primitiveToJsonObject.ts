@@ -9,7 +9,7 @@ export const snippets_primitiveToJsonObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}primitiveToJsonObject`,
     code`\
-function ${syntheticNamePrefix}primitiveToJsonObject<PrimitiveT extends boolean | number | string>(datatype: ${imports.NamedNode}): ${snippets.ToJsonObjectFunction}<PrimitiveT, ${snippets.TypedLiteralJsonObject}> {
+function ${syntheticNamePrefix}primitiveToJsonObject<PrimitiveT extends boolean | number | string>(datatype: ${imports.NamedNode}): ${snippets.ToJsonFunction}<PrimitiveT, ${snippets.TypedLiteralJsonObject}> {
   return (primitive) => ${snippets.typedLiteralToJsonObject}(${snippets.literalFactory}.primitive(primitive, datatype));
 }`,
   );
