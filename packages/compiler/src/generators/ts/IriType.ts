@@ -31,16 +31,24 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
 
   @Memoize()
   override get fromJsonValueFunction(): AbstractIdentifierType<NamedNode>["fromJsonValueFunction"] {
-    return new ReferenceCallable(
-      code`${this.reusables.snippets.iriFromJsonString}<${this.valueTypeExpression}>`,
-    );
+    if (this.in_.length > 0) {
+      return new ReferenceCallable(
+        code`${this.reusables.snippets.iriLiteralFromJsonString}<${this.valueTypeExpression}>`,
+      );
+    } else {
+      return new ReferenceCallable(this.reusables.snippets.iriFromJsonString);
+    }
   }
 
   @Memoize()
   override get fromJsonObjectFunction(): AbstractIdentifierType<NamedNode>["fromJsonObjectFunction"] {
-    return new ReferenceCallable(
-      code`${this.reusables.snippets.iriFromJsonObject}<${this.valueTypeExpression}>`,
-    );
+    if (this.in_.length > 0) {
+      return new ReferenceCallable(
+        code`${this.reusables.snippets.iriLiteralFromJsonObject}<${this.valueTypeExpression}>`,
+      );
+    } else {
+      return new ReferenceCallable(this.reusables.snippets.iriFromJsonObject);
+    }
   }
 
   @Memoize()
@@ -89,7 +97,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
     return Maybe.of({
       code:
         this.in_.length > 0
-          ? code`${this.reusables.snippets.convertToInIri}<${this.valueTypeExpression}>`
+          ? code`${this.reusables.snippets.convertToIriLiteral}<${this.valueTypeExpression}>`
           : code`${this.reusables.snippets.convertToIri}`,
       sourceTypes: [
         {

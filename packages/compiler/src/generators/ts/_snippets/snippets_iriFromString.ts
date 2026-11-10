@@ -31,16 +31,18 @@ export const snippets_iriFromString: SnippetFactory = ({
   return conditionalOutput(
     `${syntheticNamePrefix}iriFromString`,
     code`\
-export function ${syntheticNamePrefix}iriFromString<IriT extends string = string>(
-  string: IriT,
+export function ${syntheticNamePrefix}iriFromString(
+  string: string,
   options?: {
     defaultNamespace?: ${snippets.NamespaceBuilder};
     prefixMap?: ${imports.PrefixMap};
   }
-): ${imports.Either}<Error, ${imports.NamedNode}<IriT>> {
+): ${imports.Either}<Error, ${imports.NamedNode}> {
   if (string.trim().length === 0) {
     return ${imports.Left}(new Error("empty/blank IRI"));
   }
+
+  const defaultNamespace = options?.defaultNamespace;
 
   const colonIndex = string.indexOf(":");
   if (colonIndex === -1) {
@@ -62,17 +64,20 @@ export function ${syntheticNamePrefix}iriFromString<IriT extends string = string
   const scheme = prefix.toLowerCase();
   switch (scheme) {
 ${joinCode(leadingDoubleSlashSchemes.map((scheme) => code`    case ${literalOf(scheme)}:`, { on: "\n" }))}
-    if (path.startsWith("//") {
+    if (path.startsWith("//")) {
       return ${imports.Right}(${imports.dataFactory}.namedNode(string));
     }
     break;
   }
 
-  const prefixNamespace = prefixMap.get(prefix);
-  if (prefixNamespace !== undefined) {
-    return ${imports.Right}(
-      ${imports.dataFactory}.namedNode(\`\${prefixNamespace.value}\${path}\`),
-    );
+  const prefixMap = options?.prefixMap;
+  if (prefixMap) {
+    const prefixNamespace = prefixMap.get(prefix);
+    if (prefixNamespace !== undefined) {
+      return ${imports.Right}(
+        ${imports.dataFactory}.namedNode(\`\${prefixNamespace.value}\${path}\`),
+      );
+    }
   }
 
   if (prefix.length === 0 && defaultNamespace) {
@@ -80,7 +85,7 @@ ${joinCode(leadingDoubleSlashSchemes.map((scheme) => code`    case ${literalOf(s
     return ${imports.Right}(defaultNamespace(path));
   }
 
-  return ${imports.dataFactory}.namedNode(string);
+  return ${imports.Right}(${imports.dataFactory}.namedNode(string));
 }`,
   );
 };

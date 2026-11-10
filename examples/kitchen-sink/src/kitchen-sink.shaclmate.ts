@@ -7,7 +7,7 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
-import { datasetFactory } from "@rdfx/collection";
+import { datasetFactory, type PrefixMap } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { LiteralDecoder, LiteralFactory } from "@rdfx/literal";
 import {
@@ -579,11 +579,7 @@ function $convertToIdentifier<
     case "object":
       return Either.of(value);
     case "string":
-      return Either.of(
-        defaultNamespace
-          ? defaultNamespace(value)
-          : dataFactory.namedNode(value),
-      );
+      return $iriFromString(value, { defaultNamespace });
     case "undefined":
       return Either.of(dataFactory.blankNode());
   }
@@ -607,44 +603,12 @@ function $convertToIdentifierProperty<
       const captureIdentifier = identifier;
       return Either.of(() => captureIdentifier);
     }
-    case "string": {
-      const captureIdentifier = defaultNamespace
-        ? defaultNamespace(identifier)
-        : dataFactory.namedNode(identifier);
-      return Either.of(() => captureIdentifier);
-    }
+    case "string":
+      return $iriFromString(identifier, { defaultNamespace }).map(
+        (iri) => () => iri,
+      );
     case "undefined": {
       const captureIdentifier = dataFactory.blankNode();
-      return Either.of(() => captureIdentifier);
-    }
-  }
-}
-
-function $convertToInIri<IriT extends string>(
-  value: IriT | NamedNode<IriT>,
-  _defaultNamespace?: $NamespaceBuilder,
-): Either<Error, NamedNode<IriT>> {
-  switch (typeof value) {
-    case "object":
-      return Either.of(value);
-    case "string":
-      return Either.of(dataFactory.namedNode<IriT>(value));
-  }
-}
-
-function $convertToInIriIdentifierProperty<InIriT extends string>(
-  identifier: (() => NamedNode<InIriT>) | NamedNode<InIriT> | InIriT,
-  _defaultNamespace?: $NamespaceBuilder,
-): Either<Error, () => NamedNode<InIriT>> {
-  switch (typeof identifier) {
-    case "function":
-      return Either.of(identifier);
-    case "object": {
-      const captureIdentifier = identifier;
-      return Either.of(() => captureIdentifier);
-    }
-    case "string": {
-      const captureIdentifier = dataFactory.namedNode<InIriT>(identifier);
       return Either.of(() => captureIdentifier);
     }
   }
@@ -660,11 +624,7 @@ function $convertToIri<
     case "object":
       return Either.of(value);
     case "string":
-      return Either.of(
-        defaultNamespace
-          ? defaultNamespace(value)
-          : dataFactory.namedNode(value),
-      );
+      return $iriFromString(value, { defaultNamespace });
   }
 }
 
@@ -685,9 +645,38 @@ function $convertToIriIdentifierProperty<
       return Either.of(() => captureIdentifier);
     }
     case "string": {
-      const captureIdentifier = defaultNamespace
-        ? defaultNamespace(identifier)
-        : dataFactory.namedNode(identifier);
+      return $iriFromString(identifier, { defaultNamespace }).map(
+        (iri) => () => iri,
+      );
+    }
+  }
+}
+
+function $convertToIriLiteral<IriT extends string>(
+  value: IriT | NamedNode<IriT>,
+  _defaultNamespace?: $NamespaceBuilder,
+): Either<Error, NamedNode<IriT>> {
+  switch (typeof value) {
+    case "object":
+      return Either.of(value);
+    case "string":
+      return Either.of(dataFactory.namedNode<IriT>(value));
+  }
+}
+
+function $convertToIriLiteralIdentifierProperty<InIriT extends string>(
+  identifier: (() => NamedNode<InIriT>) | NamedNode<InIriT> | InIriT,
+  _defaultNamespace?: $NamespaceBuilder,
+): Either<Error, () => NamedNode<InIriT>> {
+  switch (typeof identifier) {
+    case "function":
+      return Either.of(identifier);
+    case "object": {
+      const captureIdentifier = identifier;
+      return Either.of(() => captureIdentifier);
+    }
+    case "string": {
+      const captureIdentifier = dataFactory.namedNode<InIriT>(identifier);
       return Either.of(() => captureIdentifier);
     }
   }
@@ -1634,13 +1623,21 @@ export type $FromJsonFunction<JsonValueT, ValueT, ValueSchemaT> = [
 ] extends [undefined]
   ? (
       jsonValue: JsonValueT,
-      options?: { context?: unknown; objectSet?: $ObjectSet; schema?: unknown },
+      options?: {
+        context?: unknown;
+        defaultNamespace?: $NamespaceBuilder;
+        objectSet?: $ObjectSet;
+        prefixMap?: PrefixMap;
+        schema?: unknown;
+      },
     ) => Either<Error, ValueT>
   : (
       jsonValue: JsonValueT,
       options: {
         context?: unknown;
+        defaultNamespace?: $NamespaceBuilder;
         objectSet?: $ObjectSet;
+        prefixMap?: PrefixMap;
         schema: ValueSchemaT;
       },
     ) => Either<Error, ValueT>;
@@ -1895,24 +1892,20 @@ interface $IriFilter {
   readonly in?: readonly NamedNode[];
 }
 
-function $iriFromJsonObject<IriT extends string = string>(
-  jsonObject: $IdentifierJsonObject<IriT>,
+function $iriFromJsonObject(
+  jsonObject: $IdentifierJsonObject,
   options: Parameters<
-    $FromJsonFunction<
-      $IdentifierJsonObject<IriT>,
-      NamedNode<IriT>,
-      $IriSchema<IriT>
-    >
+    $FromJsonFunction<$IdentifierJsonObject, NamedNode, $IriSchema>
   >[1],
-): Either<Error, NamedNode<IriT>> {
+): Either<Error, NamedNode> {
   return $iriFromJsonString(jsonObject["@id"], options);
 }
 
-function $iriFromJsonString<IriT extends string = string>(
-  jsonValue: IriT,
-  _options: Parameters<$FromJsonFunction<IriT, NamedNode<IriT>, object>>[1],
-): Either<Error, NamedNode<IriT>> {
-  return Either.of(dataFactory.namedNode(jsonValue));
+function $iriFromJsonString(
+  jsonString: string,
+  options: Parameters<$FromJsonFunction<string, NamedNode, object>>[1],
+): Either<Error, NamedNode> {
+  return $iriFromString(jsonString, options);
 }
 
 function $iriFromRdfResourceValues<IriT extends string = string>(
@@ -1928,6 +1921,78 @@ function $iriFromRdfResourceValues<IriT extends string = string>(
         : (value.toIri() as Either<Error, NamedNode<IriT>>),
     ),
   );
+}
+
+export function $iriFromString(
+  string: string,
+  options?: { defaultNamespace?: $NamespaceBuilder; prefixMap?: PrefixMap },
+): Either<Error, NamedNode> {
+  if (string.trim().length === 0) {
+    return Left(new Error("empty/blank IRI"));
+  }
+
+  const defaultNamespace = options?.defaultNamespace;
+
+  const colonIndex = string.indexOf(":");
+  if (colonIndex === -1) {
+    // No : in the string.
+    if (defaultNamespace) {
+      return Right(defaultNamespace(string));
+    } else {
+      return Left(new Error(`ill-formed IRI: ${string}`));
+    }
+  }
+
+  const prefix = string.substring(0, colonIndex);
+  const path = string.substring(colonIndex + 1);
+  if (path.length === 0) {
+    return Left(new Error(`ill-formed IRI: ${string}`));
+  }
+
+  // Absolute IRIs with scheme:// always win over prefixes with the same name.
+  const scheme = prefix.toLowerCase();
+  switch (scheme) {
+    case "file":
+    case "ftp":
+    case "http":
+    case "https":
+    case "git":
+    case "irc":
+    case "ldap":
+    case "postgres":
+    case "rtsp":
+    case "sftp":
+    case "smb":
+    case "ssh":
+    case "ws":
+    case "wss":
+      if (path.startsWith("//")) {
+        return Right(dataFactory.namedNode(string));
+      }
+      break;
+  }
+
+  const prefixMap = options?.prefixMap;
+  if (prefixMap) {
+    const prefixNamespace = prefixMap.get(prefix);
+    if (prefixNamespace !== undefined) {
+      return Right(dataFactory.namedNode(`${prefixNamespace.value}${path}`));
+    }
+  }
+
+  if (prefix.length === 0 && defaultNamespace) {
+    // a "" prefixMap entry takes precedence, above.
+    return Right(defaultNamespace(path));
+  }
+
+  return Right(dataFactory.namedNode(string));
+}
+
+function $iriLiteralFromJsonString<IriT extends string>(
+  jsonString: IriT,
+  _options: Parameters<$FromJsonFunction<IriT, NamedNode<IriT>, object>>[1],
+): Either<Error, NamedNode<IriT>> {
+  return Right(dataFactory.namedNode(jsonString));
 }
 
 interface $IriSchema<IriT extends string = string> {
@@ -4922,7 +4987,7 @@ export namespace $NamedDefaultPartial {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $iriFromJsonString<string>(jsonObject["@id"], {
+      $identifier: $iriFromJsonString(jsonObject["@id"], {
         ...options,
         schema: $NamedDefaultPartial.schema.properties.$identifier.type,
       }),
@@ -7943,7 +8008,7 @@ export namespace ClassConstraintsStruct {
         ...options,
         schema: ClassConstraintsStruct.schema.properties.$identifier.type,
       }),
-      iriClass: $maybeFromJsonValue($iriFromJsonString<string>)(
+      iriClass: $maybeFromJsonValue($iriFromJsonString)(
         jsonObject["iriClass"],
         {
           ...options,
@@ -9533,19 +9598,20 @@ export namespace ConvertibleTypesStruct {
         ...options,
         schema: ConvertibleTypesStruct.schema.properties.$identifier.type,
       }),
-      convertibleIri: $iriFromJsonString<string>(jsonObject["convertibleIri"], {
+      convertibleIri: $iriFromJsonString(jsonObject["convertibleIri"], {
         ...options,
         schema: ConvertibleTypesStruct.schema.properties.convertibleIri.type,
       }),
-      convertibleIriNonEmptySet: $arrayFromJsonArray(
-        $iriFromJsonString<string>,
-      )(jsonObject["convertibleIriNonEmptySet"], {
-        ...options,
-        schema:
-          ConvertibleTypesStruct.schema.properties.convertibleIriNonEmptySet
-            .type,
-      }),
-      convertibleIriOption: $maybeFromJsonValue($iriFromJsonString<string>)(
+      convertibleIriNonEmptySet: $arrayFromJsonArray($iriFromJsonString)(
+        jsonObject["convertibleIriNonEmptySet"],
+        {
+          ...options,
+          schema:
+            ConvertibleTypesStruct.schema.properties.convertibleIriNonEmptySet
+              .type,
+        },
+      ),
+      convertibleIriOption: $maybeFromJsonValue($iriFromJsonString)(
         jsonObject["convertibleIriOption"],
         {
           ...options,
@@ -9553,7 +9619,7 @@ export namespace ConvertibleTypesStruct {
             ConvertibleTypesStruct.schema.properties.convertibleIriOption.type,
         },
       ),
-      convertibleIriSet: $arrayFromJsonArray($iriFromJsonString<string>)(
+      convertibleIriSet: $arrayFromJsonArray($iriFromJsonString)(
         jsonObject["convertibleIriSet"],
         {
           ...options,
@@ -19717,7 +19783,7 @@ export namespace HasValuesStruct {
         ...options,
         schema: HasValuesStruct.schema.properties.$identifier.type,
       }),
-      hasIriValue: $iriFromJsonString<string>(jsonObject["hasIriValue"], {
+      hasIriValue: $iriFromJsonString(jsonObject["hasIriValue"], {
         ...options,
         schema: HasValuesStruct.schema.properties.hasIriValue.type,
       }),
@@ -21810,7 +21876,7 @@ export namespace InIdentifierStruct {
     parameters: InIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, InIdentifierStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToInIriIdentifierProperty<
+      $identifier: $convertToIriLiteralIdentifierProperty<
         | "http://example.com/InIdentifierStructInstance1"
         | "http://example.com/InIdentifierStructInstance2"
       >(parameters.$identifier, parameters.$defaultNamespace),
@@ -22033,7 +22099,7 @@ export namespace InIdentifierStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $iriFromJsonString<
+      $identifier: $iriLiteralFromJsonString<
         | "http://example.com/InIdentifierStructInstance1"
         | "http://example.com/InIdentifierStructInstance2"
       >(jsonObject["@id"], {
@@ -22594,7 +22660,7 @@ export namespace InPropertiesStruct {
         ),
       ),
       inIris: $convertToMaybe(
-        $convertToInIri<
+        $convertToIriLiteral<
           "http://example.com/InIri1" | "http://example.com/InIri2"
         >,
       )(parameters.inIris, parameters.$defaultNamespace).chain((value) =>
@@ -23109,7 +23175,7 @@ export namespace InPropertiesStruct {
         schema: InPropertiesStruct.schema.properties.inIntegers.type,
       }),
       inIris: $maybeFromJsonValue(
-        $iriFromJsonString<
+        $iriLiteralFromJsonString<
           "http://example.com/InIri1" | "http://example.com/InIri2"
         >,
       )(jsonObject["inIris"], {
@@ -24256,7 +24322,7 @@ export namespace IriIdentifierStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $iriFromJsonString<string>(jsonObject["@id"], {
+      $identifier: $iriFromJsonString(jsonObject["@id"], {
         ...options,
         schema: IriIdentifierStruct.schema.properties.$identifier.type,
       }),
@@ -28280,7 +28346,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $iriFromJsonString<string>(jsonObject["@id"], {
+      $identifier: $iriFromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           LazilyResolvedIriIdentifierStruct.schema.properties.$identifier.type,
@@ -33310,12 +33376,13 @@ export namespace ListsStruct {
         ...options,
         schema: ListsStruct.schema.properties.$identifier.type,
       }),
-      iriList: $maybeFromJsonValue(
-        $arrayFromJsonArray($iriFromJsonString<string>),
-      )(jsonObject["iriList"], {
-        ...options,
-        schema: ListsStruct.schema.properties.iriList.type,
-      }),
+      iriList: $maybeFromJsonValue($arrayFromJsonArray($iriFromJsonString))(
+        jsonObject["iriList"],
+        {
+          ...options,
+          schema: ListsStruct.schema.properties.iriList.type,
+        },
+      ),
       stringList: $maybeFromJsonValue(
         $arrayFromJsonArray($stringFromJsonString<string>),
       )(jsonObject["stringList"], {
@@ -34626,7 +34693,7 @@ export namespace NamedTypesStruct {
         parameters.$defaultNamespace,
       ),
       $type: Right("NamedTypesStruct" as const),
-      inIri: $convertToInIri<InIri["value"]>(
+      inIri: $convertToIriLiteral<InIri["value"]>(
         parameters.inIri,
         parameters.$defaultNamespace,
       ),
@@ -34900,7 +34967,7 @@ export namespace NamedTypesStruct {
         ...options,
         schema: NamedTypesStruct.schema.properties.$identifier.type,
       }),
-      inIri: $iriFromJsonString<InIri["value"]>(jsonObject["inIri"], {
+      inIri: $iriLiteralFromJsonString<InIri["value"]>(jsonObject["inIri"], {
         ...options,
         schema: NamedTypesStruct.schema.properties.inIri.type,
       }),
@@ -36315,7 +36382,7 @@ export namespace NodeKindsStruct {
             NodeKindsStruct.schema.properties.blankNodeOrLiteralNodeKind.type,
         },
       ),
-      iriNodeKind: $iriFromJsonString<string>(jsonObject["iriNodeKind"], {
+      iriNodeKind: $iriFromJsonString(jsonObject["iriNodeKind"], {
         ...options,
         schema: NodeKindsStruct.schema.properties.iriNodeKind.type,
       }),
@@ -44233,7 +44300,7 @@ export namespace PropertyPathsStruct {
         ...options,
         schema: PropertyPathsStruct.schema.properties.$identifier.type,
       }),
-      inversePath: $maybeFromJsonValue($iriFromJsonString<string>)(
+      inversePath: $maybeFromJsonValue($iriFromJsonString)(
         jsonObject["inversePath"],
         {
           ...options,
@@ -50415,13 +50482,10 @@ export namespace TermsStruct {
           schema: TermsStruct.schema.properties.identifierTerm.type,
         },
       ),
-      iriTerm: $maybeFromJsonValue($iriFromJsonString<string>)(
-        jsonObject["iriTerm"],
-        {
-          ...options,
-          schema: TermsStruct.schema.properties.iriTerm.type,
-        },
-      ),
+      iriTerm: $maybeFromJsonValue($iriFromJsonString)(jsonObject["iriTerm"], {
+        ...options,
+        schema: TermsStruct.schema.properties.iriTerm.type,
+      }),
       langStringTerm: $maybeFromJsonValue($langStringFromJsonObject)(
         jsonObject["langStringTerm"],
         {
@@ -55800,7 +55864,7 @@ export namespace UnionDiscriminantsStruct {
       }),
       optionalIriOrString: $maybeFromJsonValue(((value, options) => {
         if (value.$type === "object") {
-          return $iriFromJsonObject<string>(value, {
+          return $iriFromJsonObject(value, {
             ...options,
             schema: {
               kind: "DiscriminatedUnion" as const,
@@ -56104,7 +56168,7 @@ export namespace UnionDiscriminantsStruct {
       }),
       requiredIriOrString: ((value, options) => {
         if (value.$type === "object") {
-          return $iriFromJsonObject<string>(value, {
+          return $iriFromJsonObject(value, {
             ...options,
             schema: {
               kind: "DiscriminatedUnion" as const,
@@ -56369,7 +56433,7 @@ export namespace UnionDiscriminantsStruct {
       }),
       setIriOrString: $arrayFromJsonArray(((value, options) => {
         if (value.$type === "object") {
-          return $iriFromJsonObject<string>(value, {
+          return $iriFromJsonObject(value, {
             ...options,
             schema: {
               kind: "DiscriminatedUnion" as const,
@@ -58152,7 +58216,7 @@ export namespace DatatypeDiscriminatedUnion1 {
     undefined
   > = (value, options) => {
     if (value.$type === "object") {
-      return $iriFromJsonObject<string>(value, {
+      return $iriFromJsonObject(value, {
         ...options,
         schema: DatatypeDiscriminatedUnion1.schema.members["object"].type,
       }) as Either<Error, DatatypeDiscriminatedUnion1>;

@@ -1,15 +1,15 @@
 import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-export const snippets_convertToInIriIdentifierProperty: SnippetFactory = ({
+export const snippets_convertToIriLiteralIdentifierProperty: SnippetFactory = ({
   imports,
   snippets,
   syntheticNamePrefix,
 }) =>
   conditionalOutput(
-    `${syntheticNamePrefix}convertToInIriIdentifierProperty`,
+    `${syntheticNamePrefix}convertToIriLiteralIdentifierProperty`,
     code`\
-function ${syntheticNamePrefix}convertToInIriIdentifierProperty<InIriT extends string>(identifier: (() => ${imports.NamedNode}<InIriT>) | ${imports.NamedNode}<InIriT> | InIriT, _defaultNamespace?: ${snippets.NamespaceBuilder}): ${imports.Either}<Error, (() => ${imports.NamedNode}<InIriT>)> {
+function ${syntheticNamePrefix}convertToIriLiteralIdentifierProperty<InIriT extends string>(identifier: (() => ${imports.NamedNode}<InIriT>) | ${imports.NamedNode}<InIriT> | InIriT, _defaultNamespace?: ${snippets.NamespaceBuilder}): ${imports.Either}<Error, (() => ${imports.NamedNode}<InIriT>)> {
   switch (typeof identifier) {
     case "function":
       return ${imports.Either}.of(identifier);

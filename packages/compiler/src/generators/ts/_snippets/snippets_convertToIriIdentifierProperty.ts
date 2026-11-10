@@ -18,8 +18,7 @@ function ${syntheticNamePrefix}convertToIriIdentifierProperty<DefaultNamespaceT 
       return ${imports.Either}.of(() => captureIdentifier);
     }
     case "string": {
-      const captureIdentifier = ${snippets.iriFromString}(identifier, { defaultNamespace });
-      return ${imports.Either}.of(() => captureIdentifier);
+      return ${snippets.iriFromString}(identifier, { defaultNamespace }).map(iri => (() => iri));
     }
   }
 }`,
