@@ -1832,28 +1832,29 @@ export namespace RootObject {
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: RootObject.schema.properties.lazyObjectSetProperty,
-        typeFromRdfResourceValues: (
-          values,
-          { objectSet, schema, ...otherOptions },
-        ) =>
+        typeFromRdfResourceValues: (values, fromRdfResourceValuesOptions) =>
           $setFromRdfResourceValues<$DefaultPartial, $DefaultPartial.Schema>(
             $DefaultPartial.fromRdfResourceValues,
           )(values, {
-            objectSet,
-            schema: schema.partialType,
-            ...otherOptions,
+            ...fromRdfResourceValuesOptions,
+            schema: fromRdfResourceValuesOptions.schema.partialType,
           }).map((values) =>
             values.map(
               (partials) =>
                 new $LazySet<$DefaultPartial, LazyObject>({
                   partials,
-                  resolver: (partials, options) =>
-                    objectSet.lazyObjects({
-                      identifiers: partials.map((partial) =>
+                  resolver: (partial, resolverOptions) => {
+                    const objectSet = fromRdfResourceValuesOptions?.objectSet;
+                    if (!objectSet) {
+                      return $missingResolver();
+                    }
+                    return objectSet.lazyObjects({
+                      identifiers: partial.map((partial) =>
                         partial.$identifier(),
                       ),
-                      ...options,
-                    }),
+                      ...resolverOptions,
+                    });
+                  },
                 }),
             ),
           ),
@@ -1869,23 +1870,27 @@ export namespace RootObject {
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: RootObject.schema.properties.optionalLazyProperty,
-        typeFromRdfResourceValues: (
-          values,
-          { objectSet, schema, ...otherOptions },
-        ) =>
+        typeFromRdfResourceValues: (values, fromRdfResourceValuesOptions) =>
           $maybeFromRdfResourceValues<$DefaultPartial, $DefaultPartial.Schema>(
             $DefaultPartial.fromRdfResourceValues,
           )(values, {
-            objectSet,
-            schema: schema.partialType,
-            ...otherOptions,
+            ...fromRdfResourceValuesOptions,
+            schema: fromRdfResourceValuesOptions.schema.partialType,
           }).map((values) =>
             values.map(
               (partial) =>
                 new $LazyOption<$DefaultPartial, LazyObject>({
                   partial,
-                  resolver: (partial, options) =>
-                    objectSet.lazyObject(partial.$identifier(), options),
+                  resolver: (partial, resolverOptions) => {
+                    const objectSet = fromRdfResourceValuesOptions?.objectSet;
+                    if (!objectSet) {
+                      return $missingResolver();
+                    }
+                    return objectSet.lazyObject(
+                      partial.$identifier(),
+                      resolverOptions,
+                    );
+                  },
                 }),
             ),
           ),
@@ -2991,8 +2996,7 @@ export namespace Union {
         type: UnionMember2.schema,
       },
     },
-    properties: {},
-  } as const;
+  };
 
   export type Schema = typeof schema;
 
