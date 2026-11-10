@@ -1,12 +1,29 @@
 import type { SnippetFactory } from "../SnippetFactory.js";
-import { code, conditionalOutput } from "../ts-poet-wrapper.js";
+import {
+  type Code,
+  code,
+  conditionalOutput,
+  joinCode,
+} from "../ts-poet-wrapper.js";
 
 export const snippets_FromJsonFunction: SnippetFactory = ({
   configuration,
   imports,
+  snippets,
   syntheticNamePrefix,
-}) =>
-  conditionalOutput(
+}) => {
+  const options: Code[] = [code`context?: unknown;`];
+  options.push(code`defaultNamespace?: ${snippets.NamespaceBuilder};`);
+  if (configuration.features.has("ObjectSet")) {
+    options.push(code`objectSet?: ${syntheticNamePrefix}ObjectSet;`);
+  }
+  options.push(code`prefixMap?: ${imports.PrefixMap};`);
+  const joinedOptions = joinCode(
+    options.map((option) => code`        ${option}`),
+    { on: "\n" },
+  );
+
+  return conditionalOutput(
     `${syntheticNamePrefix}FromJsonFunction`,
     code`\
 export type ${syntheticNamePrefix}FromJsonFunction<JsonValueT, ValueT, ValueSchemaT> = 
@@ -14,17 +31,16 @@ export type ${syntheticNamePrefix}FromJsonFunction<JsonValueT, ValueT, ValueSche
   ? (
       jsonValue: JsonValueT,
       options?: {
-        context?: unknown;
-        ${configuration.features.has("ObjectSet") ? code`objectSet?: ${syntheticNamePrefix}ObjectSet;` : ""}
+${joinedOptions}
         schema?: unknown;
       },
     ) => ${imports.Either}<Error, ValueT>
   : (
       jsonValue: JsonValueT,
       options: {
-        context?: unknown;
-        ${configuration.features.has("ObjectSet") ? code`objectSet?: ${syntheticNamePrefix}ObjectSet;` : ""}
+${joinedOptions}
         schema: ValueSchemaT;
       },
     ) => ${imports.Either}<Error, ValueT>;`,
   );
+};
