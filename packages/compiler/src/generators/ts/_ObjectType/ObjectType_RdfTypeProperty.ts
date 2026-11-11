@@ -52,13 +52,6 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
   }
 
   @Memoize()
-  override get schema(): Maybe<Code> {
-    return Maybe.of(
-      code`${{ fromRdfType: this.rdfjsTermExpression(this.fromRdfType), kind: this.kind, toRdfTypes: this.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)) }}`,
-    );
-  }
-
-  @Memoize()
   get jsonObjectMember(): ObjectType_AbstractProperty["jsonObjectMember"] {
     return Maybe.of({
       description: Maybe.empty(),
@@ -83,6 +76,13 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
   override get schemaType(): Maybe<Code> {
     return Maybe.of(
       code`${{ fromRdfType: code`${this.reusables.imports.NamedNode}`, kind: this.kind, toRdfTypes: code`readonly ${this.reusables.imports.NamedNode}[]` }}`,
+    );
+  }
+
+  @Memoize()
+  protected override get schemaExpression(): Maybe<Code> {
+    return Maybe.of(
+      code`${{ fromRdfType: this.rdfjsTermExpression(this.fromRdfType), kind: this.kind, toRdfTypes: this.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)) }}`,
     );
   }
 
@@ -111,7 +111,7 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.name}: !${variables.ignoreRdfType} ? ${this.reusables.snippets.ensureRdfResourceType}(${variables.focusResource}, ${arrayOf(
-        code`(${this.schemaVariable}).fromRdfType`,
+        code`(${this.schema.unsafeCoerce()}).fromRdfType`,
       )}, ${{ graph: variables.graph }}) : ${this.reusables.imports.Right}(true as const)`,
     );
   }
@@ -205,7 +205,7 @@ type: "optional" as const
     return [
       code`\
 if (!${variables.ignoreRdfType}) {
-  ${variables.resource}.add(${this.rdfjsTermExpression(rdf.type)}, ${this.schemaVariable}.toRdfTypes, ${variables.graph});
+  ${variables.resource}.add(${this.rdfjsTermExpression(rdf.type)}, ${this.schema.unsafeCoerce()}.toRdfTypes, ${variables.graph});
 }`,
     ];
   }

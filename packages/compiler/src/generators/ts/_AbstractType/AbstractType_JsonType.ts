@@ -2,6 +2,7 @@ import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
+import type { Callable } from "../Callable.js";
 import type { Reusables } from "../Reusables.js";
 import type { Snippet } from "../Snippet.js";
 import type { TsGenerator } from "../TsGenerator.js";
@@ -38,31 +39,6 @@ abstract class AbstractJsonType {
     this.name = name;
     this.reusables = reusables;
     this.snippet = snippet;
-  }
-
-  protected moduleDeclarations({
-    unqualifiedName,
-  }: {
-    unqualifiedName: string;
-  }): Code[] {
-    const moduleDeclarations: Code[] = [];
-
-    if (this.configuration.features.has("Object.JSON.parse")) {
-      moduleDeclarations.push(code`\
-export function parse(json: unknown): ${this.reusables.imports.Either}<Error, ${unqualifiedName}> {
-  const jsonSafeParseResult = schema().safeParse(json);
-  if (!jsonSafeParseResult.success) { return ${this.reusables.imports.Left}(jsonSafeParseResult.error); }
-  return ${this.reusables.imports.Right}(jsonSafeParseResult.data);
-}`);
-    }
-
-    if (this.configuration.features.has("Object.JSON.schema")) {
-      moduleDeclarations.push(
-        code`export function schema() { return ${this.schemaExpression} satisfies ${this.reusables.imports.z}.ZodType<Json>; }`,
-      );
-    }
-
-    return moduleDeclarations;
   }
 
   @Memoize()
@@ -116,14 +92,48 @@ export function parse(json: unknown): ${this.reusables.imports.Either}<Error, ${
   }): Maybe<Code> {
     return Maybe.empty();
   }
+
+  protected moduleDeclarations({
+    unqualifiedName,
+  }: {
+    unqualifiedName: string;
+  }): Code[] {
+    const moduleDeclarations: Code[] = [];
+
+    if (this.configuration.features.has("Object.JSON.parse")) {
+      moduleDeclarations.push(code`\
+export function parse(json: unknown): ${this.reusables.imports.Either}<Error, ${unqualifiedName}> {
+  const jsonSafeParseResult = schema().safeParse(json);
+  if (!jsonSafeParseResult.success) { return ${this.reusables.imports.Left}(jsonSafeParseResult.error); }
+  return ${this.reusables.imports.Right}(jsonSafeParseResult.data);
+}`);
+    }
+
+    if (this.configuration.features.has("Object.JSON.schema")) {
+      moduleDeclarations.push(
+        code`export function schema() { return ${this.schemaExpression} satisfies ${this.schemaTypeExpression({ unqualifiedName })}; }`,
+      );
+    }
+
+    return moduleDeclarations;
+  }
+
+  protected schemaTypeExpression({
+    unqualifiedName,
+  }: {
+    unqualifiedName: string;
+  }): Code {
+    return code`${this.reusables.imports.z}.ZodType<${unqualifiedName}>`;
+  }
 }
 
 abstract class AbstractJsonPrimitiveType<
   PrimitiveT extends boolean | number | string,
 > extends AbstractJsonType {
+  protected abstract readonly typeof: "boolean" | "number" | "string";
+
   readonly inReference: Maybe<Code>;
   readonly in_: readonly PrimitiveT[];
-  protected abstract readonly typeof: "boolean" | "number" | "string";
 
   constructor({
     in_,
@@ -197,8 +207,9 @@ class JsonArrayType extends AbstractJsonType {
 }
 
 class JsonBooleanType extends AbstractJsonPrimitiveType<boolean> {
-  override readonly kind = "JsonBoolean";
   protected override readonly typeof = "boolean";
+
+  override readonly kind = "JsonBoolean";
 }
 
 class JsonDiscriminatedUnionType extends AbstractJsonType {
@@ -259,13 +270,6 @@ class JsonDiscriminatedUnionType extends AbstractJsonType {
   }
 }
 
-namespace JsonDiscriminatedUnionType {
-  export interface Member {
-    readonly discriminantValue: number | string;
-    readonly type: JsonIntersectionType | JsonObjectType;
-  }
-}
-
 class JsonIntersectionType extends AbstractJsonType {
   override readonly kind = "JsonIntersection";
   readonly memberTypes: readonly JsonType[];
@@ -301,24 +305,32 @@ class JsonIntersectionType extends AbstractJsonType {
 }
 
 class JsonNumberType extends AbstractJsonPrimitiveType<number> {
-  override readonly kind = "JsonNumber";
   protected override readonly typeof = "number";
+
+  override readonly kind = "JsonNumber";
 }
 
 class JsonObjectType extends AbstractJsonType {
+  private readonly cachedMemberTypes: (JsonType | null)[];
+  private readonly shorthand: Maybe<JsonObjectType.Shorthand>;
+
   override readonly kind = "JsonObject";
   readonly members: readonly JsonObjectType.Member[];
-  private readonly memberTypes: (JsonType | null)[];
 
   constructor({
     members,
+    shorthand,
     ...superParameters
   }: {
     members: readonly JsonObjectType.Member[];
+    shorthand: Maybe<JsonObjectType.Shorthand>;
   } & ConstructorParameters<typeof AbstractJsonType>[0]) {
     super(superParameters);
+    this.cachedMemberTypes = Array.from({ length: members.length }).map(
+      () => null,
+    );
     this.members = members;
-    this.memberTypes = Array.from({ length: members.length }).map(() => null);
+    this.shorthand = shorthand;
   }
 
   @Memoize()
@@ -333,7 +345,7 @@ class JsonObjectType extends AbstractJsonType {
 
   @Memoize()
   protected get schemaExpression(): Code {
-    return code`${this.reusables.imports.z}.object({ ${joinCode(
+    const objectSchema = code`${this.reusables.imports.z}.object({ ${joinCode(
       this.members.map((member, memberI) => {
         const memberType = this.memberType(memberI);
         let schema: Code = memberType.schema;
@@ -361,6 +373,25 @@ class JsonObjectType extends AbstractJsonType {
       }),
       { on: ", " },
     )} })`;
+
+    return this.shorthand
+      .map((shorthand) => {
+        return code`${this.reusables.imports.z}.union([${objectSchema}, ${shorthand.type.schema}.transform(${shorthand.transformer.unannotatedUsage})])`;
+      })
+      .orDefault(objectSchema);
+  }
+
+  protected override schemaTypeExpression({
+    unqualifiedName,
+  }: {
+    unqualifiedName: string;
+  }): Code {
+    return this.shorthand
+      .map(
+        (shorthand) =>
+          code`${this.reusables.imports.z}.ZodType<${unqualifiedName}, ${unqualifiedName} | ${shorthand.type.expression}>`,
+      )
+      .orDefault(super.schemaTypeExpression({ unqualifiedName }));
   }
 
   private get uiSchemaFunctionExpression() {
@@ -384,14 +415,16 @@ class JsonObjectType extends AbstractJsonType {
 })`;
   }
 
-  private memberType(memberI: number): JsonType {
-    if (this.memberTypes[memberI] === null) {
-      this.memberTypes[memberI] =
-        typeof this.members[memberI].type === "function"
-          ? this.members[memberI].type()
-          : this.members[memberI].type;
-    }
-    return this.memberTypes[memberI];
+  override uiSchemaElement({
+    variables,
+  }: Parameters<AbstractJsonType["uiSchemaElement"]>[0]): Maybe<Code> {
+    return Maybe.of(
+      code`${this.name
+        .map((name) => code`${name.join(".")}.uiSchema`)
+        .orDefaultLazy(
+          () => this.uiSchemaFunctionExpression,
+        )}({ scopePrefix: ${variables.scopePrefix} })`,
+    );
   }
 
   protected override moduleDeclarations(parameters: {
@@ -408,16 +441,14 @@ class JsonObjectType extends AbstractJsonType {
     return moduleDeclarations;
   }
 
-  override uiSchemaElement({
-    variables,
-  }: Parameters<AbstractJsonType["uiSchemaElement"]>[0]): Maybe<Code> {
-    return Maybe.of(
-      code`${this.name
-        .map((name) => code`${name.join(".")}.uiSchema`)
-        .orDefaultLazy(
-          () => this.uiSchemaFunctionExpression,
-        )}({ scopePrefix: ${variables.scopePrefix} })`,
-    );
+  private memberType(memberI: number): JsonType {
+    if (this.cachedMemberTypes[memberI] === null) {
+      this.cachedMemberTypes[memberI] =
+        typeof this.members[memberI].type === "function"
+          ? this.members[memberI].type()
+          : this.members[memberI].type;
+    }
+    return this.cachedMemberTypes[memberI];
   }
 }
 
@@ -579,6 +610,7 @@ class JsonTypeFactory {
       | Record<string, Omit<JsonObjectType.PartialMember, "name">>,
     options?: {
       name?: AbstractJsonType.Name;
+      shorthand?: JsonObjectType.Shorthand;
       snippet?: Snippet;
     },
   ): JsonObjectType {
@@ -609,6 +641,7 @@ class JsonTypeFactory {
           : Maybe.fromNullable(member.uiSchemaElement),
       })),
       name: Maybe.fromNullable(options?.name),
+      shorthand: Maybe.fromNullable(options?.shorthand),
       snippet: Maybe.fromNullable(options?.snippet),
     });
   }
@@ -646,6 +679,13 @@ export type AbstractType_JsonType = JsonType;
 
 export type AbstractType_JsonTypeFactory = JsonTypeFactory;
 
+namespace JsonDiscriminatedUnionType {
+  export interface Member {
+    readonly discriminantValue: number | string;
+    readonly type: JsonIntersectionType | JsonObjectType;
+  }
+}
+
 export namespace AbstractJsonType {
   export type Name = readonly string[];
 }
@@ -681,6 +721,21 @@ namespace JsonObjectType {
       | Maybe<MemberUiSchemaElementFunction>
       | MemberUiSchemaElementFunction;
   };
+
+  /**
+   * Shorthand for the object type, such as a string that can be transformed into the object.
+   */
+  export interface Shorthand {
+    /**
+     * Zod-compatible transformer that takes an instance of the shorthand type and transforms it to an instance of the object type.
+     */
+    readonly transformer: Callable;
+
+    /**
+     * Shorthand type, such as a JSON string.
+     */
+    readonly type: JsonType;
+  }
 }
 
 // biome-ignore lint/correctness/noUnusedVariables: used for types

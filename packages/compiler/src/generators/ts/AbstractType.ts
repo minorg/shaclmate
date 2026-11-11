@@ -304,14 +304,6 @@ ${joinCode(
       .orDefaultLazy(() => this.schemaExpression());
   }
 
-  @Memoize()
-  get schemaVariable(): Maybe<Code> {
-    if (!this.configuration.features.has("Object.schema")) {
-      return Maybe.empty();
-    }
-    return this.name.map((name) => code`${name}.schema`);
-  }
-
   /**
    * Helper to compose the result of schema along the type hierarchy.
    */

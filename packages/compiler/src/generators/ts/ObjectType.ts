@@ -72,6 +72,7 @@ import type { BlankNodeType } from "./BlankNodeType.js";
 import type { Callable } from "./Callable.js";
 import { DeclaredCallable } from "./DeclaredCallable.js";
 import type { IdentifierType } from "./IdentifierType.js";
+import { InlineCallable } from "./InlineCallable.js";
 import type { IriType } from "./IriType.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
@@ -212,10 +213,49 @@ export class ObjectType extends AbstractStructuredType {
 
   @Memoize()
   override get jsonObjectType(): AbstractStructuredType["jsonObjectType"] {
+    // If the JSON object type is { "@id": string }, allow a shorthand of string => that type.
+    let shorthand:
+      | { transformer: Callable; type: AbstractStructuredType.JsonType }
+      | undefined;
+    this.identifierProperty.ifJust((identifierProperty) => {
+      const fromJsonObjectInitializerParameters = {
+        variables: { context: code``, jsonObject: code``, options: code`` },
+      };
+      if (
+        this.properties.some(
+          (property) =>
+            !Object.is(property, identifierProperty) &&
+            property
+              .fromJsonObjectInitializer(fromJsonObjectInitializerParameters)
+              .isJust(),
+        )
+      ) {
+        return;
+      }
+
+      shorthand = {
+        transformer: new InlineCallable(
+          code`\
+(idString, ctx) => ${identifierProperty.type.fromJsonValueFunction.unannotatedUsage}(idString, { schema: ${identifierProperty.schema} })
+  .map(id => ({ ${literalOf(identifierProperty.jsonObjectMember.unsafeCoerce().name)}: id }))
+  .mapLeft(error => {
+    ctx.issues.push({
+      code: "custom",
+      message: error.message,
+      input: idString,
+    });
+    return ${this.reusables.imports.z}.NEVER;
+  })`,
+        ),
+        type: identifierProperty.type.jsonValueType,
+      };
+    });
+
     return this.jsonTypeFactory.createJsonObjectType(
       this.properties.flatMap((property) => property.jsonObjectMember.toList()),
       {
         name: this.name.map((name) => [name, "Json"]).extract(),
+        shorthand,
       },
     );
   }

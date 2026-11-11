@@ -5,6 +5,9 @@ import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { ObjectType_AbstractProperty } from "./ObjectType_AbstractProperty.js";
 
 export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty {
+  protected override readonly schemaExpression: ObjectType_AbstractProperty["schemaExpression"] =
+    Maybe.empty();
+
   override readonly createFunctionParameter: ObjectType_AbstractProperty["createFunctionParameter"] =
     Maybe.empty();
 
@@ -24,8 +27,6 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   override readonly kind = "Discriminant";
   override readonly mutable = false;
   override readonly recursive = false;
-  override readonly schema: ObjectType_AbstractProperty["schema"] =
-    Maybe.empty();
   override readonly schemaType: ObjectType_AbstractProperty["schemaType"] =
     Maybe.empty();
   readonly value: string;

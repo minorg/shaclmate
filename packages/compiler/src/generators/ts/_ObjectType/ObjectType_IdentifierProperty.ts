@@ -104,7 +104,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     });
   }
 
-  override get schema(): Maybe<Code> {
+  protected override get schemaExpression(): Maybe<Code> {
     return Maybe.of(
       code`{ ${joinCode(
         [code`kind: ${literalOf(this.kind)}`, code`type: ${this.type.schema}`],

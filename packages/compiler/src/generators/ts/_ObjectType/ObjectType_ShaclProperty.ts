@@ -151,7 +151,7 @@ export class ObjectType_ShaclProperty<
     });
   }
 
-  override get schema(): Maybe<Code> {
+  protected override get schemaExpression(): Maybe<Code> {
     const initializers = [code`kind: ${literalOf(this.kind)}`];
     if (
       this.configuration.features.has("Object.fromRdf") ||
@@ -257,7 +257,7 @@ export class ObjectType_ShaclProperty<
           ...${variables.options},
           focusResource: ${variables.focusResource},
           ignoreRdfType: true,
-          propertySchema: ${this.schemaVariable},
+          propertySchema: ${this.schema.unsafeCoerce()},
           typeFromRdfResourceValues: ${this.type.fromRdfResourceValuesFunction.unannotatedUsage} 
         })`,
     );
@@ -286,7 +286,7 @@ export class ObjectType_ShaclProperty<
         focusIdentifier: variables.focusIdentifier,
         ignoreRdfType: true,
         propertyName: this.name,
-        propertySchema: this.schemaVariable,
+        propertySchema: this.schema.unsafeCoerce(),
         typeSparqlConstructTriples:
           this.type.valueSparqlConstructTriplesFunction.unannotatedUsage,
         variablePrefix: variables.variablePrefix,
@@ -310,7 +310,7 @@ export class ObjectType_ShaclProperty<
         ignoreRdfType: true,
         preferredLanguages: variables.preferredLanguages,
         propertyName: this.name,
-        propertySchema: this.schemaVariable,
+        propertySchema: this.schema.unsafeCoerce(),
         typeSparqlWherePatterns:
           this.type.valueSparqlWherePatternsFunction.unannotatedUsage,
         variablePrefix: variables.variablePrefix,
@@ -357,7 +357,7 @@ export class ObjectType_ShaclProperty<
     }
 
     const propertyPath = this.objectType.name
-      .map(() => code`${this.schemaVariable}.path`)
+      .map(() => code`${this.schema.unsafeCoerce()}.path`)
       .orDefault(this.propertyPathToCode(this.path));
 
     const { object: objectVariable, ...otherVariables } = variables;

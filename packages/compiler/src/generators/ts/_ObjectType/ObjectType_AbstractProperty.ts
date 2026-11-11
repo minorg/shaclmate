@@ -2,6 +2,7 @@ import type { Logger } from "@rdfx/logger";
 
 import type { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import type { AbstractType } from "../AbstractType.js";
 import type { Reusables } from "../Reusables.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
@@ -15,6 +16,11 @@ export abstract class ObjectType_AbstractProperty {
   protected readonly logger: Logger;
   protected readonly objectType: { readonly name: Maybe<string> };
   protected readonly reusables: Reusables;
+
+  /**
+   * TypeScript object describing this property, for runtime use.
+   */
+  protected abstract readonly schemaExpression: Maybe<Code>;
 
   /**
    * Optional parameter to include in the parameters object of constructor function.
@@ -98,11 +104,6 @@ export abstract class ObjectType_AbstractProperty {
   abstract readonly recursive: boolean;
 
   /**
-   * TypeScript object describing this type, for runtime use.
-   */
-  abstract readonly schema: Maybe<Code>;
-
-  /**
    * TypeScript type describing .schema.
    */
   abstract readonly schemaType: Maybe<Code>;
@@ -133,6 +134,16 @@ export abstract class ObjectType_AbstractProperty {
       logger: this.logger,
       snippets: this.reusables.snippets,
     });
+  }
+
+  /**
+   * TypeScript object describing this property, for runtime use.
+   */
+  @Memoize()
+  get schema(): Maybe<Code> {
+    return this.objectType.name
+      .map((name) => code`${name}.schema.properties.${this.name}`)
+      .altLazy(() => this.schemaExpression);
   }
 
   /**
@@ -276,11 +287,4 @@ export abstract class ObjectType_AbstractProperty {
   protected readonly rdfjsTermExpression: (
     parameters: Parameters<typeof rdfjsTermExpression>[0],
   ) => Code;
-
-  @Memoize()
-  protected get schemaVariable(): Code {
-    return this.objectType.name
-      .map((name) => code`${name}.schema.properties.${this.name}`)
-      .orDefaultLazy(() => this.schema.unsafeCoerce());
-  }
 }
