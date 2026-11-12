@@ -286,7 +286,7 @@ export abstract class AbstractUserDefinedType extends AbstractType {
 
     if (this.configuration.features.has("Object.schema")) {
       staticModuleDeclarations["schema"] =
-        code`export const schema = ${this.schema.literalExpression}`;
+        code`export const schema = ${this.schema.literalExpression};`;
       staticModuleDeclarations["Schema"] =
         code`export type Schema = typeof schema;`;
     }

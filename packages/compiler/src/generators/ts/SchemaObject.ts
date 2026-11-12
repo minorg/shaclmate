@@ -130,7 +130,6 @@ export namespace SchemaObject {
     get literalExpression(): Code {
       return code`{ ${joinCode(
         this.members.map((member) => code`${member};`),
-        { on: ", " },
       )} }`;
     }
 

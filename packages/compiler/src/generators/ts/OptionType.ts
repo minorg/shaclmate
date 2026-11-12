@@ -116,15 +116,10 @@ export class OptionType<
   @Memoize()
   override get schema(): SchemaObject<SchemaObject.BuiltinType> {
     return new SchemaObject({
-      properties: [code`kind: ${literalOf(this.kind)} as const`].concat(
-        this.recursive || this.referencesNamedType
-          ? code`get itemType() { return ${this.itemType.schema.expression}; }`
-          : code`itemType: ${this.itemType.schema.expression}`,
-      ),
+      ...super.schema,
       type: new SchemaObject.BuiltinType(
         code`${this.reusables.snippets.MaybeSchema}<${this.itemType.schema.type.expression}>`,
       ),
-      variable: Maybe.empty(),
     });
   }
 
