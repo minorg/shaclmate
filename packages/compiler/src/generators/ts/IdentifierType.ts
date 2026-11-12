@@ -2,9 +2,10 @@ import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 
 import { Maybe } from "purify-ts";
-
+import { Memoize } from "typescript-memoize";
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { code } from "./ts-poet-wrapper.js";
 
 export class IdentifierType extends AbstractIdentifierType<
@@ -37,34 +38,32 @@ export class IdentifierType extends AbstractIdentifierType<
         },
       ],
     });
-  override readonly filterFunction = new ReferenceCallable(
+  override readonly filterFunction = new BuiltinCallable(
     this.reusables.snippets.filterIdentifier,
   );
-  override readonly fromJsonValueFunction = new ReferenceCallable(
+  override readonly fromJsonValueFunction = new BuiltinCallable(
     this.reusables.snippets.identifierFromJsonString,
   );
-  override readonly fromJsonObjectFunction = new ReferenceCallable(
+  override readonly fromJsonObjectFunction = new BuiltinCallable(
     this.reusables.snippets.identifierFromJsonObject,
   );
   override readonly filterType =
     code`${this.reusables.snippets.IdentifierFilter}`;
-  override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
+  override readonly fromRdfResourceValuesFunction = new BuiltinCallable(
     this.reusables.snippets.identifierFromRdfResourceValues,
   );
   override readonly kind = "Identifier";
   override readonly nodeKinds = nodeKinds;
-  override readonly parseFunction = new ReferenceCallable(
+  override readonly parseFunction = new BuiltinCallable(
     this.reusables.snippets.parseIdentifier,
   );
-  override readonly schemaType =
-    code`${this.reusables.snippets.IdentifierSchema}`;
-  override readonly toJsonValueFunction = new ReferenceCallable(
+  override readonly toJsonValueFunction = new BuiltinCallable(
     this.reusables.snippets.identifierToJsonString,
   );
-  override readonly toJsonObjectFunction = new ReferenceCallable(
+  override readonly toJsonObjectFunction = new BuiltinCallable(
     this.reusables.snippets.identifierToJsonObject,
   );
-  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
+  override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
     this.reusables.snippets.identifierSparqlWherePatterns,
   );
 
@@ -80,6 +79,17 @@ export class IdentifierType extends AbstractIdentifierType<
       ...parameters,
       hasValues: [],
       in_: [],
+    });
+  }
+
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    return new SchemaObject({
+      properties: super.schema.properties,
+      type: new SchemaObject.BuiltinType(
+        this.reusables.snippets.IdentifierSchema,
+      ),
+      variable: super.schema.variable,
     });
   }
 }

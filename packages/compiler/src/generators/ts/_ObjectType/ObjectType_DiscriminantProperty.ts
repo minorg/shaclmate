@@ -26,8 +26,6 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   override readonly recursive = false;
   override readonly schema: ObjectType_AbstractProperty["schema"] =
     Maybe.empty();
-  override readonly schemaType: ObjectType_AbstractProperty["schemaType"] =
-    Maybe.empty();
   readonly value: string;
 
   constructor({

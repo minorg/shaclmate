@@ -2,9 +2,11 @@ import type { Logger } from "@rdfx/logger";
 
 import type { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import type { AbstractType } from "../AbstractType.js";
 import type { Reusables } from "../Reusables.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
+import type { SchemaObject } from "../SchemaObject.js";
 import type { TsGenerator } from "../TsGenerator.js";
 import type { Type } from "../Type.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
@@ -98,14 +100,9 @@ export abstract class ObjectType_AbstractProperty {
   abstract readonly recursive: boolean;
 
   /**
-   * TypeScript object describing this type, for runtime use.
+   * TypeScript object describing this property, for runtime use.
    */
-  abstract readonly schema: Maybe<Code>;
-
-  /**
-   * TypeScript type describing .schema.
-   */
-  abstract readonly schemaType: Maybe<Code>;
+  abstract readonly schema: Maybe<SchemaObject<SchemaObject.UserDefinedType>>;
 
   constructor({
     configuration,
@@ -278,9 +275,9 @@ export abstract class ObjectType_AbstractProperty {
   ) => Code;
 
   @Memoize()
-  protected get schemaVariable(): Code {
-    return this.objectType.name
-      .map((name) => code`${name}.schema.properties.${this.name}`)
-      .orDefaultLazy(() => this.schema.unsafeCoerce());
+  protected get schemaVariable(): Maybe<Code> {
+    return this.objectType.name.map(
+      (name) => code`${name}.schema.properties.${this.name}`,
+    );
   }
 }

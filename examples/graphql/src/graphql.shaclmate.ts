@@ -6,7 +6,7 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
-import { datasetFactory } from "@rdfx/collection";
+import { datasetFactory, type PrefixMap } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { LiteralFactory } from "@rdfx/literal";
 import {
@@ -105,12 +105,10 @@ function $convertToIdentifierProperty<
       const captureIdentifier = identifier;
       return Either.of(() => captureIdentifier);
     }
-    case "string": {
-      const captureIdentifier = defaultNamespace
-        ? defaultNamespace(identifier)
-        : dataFactory.namedNode(identifier);
-      return Either.of(() => captureIdentifier);
-    }
+    case "string":
+      return $iriFromString(identifier, { defaultNamespace }).map(
+        (iri) => () => iri,
+      );
     case "undefined": {
       const captureIdentifier = dataFactory.blankNode();
       return Either.of(() => captureIdentifier);
@@ -135,10 +133,9 @@ function $convertToIriIdentifierProperty<
       return Either.of(() => captureIdentifier);
     }
     case "string": {
-      const captureIdentifier = defaultNamespace
-        ? defaultNamespace(identifier)
-        : dataFactory.namedNode(identifier);
-      return Either.of(() => captureIdentifier);
+      return $iriFromString(identifier, { defaultNamespace }).map(
+        (iri) => () => iri,
+      );
     }
   }
 }
@@ -520,6 +517,70 @@ function $iriFromRdfResourceValues<IriT extends string = string>(
   );
 }
 
+export function $iriFromString(
+  string: string,
+  options?: { defaultNamespace?: $NamespaceBuilder; prefixMap?: PrefixMap },
+): Either<Error, NamedNode> {
+  if (string.trim().length === 0) {
+    return Left(new Error("empty/blank IRI"));
+  }
+
+  const defaultNamespace = options?.defaultNamespace;
+
+  const colonIndex = string.indexOf(":");
+  if (colonIndex === -1) {
+    // No : in the string.
+    if (defaultNamespace) {
+      return Right(defaultNamespace(string));
+    } else {
+      return Left(new Error(`ill-formed IRI: ${string}`));
+    }
+  }
+
+  const prefix = string.substring(0, colonIndex);
+  const path = string.substring(colonIndex + 1);
+  if (path.length === 0) {
+    return Left(new Error(`ill-formed IRI: ${string}`));
+  }
+
+  // Absolute IRIs with scheme:// always win over prefixes with the same name.
+  switch (prefix.toLowerCase()) {
+    case "file":
+    case "ftp":
+    case "http":
+    case "https":
+    case "git":
+    case "irc":
+    case "ldap":
+    case "postgres":
+    case "rtsp":
+    case "sftp":
+    case "smb":
+    case "ssh":
+    case "ws":
+    case "wss":
+      if (path.startsWith("//")) {
+        return Right(dataFactory.namedNode(string));
+      }
+      break;
+  }
+
+  const prefixMap = options?.prefixMap;
+  if (prefixMap) {
+    const prefixNamespace = prefixMap.get(prefix);
+    if (prefixNamespace !== undefined) {
+      return Right(dataFactory.namedNode(`${prefixNamespace.value}${path}`));
+    }
+  }
+
+  if (prefix.length === 0 && defaultNamespace) {
+    // a "" prefixMap entry takes precedence, above.
+    return Right(defaultNamespace(path));
+  }
+
+  return Right(dataFactory.namedNode(string));
+}
+
 interface $IriSchema<IriT extends string = string> {
   readonly hasValues?: readonly NamedNode[];
   readonly in?: readonly NamedNode<IriT>[];
@@ -578,6 +639,11 @@ export class $LazyOption<PartialT, ResolvedT> {
       Maybe.of,
     );
   }
+}
+
+interface $LazySchema<PartialSchemaT> {
+  readonly kind: "Lazy" | "LazyOption" | "LazySet";
+  readonly partialType: PartialSchemaT;
 }
 
 /**
@@ -1219,11 +1285,12 @@ export namespace $DefaultPartial {
     object.$type === "DefaultPartial";
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
     },
   } as const;
 
@@ -1383,14 +1450,15 @@ export namespace AnonymousObject {
     object.$type === "AnonymousObject";
 
   export const schema = {
+    kind: "Object",
     properties: {
       requiredStringProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -1704,43 +1772,44 @@ export namespace LazyObject {
     object.$type === "LazyObject";
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode("http://example.com/LazyObject"),
         kind: "RdfType",
         toRdfTypes: [dataFactory.namedNode("http://example.com/LazyObject")],
-      },
+      } as const,
       optionalNumberProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/optionalNumberProperty",
         ),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Float" as const, datatype: $xsd_double },
-        },
-      },
+          itemType: { datatype: $xsd_double, kind: "Float" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       optionalStringProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
+          itemType: { datatype: $xsd_string, kind: "String" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       requiredStringProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -1823,10 +1892,7 @@ export namespace RootObject {
         : Right(true as const),
       lazyObjectSetProperty: $shaclPropertyFromRdf<
         $LazySet<$DefaultPartial, LazyObject>,
-        {
-          kind: "LazySet";
-          partialType: $CollectionSchema<$DefaultPartial.Schema>;
-        }
+        $LazySchema<$CollectionSchema<$DefaultPartial.Schema>>
       >({
         ...options,
         focusResource: resource,
@@ -1861,10 +1927,7 @@ export namespace RootObject {
       }),
       optionalLazyProperty: $shaclPropertyFromRdf<
         $LazyOption<$DefaultPartial, LazyObject>,
-        {
-          kind: "LazyOption";
-          partialType: $MaybeSchema<$DefaultPartial.Schema>;
-        }
+        $LazySchema<$MaybeSchema<$DefaultPartial.Schema>>
       >({
         ...options,
         focusResource: resource,
@@ -2232,47 +2295,51 @@ export namespace RootObject {
     object.$type === "RootObject";
 
   export const schema = {
+    kind: "Object",
     properties: {
-      $identifier: { kind: "Identifier", type: { kind: "Iri" as const } },
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Iri" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode("http://example.com/RootObject"),
         kind: "RdfType",
         toRdfTypes: [dataFactory.namedNode("http://example.com/RootObject")],
-      },
+      } as const,
       lazyObjectSetProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/lazyObjectSetProperty"),
         get type() {
           return {
-            kind: "LazySet" as const,
+            kind: "LazySet",
             get partialType() {
               return {
-                kind: "Set" as const,
                 get itemType() {
                   return $DefaultPartial.schema;
                 },
-              };
+                kind: "Set",
+              } as const;
             },
-          };
+          } as const;
         },
-      },
+      } as const,
       optionalLazyProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/optionalLazyProperty"),
         get type() {
           return {
-            kind: "LazyOption" as const,
+            kind: "LazyOption",
             get partialType() {
               return {
-                kind: "Option" as const,
                 get itemType() {
                   return $DefaultPartial.schema;
                 },
-              };
+                kind: "Option",
+              } as const;
             },
-          };
+          } as const;
         },
-      },
+      } as const,
       optionalObjectProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -2280,30 +2347,30 @@ export namespace RootObject {
         ),
         get type() {
           return {
-            kind: "Option" as const,
             get itemType() {
               return AnonymousObject.schema;
             },
-          };
+            kind: "Option",
+          } as const;
         },
-      },
+      } as const,
       optionalStringProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
+          itemType: { datatype: $xsd_string, kind: "String" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       requiredStringProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -2526,26 +2593,27 @@ export namespace UnionMember1 {
     object.$type === "UnionMember1";
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode("http://example.com/UnionMember1"),
         kind: "RdfType",
         toRdfTypes: [dataFactory.namedNode("http://example.com/UnionMember1")],
-      },
+      } as const,
       optionalNumberProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/optionalNumberProperty",
         ),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Float" as const, datatype: $xsd_double },
-        },
-      },
+          itemType: { datatype: $xsd_double, kind: "Float" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -2768,26 +2836,27 @@ export namespace UnionMember2 {
     object.$type === "UnionMember2";
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode("http://example.com/UnionMember2"),
         kind: "RdfType",
         toRdfTypes: [dataFactory.namedNode("http://example.com/UnionMember2")],
-      },
+      } as const,
       optionalStringProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
+          itemType: { datatype: $xsd_string, kind: "String" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -2985,7 +3054,7 @@ export namespace Union {
     UnionMember1.isUnionMember1(object) || UnionMember2.isUnionMember2(object);
 
   export const schema = {
-    kind: "ObjectDiscriminatedUnion" as const,
+    kind: "ObjectDiscriminatedUnion",
     members: {
       UnionMember1: {
         discriminantValues: ["UnionMember1"],
@@ -2996,7 +3065,7 @@ export namespace Union {
         type: UnionMember2.schema,
       },
     },
-  };
+  } as const;
 
   export type Schema = typeof schema;
 

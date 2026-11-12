@@ -2170,6 +2170,11 @@ export class $LazyOption<PartialT, ResolvedT> {
   }
 }
 
+interface $LazySchema<PartialSchemaT> {
+  readonly kind: "Lazy" | "LazyOption" | "LazySet";
+  readonly partialType: PartialSchemaT;
+}
+
 /**
  * Type of lazy properties that return a set of values. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
@@ -4713,7 +4718,13 @@ export namespace $DefaultPartial {
     }
 
     export function schema() {
-      return z.object({ "@id": z.string().min(1) }) satisfies z.ZodType<Json>;
+      return z.union([
+        z.object({ "@id": z.string().min(1) }),
+        z
+          .string()
+          .min(1)
+          .transform((id) => ({ "@id": id })),
+      ]) satisfies z.ZodType<Json, Json | string>;
     }
 
     export const uiSchema = (_options?: { scopePrefix?: string }): any => {
@@ -4732,11 +4743,12 @@ export namespace $DefaultPartial {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
     },
   } as const;
 
@@ -5039,7 +5051,13 @@ export namespace $NamedDefaultPartial {
     }
 
     export function schema() {
-      return z.object({ "@id": z.string().min(1) }) satisfies z.ZodType<Json>;
+      return z.union([
+        z.object({ "@id": z.string().min(1) }),
+        z
+          .string()
+          .min(1)
+          .transform((id) => ({ "@id": id })),
+      ]) satisfies z.ZodType<Json, Json | string>;
     }
 
     export const uiSchema = (_options?: { scopePrefix?: string }): any => {
@@ -5058,8 +5076,12 @@ export namespace $NamedDefaultPartial {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
-      $identifier: { kind: "Identifier", type: { kind: "Iri" as const } },
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Iri" } as const,
+      } as const,
     },
   } as const;
 
@@ -5227,6 +5249,7 @@ export namespace AnonymousTypesStruct {
           readonly anonymousStructString: string;
         }>,
         $MaybeSchema<{
+          kind: "Object";
           properties: {
             $identifier: {
               readonly kind: "Identifier";
@@ -5250,6 +5273,7 @@ export namespace AnonymousTypesStruct {
             readonly anonymousStructString: string;
           },
           {
+            kind: "Object";
             properties: {
               $identifier: {
                 readonly kind: "Identifier";
@@ -5274,7 +5298,7 @@ export namespace AnonymousTypesStruct {
                         ...options,
                         focusResource: resource,
                         propertyPath: $rdf_subject,
-                        schema: { kind: "Identifier" as const },
+                        schema: { kind: "Identifier" } as const,
                       },
                     ).chain((values) => values.head()),
                     anonymousStructString: $shaclPropertyFromRdf<
@@ -5290,10 +5314,10 @@ export namespace AnonymousTypesStruct {
                           "http://example.com/anonymousStructString",
                         ),
                         type: {
-                          kind: "String" as const,
                           datatype: $xsd_string,
-                        },
-                      },
+                          kind: "String",
+                        } as const,
+                      } as const,
                       typeFromRdfResourceValues:
                         $stringFromRdfResourceValues<string>,
                     }),
@@ -5671,6 +5695,7 @@ export namespace AnonymousTypesStruct {
             readonly anonymousStructString?: $StringFilter;
           },
           {
+            kind: "Object";
             properties: {
               $identifier: {
                 readonly kind: "Identifier";
@@ -5697,8 +5722,8 @@ export namespace AnonymousTypesStruct {
                   path: dataFactory.namedNode(
                     "http://example.com/anonymousStructString",
                   ),
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
+                  type: { datatype: $xsd_string, kind: "String" } as const,
+                } as const,
                 typeSparqlConstructTriples: (_: object) => [],
                 variablePrefix: parameters.variablePrefix,
               }),
@@ -5794,6 +5819,7 @@ export namespace AnonymousTypesStruct {
             readonly anonymousStructString?: $StringFilter;
           },
           {
+            kind: "Object";
             properties: {
               $identifier: {
                 readonly kind: "Identifier";
@@ -5825,7 +5851,7 @@ export namespace AnonymousTypesStruct {
                       ignoreRdfType: true,
                       preferredLanguages: parameters.preferredLanguages,
                       propertyPatterns: [],
-                      schema: { kind: "Identifier" as const },
+                      schema: { kind: "Identifier" } as const,
                       valueVariable: parameters.focusIdentifier,
                       variablePrefix: parameters.variablePrefix,
                     }),
@@ -5843,8 +5869,8 @@ export namespace AnonymousTypesStruct {
                       path: dataFactory.namedNode(
                         "http://example.com/anonymousStructString",
                       ),
-                      type: { kind: "String" as const, datatype: $xsd_string },
-                    },
+                      type: { datatype: $xsd_string, kind: "String" } as const,
+                    } as const,
                     typeSparqlWherePatterns: $stringSparqlWherePatterns,
                     variablePrefix: parameters.variablePrefix,
                   }),
@@ -5891,13 +5917,13 @@ export namespace AnonymousTypesStruct {
         $sequenceRecord({
           $identifier: $identifierFromJsonString(jsonObject["@id"], {
             ...options,
-            schema: { kind: "Identifier" as const },
+            schema: { kind: "Identifier" } as const,
           }),
           anonymousStructString: $stringFromJsonString<string>(
             jsonObject["anonymousStructString"],
             {
               ...options,
-              schema: { kind: "String" as const, datatype: $xsd_string },
+              schema: { datatype: $xsd_string, kind: "String" } as const,
             },
           ),
         }).chain(((parameters) =>
@@ -6078,11 +6104,12 @@ export namespace AnonymousTypesStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/AnonymousTypesStruct",
@@ -6091,29 +6118,30 @@ export namespace AnonymousTypesStruct {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/AnonymousTypesStruct"),
         ],
-      },
+      } as const,
       anonymousStruct: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/anonymousStruct"),
         type: {
-          kind: "Option" as const,
           itemType: {
+            kind: "Object",
             properties: {
               $identifier: {
                 kind: "Identifier",
-                type: { kind: "Identifier" as const },
-              },
+                type: { kind: "Identifier" } as const,
+              } as const,
               anonymousStructString: {
                 kind: "Shacl",
                 path: dataFactory.namedNode(
                   "http://example.com/anonymousStructString",
                 ),
-                type: { kind: "String" as const, datatype: $xsd_string },
-              },
+                type: { datatype: $xsd_string, kind: "String" } as const,
+              } as const,
             },
           } as const,
-        },
-      },
+          kind: "Option",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -6614,6 +6642,7 @@ export namespace BlankNodeIdentifierStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
@@ -6623,17 +6652,17 @@ export namespace BlankNodeIdentifierStruct {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/BlankNodeIdentifierStruct"),
         ],
-      },
+      } as const,
       blankNodeIdentifierString: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/blankNodeIdentifierString",
         ),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
+          itemType: { datatype: $xsd_string, kind: "String" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -7187,11 +7216,12 @@ export namespace BlankNodeOrIriIdentifierStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/BlankNodeOrIriIdentifierStruct",
@@ -7202,17 +7232,17 @@ export namespace BlankNodeOrIriIdentifierStruct {
             "http://example.com/BlankNodeOrIriIdentifierStruct",
           ),
         ],
-      },
+      } as const,
       blankNodeOrIriIdentifierString: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/blankNodeOrIriIdentifierString",
         ),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
+          itemType: { datatype: $xsd_string, kind: "String" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -8176,11 +8206,12 @@ export namespace ClassConstraintsStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/ClassConstraintsStruct",
@@ -8189,52 +8220,52 @@ export namespace ClassConstraintsStruct {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/ClassConstraintsStruct"),
         ],
-      },
+      } as const,
       iriClass: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/iriClass"),
-        type: { kind: "Option" as const, itemType: { kind: "Iri" as const } },
-      },
+        type: { itemType: { kind: "Iri" } as const, kind: "Option" } as const,
+      } as const,
       multiClass: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/multiClass"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Identifier" as const },
-        },
-      },
+          itemType: { kind: "Identifier" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       nodeClass1: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/nodeClass1"),
         get type() {
           return {
-            kind: "Option" as const,
             get itemType() {
               return NonClassStruct.schema;
             },
-          };
+            kind: "Option",
+          } as const;
         },
-      },
+      } as const,
       nodeClass2: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/nodeClass2"),
         get type() {
           return {
-            kind: "Option" as const,
             get itemType() {
               return PartialStruct.schema;
             },
-          };
+            kind: "Option",
+          } as const;
         },
-      },
+      } as const,
       singleClass: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/singleClass"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Identifier" as const },
-        },
-      },
+          itemType: { kind: "Identifier" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -9874,11 +9905,12 @@ export namespace ConvertibleTypesStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/ConvertibleTypesStruct",
@@ -9887,108 +9919,108 @@ export namespace ConvertibleTypesStruct {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/ConvertibleTypesStruct"),
         ],
-      },
+      } as const,
       convertibleIri: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/convertibleIri"),
-        type: { kind: "Iri" as const },
-      },
+        type: { kind: "Iri" } as const,
+      } as const,
       convertibleIriNonEmptySet: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/convertibleIriNonEmptySet",
         ),
         type: {
-          kind: "Set" as const,
-          itemType: { kind: "Iri" as const },
+          itemType: { kind: "Iri" } as const,
+          kind: "Set",
           minCount: 1,
-        },
-      },
+        } as const,
+      } as const,
       convertibleIriOption: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/convertibleIriOption"),
-        type: { kind: "Option" as const, itemType: { kind: "Iri" as const } },
-      },
+        type: { itemType: { kind: "Iri" } as const, kind: "Option" } as const,
+      } as const,
       convertibleIriSet: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/convertibleIriSet"),
-        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
-      },
+        type: { itemType: { kind: "Iri" } as const, kind: "Set" } as const,
+      } as const,
       convertibleLiteral: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/convertibleLiteral"),
-        type: { kind: "Literal" as const },
-      },
+        type: { kind: "Literal" } as const,
+      } as const,
       convertibleLiteralNonEmptySet: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/convertibleLiteralNonEmptySet",
         ),
         type: {
-          kind: "Set" as const,
-          itemType: { kind: "Literal" as const },
+          itemType: { kind: "Literal" } as const,
+          kind: "Set",
           minCount: 1,
-        },
-      },
+        } as const,
+      } as const,
       convertibleLiteralOption: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/convertibleLiteralOption",
         ),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Literal" as const },
-        },
-      },
+          itemType: { kind: "Literal" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       convertibleLiteralSet: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/convertibleLiteralSet"),
-        type: { kind: "Set" as const, itemType: { kind: "Literal" as const } },
-      },
+        type: { itemType: { kind: "Literal" } as const, kind: "Set" } as const,
+      } as const,
       convertibleTerm: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/convertibleTerm"),
         type: {
-          kind: "Term" as const,
+          kind: "Term",
           types: ["BlankNode", "NamedNode", "Literal"],
-        },
-      },
+        } as const,
+      } as const,
       convertibleTermNonEmptySet: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/convertibleTermNonEmptySet",
         ),
         type: {
-          kind: "Set" as const,
           itemType: {
-            kind: "Term" as const,
+            kind: "Term",
             types: ["BlankNode", "NamedNode", "Literal"],
-          },
+          } as const,
+          kind: "Set",
           minCount: 1,
-        },
-      },
+        } as const,
+      } as const,
       convertibleTermOption: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/convertibleTermOption"),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "Term" as const,
+            kind: "Term",
             types: ["BlankNode", "NamedNode", "Literal"],
-          },
-        },
-      },
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       convertibleTermSet: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/convertibleTermSet"),
         type: {
-          kind: "Set" as const,
           itemType: {
-            kind: "Term" as const,
+            kind: "Term",
             types: ["BlankNode", "NamedNode", "Literal"],
-          },
-        },
-      },
+          } as const,
+          kind: "Set",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -13756,19 +13788,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         if (value.$type === "date") {
           return $dateFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                date: {
-                  discriminantValues: ["date"],
-                  type: { kind: "Date" as const, datatype: $xsd_date },
-                },
-                dateTime: {
-                  discriminantValues: ["dateTime"],
-                  type: { kind: "DateTime" as const, datatype: $xsd_dateTime },
-                },
-              },
-            }.members["date"].type,
+            schema: { datatype: $xsd_date, kind: "Date" } as const,
           }).map((value) => ({
             $type: "date" as const,
             value: value,
@@ -13780,19 +13800,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         if (value.$type === "dateTime") {
           return $dateTimeFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                date: {
-                  discriminantValues: ["date"],
-                  type: { kind: "Date" as const, datatype: $xsd_date },
-                },
-                dateTime: {
-                  discriminantValues: ["dateTime"],
-                  type: { kind: "DateTime" as const, datatype: $xsd_dateTime },
-                },
-              },
-            }.members["dateTime"].type,
+            schema: { datatype: $xsd_dateTime, kind: "DateTime" } as const,
           }).map((value) => ({
             $type: "dateTime" as const,
             value: value,
@@ -13813,37 +13821,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         if (value.$type === "object") {
           return $dateFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "Date" as const, datatype: $xsd_date },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["object"].type,
+            schema: { datatype: $xsd_date, kind: "Date" } as const,
           }) as Either<Error, Date | string>;
         }
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "Date" as const, datatype: $xsd_date },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }) as Either<Error, Date | string>;
         }
 
@@ -13857,19 +13841,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         if (value.$type === "dateTime") {
           return $dateTimeFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                dateTime: {
-                  discriminantValues: ["dateTime"],
-                  type: { kind: "DateTime" as const, datatype: $xsd_dateTime },
-                },
-                date: {
-                  discriminantValues: ["date"],
-                  type: { kind: "Date" as const, datatype: $xsd_date },
-                },
-              },
-            }.members["dateTime"].type,
+            schema: { datatype: $xsd_dateTime, kind: "DateTime" } as const,
           }).map((value) => ({
             $type: "dateTime" as const,
             value: value,
@@ -13881,19 +13853,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         if (value.$type === "date") {
           return $dateFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                dateTime: {
-                  discriminantValues: ["dateTime"],
-                  type: { kind: "DateTime" as const, datatype: $xsd_dateTime },
-                },
-                date: {
-                  discriminantValues: ["date"],
-                  type: { kind: "Date" as const, datatype: $xsd_date },
-                },
-              },
-            }.members["date"].type,
+            schema: { datatype: $xsd_date, kind: "Date" } as const,
           }).map((value) => ({
             $type: "date" as const,
             value: value,
@@ -13914,37 +13874,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         if (value.$type === "object") {
           return $bigDecimalFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "BigDecimal" as const, datatype: $xsd_decimal },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["object"].type,
+            schema: { datatype: $xsd_decimal, kind: "BigDecimal" } as const,
           }) as Either<Error, BigDecimal | string>;
         }
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "BigDecimal" as const, datatype: $xsd_decimal },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }) as Either<Error, BigDecimal | string>;
         }
 
@@ -13959,37 +13895,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         if (value.$type === "bigint") {
           return $bigIntFromJsonObject<bigint>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                bigint: {
-                  discriminantValues: ["bigint"],
-                  type: { kind: "BigInt" as const, datatype: $xsd_integer },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["bigint"].type,
+            schema: { datatype: $xsd_integer, kind: "BigInt" } as const,
           }) as Either<Error, bigint | string>;
         }
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                bigint: {
-                  discriminantValues: ["bigint"],
-                  type: { kind: "BigInt" as const, datatype: $xsd_integer },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }) as Either<Error, bigint | string>;
         }
 
@@ -14004,105 +13916,25 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         if (value.$type === "boolean") {
           return $booleanFromJsonObject<boolean>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                boolean: {
-                  discriminantValues: ["boolean"],
-                  type: { kind: "Boolean" as const, datatype: $xsd_boolean },
-                },
-                number: {
-                  discriminantValues: ["number"],
-                  type: { kind: "Float" as const, datatype: $xsd_double },
-                },
-                bigint: {
-                  discriminantValues: ["bigint"],
-                  type: { kind: "BigInt" as const, datatype: $xsd_integer },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["boolean"].type,
+            schema: { datatype: $xsd_boolean, kind: "Boolean" } as const,
           }) as Either<Error, boolean | number | bigint | string>;
         }
         if (value.$type === "number") {
           return $floatFromJsonObject<number>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                boolean: {
-                  discriminantValues: ["boolean"],
-                  type: { kind: "Boolean" as const, datatype: $xsd_boolean },
-                },
-                number: {
-                  discriminantValues: ["number"],
-                  type: { kind: "Float" as const, datatype: $xsd_double },
-                },
-                bigint: {
-                  discriminantValues: ["bigint"],
-                  type: { kind: "BigInt" as const, datatype: $xsd_integer },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["number"].type,
+            schema: { datatype: $xsd_double, kind: "Float" } as const,
           }) as Either<Error, boolean | number | bigint | string>;
         }
         if (value.$type === "bigint") {
           return $bigIntFromJsonObject<bigint>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                boolean: {
-                  discriminantValues: ["boolean"],
-                  type: { kind: "Boolean" as const, datatype: $xsd_boolean },
-                },
-                number: {
-                  discriminantValues: ["number"],
-                  type: { kind: "Float" as const, datatype: $xsd_double },
-                },
-                bigint: {
-                  discriminantValues: ["bigint"],
-                  type: { kind: "BigInt" as const, datatype: $xsd_integer },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["bigint"].type,
+            schema: { datatype: $xsd_integer, kind: "BigInt" } as const,
           }) as Either<Error, boolean | number | bigint | string>;
         }
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                boolean: {
-                  discriminantValues: ["boolean"],
-                  type: { kind: "Boolean" as const, datatype: $xsd_boolean },
-                },
-                number: {
-                  discriminantValues: ["number"],
-                  type: { kind: "Float" as const, datatype: $xsd_double },
-                },
-                bigint: {
-                  discriminantValues: ["bigint"],
-                  type: { kind: "BigInt" as const, datatype: $xsd_integer },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }) as Either<Error, boolean | number | bigint | string>;
         }
 
@@ -14116,37 +13948,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         if (value.$type === "object") {
           return $langStringFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "LangString" as const },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["object"].type,
+            schema: { kind: "LangString" } as const,
           }) as Either<Error, Literal | string>;
         }
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "LangString" as const },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }) as Either<Error, Literal | string>;
         }
 
@@ -14179,37 +13987,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "Date" as const, datatype: $xsd_date },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }) as Either<Error, string | Date>;
         }
         if (value.$type === "object") {
           return $dateFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "Date" as const, datatype: $xsd_date },
-                },
-              },
-            }.members["object"].type,
+            schema: { datatype: $xsd_date, kind: "Date" } as const,
           }) as Either<Error, string | Date>;
         }
 
@@ -14223,37 +14007,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "BigDecimal" as const, datatype: $xsd_decimal },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }) as Either<Error, string | BigDecimal>;
         }
         if (value.$type === "object") {
           return $bigDecimalFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "BigDecimal" as const, datatype: $xsd_decimal },
-                },
-              },
-            }.members["object"].type,
+            schema: { datatype: $xsd_decimal, kind: "BigDecimal" } as const,
           }) as Either<Error, string | BigDecimal>;
         }
 
@@ -14268,37 +14028,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-                bigint: {
-                  discriminantValues: ["bigint"],
-                  type: { kind: "BigInt" as const, datatype: $xsd_integer },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }) as Either<Error, string | bigint>;
         }
         if (value.$type === "bigint") {
           return $bigIntFromJsonObject<bigint>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-                bigint: {
-                  discriminantValues: ["bigint"],
-                  type: { kind: "BigInt" as const, datatype: $xsd_integer },
-                },
-              },
-            }.members["bigint"].type,
+            schema: { datatype: $xsd_integer, kind: "BigInt" } as const,
           }) as Either<Error, string | bigint>;
         }
 
@@ -14313,37 +14049,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "LangString" as const },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }) as Either<Error, string | Literal>;
         }
         if (value.$type === "object") {
           return $langStringFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "LangString" as const },
-                },
-              },
-            }.members["object"].type,
+            schema: { kind: "LangString" } as const,
           }) as Either<Error, string | Literal>;
         }
 
@@ -14828,11 +14540,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/DatatypeDiscriminatedUnionsStruct",
@@ -14843,134 +14556,134 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             "http://example.com/DatatypeDiscriminatedUnionsStruct",
           ),
         ],
-      },
+      } as const,
       dateOrDateTime: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/dateOrDateTime"),
         type: {
-          kind: "DiscriminatedUnion" as const,
+          kind: "DiscriminatedUnion",
           members: {
             date: {
               discriminantValues: ["date"],
-              type: { kind: "Date" as const, datatype: $xsd_date },
+              type: { datatype: $xsd_date, kind: "Date" } as const,
             },
             dateTime: {
               discriminantValues: ["dateTime"],
-              type: { kind: "DateTime" as const, datatype: $xsd_dateTime },
+              type: { datatype: $xsd_dateTime, kind: "DateTime" } as const,
             },
           },
-        },
-      },
+        } as const,
+      } as const,
       dateOrString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/dateOrString"),
         type: {
-          kind: "DiscriminatedUnion" as const,
+          kind: "DiscriminatedUnion",
           members: {
             object: {
               discriminantValues: ["object"],
-              type: { kind: "Date" as const, datatype: $xsd_date },
+              type: { datatype: $xsd_date, kind: "Date" } as const,
             },
             string: {
               discriminantValues: ["string"],
-              type: { kind: "String" as const, datatype: $xsd_string },
+              type: { datatype: $xsd_string, kind: "String" } as const,
             },
           },
-        },
-      },
+        } as const,
+      } as const,
       dateTimeOrDate: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/dateTimeOrDate"),
         type: {
-          kind: "DiscriminatedUnion" as const,
+          kind: "DiscriminatedUnion",
           members: {
             dateTime: {
               discriminantValues: ["dateTime"],
-              type: { kind: "DateTime" as const, datatype: $xsd_dateTime },
+              type: { datatype: $xsd_dateTime, kind: "DateTime" } as const,
             },
             date: {
               discriminantValues: ["date"],
-              type: { kind: "Date" as const, datatype: $xsd_date },
+              type: { datatype: $xsd_date, kind: "Date" } as const,
             },
           },
-        },
-      },
+        } as const,
+      } as const,
       decimalOrString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/decimalOrString"),
         type: {
-          kind: "DiscriminatedUnion" as const,
+          kind: "DiscriminatedUnion",
           members: {
             object: {
               discriminantValues: ["object"],
-              type: { kind: "BigDecimal" as const, datatype: $xsd_decimal },
+              type: { datatype: $xsd_decimal, kind: "BigDecimal" } as const,
             },
             string: {
               discriminantValues: ["string"],
-              type: { kind: "String" as const, datatype: $xsd_string },
+              type: { datatype: $xsd_string, kind: "String" } as const,
             },
           },
-        },
-      },
+        } as const,
+      } as const,
       integerOrString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/integerOrString"),
         type: {
-          kind: "DiscriminatedUnion" as const,
+          kind: "DiscriminatedUnion",
           members: {
             bigint: {
               discriminantValues: ["bigint"],
-              type: { kind: "BigInt" as const, datatype: $xsd_integer },
+              type: { datatype: $xsd_integer, kind: "BigInt" } as const,
             },
             string: {
               discriminantValues: ["string"],
-              type: { kind: "String" as const, datatype: $xsd_string },
+              type: { datatype: $xsd_string, kind: "String" } as const,
             },
           },
-        },
-      },
+        } as const,
+      } as const,
       jsPrimitive: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/jsPrimitive"),
         type: {
-          kind: "DiscriminatedUnion" as const,
+          kind: "DiscriminatedUnion",
           members: {
             boolean: {
               discriminantValues: ["boolean"],
-              type: { kind: "Boolean" as const, datatype: $xsd_boolean },
+              type: { datatype: $xsd_boolean, kind: "Boolean" } as const,
             },
             number: {
               discriminantValues: ["number"],
-              type: { kind: "Float" as const, datatype: $xsd_double },
+              type: { datatype: $xsd_double, kind: "Float" } as const,
             },
             bigint: {
               discriminantValues: ["bigint"],
-              type: { kind: "BigInt" as const, datatype: $xsd_integer },
+              type: { datatype: $xsd_integer, kind: "BigInt" } as const,
             },
             string: {
               discriminantValues: ["string"],
-              type: { kind: "String" as const, datatype: $xsd_string },
+              type: { datatype: $xsd_string, kind: "String" } as const,
             },
           },
-        },
-      },
+        } as const,
+      } as const,
       langStringOrString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/langStringOrString"),
         type: {
-          kind: "DiscriminatedUnion" as const,
+          kind: "DiscriminatedUnion",
           members: {
             object: {
               discriminantValues: ["object"],
-              type: { kind: "LangString" as const },
+              type: { kind: "LangString" } as const,
             },
             string: {
               discriminantValues: ["string"],
-              type: { kind: "String" as const, datatype: $xsd_string },
+              type: { datatype: $xsd_string, kind: "String" } as const,
             },
           },
-        },
-      },
+        } as const,
+      } as const,
       namedDatatypeDiscriminatedUnion1: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -14979,7 +14692,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         get type() {
           return DatatypeDiscriminatedUnion1.schema;
         },
-      },
+      } as const,
       namedDatatypeDiscriminatedUnion2: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -14988,75 +14701,75 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         get type() {
           return DatatypeDiscriminatedUnion2.schema;
         },
-      },
+      } as const,
       stringOrDate: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/stringOrDate"),
         type: {
-          kind: "DiscriminatedUnion" as const,
+          kind: "DiscriminatedUnion",
           members: {
             string: {
               discriminantValues: ["string"],
-              type: { kind: "String" as const, datatype: $xsd_string },
+              type: { datatype: $xsd_string, kind: "String" } as const,
             },
             object: {
               discriminantValues: ["object"],
-              type: { kind: "Date" as const, datatype: $xsd_date },
+              type: { datatype: $xsd_date, kind: "Date" } as const,
             },
           },
-        },
-      },
+        } as const,
+      } as const,
       stringOrDecimal: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/stringOrDecimal"),
         type: {
-          kind: "DiscriminatedUnion" as const,
+          kind: "DiscriminatedUnion",
           members: {
             string: {
               discriminantValues: ["string"],
-              type: { kind: "String" as const, datatype: $xsd_string },
+              type: { datatype: $xsd_string, kind: "String" } as const,
             },
             object: {
               discriminantValues: ["object"],
-              type: { kind: "BigDecimal" as const, datatype: $xsd_decimal },
+              type: { datatype: $xsd_decimal, kind: "BigDecimal" } as const,
             },
           },
-        },
-      },
+        } as const,
+      } as const,
       stringOrInteger: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/stringOrInteger"),
         type: {
-          kind: "DiscriminatedUnion" as const,
+          kind: "DiscriminatedUnion",
           members: {
             string: {
               discriminantValues: ["string"],
-              type: { kind: "String" as const, datatype: $xsd_string },
+              type: { datatype: $xsd_string, kind: "String" } as const,
             },
             bigint: {
               discriminantValues: ["bigint"],
-              type: { kind: "BigInt" as const, datatype: $xsd_integer },
+              type: { datatype: $xsd_integer, kind: "BigInt" } as const,
             },
           },
-        },
-      },
+        } as const,
+      } as const,
       stringOrLangString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/stringOrLangString"),
         type: {
-          kind: "DiscriminatedUnion" as const,
+          kind: "DiscriminatedUnion",
           members: {
             string: {
               discriminantValues: ["string"],
-              type: { kind: "String" as const, datatype: $xsd_string },
+              type: { datatype: $xsd_string, kind: "String" } as const,
             },
             object: {
               discriminantValues: ["object"],
-              type: { kind: "LangString" as const },
+              type: { kind: "LangString" } as const,
             },
           },
-        },
-      },
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -16019,40 +15732,41 @@ export namespace DatesStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode("http://example.com/DatesStruct"),
         kind: "RdfType",
         toRdfTypes: [dataFactory.namedNode("http://example.com/DatesStruct")],
-      },
+      } as const,
       date: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/date"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Date" as const, datatype: $xsd_date },
-        },
-      },
+          itemType: { datatype: $xsd_date, kind: "Date" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       dateTime: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/dateTime"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "DateTime" as const, datatype: $xsd_dateTime },
-        },
-      },
+          itemType: { datatype: $xsd_dateTime, kind: "DateTime" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       dateTimeStamp: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/dateTimeStamp"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "DateTime" as const, datatype: $xsd_dateTimeStamp },
-        },
-      },
+          itemType: { datatype: $xsd_dateTimeStamp, kind: "DateTime" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -17021,11 +16735,12 @@ export namespace DefaultValuesStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/DefaultValuesStruct",
@@ -17034,68 +16749,68 @@ export namespace DefaultValuesStruct {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/DefaultValuesStruct"),
         ],
-      },
+      } as const,
       dateDefaultValue: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/dateDefaultValue"),
         type: {
-          kind: "DefaultValue" as const,
-          itemType: { kind: "Date" as const, datatype: $xsd_date },
           defaultValue: dataFactory.literal("2018-04-09", $xsd_date),
-        },
-      },
+          itemType: { datatype: $xsd_date, kind: "Date" } as const,
+          kind: "DefaultValue",
+        } as const,
+      } as const,
       dateTimeDefaultValue: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/dateTimeDefaultValue"),
         type: {
-          kind: "DefaultValue" as const,
-          itemType: { kind: "DateTime" as const, datatype: $xsd_dateTime },
           defaultValue: dataFactory.literal(
             "2018-04-09T10:00:00Z",
             $xsd_dateTime,
           ),
-        },
-      },
+          itemType: { datatype: $xsd_dateTime, kind: "DateTime" } as const,
+          kind: "DefaultValue",
+        } as const,
+      } as const,
       falseBooleanDefaultValue: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/falseBooleanDefaultValue",
         ),
         type: {
-          kind: "DefaultValue" as const,
-          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
           defaultValue: dataFactory.literal("false", $xsd_boolean),
-        },
-      },
+          itemType: { datatype: $xsd_boolean, kind: "Boolean" } as const,
+          kind: "DefaultValue",
+        } as const,
+      } as const,
       numberDefaultValue: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/numberDefaultValue"),
         type: {
-          kind: "DefaultValue" as const,
-          itemType: { kind: "Float" as const, datatype: $xsd_double },
           defaultValue: dataFactory.literal("0.0e0", $xsd_double),
-        },
-      },
+          itemType: { datatype: $xsd_double, kind: "Float" } as const,
+          kind: "DefaultValue",
+        } as const,
+      } as const,
       stringDefaultValue: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/stringDefaultValue"),
         type: {
-          kind: "DefaultValue" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
           defaultValue: dataFactory.literal(""),
-        },
-      },
+          itemType: { datatype: $xsd_string, kind: "String" } as const,
+          kind: "DefaultValue",
+        } as const,
+      } as const,
       trueBooleanDefaultValue: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/trueBooleanDefaultValue",
         ),
         type: {
-          kind: "DefaultValue" as const,
-          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
           defaultValue: dataFactory.literal("true", $xsd_boolean),
-        },
-      },
+          itemType: { datatype: $xsd_boolean, kind: "Boolean" } as const,
+          kind: "DefaultValue",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -17624,11 +17339,12 @@ export namespace DirectRecursiveStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/DirectRecursiveStruct",
@@ -17637,19 +17353,19 @@ export namespace DirectRecursiveStruct {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/DirectRecursiveStruct"),
         ],
-      },
+      } as const,
       directRecursive: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/directRecursive"),
         get type() {
           return {
-            kind: "Option" as const,
             get itemType() {
               return DirectRecursiveStruct.schema;
             },
-          };
+            kind: "Option",
+          } as const;
         },
-      },
+      } as const,
     },
   } as const;
 
@@ -18302,31 +18018,32 @@ export namespace DisplayStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode("http://example.com/DisplayStruct"),
         kind: "RdfType",
         toRdfTypes: [dataFactory.namedNode("http://example.com/DisplayStruct")],
-      },
+      } as const,
       explicitFalseDisplay: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/explicitFalseDisplay"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
       explicitTrueDisplay: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/explicitTrueDisplay"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
       implicitFalseDisplay: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/implicitFalseDisplay"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -18869,11 +18586,12 @@ export namespace ExplicitFromToRdfTypesStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode("http://example.com/FromRdfType"),
         kind: "RdfType",
@@ -18881,14 +18599,14 @@ export namespace ExplicitFromToRdfTypesStruct {
           dataFactory.namedNode("http://example.com/ToRdfType"),
           dataFactory.namedNode("http://example.com/FromRdfType"),
         ],
-      },
+      } as const,
       explicitFromToRdfTypesString: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/explicitFromToRdfTypesString",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -19399,21 +19117,22 @@ export namespace ExplicitRdfTypeStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode("http://example.com/RdfType"),
         kind: "RdfType",
         toRdfTypes: [dataFactory.namedNode("http://example.com/RdfType")],
-      },
+      } as const,
       explicitRdfTypeString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/explicitRdfTypeString"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -19891,30 +19610,31 @@ export namespace HasValuesStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       hasIriValue: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/hasIriValue"),
         type: {
-          kind: "Iri" as const,
           hasValues: [
             dataFactory.namedNode("http://example.com/HasValuesStructIri1"),
           ],
-        },
-      },
+          kind: "Iri",
+        } as const,
+      } as const,
       hasLiteralValue: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/hasLiteralValue"),
         type: {
-          kind: "String" as const,
-          hasValues: [dataFactory.literal("test")],
           datatype: $xsd_string,
-        },
-      },
+          hasValues: [dataFactory.literal("test")],
+          kind: "String",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -20522,32 +20242,33 @@ export namespace IgnoredPropertiesStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       severityDefaultProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/severityDefaultProperty",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
       severityViolationProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/severityViolationProperty",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
       shaclmateIgnoreFalseProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/shaclmateIgnoreFalseProperty",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -21079,11 +20800,12 @@ export namespace IndirectRecursiveStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/IndirectRecursiveStruct",
@@ -21092,7 +20814,7 @@ export namespace IndirectRecursiveStruct {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/IndirectRecursiveStruct"),
         ],
-      },
+      } as const,
       indirectRecursiveHelper: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -21100,13 +20822,13 @@ export namespace IndirectRecursiveStruct {
         ),
         get type() {
           return {
-            kind: "Option" as const,
             get itemType() {
               return IndirectRecursiveStructHelper.schema;
             },
-          };
+            kind: "Option",
+          } as const;
         },
-      },
+      } as const,
     },
   } as const;
 
@@ -21641,11 +21363,12 @@ export namespace IndirectRecursiveStructHelper {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/IndirectRecursiveStructHelper",
@@ -21656,19 +21379,19 @@ export namespace IndirectRecursiveStructHelper {
             "http://example.com/IndirectRecursiveStructHelper",
           ),
         ],
-      },
+      } as const,
       indirectRecursive: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/indirectRecursive"),
         get type() {
           return {
-            kind: "Option" as const,
             get itemType() {
               return IndirectRecursiveStruct.schema;
             },
-          };
+            kind: "Option",
+          } as const;
         },
-      },
+      } as const,
     },
   } as const;
 
@@ -22237,11 +21960,11 @@ export namespace InIdentifierStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
         type: {
-          kind: "Iri" as const,
           in: [
             dataFactory.namedNode(
               "http://example.com/InIdentifierStructInstance1",
@@ -22250,8 +21973,9 @@ export namespace InIdentifierStruct {
               "http://example.com/InIdentifierStructInstance2",
             ),
           ] as const,
-        },
-      },
+          kind: "Iri",
+        } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/InIdentifierStruct",
@@ -22260,15 +21984,15 @@ export namespace InIdentifierStruct {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/InIdentifierStruct"),
         ],
-      },
+      } as const,
       inIdentifierString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/inIdentifierString"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
+          itemType: { datatype: $xsd_string, kind: "String" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -22412,10 +22136,10 @@ export namespace InIri {
   ] as const;
 
   export const schema = {
-    kind: "Iri" as const,
     in: inValues.map((inValue) => dataFactory.namedNode(inValue)),
     inValues,
-  };
+    kind: "Iri",
+  } as const;
 
   export type Schema = typeof schema;
 }
@@ -22424,10 +22148,10 @@ export type InLiteral = InLiteral.Schema["in"][number];
 
 export namespace InLiteral {
   export const schema = {
-    kind: "String" as const,
-    in: ["test1", "test2"] as const,
     datatype: $xsd_string,
-  };
+    in: ["test1", "test2"] as const,
+    kind: "String",
+  } as const;
 
   export type Schema = typeof schema;
 }
@@ -23318,11 +23042,12 @@ export namespace InPropertiesStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/InPropertiesStruct",
@@ -23331,81 +23056,81 @@ export namespace InPropertiesStruct {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/InPropertiesStruct"),
         ],
-      },
+      } as const,
       inBooleans: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/inBooleans"),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "Boolean" as const,
-            in: [true] as const,
             datatype: $xsd_boolean,
-          },
-        },
-      },
+            in: [true] as const,
+            kind: "Boolean",
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       inDateTimes: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/inDateTimes"),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "DateTime" as const,
-            in: [new Date("2018-04-09T10:00:00.000Z")] as const,
             datatype: $xsd_dateTime,
-          },
-        },
-      },
+            in: [new Date("2018-04-09T10:00:00.000Z")] as const,
+            kind: "DateTime",
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       inDoubles: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/inDoubles"),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "Float" as const,
-            in: [1, 2] as const,
             datatype: $xsd_double,
-          },
-        },
-      },
+            in: [1, 2] as const,
+            kind: "Float",
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       inIntegers: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/inIntegers"),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "BigInt" as const,
-            in: [1n, 2n] as const,
             datatype: $xsd_integer,
-          },
-        },
-      },
+            in: [1n, 2n] as const,
+            kind: "BigInt",
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       inIris: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/inIris"),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "Iri" as const,
             in: [
               dataFactory.namedNode("http://example.com/InIri1"),
               dataFactory.namedNode("http://example.com/InIri2"),
             ] as const,
-          },
-        },
-      },
+            kind: "Iri",
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       inStrings: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/inStrings"),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "String" as const,
-            in: ["text", "html"] as const,
             datatype: $xsd_string,
-          },
-        },
-      },
+            in: ["text", "html"] as const,
+            kind: "String",
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -23882,11 +23607,12 @@ export namespace IntersectionPropertiesStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       namedStructIntersection: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -23895,7 +23621,7 @@ export namespace IntersectionPropertiesStruct {
         get type() {
           return StructIntersection.schema;
         },
-      },
+      } as const,
     },
   } as const;
 
@@ -24426,8 +24152,12 @@ export namespace IriIdentifierStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
-      $identifier: { kind: "Identifier", type: { kind: "Iri" as const } },
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Iri" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/IriIdentifierStruct",
@@ -24436,15 +24166,15 @@ export namespace IriIdentifierStruct {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/IriIdentifierStruct"),
         ],
-      },
+      } as const,
       iriIdentifierString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/iriIdentifierString"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
+          itemType: { datatype: $xsd_string, kind: "String" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -25543,37 +25273,13 @@ export namespace LangStringStruct {
         if (value.$type === "object") {
           return $langStringFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "LangString" as const },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["object"].type,
+            schema: { kind: "LangString" } as const,
           }) as Either<Error, Literal | string>;
         }
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "LangString" as const },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }) as Either<Error, Literal | string>;
         }
 
@@ -25591,37 +25297,13 @@ export namespace LangStringStruct {
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "LangString" as const },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }) as Either<Error, string | Literal>;
         }
         if (value.$type === "object") {
           return $langStringFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "LangString" as const },
-                },
-              },
-            }.members["object"].type,
+            schema: { kind: "LangString" } as const,
           }) as Either<Error, string | Literal>;
         }
 
@@ -25775,11 +25457,12 @@ export namespace LangStringStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/LangStringStruct",
@@ -25788,55 +25471,55 @@ export namespace LangStringStruct {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/LangStringStruct"),
         ],
-      },
+      } as const,
       langString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/langString"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "LangString" as const },
-        },
-      },
+          itemType: { kind: "LangString" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       langStringOrString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/langStringOrString"),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "DiscriminatedUnion" as const,
+            kind: "DiscriminatedUnion",
             members: {
               object: {
                 discriminantValues: ["object"],
-                type: { kind: "LangString" as const },
+                type: { kind: "LangString" } as const,
               },
               string: {
                 discriminantValues: ["string"],
-                type: { kind: "String" as const, datatype: $xsd_string },
+                type: { datatype: $xsd_string, kind: "String" } as const,
               },
             },
-          },
-        },
-      },
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       stringOrLangString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/stringOrLangString"),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "DiscriminatedUnion" as const,
+            kind: "DiscriminatedUnion",
             members: {
               string: {
                 discriminantValues: ["string"],
-                type: { kind: "String" as const, datatype: $xsd_string },
+                type: { datatype: $xsd_string, kind: "String" } as const,
               },
               object: {
                 discriminantValues: ["object"],
-                type: { kind: "LangString" as const },
+                type: { kind: "LangString" } as const,
               },
             },
-          },
-        },
-      },
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -26332,20 +26015,21 @@ export namespace LanguageInStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       languageIn: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/languageIn"),
         type: {
-          kind: "Set" as const,
-          itemType: { kind: "LangString" as const, languageIn: ["en", "fr"] },
+          itemType: { kind: "LangString", languageIn: ["en", "fr"] } as const,
+          kind: "Set",
           minCount: 1,
-        },
-      },
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -26878,11 +26562,12 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct",
@@ -26893,12 +26578,12 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
             "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct",
           ),
         ],
-      },
+      } as const,
       lazilyResolved: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/lazilyResolved"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -27441,11 +27126,12 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/LazilyResolvedDiscriminatedUnionMember1",
@@ -27456,12 +27142,12 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
             "http://example.com/LazilyResolvedDiscriminatedUnionMember1",
           ),
         ],
-      },
+      } as const,
       lazilyResolved: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/lazilyResolved"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -27995,11 +27681,12 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/LazilyResolvedDiscriminatedUnionMember2",
@@ -28010,12 +27697,12 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
             "http://example.com/LazilyResolvedDiscriminatedUnionMember2",
           ),
         ],
-      },
+      } as const,
       lazilyResolved: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/lazilyResolved"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -28449,13 +28136,17 @@ export namespace LazilyResolvedIriIdentifierStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
-      $identifier: { kind: "Identifier", type: { kind: "Iri" as const } },
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Iri" } as const,
+      } as const,
       lazilyResolved: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/lazilyResolved"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -28665,10 +28356,7 @@ export namespace LazyPropertiesStruct {
           $DefaultPartial,
           LazilyResolvedBlankNodeOrIriIdentifierStruct
         >,
-        {
-          kind: "LazyOption";
-          partialType: $MaybeSchema<$DefaultPartial.Schema>;
-        }
+        $LazySchema<$MaybeSchema<$DefaultPartial.Schema>>
       >({
         ...options,
         focusResource: resource,
@@ -28706,10 +28394,7 @@ export namespace LazyPropertiesStruct {
       }),
       optionalLazyToResolvedDiscriminatedUnion: $shaclPropertyFromRdf<
         $LazyOption<$DefaultPartial, LazilyResolvedDiscriminatedUnion>,
-        {
-          kind: "LazyOption";
-          partialType: $MaybeSchema<$DefaultPartial.Schema>;
-        }
+        $LazySchema<$MaybeSchema<$DefaultPartial.Schema>>
       >({
         ...options,
         focusResource: resource,
@@ -28747,10 +28432,7 @@ export namespace LazyPropertiesStruct {
       }),
       optionalLazyToResolvedIriIdentifier: $shaclPropertyFromRdf<
         $LazyOption<$NamedDefaultPartial, LazilyResolvedIriIdentifierStruct>,
-        {
-          kind: "LazyOption";
-          partialType: $MaybeSchema<$NamedDefaultPartial.Schema>;
-        }
+        $LazySchema<$MaybeSchema<$NamedDefaultPartial.Schema>>
       >({
         ...options,
         focusResource: resource,
@@ -28793,10 +28475,7 @@ export namespace LazyPropertiesStruct {
             PartialDiscriminatedUnion,
             LazilyResolvedDiscriminatedUnion
           >,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<PartialDiscriminatedUnion.Schema>;
-          }
+          $LazySchema<$MaybeSchema<PartialDiscriminatedUnion.Schema>>
         >({
           ...options,
           focusResource: resource,
@@ -28838,7 +28517,7 @@ export namespace LazyPropertiesStruct {
           PartialStruct,
           LazilyResolvedBlankNodeOrIriIdentifierStruct
         >,
-        { kind: "LazyOption"; partialType: $MaybeSchema<PartialStruct.Schema> }
+        $LazySchema<$MaybeSchema<PartialStruct.Schema>>
       >({
         ...options,
         focusResource: resource,
@@ -28876,7 +28555,7 @@ export namespace LazyPropertiesStruct {
       }),
       optionalPartialToResolvedDiscriminatedUnion: $shaclPropertyFromRdf<
         $LazyOption<PartialStruct, LazilyResolvedDiscriminatedUnion>,
-        { kind: "LazyOption"; partialType: $MaybeSchema<PartialStruct.Schema> }
+        $LazySchema<$MaybeSchema<PartialStruct.Schema>>
       >({
         ...options,
         focusResource: resource,
@@ -28914,7 +28593,7 @@ export namespace LazyPropertiesStruct {
       }),
       requiredLazyToResolvedBlankNodeOrIriIdentifier: $shaclPropertyFromRdf<
         $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>,
-        { kind: "Lazy"; partialType: $DefaultPartial.Schema }
+        $LazySchema<$DefaultPartial.Schema>
       >({
         ...options,
         focusResource: resource,
@@ -28952,7 +28631,7 @@ export namespace LazyPropertiesStruct {
       }),
       requiredPartialToResolvedBlankNodeOrIriIdentifier: $shaclPropertyFromRdf<
         $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>,
-        { kind: "Lazy"; partialType: PartialStruct.Schema }
+        $LazySchema<PartialStruct.Schema>
       >({
         ...options,
         focusResource: resource,
@@ -28988,10 +28667,7 @@ export namespace LazyPropertiesStruct {
       }),
       setLazyToResolvedBlankNodeOrIriIdentifier: $shaclPropertyFromRdf<
         $LazySet<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>,
-        {
-          kind: "LazySet";
-          partialType: $CollectionSchema<$DefaultPartial.Schema>;
-        }
+        $LazySchema<$CollectionSchema<$DefaultPartial.Schema>>
       >({
         ...options,
         focusResource: resource,
@@ -29033,10 +28709,7 @@ export namespace LazyPropertiesStruct {
       }),
       setPartialToResolvedBlankNodeOrIriIdentifier: $shaclPropertyFromRdf<
         $LazySet<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>,
-        {
-          kind: "LazySet";
-          partialType: $CollectionSchema<PartialStruct.Schema>;
-        }
+        $LazySchema<$CollectionSchema<PartialStruct.Schema>>
       >({
         ...options,
         focusResource: resource,
@@ -30671,11 +30344,12 @@ export namespace LazyPropertiesStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       optionalLazyToResolvedBlankNodeOrIriIdentifier: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -30683,18 +30357,18 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazyOption" as const,
+            kind: "LazyOption",
             get partialType() {
               return {
-                kind: "Option" as const,
                 get itemType() {
                   return $DefaultPartial.schema;
                 },
-              };
+                kind: "Option",
+              } as const;
             },
-          };
+          } as const;
         },
-      },
+      } as const,
       optionalLazyToResolvedDiscriminatedUnion: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -30702,18 +30376,18 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazyOption" as const,
+            kind: "LazyOption",
             get partialType() {
               return {
-                kind: "Option" as const,
                 get itemType() {
                   return $DefaultPartial.schema;
                 },
-              };
+                kind: "Option",
+              } as const;
             },
-          };
+          } as const;
         },
-      },
+      } as const,
       optionalLazyToResolvedIriIdentifier: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -30721,18 +30395,18 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazyOption" as const,
+            kind: "LazyOption",
             get partialType() {
               return {
-                kind: "Option" as const,
                 get itemType() {
                   return $NamedDefaultPartial.schema;
                 },
-              };
+                kind: "Option",
+              } as const;
             },
-          };
+          } as const;
         },
-      },
+      } as const,
       optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -30740,18 +30414,18 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazyOption" as const,
+            kind: "LazyOption",
             get partialType() {
               return {
-                kind: "Option" as const,
                 get itemType() {
                   return PartialDiscriminatedUnion.schema;
                 },
-              };
+                kind: "Option",
+              } as const;
             },
-          };
+          } as const;
         },
-      },
+      } as const,
       optionalPartialToResolvedBlankNodeOrIriIdentifier: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -30759,18 +30433,18 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazyOption" as const,
+            kind: "LazyOption",
             get partialType() {
               return {
-                kind: "Option" as const,
                 get itemType() {
                   return PartialStruct.schema;
                 },
-              };
+                kind: "Option",
+              } as const;
             },
-          };
+          } as const;
         },
-      },
+      } as const,
       optionalPartialToResolvedDiscriminatedUnion: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -30778,18 +30452,18 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazyOption" as const,
+            kind: "LazyOption",
             get partialType() {
               return {
-                kind: "Option" as const,
                 get itemType() {
                   return PartialStruct.schema;
                 },
-              };
+                kind: "Option",
+              } as const;
             },
-          };
+          } as const;
         },
-      },
+      } as const,
       requiredLazyToResolvedBlankNodeOrIriIdentifier: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -30797,13 +30471,13 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "Lazy" as const,
+            kind: "Lazy",
             get partialType() {
               return $DefaultPartial.schema;
             },
-          };
+          } as const;
         },
-      },
+      } as const,
       requiredPartialToResolvedBlankNodeOrIriIdentifier: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -30811,13 +30485,13 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "Lazy" as const,
+            kind: "Lazy",
             get partialType() {
               return PartialStruct.schema;
             },
-          };
+          } as const;
         },
-      },
+      } as const,
       setLazyToResolvedBlankNodeOrIriIdentifier: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -30825,18 +30499,18 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazySet" as const,
+            kind: "LazySet",
             get partialType() {
               return {
-                kind: "Set" as const,
                 get itemType() {
                   return $DefaultPartial.schema;
                 },
-              };
+                kind: "Set",
+              } as const;
             },
-          };
+          } as const;
         },
-      },
+      } as const,
       setPartialToResolvedBlankNodeOrIriIdentifier: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -30844,18 +30518,18 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazySet" as const,
+            kind: "LazySet",
             get partialType() {
               return {
-                kind: "Set" as const,
                 get itemType() {
                   return PartialStruct.schema;
                 },
-              };
+                kind: "Set",
+              } as const;
             },
-          };
+          } as const;
         },
-      },
+      } as const,
     },
   } as const;
 
@@ -32064,48 +31738,15 @@ export namespace ListSetsStruct {
           return $listFromJsonObject($stringFromJsonString<string>)(value, {
             ...options,
             schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                object: {
-                  discriminantValues: ["object"],
-                  type: {
-                    kind: "List" as const,
-                    itemType: {
-                      kind: "String" as const,
-                      datatype: $xsd_string,
-                    },
-                  },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["object"].type,
+              itemType: { datatype: $xsd_string, kind: "String" } as const,
+              kind: "List",
+            } as const,
           }) as Either<Error, readonly string[] | string>;
         }
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                object: {
-                  discriminantValues: ["object"],
-                  type: {
-                    kind: "List" as const,
-                    itemType: {
-                      kind: "String" as const,
-                      datatype: $xsd_string,
-                    },
-                  },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }) as Either<Error, readonly string[] | string>;
         }
 
@@ -32262,68 +31903,69 @@ export namespace ListSetsStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode("http://example.com/ListSetsStruct"),
         kind: "RdfType",
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/ListSetsStruct"),
         ],
-      },
+      } as const,
       listDiscriminatedUnionSet: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/listDiscriminatedUnionSet",
         ),
         type: {
-          kind: "Set" as const,
           itemType: {
-            kind: "DiscriminatedUnion" as const,
+            kind: "DiscriminatedUnion",
             members: {
               object: {
                 discriminantValues: ["object"],
                 type: {
-                  kind: "List" as const,
-                  itemType: { kind: "String" as const, datatype: $xsd_string },
-                },
+                  itemType: { datatype: $xsd_string, kind: "String" } as const,
+                  kind: "List",
+                } as const,
               },
               string: {
                 discriminantValues: ["string"],
-                type: { kind: "String" as const, datatype: $xsd_string },
+                type: { datatype: $xsd_string, kind: "String" } as const,
               },
             },
-          },
-        },
-      },
+          } as const,
+          kind: "Set",
+        } as const,
+      } as const,
       listListSet: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/listListSet"),
         type: {
-          kind: "Set" as const,
           itemType: {
-            kind: "List" as const,
             itemType: {
-              kind: "List" as const,
-              itemType: { kind: "String" as const, datatype: $xsd_string },
-            },
-          },
-        },
-      },
+              itemType: { datatype: $xsd_string, kind: "String" } as const,
+              kind: "List",
+            } as const,
+            kind: "List",
+          } as const,
+          kind: "Set",
+        } as const,
+      } as const,
       listSet: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/listSet"),
         type: {
-          kind: "Set" as const,
           itemType: {
-            kind: "List" as const,
-            itemType: { kind: "String" as const, datatype: $xsd_string },
-          },
-        },
-      },
+            itemType: { datatype: $xsd_string, kind: "String" } as const,
+            kind: "List",
+          } as const,
+          kind: "Set",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -33518,69 +33160,70 @@ export namespace ListsStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode("http://example.com/ListsStruct"),
         kind: "RdfType",
         toRdfTypes: [dataFactory.namedNode("http://example.com/ListsStruct")],
-      },
+      } as const,
       iriList: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/iriList"),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "List" as const,
-            itemType: { kind: "Iri" as const },
-          },
-        },
-      },
+            itemType: { kind: "Iri" } as const,
+            kind: "List",
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       stringList: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/stringList"),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "List" as const,
-            itemType: { kind: "String" as const, datatype: $xsd_string },
-          },
-        },
-      },
+            itemType: { datatype: $xsd_string, kind: "String" } as const,
+            kind: "List",
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       stringListList: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/stringListList"),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "List" as const,
             itemType: {
-              kind: "List" as const,
-              itemType: { kind: "String" as const, datatype: $xsd_string },
-            },
-          },
-        },
-      },
+              itemType: { datatype: $xsd_string, kind: "String" } as const,
+              kind: "List",
+            } as const,
+            kind: "List",
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       structList: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/structList"),
         get type() {
           return {
-            kind: "Option" as const,
             get itemType() {
               return {
-                kind: "List" as const,
                 get itemType() {
                   return NonClassStruct.schema;
                 },
-              };
+                kind: "List",
+              } as const;
             },
-          };
+            kind: "Option",
+          } as const;
         },
-      },
+      } as const,
     },
   } as const;
 
@@ -34399,11 +34042,12 @@ export namespace MutablePropertiesStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/MutablePropertiesStruct",
@@ -34412,34 +34056,34 @@ export namespace MutablePropertiesStruct {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/MutablePropertiesStruct"),
         ],
-      },
+      } as const,
       mutableList: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/mutableList"),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "List" as const,
-            itemType: { kind: "String" as const, datatype: $xsd_string },
-          },
-        },
-      },
+            itemType: { datatype: $xsd_string, kind: "String" } as const,
+            kind: "List",
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       mutableSet: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/mutableSet"),
         type: {
-          kind: "Set" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
+          itemType: { datatype: $xsd_string, kind: "String" } as const,
+          kind: "Set",
+        } as const,
+      } as const,
       mutableString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/mutableString"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
+          itemType: { datatype: $xsd_string, kind: "String" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -34592,7 +34236,7 @@ export namespace MutablePropertiesStruct {
 export type NamedDatatype = string;
 
 export namespace NamedDatatype {
-  export const schema = { kind: "String" as const, datatype: $xsd_string };
+  export const schema = { datatype: $xsd_string, kind: "String" } as const;
 
   export type Schema = typeof schema;
 }
@@ -35088,11 +34732,12 @@ export namespace NamedTypesStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/NamedTypesStruct",
@@ -35101,28 +34746,28 @@ export namespace NamedTypesStruct {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/NamedTypesStruct"),
         ],
-      },
+      } as const,
       inIri: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/inIri"),
         get type() {
           return InIri.schema;
         },
-      },
+      } as const,
       inLiteral: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/inLiteral"),
         get type() {
           return InLiteral.schema;
         },
-      },
+      } as const,
       namedDatatype: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/namedDatatype"),
         get type() {
           return NamedDatatype.schema;
         },
-      },
+      } as const,
     },
   } as const;
 
@@ -35637,11 +35282,12 @@ export namespace NewName {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/OverrideNameStruct",
@@ -35650,15 +35296,15 @@ export namespace NewName {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/OverrideNameStruct"),
         ],
-      },
+      } as const,
       newNameString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/newNameString"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
+          itemType: { datatype: $xsd_string, kind: "String" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -36521,11 +36167,12 @@ export namespace NodeKindsStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/NodeKindsStruct",
@@ -36534,41 +36181,41 @@ export namespace NodeKindsStruct {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/NodeKindsStruct"),
         ],
-      },
+      } as const,
       blankNodeKind: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/blankNodeKind"),
-        type: { kind: "BlankNode" as const },
-      },
+        type: { kind: "BlankNode" } as const,
+      } as const,
       blankNodeOrIriNodeKind: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/blankNodeOrIriNodeKind",
         ),
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       blankNodeOrLiteralNodeKind: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/blankNodeOrLiteralNodeKind",
         ),
-        type: { kind: "Term" as const, types: ["BlankNode", "Literal"] },
-      },
+        type: { kind: "Term", types: ["BlankNode", "Literal"] } as const,
+      } as const,
       iriNodeKind: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/iriNodeKind"),
-        type: { kind: "Iri" as const },
-      },
+        type: { kind: "Iri" } as const,
+      } as const,
       iriOrLiteralNodeKind: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/iriOrLiteralNodeKind"),
-        type: { kind: "Term" as const, types: ["NamedNode", "Literal"] },
-      },
+        type: { kind: "Term", types: ["NamedNode", "Literal"] } as const,
+      } as const,
       literalNodeKind: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/literalNodeKind"),
-        type: { kind: "Literal" as const },
-      },
+        type: { kind: "Literal" } as const,
+      } as const,
     },
   } as const;
 
@@ -36994,16 +36641,17 @@ export namespace NonClassStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       nonClassString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/nonClassString"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -37450,18 +37098,19 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       noRdfTypeDiscriminatedUnionMember1String: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/noRdfTypeDiscriminatedUnionMember1String",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -37916,18 +37565,19 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       noRdfTypeDiscriminatedUnionMember2String: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/noRdfTypeDiscriminatedUnionMember2String",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -39911,160 +39561,161 @@ export namespace NumericsStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode("http://example.com/NumericsStruct"),
         kind: "RdfType",
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/NumericsStruct"),
         ],
-      },
+      } as const,
       byteNumeric: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/byteNumeric"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Int" as const, datatype: $xsd_byte },
-        },
-      },
+          itemType: { datatype: $xsd_byte, kind: "Int" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       decimalNumeric: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/decimalNumeric"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "BigDecimal" as const, datatype: $xsd_decimal },
-        },
-      },
+          itemType: { datatype: $xsd_decimal, kind: "BigDecimal" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       doubleNumeric: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/doubleNumeric"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Float" as const, datatype: $xsd_double },
-        },
-      },
+          itemType: { datatype: $xsd_double, kind: "Float" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       floatNumeric: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/floatNumeric"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Float" as const, datatype: $xsd_float },
-        },
-      },
+          itemType: { datatype: $xsd_float, kind: "Float" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       integerNumeric: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/integerNumeric"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "BigInt" as const, datatype: $xsd_integer },
-        },
-      },
+          itemType: { datatype: $xsd_integer, kind: "BigInt" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       intNumeric: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/intNumeric"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Int" as const, datatype: $xsd_int },
-        },
-      },
+          itemType: { datatype: $xsd_int, kind: "Int" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       longNumeric: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/longNumeric"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "BigInt" as const, datatype: $xsd_long },
-        },
-      },
+          itemType: { datatype: $xsd_long, kind: "BigInt" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       negativeIntegerNumeric: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/negativeIntegerNumeric",
         ),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "BigInt" as const, datatype: $xsd_negativeInteger },
-        },
-      },
+          itemType: { datatype: $xsd_negativeInteger, kind: "BigInt" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       nonNegativeIntegerNumeric: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/nonNegativeIntegerNumeric",
         ),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "BigInt" as const,
             datatype: $xsd_nonNegativeInteger,
-          },
-        },
-      },
+            kind: "BigInt",
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       nonPositiveIntegerNumeric: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/nonPositiveIntegerNumeric",
         ),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "BigInt" as const,
             datatype: $xsd_nonPositiveInteger,
-          },
-        },
-      },
+            kind: "BigInt",
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       positiveIntegerNumeric: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/positiveIntegerNumeric",
         ),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "BigInt" as const, datatype: $xsd_positiveInteger },
-        },
-      },
+          itemType: { datatype: $xsd_positiveInteger, kind: "BigInt" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       shortNumeric: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/shortNumeric"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Int" as const, datatype: $xsd_short },
-        },
-      },
+          itemType: { datatype: $xsd_short, kind: "Int" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       unsignedByteNumeric: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/unsignedByteNumeric"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Int" as const, datatype: $xsd_unsignedByte },
-        },
-      },
+          itemType: { datatype: $xsd_unsignedByte, kind: "Int" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       unsignedIntNumeric: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/unsignedIntNumeric"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Int" as const, datatype: $xsd_unsignedInt },
-        },
-      },
+          itemType: { datatype: $xsd_unsignedInt, kind: "Int" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       unsignedLongNumeric: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/unsignedLongNumeric"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "BigInt" as const, datatype: $xsd_unsignedLong },
-        },
-      },
+          itemType: { datatype: $xsd_unsignedLong, kind: "BigInt" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       unsignedShortNumeric: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/unsignedShortNumeric"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Int" as const, datatype: $xsd_unsignedShort },
-        },
-      },
+          itemType: { datatype: $xsd_unsignedShort, kind: "Int" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -40676,26 +40327,27 @@ export namespace OrderedStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       orderedC: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/orderedC"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
       orderedB: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/orderedB"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
       orderedA: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/orderedA"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -41206,11 +40858,12 @@ export namespace PartialDiscriminatedUnionMember1 {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/StructDiscriminatedUnionMember1",
@@ -41221,12 +40874,12 @@ export namespace PartialDiscriminatedUnionMember1 {
             "http://example.com/StructDiscriminatedUnionMember1",
           ),
         ],
-      },
+      } as const,
       lazilyResolved: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/lazilyResolved"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -41743,11 +41396,12 @@ export namespace PartialDiscriminatedUnionMember2 {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/StructDiscriminatedUnionMember2",
@@ -41758,12 +41412,12 @@ export namespace PartialDiscriminatedUnionMember2 {
             "http://example.com/StructDiscriminatedUnionMember2",
           ),
         ],
-      },
+      } as const,
       lazilyResolved: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/lazilyResolved"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -42170,16 +41824,17 @@ export namespace PartialStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       lazilyResolved: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/lazilyResolved"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -42906,41 +42561,42 @@ export namespace PropertyCardinalitiesStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       emptySet: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/emptySet"),
         type: {
-          kind: "Set" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
+          itemType: { datatype: $xsd_string, kind: "String" } as const,
+          kind: "Set",
+        } as const,
+      } as const,
       nonEmptySet: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/nonEmptySet"),
         type: {
-          kind: "Set" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
+          itemType: { datatype: $xsd_string, kind: "String" } as const,
+          kind: "Set",
           minCount: 1,
-        },
-      },
+        } as const,
+      } as const,
       optional: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/optional"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
+          itemType: { datatype: $xsd_string, kind: "String" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       required: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/required"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -43736,11 +43392,12 @@ export namespace PropertyNamesStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/PropertyNamesStruct",
@@ -43749,32 +43406,32 @@ export namespace PropertyNamesStruct {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/PropertyNamesStruct"),
         ],
-      },
+      } as const,
       actualName1: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/actualName1"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
       actualName2: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/ignoreName2"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
       actualName3: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/ignoreName3"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
       actualName4: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/ignoreName4"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
       actualName5: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/ignoreName5"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -44413,11 +44070,12 @@ export namespace PropertyPathsStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/PropertyPathsStruct",
@@ -44426,23 +44084,23 @@ export namespace PropertyPathsStruct {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/PropertyPathsStruct"),
         ],
-      },
+      } as const,
       inversePath: {
         kind: "Shacl",
         path: {
           path: dataFactory.namedNode("http://example.com/inversePath"),
           termType: "InversePath",
         },
-        type: { kind: "Option" as const, itemType: { kind: "Iri" as const } },
-      },
+        type: { itemType: { kind: "Iri" } as const, kind: "Option" } as const,
+      } as const,
       predicatePath: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/predicatePath"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
+          itemType: { datatype: $xsd_string, kind: "String" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -44994,11 +44652,12 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/RecursiveDiscriminatedUnionMember1",
@@ -45009,7 +44668,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
             "http://example.com/RecursiveDiscriminatedUnionMember1",
           ),
         ],
-      },
+      } as const,
       recursiveDiscriminatedUnionMember1Property: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -45017,13 +44676,13 @@ export namespace RecursiveDiscriminatedUnionMember1 {
         ),
         get type() {
           return {
-            kind: "Option" as const,
             get itemType() {
               return RecursiveDiscriminatedUnion.schema;
             },
-          };
+            kind: "Option",
+          } as const;
         },
-      },
+      } as const,
     },
   } as const;
 
@@ -45575,11 +45234,12 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/RecursiveDiscriminatedUnionMember2",
@@ -45590,7 +45250,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
             "http://example.com/RecursiveDiscriminatedUnionMember2",
           ),
         ],
-      },
+      } as const,
       recursiveDiscriminatedUnionMember2Property: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -45598,13 +45258,13 @@ export namespace RecursiveDiscriminatedUnionMember2 {
         ),
         get type() {
           return {
-            kind: "Option" as const,
             get itemType() {
               return RecursiveDiscriminatedUnion.schema;
             },
-          };
+            kind: "Option",
+          } as const;
         },
-      },
+      } as const,
     },
   } as const;
 
@@ -46247,11 +45907,12 @@ export namespace StructDiscriminatedUnionMember1 {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/StructDiscriminatedUnionMember1",
@@ -46262,21 +45923,21 @@ export namespace StructDiscriminatedUnionMember1 {
             "http://example.com/StructDiscriminatedUnionMember1",
           ),
         ],
-      },
+      } as const,
       structDiscriminatedUnionMember1Distinct: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/structDiscriminatedUnionMember1Distinct",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
       structDiscriminatedUnionMemberCommon: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/structDiscriminatedUnionMemberCommon",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -46920,11 +46581,12 @@ export namespace StructDiscriminatedUnionMember2 {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/StructDiscriminatedUnionMember2",
@@ -46935,21 +46597,21 @@ export namespace StructDiscriminatedUnionMember2 {
             "http://example.com/StructDiscriminatedUnionMember2",
           ),
         ],
-      },
+      } as const,
       structDiscriminatedUnionMember2Distinct: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/structDiscriminatedUnionMember2Distinct",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
       structDiscriminatedUnionMemberCommon: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/structDiscriminatedUnionMemberCommon",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -47365,16 +47027,17 @@ export namespace StructInheritance1 {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       structInheritance1: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/structInheritance1"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -47994,11 +47657,12 @@ export namespace StructIntersectionMember1 {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/StructIntersectionMember1",
@@ -48007,21 +47671,21 @@ export namespace StructIntersectionMember1 {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/StructIntersectionMember1"),
         ],
-      },
+      } as const,
       structIntersectionMember1Distinct: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/structIntersectionMember1Distinct",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
       structIntersectionMemberCommon: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/structIntersectionMemberCommon",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -48650,11 +48314,12 @@ export namespace StructIntersectionMember2 {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/StructIntersectionMember2",
@@ -48663,21 +48328,21 @@ export namespace StructIntersectionMember2 {
         toRdfTypes: [
           dataFactory.namedNode("http://example.com/StructIntersectionMember2"),
         ],
-      },
+      } as const,
       structIntersectionMember2Distinct: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/structIntersectionMember2Distinct",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
       structIntersectionMemberCommon: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/structIntersectionMemberCommon",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -49182,21 +48847,22 @@ export namespace TargetClassStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode("http://example.com/RdfType"),
         kind: "RdfType",
         toRdfTypes: [dataFactory.namedNode("http://example.com/RdfType")],
-      },
+      } as const,
       targetClassString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/targetClassString"),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
@@ -50670,104 +50336,105 @@ export namespace TermsStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       $rdfType: {
         fromRdfType: dataFactory.namedNode("http://example.com/TermsStruct"),
         kind: "RdfType",
         toRdfTypes: [dataFactory.namedNode("http://example.com/TermsStruct")],
-      },
+      } as const,
       blankNodeTerm: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/blankNodeTerm"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "BlankNode" as const },
-        },
-      },
+          itemType: { kind: "BlankNode" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       booleanTerm: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/booleanTerm"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Boolean" as const, datatype: $xsd_boolean },
-        },
-      },
+          itemType: { datatype: $xsd_boolean, kind: "Boolean" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       dateTerm: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/dateTerm"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Date" as const, datatype: $xsd_date },
-        },
-      },
+          itemType: { datatype: $xsd_date, kind: "Date" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       dateTimeTerm: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/dateTimeTerm"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "DateTime" as const, datatype: $xsd_dateTime },
-        },
-      },
+          itemType: { datatype: $xsd_dateTime, kind: "DateTime" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       doubleTerm: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/doubleTerm"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Float" as const, datatype: $xsd_double },
-        },
-      },
+          itemType: { datatype: $xsd_double, kind: "Float" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       identifierTerm: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/identifierTerm"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Identifier" as const },
-        },
-      },
+          itemType: { kind: "Identifier" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       iriTerm: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/iriTerm"),
-        type: { kind: "Option" as const, itemType: { kind: "Iri" as const } },
-      },
+        type: { itemType: { kind: "Iri" } as const, kind: "Option" } as const,
+      } as const,
       langStringTerm: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/langStringTerm"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "LangString" as const },
-        },
-      },
+          itemType: { kind: "LangString" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       literalTerm: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/literalTerm"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "Literal" as const },
-        },
-      },
+          itemType: { kind: "Literal" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       stringTerm: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/stringTerm"),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
+          itemType: { datatype: $xsd_string, kind: "String" } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       term: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/term"),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "Term" as const,
+            kind: "Term",
             types: ["BlankNode", "NamedNode", "Literal"],
-          },
-        },
-      },
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -55877,37 +55544,13 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "object") {
           return $iriFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "Iri" as const },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["object"].type,
+            schema: { kind: "Iri" } as const,
           }) as Either<Error, NamedNode | string>;
         }
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "Iri" as const },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }) as Either<Error, NamedNode | string>;
         }
 
@@ -55926,19 +55569,7 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "StructDiscriminatedUnionMember1") {
           return StructDiscriminatedUnionMember1.fromJson(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                StructDiscriminatedUnionMember1: {
-                  discriminantValues: ["StructDiscriminatedUnionMember1"],
-                  type: StructDiscriminatedUnionMember1.schema,
-                },
-                Literal: {
-                  discriminantValues: ["Literal"],
-                  type: { kind: "Literal" as const },
-                },
-              },
-            }.members["StructDiscriminatedUnionMember1"].type,
+            schema: StructDiscriminatedUnionMember1.schema,
           }).map((value) => ({
             termType: "StructDiscriminatedUnionMember1" as const,
             value: value,
@@ -55954,19 +55585,7 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "Literal") {
           return $literalFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                StructDiscriminatedUnionMember1: {
-                  discriminantValues: ["StructDiscriminatedUnionMember1"],
-                  type: StructDiscriminatedUnionMember1.schema,
-                },
-                Literal: {
-                  discriminantValues: ["Literal"],
-                  type: { kind: "Literal" as const },
-                },
-              },
-            }.members["Literal"].type,
+            schema: { kind: "Literal" } as const,
           }) as Either<
             Error,
             | {
@@ -55998,23 +55617,7 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "StructDiscriminatedUnionMember1") {
           return StructDiscriminatedUnionMember1.fromJson(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                StructDiscriminatedUnionMember1: {
-                  discriminantValues: ["StructDiscriminatedUnionMember1"],
-                  type: StructDiscriminatedUnionMember1.schema,
-                },
-                StructDiscriminatedUnionMember2: {
-                  discriminantValues: ["StructDiscriminatedUnionMember2"],
-                  type: StructDiscriminatedUnionMember2.schema,
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["StructDiscriminatedUnionMember1"].type,
+            schema: StructDiscriminatedUnionMember1.schema,
           }).map((value) => ({
             $type: "StructDiscriminatedUnionMember1" as const,
             value: value,
@@ -56034,23 +55637,7 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "StructDiscriminatedUnionMember2") {
           return StructDiscriminatedUnionMember2.fromJson(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                StructDiscriminatedUnionMember1: {
-                  discriminantValues: ["StructDiscriminatedUnionMember1"],
-                  type: StructDiscriminatedUnionMember1.schema,
-                },
-                StructDiscriminatedUnionMember2: {
-                  discriminantValues: ["StructDiscriminatedUnionMember2"],
-                  type: StructDiscriminatedUnionMember2.schema,
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["StructDiscriminatedUnionMember2"].type,
+            schema: StructDiscriminatedUnionMember2.schema,
           }).map((value) => ({
             $type: "StructDiscriminatedUnionMember2" as const,
             value: value,
@@ -56070,23 +55657,7 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                StructDiscriminatedUnionMember1: {
-                  discriminantValues: ["StructDiscriminatedUnionMember1"],
-                  type: StructDiscriminatedUnionMember1.schema,
-                },
-                StructDiscriminatedUnionMember2: {
-                  discriminantValues: ["StructDiscriminatedUnionMember2"],
-                  type: StructDiscriminatedUnionMember2.schema,
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }).map((value) => ({
             $type: "string" as const,
             value: value,
@@ -56133,37 +55704,13 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "BlankNode") {
           return $identifierFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                BlankNode: {
-                  discriminantValues: ["BlankNode", "NamedNode"],
-                  type: { kind: "Identifier" as const },
-                },
-                Literal: {
-                  discriminantValues: ["Literal"],
-                  type: { kind: "Literal" as const },
-                },
-              },
-            }.members["BlankNode"].type,
+            schema: { kind: "Identifier" } as const,
           }) as Either<Error, (BlankNode | NamedNode) | Literal>;
         }
         if (value.$type === "Literal") {
           return $literalFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                BlankNode: {
-                  discriminantValues: ["BlankNode", "NamedNode"],
-                  type: { kind: "Identifier" as const },
-                },
-                Literal: {
-                  discriminantValues: ["Literal"],
-                  type: { kind: "Literal" as const },
-                },
-              },
-            }.members["Literal"].type,
+            schema: { kind: "Literal" } as const,
           }) as Either<Error, (BlankNode | NamedNode) | Literal>;
         }
 
@@ -56181,37 +55728,13 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "object") {
           return $iriFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "Iri" as const },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["object"].type,
+            schema: { kind: "Iri" } as const,
           }) as Either<Error, NamedNode | string>;
         }
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "Iri" as const },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }) as Either<Error, NamedNode | string>;
         }
 
@@ -56225,19 +55748,7 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "StructDiscriminatedUnionMember1") {
           return StructDiscriminatedUnionMember1.fromJson(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                StructDiscriminatedUnionMember1: {
-                  discriminantValues: ["StructDiscriminatedUnionMember1"],
-                  type: StructDiscriminatedUnionMember1.schema,
-                },
-                Literal: {
-                  discriminantValues: ["Literal"],
-                  type: { kind: "Literal" as const },
-                },
-              },
-            }.members["StructDiscriminatedUnionMember1"].type,
+            schema: StructDiscriminatedUnionMember1.schema,
           }).map((value) => ({
             termType: "StructDiscriminatedUnionMember1" as const,
             value: value,
@@ -56253,19 +55764,7 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "Literal") {
           return $literalFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                StructDiscriminatedUnionMember1: {
-                  discriminantValues: ["StructDiscriminatedUnionMember1"],
-                  type: StructDiscriminatedUnionMember1.schema,
-                },
-                Literal: {
-                  discriminantValues: ["Literal"],
-                  type: { kind: "Literal" as const },
-                },
-              },
-            }.members["Literal"].type,
+            schema: { kind: "Literal" } as const,
           }) as Either<
             Error,
             | {
@@ -56286,23 +55785,7 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "StructDiscriminatedUnionMember1") {
           return StructDiscriminatedUnionMember1.fromJson(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                StructDiscriminatedUnionMember1: {
-                  discriminantValues: ["StructDiscriminatedUnionMember1"],
-                  type: StructDiscriminatedUnionMember1.schema,
-                },
-                StructDiscriminatedUnionMember2: {
-                  discriminantValues: ["StructDiscriminatedUnionMember2"],
-                  type: StructDiscriminatedUnionMember2.schema,
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["StructDiscriminatedUnionMember1"].type,
+            schema: StructDiscriminatedUnionMember1.schema,
           }).map((value) => ({
             $type: "StructDiscriminatedUnionMember1" as const,
             value: value,
@@ -56322,23 +55805,7 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "StructDiscriminatedUnionMember2") {
           return StructDiscriminatedUnionMember2.fromJson(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                StructDiscriminatedUnionMember1: {
-                  discriminantValues: ["StructDiscriminatedUnionMember1"],
-                  type: StructDiscriminatedUnionMember1.schema,
-                },
-                StructDiscriminatedUnionMember2: {
-                  discriminantValues: ["StructDiscriminatedUnionMember2"],
-                  type: StructDiscriminatedUnionMember2.schema,
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["StructDiscriminatedUnionMember2"].type,
+            schema: StructDiscriminatedUnionMember2.schema,
           }).map((value) => ({
             $type: "StructDiscriminatedUnionMember2" as const,
             value: value,
@@ -56358,23 +55825,7 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                StructDiscriminatedUnionMember1: {
-                  discriminantValues: ["StructDiscriminatedUnionMember1"],
-                  type: StructDiscriminatedUnionMember1.schema,
-                },
-                StructDiscriminatedUnionMember2: {
-                  discriminantValues: ["StructDiscriminatedUnionMember2"],
-                  type: StructDiscriminatedUnionMember2.schema,
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }).map((value) => ({
             $type: "string" as const,
             value: value,
@@ -56403,37 +55854,13 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "BlankNode") {
           return $identifierFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                BlankNode: {
-                  discriminantValues: ["BlankNode", "NamedNode"],
-                  type: { kind: "Identifier" as const },
-                },
-                Literal: {
-                  discriminantValues: ["Literal"],
-                  type: { kind: "Literal" as const },
-                },
-              },
-            }.members["BlankNode"].type,
+            schema: { kind: "Identifier" } as const,
           }) as Either<Error, (BlankNode | NamedNode) | Literal>;
         }
         if (value.$type === "Literal") {
           return $literalFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                BlankNode: {
-                  discriminantValues: ["BlankNode", "NamedNode"],
-                  type: { kind: "Identifier" as const },
-                },
-                Literal: {
-                  discriminantValues: ["Literal"],
-                  type: { kind: "Literal" as const },
-                },
-              },
-            }.members["Literal"].type,
+            schema: { kind: "Literal" } as const,
           }) as Either<Error, (BlankNode | NamedNode) | Literal>;
         }
 
@@ -56446,37 +55873,13 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "object") {
           return $iriFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "Iri" as const },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["object"].type,
+            schema: { kind: "Iri" } as const,
           }) as Either<Error, NamedNode | string>;
         }
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                object: {
-                  discriminantValues: ["object"],
-                  type: { kind: "Iri" as const },
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }) as Either<Error, NamedNode | string>;
         }
 
@@ -56494,19 +55897,7 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "StructDiscriminatedUnionMember1") {
           return StructDiscriminatedUnionMember1.fromJson(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                StructDiscriminatedUnionMember1: {
-                  discriminantValues: ["StructDiscriminatedUnionMember1"],
-                  type: StructDiscriminatedUnionMember1.schema,
-                },
-                Literal: {
-                  discriminantValues: ["Literal"],
-                  type: { kind: "Literal" as const },
-                },
-              },
-            }.members["StructDiscriminatedUnionMember1"].type,
+            schema: StructDiscriminatedUnionMember1.schema,
           }).map((value) => ({
             termType: "StructDiscriminatedUnionMember1" as const,
             value: value,
@@ -56522,19 +55913,7 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "Literal") {
           return $literalFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                StructDiscriminatedUnionMember1: {
-                  discriminantValues: ["StructDiscriminatedUnionMember1"],
-                  type: StructDiscriminatedUnionMember1.schema,
-                },
-                Literal: {
-                  discriminantValues: ["Literal"],
-                  type: { kind: "Literal" as const },
-                },
-              },
-            }.members["Literal"].type,
+            schema: { kind: "Literal" } as const,
           }) as Either<
             Error,
             | {
@@ -56566,23 +55945,7 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "StructDiscriminatedUnionMember1") {
           return StructDiscriminatedUnionMember1.fromJson(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                StructDiscriminatedUnionMember1: {
-                  discriminantValues: ["StructDiscriminatedUnionMember1"],
-                  type: StructDiscriminatedUnionMember1.schema,
-                },
-                StructDiscriminatedUnionMember2: {
-                  discriminantValues: ["StructDiscriminatedUnionMember2"],
-                  type: StructDiscriminatedUnionMember2.schema,
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["StructDiscriminatedUnionMember1"].type,
+            schema: StructDiscriminatedUnionMember1.schema,
           }).map((value) => ({
             $type: "StructDiscriminatedUnionMember1" as const,
             value: value,
@@ -56602,23 +55965,7 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "StructDiscriminatedUnionMember2") {
           return StructDiscriminatedUnionMember2.fromJson(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                StructDiscriminatedUnionMember1: {
-                  discriminantValues: ["StructDiscriminatedUnionMember1"],
-                  type: StructDiscriminatedUnionMember1.schema,
-                },
-                StructDiscriminatedUnionMember2: {
-                  discriminantValues: ["StructDiscriminatedUnionMember2"],
-                  type: StructDiscriminatedUnionMember2.schema,
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["StructDiscriminatedUnionMember2"].type,
+            schema: StructDiscriminatedUnionMember2.schema,
           }).map((value) => ({
             $type: "StructDiscriminatedUnionMember2" as const,
             value: value,
@@ -56638,23 +55985,7 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "string") {
           return $stringFromJsonObject<string>(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                StructDiscriminatedUnionMember1: {
-                  discriminantValues: ["StructDiscriminatedUnionMember1"],
-                  type: StructDiscriminatedUnionMember1.schema,
-                },
-                StructDiscriminatedUnionMember2: {
-                  discriminantValues: ["StructDiscriminatedUnionMember2"],
-                  type: StructDiscriminatedUnionMember2.schema,
-                },
-                string: {
-                  discriminantValues: ["string"],
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
-              },
-            }.members["string"].type,
+            schema: { datatype: $xsd_string, kind: "String" } as const,
           }).map((value) => ({
             $type: "string" as const,
             value: value,
@@ -56700,37 +56031,13 @@ export namespace UnionDiscriminantsStruct {
         if (value.$type === "BlankNode") {
           return $identifierFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                BlankNode: {
-                  discriminantValues: ["BlankNode", "NamedNode"],
-                  type: { kind: "Identifier" as const },
-                },
-                Literal: {
-                  discriminantValues: ["Literal"],
-                  type: { kind: "Literal" as const },
-                },
-              },
-            }.members["BlankNode"].type,
+            schema: { kind: "Identifier" } as const,
           }) as Either<Error, (BlankNode | NamedNode) | Literal>;
         }
         if (value.$type === "Literal") {
           return $literalFromJsonObject(value, {
             ...options,
-            schema: {
-              kind: "DiscriminatedUnion" as const,
-              members: {
-                BlankNode: {
-                  discriminantValues: ["BlankNode", "NamedNode"],
-                  type: { kind: "Identifier" as const },
-                },
-                Literal: {
-                  discriminantValues: ["Literal"],
-                  type: { kind: "Literal" as const },
-                },
-              },
-            }.members["Literal"].type,
+            schema: { kind: "Literal" } as const,
           }) as Either<Error, (BlankNode | NamedNode) | Literal>;
         }
 
@@ -57307,40 +56614,40 @@ export namespace UnionDiscriminantsStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       optionalIriOrString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/optionalIriOrString"),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "DiscriminatedUnion" as const,
+            kind: "DiscriminatedUnion",
             members: {
               object: {
                 discriminantValues: ["object"],
-                type: { kind: "Iri" as const },
+                type: { kind: "Iri" } as const,
               },
               string: {
                 discriminantValues: ["string"],
-                type: { kind: "String" as const, datatype: $xsd_string },
+                type: { datatype: $xsd_string, kind: "String" } as const,
               },
             },
-          },
-        },
-      },
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       optionalNodeOrLiteral: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/optionalNodeOrLiteral"),
         get type() {
           return {
-            kind: "Option" as const,
             get itemType() {
               return {
-                kind: "DiscriminatedUnion" as const,
+                kind: "DiscriminatedUnion",
                 members: {
                   StructDiscriminatedUnionMember1: {
                     discriminantValues: ["StructDiscriminatedUnionMember1"],
@@ -57348,14 +56655,15 @@ export namespace UnionDiscriminantsStruct {
                   },
                   Literal: {
                     discriminantValues: ["Literal"],
-                    type: { kind: "Literal" as const },
+                    type: { kind: "Literal" } as const,
                   },
                 },
-              };
+              } as const;
             },
-          };
+            kind: "Option",
+          } as const;
         },
-      },
+      } as const,
       optionalNodeOrNodeOrString: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -57363,10 +56671,9 @@ export namespace UnionDiscriminantsStruct {
         ),
         get type() {
           return {
-            kind: "Option" as const,
             get itemType() {
               return {
-                kind: "DiscriminatedUnion" as const,
+                kind: "DiscriminatedUnion",
                 members: {
                   StructDiscriminatedUnionMember1: {
                     discriminantValues: ["StructDiscriminatedUnionMember1"],
@@ -57378,57 +56685,58 @@ export namespace UnionDiscriminantsStruct {
                   },
                   string: {
                     discriminantValues: ["string"],
-                    type: { kind: "String" as const, datatype: $xsd_string },
+                    type: { datatype: $xsd_string, kind: "String" } as const,
                   },
                 },
-              };
+              } as const;
             },
-          };
+            kind: "Option",
+          } as const;
         },
-      },
+      } as const,
       optionalTerm: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/optionalTerm"),
         type: {
-          kind: "Option" as const,
           itemType: {
-            kind: "DiscriminatedUnion" as const,
+            kind: "DiscriminatedUnion",
             members: {
               BlankNode: {
                 discriminantValues: ["BlankNode", "NamedNode"],
-                type: { kind: "Identifier" as const },
+                type: { kind: "Identifier" } as const,
               },
               Literal: {
                 discriminantValues: ["Literal"],
-                type: { kind: "Literal" as const },
+                type: { kind: "Literal" } as const,
               },
             },
-          },
-        },
-      },
+          } as const,
+          kind: "Option",
+        } as const,
+      } as const,
       requiredIriOrString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/requiredIriOrString"),
         type: {
-          kind: "DiscriminatedUnion" as const,
+          kind: "DiscriminatedUnion",
           members: {
             object: {
               discriminantValues: ["object"],
-              type: { kind: "Iri" as const },
+              type: { kind: "Iri" } as const,
             },
             string: {
               discriminantValues: ["string"],
-              type: { kind: "String" as const, datatype: $xsd_string },
+              type: { datatype: $xsd_string, kind: "String" } as const,
             },
           },
-        },
-      },
+        } as const,
+      } as const,
       requiredNodeOrLiteral: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/requiredNodeOrLiteral"),
         get type() {
           return {
-            kind: "DiscriminatedUnion" as const,
+            kind: "DiscriminatedUnion",
             members: {
               StructDiscriminatedUnionMember1: {
                 discriminantValues: ["StructDiscriminatedUnionMember1"],
@@ -57436,12 +56744,12 @@ export namespace UnionDiscriminantsStruct {
               },
               Literal: {
                 discriminantValues: ["Literal"],
-                type: { kind: "Literal" as const },
+                type: { kind: "Literal" } as const,
               },
             },
-          };
+          } as const;
         },
-      },
+      } as const,
       requiredNodeOrNodeOrString: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -57449,7 +56757,7 @@ export namespace UnionDiscriminantsStruct {
         ),
         get type() {
           return {
-            kind: "DiscriminatedUnion" as const,
+            kind: "DiscriminatedUnion",
             members: {
               StructDiscriminatedUnionMember1: {
                 discriminantValues: ["StructDiscriminatedUnionMember1"],
@@ -57461,58 +56769,57 @@ export namespace UnionDiscriminantsStruct {
               },
               string: {
                 discriminantValues: ["string"],
-                type: { kind: "String" as const, datatype: $xsd_string },
+                type: { datatype: $xsd_string, kind: "String" } as const,
               },
             },
-          };
+          } as const;
         },
-      },
+      } as const,
       requiredTerm: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/requiredTerm"),
         type: {
-          kind: "DiscriminatedUnion" as const,
+          kind: "DiscriminatedUnion",
           members: {
             BlankNode: {
               discriminantValues: ["BlankNode", "NamedNode"],
-              type: { kind: "Identifier" as const },
+              type: { kind: "Identifier" } as const,
             },
             Literal: {
               discriminantValues: ["Literal"],
-              type: { kind: "Literal" as const },
+              type: { kind: "Literal" } as const,
             },
           },
-        },
-      },
+        } as const,
+      } as const,
       setIriOrString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/setIriOrString"),
         type: {
-          kind: "Set" as const,
           itemType: {
-            kind: "DiscriminatedUnion" as const,
+            kind: "DiscriminatedUnion",
             members: {
               object: {
                 discriminantValues: ["object"],
-                type: { kind: "Iri" as const },
+                type: { kind: "Iri" } as const,
               },
               string: {
                 discriminantValues: ["string"],
-                type: { kind: "String" as const, datatype: $xsd_string },
+                type: { datatype: $xsd_string, kind: "String" } as const,
               },
             },
-          },
-        },
-      },
+          } as const,
+          kind: "Set",
+        } as const,
+      } as const,
       setNodeOrLiteral: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/setNodeOrLiteral"),
         get type() {
           return {
-            kind: "Set" as const,
             get itemType() {
               return {
-                kind: "DiscriminatedUnion" as const,
+                kind: "DiscriminatedUnion",
                 members: {
                   StructDiscriminatedUnionMember1: {
                     discriminantValues: ["StructDiscriminatedUnionMember1"],
@@ -57520,23 +56827,23 @@ export namespace UnionDiscriminantsStruct {
                   },
                   Literal: {
                     discriminantValues: ["Literal"],
-                    type: { kind: "Literal" as const },
+                    type: { kind: "Literal" } as const,
                   },
                 },
-              };
+              } as const;
             },
-          };
+            kind: "Set",
+          } as const;
         },
-      },
+      } as const,
       setNodeOrNodeOrString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/setNodeOrNodeOrString"),
         get type() {
           return {
-            kind: "Set" as const,
             get itemType() {
               return {
-                kind: "DiscriminatedUnion" as const,
+                kind: "DiscriminatedUnion",
                 members: {
                   StructDiscriminatedUnionMember1: {
                     discriminantValues: ["StructDiscriminatedUnionMember1"],
@@ -57548,34 +56855,35 @@ export namespace UnionDiscriminantsStruct {
                   },
                   string: {
                     discriminantValues: ["string"],
-                    type: { kind: "String" as const, datatype: $xsd_string },
+                    type: { datatype: $xsd_string, kind: "String" } as const,
                   },
                 },
-              };
+              } as const;
             },
-          };
+            kind: "Set",
+          } as const;
         },
-      },
+      } as const,
       setTerm: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/setTerm"),
         type: {
-          kind: "Set" as const,
           itemType: {
-            kind: "DiscriminatedUnion" as const,
+            kind: "DiscriminatedUnion",
             members: {
               BlankNode: {
                 discriminantValues: ["BlankNode", "NamedNode"],
-                type: { kind: "Identifier" as const },
+                type: { kind: "Identifier" } as const,
               },
               Literal: {
                 discriminantValues: ["Literal"],
-                type: { kind: "Literal" as const },
+                type: { kind: "Literal" } as const,
               },
             },
-          },
-        },
-      },
+          } as const,
+          kind: "Set",
+        } as const,
+      } as const,
     },
   } as const;
 
@@ -58364,18 +57672,18 @@ export namespace DatatypeDiscriminatedUnion1 {
   }
 
   export const schema = {
-    kind: "DiscriminatedUnion" as const,
+    kind: "DiscriminatedUnion",
     members: {
       object: {
         discriminantValues: ["object"],
-        type: { kind: "Iri" as const },
+        type: { kind: "Iri" } as const,
       },
       string: {
         discriminantValues: ["string"],
-        type: { kind: "String" as const, datatype: $xsd_string },
+        type: { datatype: $xsd_string, kind: "String" } as const,
       },
     },
-  };
+  } as const;
 
   export type Schema = typeof schema;
 
@@ -58719,18 +58027,18 @@ export namespace DatatypeDiscriminatedUnion2 {
   }
 
   export const schema = {
-    kind: "DiscriminatedUnion" as const,
+    kind: "DiscriminatedUnion",
     members: {
       date: {
         discriminantValues: ["date"],
-        type: { kind: "Date" as const, datatype: $xsd_date },
+        type: { datatype: $xsd_date, kind: "Date" } as const,
       },
       dateTime: {
         discriminantValues: ["dateTime"],
-        type: { kind: "DateTime" as const, datatype: $xsd_dateTime },
+        type: { datatype: $xsd_dateTime, kind: "DateTime" } as const,
       },
     },
-  };
+  } as const;
 
   export type Schema = typeof schema;
 
@@ -58957,7 +58265,7 @@ export namespace LazilyResolvedDiscriminatedUnion {
           ignoreRdfType: false,
           preferredLanguages,
           propertyPatterns: [],
-          schema: { kind: "Identifier" as const },
+          schema: { kind: "Identifier" } as const,
           valueVariable: focusIdentifier,
           variablePrefix,
         }),
@@ -59198,7 +58506,7 @@ export namespace LazilyResolvedDiscriminatedUnion {
   }
 
   export const schema = {
-    kind: "ObjectDiscriminatedUnion" as const,
+    kind: "ObjectDiscriminatedUnion",
     members: {
       LazilyResolvedDiscriminatedUnionMember1: {
         discriminantValues: ["LazilyResolvedDiscriminatedUnionMember1"],
@@ -59209,7 +58517,7 @@ export namespace LazilyResolvedDiscriminatedUnion {
         type: LazilyResolvedDiscriminatedUnionMember2.schema,
       },
     },
-  };
+  } as const;
 
   export type Schema = typeof schema;
 
@@ -59544,7 +58852,7 @@ export namespace NoRdfTypeDiscriminatedUnion {
           ignoreRdfType: false,
           preferredLanguages,
           propertyPatterns: [],
-          schema: { kind: "Identifier" as const },
+          schema: { kind: "Identifier" } as const,
           valueVariable: focusIdentifier,
           variablePrefix,
         }),
@@ -59783,7 +59091,7 @@ export namespace NoRdfTypeDiscriminatedUnion {
   }
 
   export const schema = {
-    kind: "ObjectDiscriminatedUnion" as const,
+    kind: "ObjectDiscriminatedUnion",
     members: {
       NoRdfTypeDiscriminatedUnionMember1: {
         discriminantValues: ["NoRdfTypeDiscriminatedUnionMember1"],
@@ -59794,7 +59102,7 @@ export namespace NoRdfTypeDiscriminatedUnion {
         type: NoRdfTypeDiscriminatedUnionMember2.schema,
       },
     },
-  };
+  } as const;
 
   export type Schema = typeof schema;
 
@@ -60113,7 +59421,7 @@ export namespace PartialDiscriminatedUnion {
           ignoreRdfType: false,
           preferredLanguages,
           propertyPatterns: [],
-          schema: { kind: "Identifier" as const },
+          schema: { kind: "Identifier" } as const,
           valueVariable: focusIdentifier,
           variablePrefix,
         }),
@@ -60346,7 +59654,7 @@ export namespace PartialDiscriminatedUnion {
   }
 
   export const schema = {
-    kind: "ObjectDiscriminatedUnion" as const,
+    kind: "ObjectDiscriminatedUnion",
     members: {
       PartialDiscriminatedUnionMember1: {
         discriminantValues: ["PartialDiscriminatedUnionMember1"],
@@ -60357,7 +59665,7 @@ export namespace PartialDiscriminatedUnion {
         type: PartialDiscriminatedUnionMember2.schema,
       },
     },
-  };
+  } as const;
 
   export type Schema = typeof schema;
 
@@ -60676,7 +59984,7 @@ export namespace RecursiveDiscriminatedUnion {
           ignoreRdfType: false,
           preferredLanguages,
           propertyPatterns: [],
-          schema: { kind: "Identifier" as const },
+          schema: { kind: "Identifier" } as const,
           valueVariable: focusIdentifier,
           variablePrefix,
         }),
@@ -60915,7 +60223,7 @@ export namespace RecursiveDiscriminatedUnion {
   }
 
   export const schema = {
-    kind: "ObjectDiscriminatedUnion" as const,
+    kind: "ObjectDiscriminatedUnion",
     members: {
       RecursiveDiscriminatedUnionMember1: {
         discriminantValues: ["RecursiveDiscriminatedUnionMember1"],
@@ -60926,7 +60234,7 @@ export namespace RecursiveDiscriminatedUnion {
         type: RecursiveDiscriminatedUnionMember2.schema,
       },
     },
-  };
+  } as const;
 
   export type Schema = typeof schema;
 
@@ -61245,7 +60553,7 @@ export namespace StructDiscriminatedUnion {
           ignoreRdfType: false,
           preferredLanguages,
           propertyPatterns: [],
-          schema: { kind: "Identifier" as const },
+          schema: { kind: "Identifier" } as const,
           valueVariable: focusIdentifier,
           variablePrefix,
         }),
@@ -61476,7 +60784,7 @@ export namespace StructDiscriminatedUnion {
   }
 
   export const schema = {
-    kind: "ObjectDiscriminatedUnion" as const,
+    kind: "ObjectDiscriminatedUnion",
     members: {
       StructDiscriminatedUnionMember1: {
         discriminantValues: ["StructDiscriminatedUnionMember1"],
@@ -61487,7 +60795,7 @@ export namespace StructDiscriminatedUnion {
         type: StructDiscriminatedUnionMember2.schema,
       },
     },
-  };
+  } as const;
 
   export type Schema = typeof schema;
 
@@ -61691,7 +60999,7 @@ export namespace StructInheritance2 {
               ...options,
               focusResource: resource,
               propertyPath: $rdf_subject,
-              schema: { kind: "Identifier" as const },
+              schema: { kind: "Identifier" } as const,
             },
           ).chain((values) => values.head()),
           structInheritance2: $shaclPropertyFromRdf<
@@ -61706,8 +61014,8 @@ export namespace StructInheritance2 {
               path: dataFactory.namedNode(
                 "http://example.com/structInheritance2",
               ),
-              type: { kind: "String" as const, datatype: $xsd_string },
-            },
+              type: { datatype: $xsd_string, kind: "String" } as const,
+            } as const,
             typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           }),
         }).chain((properties) =>
@@ -61962,8 +61270,8 @@ export namespace StructInheritance2 {
               path: dataFactory.namedNode(
                 "http://example.com/structInheritance2",
               ),
-              type: { kind: "String" as const, datatype: $xsd_string },
-            },
+              type: { datatype: $xsd_string, kind: "String" } as const,
+            } as const,
             typeSparqlConstructTriples: (_: object) => [],
             variablePrefix: parameters.variablePrefix,
           }),
@@ -61991,7 +61299,7 @@ export namespace StructInheritance2 {
               ignoreRdfType: true,
               preferredLanguages: parameters.preferredLanguages,
               propertyPatterns: [],
-              schema: { kind: "Identifier" as const },
+              schema: { kind: "Identifier" } as const,
               valueVariable: parameters.focusIdentifier,
               variablePrefix: parameters.variablePrefix,
             }),
@@ -62009,8 +61317,8 @@ export namespace StructInheritance2 {
               path: dataFactory.namedNode(
                 "http://example.com/structInheritance2",
               ),
-              type: { kind: "String" as const, datatype: $xsd_string },
-            },
+              type: { datatype: $xsd_string, kind: "String" } as const,
+            } as const,
             typeSparqlWherePatterns: $stringSparqlWherePatterns,
             variablePrefix: parameters.variablePrefix,
           }),
@@ -62043,13 +61351,13 @@ export namespace StructInheritance2 {
         $sequenceRecord({
           $identifier: $identifierFromJsonString(jsonObject["@id"], {
             ...options,
-            schema: { kind: "Identifier" as const },
+            schema: { kind: "Identifier" } as const,
           }),
           structInheritance2: $stringFromJsonString<string>(
             jsonObject["structInheritance2"],
             {
               ...options,
-              schema: { kind: "String" as const, datatype: $xsd_string },
+              schema: { datatype: $xsd_string, kind: "String" } as const,
             },
           ),
         }).chain(((parameters) =>
@@ -62179,26 +61487,27 @@ export namespace StructInheritance2 {
   }
 
   export const schema = {
-    kind: "ObjectIntersection" as const,
+    kind: "ObjectIntersection",
     members: [
       StructInheritance1.schema,
       {
+        kind: "Object",
         properties: {
           $identifier: {
             kind: "Identifier",
-            type: { kind: "Identifier" as const },
-          },
+            type: { kind: "Identifier" } as const,
+          } as const,
           structInheritance2: {
             kind: "Shacl",
             path: dataFactory.namedNode(
               "http://example.com/structInheritance2",
             ),
-            type: { kind: "String" as const, datatype: $xsd_string },
-          },
+            type: { datatype: $xsd_string, kind: "String" } as const,
+          } as const,
         },
       } as const,
     ] as const,
-  };
+  } as const;
 
   export type Schema = typeof schema;
 
@@ -62327,8 +61636,8 @@ export namespace StructInheritance2 {
                   path: dataFactory.namedNode(
                     "http://example.com/structInheritance2",
                   ),
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
+                  type: { datatype: $xsd_string, kind: "String" } as const,
+                } as const,
                 typeSparqlConstructTriples: (_: object) => [],
                 variablePrefix: parameters.variablePrefix,
               }),
@@ -62345,6 +61654,7 @@ export namespace StructInheritance2 {
             readonly structInheritance2?: $StringFilter;
           },
           {
+            kind: "Object";
             properties: {
               $identifier: {
                 readonly kind: "Identifier";
@@ -62403,7 +61713,7 @@ export namespace StructInheritance2 {
                     ignoreRdfType: true,
                     preferredLanguages: parameters.preferredLanguages,
                     propertyPatterns: [],
-                    schema: { kind: "Identifier" as const },
+                    schema: { kind: "Identifier" } as const,
                     valueVariable: parameters.focusIdentifier,
                     variablePrefix: parameters.variablePrefix,
                   }),
@@ -62421,8 +61731,8 @@ export namespace StructInheritance2 {
                     path: dataFactory.namedNode(
                       "http://example.com/structInheritance2",
                     ),
-                    type: { kind: "String" as const, datatype: $xsd_string },
-                  },
+                    type: { datatype: $xsd_string, kind: "String" } as const,
+                  } as const,
                   typeSparqlWherePatterns: $stringSparqlWherePatterns,
                   variablePrefix: parameters.variablePrefix,
                 }),
@@ -62441,6 +61751,7 @@ export namespace StructInheritance2 {
             readonly structInheritance2?: $StringFilter;
           },
           {
+            kind: "Object";
             properties: {
               $identifier: {
                 readonly kind: "Identifier";
@@ -62488,7 +61799,7 @@ export namespace StructInheritance3 {
               ...options,
               focusResource: resource,
               propertyPath: $rdf_subject,
-              schema: { kind: "Identifier" as const },
+              schema: { kind: "Identifier" } as const,
             },
           ).chain((values) => values.head()),
           structInheritance3: $shaclPropertyFromRdf<
@@ -62503,8 +61814,8 @@ export namespace StructInheritance3 {
               path: dataFactory.namedNode(
                 "http://example.com/structInheritance3",
               ),
-              type: { kind: "String" as const, datatype: $xsd_string },
-            },
+              type: { datatype: $xsd_string, kind: "String" } as const,
+            } as const,
             typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           }),
         }).chain((properties) =>
@@ -62759,8 +62070,8 @@ export namespace StructInheritance3 {
               path: dataFactory.namedNode(
                 "http://example.com/structInheritance3",
               ),
-              type: { kind: "String" as const, datatype: $xsd_string },
-            },
+              type: { datatype: $xsd_string, kind: "String" } as const,
+            } as const,
             typeSparqlConstructTriples: (_: object) => [],
             variablePrefix: parameters.variablePrefix,
           }),
@@ -62788,7 +62099,7 @@ export namespace StructInheritance3 {
               ignoreRdfType: true,
               preferredLanguages: parameters.preferredLanguages,
               propertyPatterns: [],
-              schema: { kind: "Identifier" as const },
+              schema: { kind: "Identifier" } as const,
               valueVariable: parameters.focusIdentifier,
               variablePrefix: parameters.variablePrefix,
             }),
@@ -62806,8 +62117,8 @@ export namespace StructInheritance3 {
               path: dataFactory.namedNode(
                 "http://example.com/structInheritance3",
               ),
-              type: { kind: "String" as const, datatype: $xsd_string },
-            },
+              type: { datatype: $xsd_string, kind: "String" } as const,
+            } as const,
             typeSparqlWherePatterns: $stringSparqlWherePatterns,
             variablePrefix: parameters.variablePrefix,
           }),
@@ -62840,13 +62151,13 @@ export namespace StructInheritance3 {
         $sequenceRecord({
           $identifier: $identifierFromJsonString(jsonObject["@id"], {
             ...options,
-            schema: { kind: "Identifier" as const },
+            schema: { kind: "Identifier" } as const,
           }),
           structInheritance3: $stringFromJsonString<string>(
             jsonObject["structInheritance3"],
             {
               ...options,
-              schema: { kind: "String" as const, datatype: $xsd_string },
+              schema: { datatype: $xsd_string, kind: "String" } as const,
             },
           ),
         }).chain(((parameters) =>
@@ -62976,26 +62287,27 @@ export namespace StructInheritance3 {
   }
 
   export const schema = {
-    kind: "ObjectIntersection" as const,
+    kind: "ObjectIntersection",
     members: [
       StructInheritance2.schema,
       {
+        kind: "Object",
         properties: {
           $identifier: {
             kind: "Identifier",
-            type: { kind: "Identifier" as const },
-          },
+            type: { kind: "Identifier" } as const,
+          } as const,
           structInheritance3: {
             kind: "Shacl",
             path: dataFactory.namedNode(
               "http://example.com/structInheritance3",
             ),
-            type: { kind: "String" as const, datatype: $xsd_string },
-          },
+            type: { datatype: $xsd_string, kind: "String" } as const,
+          } as const,
         },
       } as const,
     ] as const,
-  };
+  } as const;
 
   export type Schema = typeof schema;
 
@@ -63124,8 +62436,8 @@ export namespace StructInheritance3 {
                   path: dataFactory.namedNode(
                     "http://example.com/structInheritance3",
                   ),
-                  type: { kind: "String" as const, datatype: $xsd_string },
-                },
+                  type: { datatype: $xsd_string, kind: "String" } as const,
+                } as const,
                 typeSparqlConstructTriples: (_: object) => [],
                 variablePrefix: parameters.variablePrefix,
               }),
@@ -63142,6 +62454,7 @@ export namespace StructInheritance3 {
             readonly structInheritance3?: $StringFilter;
           },
           {
+            kind: "Object";
             properties: {
               $identifier: {
                 readonly kind: "Identifier";
@@ -63200,7 +62513,7 @@ export namespace StructInheritance3 {
                     ignoreRdfType: true,
                     preferredLanguages: parameters.preferredLanguages,
                     propertyPatterns: [],
-                    schema: { kind: "Identifier" as const },
+                    schema: { kind: "Identifier" } as const,
                     valueVariable: parameters.focusIdentifier,
                     variablePrefix: parameters.variablePrefix,
                   }),
@@ -63218,8 +62531,8 @@ export namespace StructInheritance3 {
                     path: dataFactory.namedNode(
                       "http://example.com/structInheritance3",
                     ),
-                    type: { kind: "String" as const, datatype: $xsd_string },
-                  },
+                    type: { datatype: $xsd_string, kind: "String" } as const,
+                  } as const,
                   typeSparqlWherePatterns: $stringSparqlWherePatterns,
                   variablePrefix: parameters.variablePrefix,
                 }),
@@ -63238,6 +62551,7 @@ export namespace StructInheritance3 {
             readonly structInheritance3?: $StringFilter;
           },
           {
+            kind: "Object";
             properties: {
               $identifier: {
                 readonly kind: "Identifier";
@@ -63437,12 +62751,12 @@ export namespace StructIntersection {
   }
 
   export const schema = {
-    kind: "ObjectIntersection" as const,
+    kind: "ObjectIntersection",
     members: [
       StructIntersectionMember1.schema,
       StructIntersectionMember2.schema,
     ] as const,
-  };
+  } as const;
 
   export type Schema = typeof schema;
 
@@ -63740,7 +63054,7 @@ export namespace StructIntersectionDiscriminatedUnion {
           ignoreRdfType: false,
           preferredLanguages,
           propertyPatterns: [],
-          schema: { kind: "Identifier" as const },
+          schema: { kind: "Identifier" } as const,
           valueVariable: focusIdentifier,
           variablePrefix,
         }),
@@ -64035,7 +63349,7 @@ export namespace StructIntersectionDiscriminatedUnion {
   }
 
   export const schema = {
-    kind: "ObjectDiscriminatedUnion" as const,
+    kind: "ObjectDiscriminatedUnion",
     members: {
       StructDiscriminatedUnionMember1: {
         discriminantValues: ["StructDiscriminatedUnionMember1"],
@@ -64050,7 +63364,7 @@ export namespace StructIntersectionDiscriminatedUnion {
         type: StructIntersection.schema,
       },
     },
-  };
+  } as const;
 
   export type Schema = typeof schema;
 

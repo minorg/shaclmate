@@ -1,5 +1,4 @@
 import type { Literal } from "@rdfjs/types";
-
 import { AbstractTermType } from "./AbstractTermType.js";
 
 /**

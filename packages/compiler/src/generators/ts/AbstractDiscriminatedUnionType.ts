@@ -11,7 +11,6 @@ import { AbstractDiscriminatedUnionType_fromRdfResourceValuesFunctionExpression 
 import { AbstractDiscriminatedUnionType_hashFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_hashFunction.js";
 import { AbstractDiscriminatedUnionType_inferDiscriminant } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_inferDiscriminant.js";
 import { AbstractDiscriminatedUnionType_inlineExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_inlineExpression.js";
-import { AbstractDiscriminatedUnionType_schemaTypeExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_schemaTypeExpression.js";
 import { AbstractDiscriminatedUnionType_toJsonObjectFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toJsonObjectFunction.js";
 import { AbstractDiscriminatedUnionType_toLoggableFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toLoggableFunction.js";
 import { AbstractDiscriminatedUnionType_toRdfResourceValuesFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toRdfResourceValuesFunction.js";
@@ -20,6 +19,7 @@ import { AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpre
 import { AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunction.js";
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
 import type { ObjectType } from "./ObjectType.js";
+import { SchemaObject } from "./SchemaObject.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
@@ -43,8 +43,6 @@ export abstract class AbstractDiscriminatedUnionType<
     AbstractDiscriminatedUnionType_fromRdfResourceValuesFunctionExpression;
   protected override hashFunctionExpression =
     AbstractDiscriminatedUnionType_hashFunctionExpression;
-  protected override schemaTypeExpression =
-    AbstractDiscriminatedUnionType_schemaTypeExpression;
   protected override toJsonObjectFunctionExpression =
     AbstractDiscriminatedUnionType_toJsonObjectFunctionExpression;
   protected override toLoggableFunctionExpression =
@@ -343,19 +341,40 @@ export abstract class AbstractDiscriminatedUnionType<
     return AbstractDiscriminatedUnionType_inlineExpression.call(this);
   }
 
-  protected override get schemaInitializers(): readonly Code[] {
-    return super.schemaInitializers.concat(
-      code`members: { ${joinCode(
-        this.members.map(
-          ({ discriminantValues, type, primaryDiscriminantValue }) =>
-            code`${literalOf(primaryDiscriminantValue)}: ${{
-              discriminantValues: discriminantValues,
-              type: type.schema,
-            }}`,
-        ),
-        { on: "," },
-      )} }`,
-    );
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.UserDefinedType> {
+    return new SchemaObject({
+      properties: {
+        ...super.schema.properties,
+        members: code`members: { ${joinCode(
+          this.members.map(
+            ({ discriminantValues, type, primaryDiscriminantValue }) =>
+              code`${literalOf(primaryDiscriminantValue)}: ${{
+                discriminantValues: discriminantValues,
+                type: type.schema.expression,
+              }}`,
+          ),
+          { on: "," },
+        )} }`,
+      },
+      type: new SchemaObject.UserDefinedType({
+        members: {
+          ...super.schema.type.members,
+          members: code`members: { ${joinCode(
+            this.members.map(
+              ({ type, primaryDiscriminantValue }) =>
+                code`readonly ${literalOf(primaryDiscriminantValue)}: ${{
+                  discriminantValues: code`readonly (number | string)[]`,
+                  type: type.schema.type.expression,
+                }}`,
+            ),
+            { on: ";" },
+          )} }`,
+        },
+        name: super.schema.type.name,
+      }),
+      variable: super.schema.variable,
+    });
   }
 
   @Memoize()

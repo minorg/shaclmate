@@ -4,9 +4,11 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import type { BlankNodeType } from "../BlankNodeType.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import type { IriType } from "../IriType.js";
+import { SchemaObject } from "../SchemaObject.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { ObjectType_AbstractProperty } from "./ObjectType_AbstractProperty.js";
 
@@ -104,25 +106,27 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     });
   }
 
-  override get schema(): Maybe<Code> {
-    return Maybe.of(
-      code`{ ${joinCode(
-        [code`kind: ${literalOf(this.kind)}`, code`type: ${this.type.schema}`],
-        { on: ", " },
-      )} }`,
-    );
+  @Memoize()
+  override get schema() {
+    return Maybe.of(this._schema);
   }
 
-  override get schemaType(): Maybe<Code> {
-    return Maybe.of(
-      code`{ ${joinCode(
-        [
-          code`readonly kind: ${literalOf(this.kind)}`,
-          code`readonly type: ${this.type.schemaType}`,
-        ],
-        { on: ", " },
-      )} }`,
-    );
+  @Memoize()
+  private get _schema(): SchemaObject<SchemaObject.UserDefinedType> {
+    return new SchemaObject({
+      properties: {
+        kind: code`kind: ${literalOf(this.kind)}`,
+        type: code`type: ${this.type.schema.expression}`,
+      },
+      type: new SchemaObject.UserDefinedType({
+        members: {
+          kind: code`readonly kind: ${literalOf(this.kind)}`,
+          type: code`readonly type: ${this.type.schema.type.expression}`,
+        },
+        name: Maybe.empty(),
+      }),
+      variable: this.schemaVariable,
+    });
   }
 
   @Memoize()
@@ -132,10 +136,11 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
       .orDefault(this.type.expression);
   }
 
+  @Memoize()
   private get typeSchemaVariable(): Code {
-    return this.objectType.name
-      .map((name) => code`${name}.schema.properties.${this.name}.type`)
-      .orDefaultLazy(() => this.type.schema);
+    return this.schemaVariable
+      .map((schemaVariable) => code`${schemaVariable}.type`)
+      .orDefault(this.type.schema.expression);
   }
 
   override createInitializer({

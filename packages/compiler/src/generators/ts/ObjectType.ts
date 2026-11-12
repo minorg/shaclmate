@@ -38,12 +38,11 @@ import {
 } from "./_ObjectType/ObjectType_hashFunction.js";
 import { ObjectType_IdentifierProperty } from "./_ObjectType/ObjectType_IdentifierProperty.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
+import { ObjectType_jsonObjectType } from "./_ObjectType/ObjectType_jsonObjectType.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import type { ObjectType_Property } from "./_ObjectType/ObjectType_Property.js";
 import { ObjectType_RdfTypeProperty } from "./_ObjectType/ObjectType_RdfTypeProperty.js";
 import { ObjectType_ShaclProperty } from "./_ObjectType/ObjectType_ShaclProperty.js";
-import { ObjectType_schemaExpression } from "./_ObjectType/ObjectType_schemaExpression.js";
-import { ObjectType_schemaTypeExpression } from "./_ObjectType/ObjectType_schemaTypeExpression.js";
 import { ObjectType_sparqlConstructQueryFunction } from "./_ObjectType/ObjectType_sparqlConstructQueryFunction.js";
 import { ObjectType_sparqlConstructQueryStringFunction } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunction.js";
 import {
@@ -67,16 +66,17 @@ import { ObjectType_toStringRecordFunction } from "./_ObjectType/ObjectType_toSt
 import { ObjectType_typeGuardFunction } from "./_ObjectType/ObjectType_typeGuardFunction.js";
 import { ObjectType_valueSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunction.js";
 import { ObjectType_valueSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunction.js";
-import { AbstractStructuredType } from "./AbstractStructuredType.js";
+import { AbstractUserDefinedType } from "./AbstractUserDefinedType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { Callable } from "./Callable.js";
 import { DeclaredCallable } from "./DeclaredCallable.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
+import { SchemaObject } from "./SchemaObject.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
-export class ObjectType extends AbstractStructuredType {
+export class ObjectType extends AbstractUserDefinedType {
   private readonly rdfTypeProperty: Maybe<ObjectType.RdfTypeProperty>;
 
   protected override equalsFunctionExpression =
@@ -96,8 +96,6 @@ export class ObjectType extends AbstractStructuredType {
     ObjectType_fromRdfResourceValuesFunctionType;
   protected override hashFunctionExpression = ObjectType_hashFunctionExpression;
   protected override hashFunctionType = ObjectType_hashFunctionType;
-  protected override schemaExpression = ObjectType_schemaExpression;
-  protected override schemaTypeExpression = ObjectType_schemaTypeExpression;
   protected override toJsonObjectFunctionExpression =
     ObjectType_toJsonObjectFunctionExpression;
   protected override toJsonObjectFunctionType =
@@ -117,9 +115,9 @@ export class ObjectType extends AbstractStructuredType {
   protected override valueSparqlWherePatternsFunctionExpression =
     ObjectType_valueSparqlWherePatternsFunctionExpression;
 
-  readonly discriminatedType: Maybe<AbstractStructuredType.DiscriminatedType>;
+  readonly discriminatedType: Maybe<AbstractUserDefinedType.DiscriminatedType>;
   readonly extern: boolean;
-  override readonly graphqlArgs: AbstractStructuredType["graphqlArgs"] =
+  override readonly graphqlArgs: AbstractUserDefinedType["graphqlArgs"] =
     Maybe.empty();
   readonly identifierProperty: Maybe<ObjectType.IdentifierProperty>;
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
@@ -129,7 +127,7 @@ export class ObjectType extends AbstractStructuredType {
   override readonly kind = "Object";
   override readonly recursive: boolean;
   readonly synthetic: boolean;
-  override readonly validationFunction: AbstractStructuredType["validationFunction"] =
+  override readonly validationFunction: AbstractUserDefinedType["validationFunction"] =
     Maybe.empty();
 
   constructor({
@@ -153,7 +151,7 @@ export class ObjectType extends AbstractStructuredType {
     rdfTypeProperty: Maybe<ObjectType.RdfTypeProperty>;
     recursive: boolean;
     synthetic: boolean;
-  } & ConstructorParameters<typeof AbstractStructuredType>[0]) {
+  } & ConstructorParameters<typeof AbstractUserDefinedType>[0]) {
     super(superParameters);
     this.discriminatedType = discriminantProperty.map(
       (discriminantProperty) => ({
@@ -182,12 +180,12 @@ export class ObjectType extends AbstractStructuredType {
     return ObjectType__toRdfResourceFunction.call(this);
   }
 
-  get jsonValueType(): AbstractStructuredType["jsonObjectType"] {
+  get jsonValueType(): AbstractUserDefinedType["jsonObjectType"] {
     return this.jsonObjectType;
   }
 
   @Memoize()
-  override get conversionFunction(): Maybe<AbstractStructuredType.ConversionFunction> {
+  override get conversionFunction(): Maybe<AbstractUserDefinedType.ConversionFunction> {
     return ObjectType_conversionFunction.call(this);
   }
 
@@ -211,13 +209,46 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
-  override get jsonObjectType(): AbstractStructuredType["jsonObjectType"] {
-    return this.jsonTypeFactory.createJsonObjectType(
-      this.properties.flatMap((property) => property.jsonObjectMember.toList()),
-      {
-        name: this.name.map((name) => [name, "Json"]).extract(),
+  override get jsonObjectType(): AbstractUserDefinedType["jsonObjectType"] {
+    return ObjectType_jsonObjectType.call(this);
+  }
+
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.UserDefinedType> {
+    return new SchemaObject({
+      properties: {
+        ...super.schema.properties,
+        properties: () =>
+          code`properties: { ${joinCode(
+            this.properties.flatMap((property) =>
+              property.schema
+                .map((propertySchema) => [
+                  code`${property.name}: ${propertySchema.literalExpression}`,
+                ])
+                .orDefault([]),
+            ),
+            { on: "," },
+          )} }`,
       },
-    );
+      type: new SchemaObject.UserDefinedType({
+        members: {
+          ...super.schema.type.members,
+          properties: () =>
+            code`properties: { ${joinCode(
+              this.properties.flatMap((property) =>
+                property.schema
+                  .map((propertySchema) => [
+                    code`${property.name}: ${propertySchema.type.literalExpression}`,
+                  ])
+                  .orDefault([]),
+              ),
+              { on: "," },
+            )} }`,
+        },
+        name: super.schema.type.name,
+      }),
+      variable: super.schema.variable,
+    });
   }
 
   @Memoize()
@@ -250,8 +281,8 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
-  get graphqlType(): AbstractStructuredType.GraphqlType {
-    return new AbstractStructuredType.GraphqlType(
+  get graphqlType(): AbstractUserDefinedType.GraphqlType {
+    return new AbstractUserDefinedType.GraphqlType(
       this.name
         .map((name) => code`${name}.GraphQL`)
         .orDefaultLazy(() => ObjectType_graphqlTypeExpression.call(this)),
@@ -334,7 +365,7 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
-  get toRdfResourceValueTypes(): AbstractStructuredType["toRdfResourceValueTypes"] {
+  get toRdfResourceValueTypes(): AbstractUserDefinedType["toRdfResourceValueTypes"] {
     return new Set([...this.identifierType.nodeKinds].map(NodeKind.toTermType));
   }
 

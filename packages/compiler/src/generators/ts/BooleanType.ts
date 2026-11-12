@@ -5,8 +5,9 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
@@ -16,7 +17,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
 
   override readonly conversionFunction: Maybe<AbstractPrimitiveType.ConversionFunction> =
     Maybe.empty();
-  override readonly filterFunction = new ReferenceCallable(
+  override readonly filterFunction = new BuiltinCallable(
     this.reusables.snippets.filterBoolean,
   );
   override readonly filterType = code`${this.reusables.snippets.BooleanFilter}`;
@@ -24,38 +25,47 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     code`${this.reusables.imports.GraphQLBoolean}`,
     this.reusables,
   );
-  override readonly hashFunction = new ReferenceCallable(
+  override readonly hashFunction = new BuiltinCallable(
     this.reusables.snippets.hashBoolean,
   );
   override readonly jsTypes = [{ typeof: "boolean" }] as const;
   override readonly jsonValueType: AbstractPrimitiveType.JsonType =
     this.jsonTypeFactory.createJsonBooleanType({ in_: this.decodedIn });
   override readonly kind = "Boolean";
-  override readonly schemaType =
-    code`${this.reusables.snippets.BooleanSchema}<${this.expression}>`;
-  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
+  override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
     this.reusables.snippets.booleanSparqlWherePatterns,
   );
 
   @Memoize()
   override get fromJsonObjectFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.booleanFromJsonObject}<${this.expression}>`,
     );
   }
 
   @Memoize()
   override get fromJsonValueFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.booleanFromJsonBoolean}<${this.expression}>`,
     );
   }
 
   @Memoize()
   override get fromRdfResourceValuesFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.booleanFromRdfResourceValues}<${this.expression}>`,
     );
+  }
+
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    return new SchemaObject({
+      properties: super.schema.properties,
+      type: new SchemaObject.BuiltinType(
+        code`${this.reusables.snippets.BooleanSchema}<${this.expression}>`,
+      ),
+      variable: super.schema.variable,
+    });
   }
 
   override toRdfResourceValuesExpression({

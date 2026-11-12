@@ -6,8 +6,9 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import { InlineCallable } from "./InlineCallable.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import type { Type } from "./Type.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -18,10 +19,8 @@ export class DefaultValueType<
   override readonly equalsFunction = this.itemType.equalsFunction;
   override readonly filterFunction = this.itemType.filterFunction;
   override readonly filterType = this.itemType.filterType;
-  override readonly schemaType =
-    code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.schemaType}>`;
   override readonly fromRdfResourceValuesFunction = new InlineCallable(
-    code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
+    code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schema.type.expression}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
   );
   override readonly graphqlArgs: AbstractContainerType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
@@ -44,7 +43,7 @@ export class DefaultValueType<
   override readonly valueSparqlConstructTriplesFunction =
     this.itemType.valueSparqlConstructTriplesFunction;
   override readonly valueSparqlWherePatternsFunction = new InlineCallable(
-    code`${this.reusables.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
+    code`${this.reusables.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schema.type.expression}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
   );
 
   constructor({
@@ -75,22 +74,30 @@ export class DefaultValueType<
 
   @Memoize()
   override get fromJsonObjectFunction(): AbstractContainerType<ItemTypeT>["fromJsonObjectFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.defaultValueFromJsonObject}(${this.itemType.fromJsonObjectFunction.annotatedUsage})`,
     );
   }
 
   @Memoize()
   override get fromJsonValueFunction(): AbstractContainerType<ItemTypeT>["fromJsonValueFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.defaultValueFromJsonValue}(${this.itemType.fromJsonValueFunction.annotatedUsage})`,
     );
   }
 
-  protected override get schemaInitializers() {
-    return super.schemaInitializers.concat(
-      code`defaultValue: ${this.rdfjsTermExpression(this.defaultValue)}`,
-    );
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    return new SchemaObject({
+      properties: {
+        ...super.schema.properties,
+        defaultValue: code`defaultValue: ${this.rdfjsTermExpression(this.defaultValue)}`,
+      },
+      type: new SchemaObject.BuiltinType(
+        code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.schema.type.expression}>`,
+      ),
+      variable: super.schema.variable,
+    });
   }
 
   @Memoize()

@@ -6,12 +6,13 @@ import type { Callable } from "./Callable.js";
 import type { CodeThunk } from "./CodeThunk.js";
 import { DeclaredCallable } from "./DeclaredCallable.js";
 import { InlineCallable } from "./InlineCallable.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { SchemaObject } from "./SchemaObject.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 /**
- * Abstract base class for AbstractCompoundType and StructType.
+ * Abstract base class for user-defined types (compound types, object types).
  */
-export abstract class AbstractStructuredType extends AbstractType {
+export abstract class AbstractUserDefinedType extends AbstractType {
   @Memoize()
   override get equalsFunction(): Callable {
     return this._function({
@@ -27,6 +28,18 @@ export abstract class AbstractStructuredType extends AbstractType {
       type: () => this.filterFunctionType(),
       unannotatedExpression: () => this.filterFunctionExpression(),
       unqualifiedName: "filter",
+    });
+  }
+
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.UserDefinedType> {
+    return new SchemaObject({
+      properties: super.schema.properties,
+      type: new SchemaObject.UserDefinedType({
+        members: { kind: code`kind: ${literalOf(this.kind)}` },
+        name: this.name.map((name) => code`${name}.Schema`),
+      }),
+      variable: this.name.map((name) => code`${name}.schema`),
     });
   }
 
@@ -67,13 +80,6 @@ export abstract class AbstractStructuredType extends AbstractType {
       unannotatedExpression: () => this.hashFunctionExpression(),
       unqualifiedName: "hash",
     });
-  }
-
-  @Memoize()
-  override get schemaType(): Code {
-    return this.name
-      .map((name) => code`${name}.Schema`)
-      .orDefaultLazy(() => this.schemaTypeExpression());
   }
 
   override get toJsonValueFunction(): Callable {
@@ -227,7 +233,7 @@ export abstract class AbstractStructuredType extends AbstractType {
   protected abstract fromRdfResourceValuesFunctionExpression(): Code;
 
   protected fromRdfResourceValuesFunctionType(): Code {
-    return code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`;
+    return code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schema.type.expression}>`;
   }
 
   protected abstract hashFunctionExpression(): Code;
@@ -235,8 +241,6 @@ export abstract class AbstractStructuredType extends AbstractType {
   protected hashFunctionType(): Code {
     return code`${this.reusables.snippets.HashFunction}<${this.expression}>`;
   }
-
-  protected abstract schemaTypeExpression(): Code;
 
   protected override staticModuleDeclarations(
     name: string,
@@ -278,6 +282,13 @@ export abstract class AbstractStructuredType extends AbstractType {
 
     if (this.configuration.features.has("Object.fromRdf")) {
       addFunctionDeclaration(this.fromRdfResourceValuesFunction);
+    }
+
+    if (this.configuration.features.has("Object.schema")) {
+      staticModuleDeclarations["schema"] =
+        code`export const schema = ${this.schema.literalExpression};`;
+      staticModuleDeclarations["Schema"] =
+        code`export type Schema = typeof schema;`;
     }
 
     if (this.configuration.features.has("Object.SPARQL")) {
@@ -331,17 +342,17 @@ export abstract class AbstractStructuredType extends AbstractType {
   protected abstract valueSparqlConstructTriplesFunctionExpression(): Code;
 
   protected valueSparqlConstructTriplesType(): Code {
-    return code`${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>`;
+    return code`${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schema.type.expression}>`;
   }
 
   protected abstract valueSparqlWherePatternsFunctionExpression(): Code;
 
   protected valueSparqlWherePatternsFunctionType(): Code {
-    return code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>`;
+    return code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schema.type.expression}>`;
   }
 }
 
-export namespace AbstractStructuredType {
+export namespace AbstractUserDefinedType {
   export type ConversionFunction = AbstractType.ConversionFunction;
   export type DiscriminatedType = AbstractType.DiscriminatedType;
   export type GraphqlType = AbstractType.GraphqlType;

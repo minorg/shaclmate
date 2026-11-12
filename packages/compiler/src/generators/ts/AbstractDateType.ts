@@ -2,7 +2,8 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
@@ -14,14 +15,14 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
    */
   override readonly conversionFunction: Maybe<AbstractTypedLiteralType.ConversionFunction> =
     Maybe.empty();
-  override readonly equalsFunction = new ReferenceCallable(
+  override readonly equalsFunction = new BuiltinCallable(
     this.reusables.snippets.dateEquals,
   );
-  override readonly filterFunction = new ReferenceCallable(
+  override readonly filterFunction = new BuiltinCallable(
     this.reusables.snippets.filterDate,
   );
   override readonly filterType = code`${this.reusables.snippets.DateFilter}`;
-  override readonly fromJsonValueFunction = new ReferenceCallable(
+  override readonly fromJsonValueFunction = new BuiltinCallable(
     this.reusables.snippets.dateFromJsonString,
   );
   override readonly jsTypes = [
@@ -30,8 +31,7 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
       typeof: "object",
     },
   ] as const;
-  override readonly schemaType = code`${this.reusables.snippets.DateSchema}`;
-  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
+  override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
     this.reusables.snippets.dateSparqlWherePatterns,
   );
 
@@ -39,6 +39,15 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
   override get jsonValueType(): AbstractTypedLiteralType.JsonType {
     return this.jsonTypeFactory.createJsonStringType({
       format: this.jsonStringFormat,
+    });
+  }
+
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    return new SchemaObject({
+      properties: super.schema.properties,
+      type: new SchemaObject.BuiltinType(this.reusables.snippets.DateSchema),
+      variable: super.schema.variable,
     });
   }
 

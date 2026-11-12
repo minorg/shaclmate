@@ -193,6 +193,7 @@ describe("ShapesGraphToAstTransformer", () => {
             break;
           case "compilerInput":
           case "featureCombinations":
+          case "formsExample":
           case "graphqlExample":
           case "empty":
           case "kitchenSinkExample":

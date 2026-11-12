@@ -4,6 +4,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { Callable } from "./Callable.js";
 import { InlineCallable } from "./InlineCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
@@ -58,6 +59,17 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    return new SchemaObject({
+      properties: super.schema.properties,
+      type: new SchemaObject.BuiltinType(
+        code`${this.reusables.snippets.CollectionSchema}<${this.itemType.schema.type.expression}>`,
+      ),
+      variable: super.schema.variable,
+    });
+  }
+
+  @Memoize()
   get hashFunction(): Callable {
     return new InlineCallable(
       code`${this.reusables.snippets.hashArray}(${this.itemType.hashFunction.annotatedUsage})`,
@@ -66,11 +78,6 @@ export abstract class AbstractCollectionType<
 
   override get mutable(): boolean {
     return this._mutable || this.itemType.mutable;
-  }
-
-  @Memoize()
-  override get schemaType(): Code {
-    return code`${this.reusables.snippets.CollectionSchema}<${this.itemType.schemaType}>`;
   }
 
   @Memoize()

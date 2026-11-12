@@ -4,10 +4,11 @@ import { NodeKind } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
-import { AbstractType } from "./AbstractType.js";
+import { AbstractBuiltinType } from "./AbstractBuiltinType.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
 import { InlineCallable } from "./InlineCallable.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 /**
@@ -24,20 +25,21 @@ export abstract class AbstractTermType<
     | BlankNode
     | Literal
     | NamedNode,
-> extends AbstractType {
-  readonly equalsFunction = new ReferenceCallable(
+> extends AbstractBuiltinType {
+  readonly equalsFunction = new BuiltinCallable(
     this.reusables.snippets.booleanEquals,
   );
-  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: AbstractBuiltinType["graphqlArgs"] =
+    Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
-  override readonly hashFunction = new ReferenceCallable(
+  override readonly hashFunction = new BuiltinCallable(
     this.reusables.snippets.hashTerm,
   );
   readonly in_: readonly ConstantTermT[];
   override readonly mutable: boolean = false;
   abstract readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly recursive = false;
-  override readonly validationFunction: AbstractType["validationFunction"] =
+  override readonly validationFunction: AbstractBuiltinType["validationFunction"] =
     Maybe.empty();
 
   constructor({
@@ -47,7 +49,7 @@ export abstract class AbstractTermType<
   }: {
     hasValues: readonly ConstantTermT[];
     in_: readonly ConstantTermT[];
-  } & ConstructorParameters<typeof AbstractType>[0]) {
+  } & ConstructorParameters<typeof AbstractBuiltinType>[0]) {
     super(superParameters);
     this.hasValues = hasValues;
     this.in_ = in_;
@@ -72,30 +74,40 @@ export abstract class AbstractTermType<
     return new InlineCallable(code`((_: object) => [])`);
   }
 
-  protected override get schemaInitializers() {
-    let initializers = super.schemaInitializers;
+  @Memoize()
+  override get schema(): SchemaObject<
+    SchemaObject.AbstractType | SchemaObject.BuiltinType
+  > {
+    const thisProperties: Record<string, Code> = {};
+
     if (this.hasValues.length > 0) {
-      initializers = initializers.concat(
-        code`hasValues: ${arrayOf(...this.hasValues.map((hasValue) => this.rdfjsTermExpression(hasValue)))}`,
-      );
+      thisProperties["hasValues"] =
+        code`hasValues: ${arrayOf(...this.hasValues.map((hasValue) => this.rdfjsTermExpression(hasValue)))}`;
     }
+
     if (this.in_.length > 0) {
-      initializers = initializers.concat(
-        code`in: ${arrayOf(...this.in_.map((in_) => this.valueExpression(in_)))} as const`,
-      );
+      thisProperties["in"] =
+        code`in: ${arrayOf(...this.in_.map((in_) => this.valueExpression(in_)))} as const`;
     }
-    return initializers;
+
+    return new SchemaObject({
+      properties: { ...super.schema.properties, ...thisProperties },
+      type: new SchemaObject.AbstractType("AbstractTermType"),
+      variable: super.schema.variable,
+    });
   }
 
   override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
+  }: Parameters<
+    AbstractBuiltinType["toRdfResourceValuesExpression"]
+  >[0]): Code {
     return code`[${variables.value}]`;
   }
 
   override toStringExpression({
     variables,
-  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
+  }: Parameters<AbstractBuiltinType["toStringExpression"]>[0]): Code {
     return code`${variables.value}.toString()`;
   }
 
@@ -110,10 +122,10 @@ export abstract class AbstractTermType<
 }
 
 export namespace AbstractTermType {
-  export type ConversionFunction = AbstractType.ConversionFunction;
-  export type DiscriminatedType = AbstractType.DiscriminatedType;
-  export const GraphqlType = AbstractType.GraphqlType;
-  export type GraphqlType = AbstractType.GraphqlType;
-  export type JsType = AbstractType.JsType;
-  export type JsonType = AbstractType.JsonType;
+  export type ConversionFunction = AbstractBuiltinType.ConversionFunction;
+  export type DiscriminatedType = AbstractBuiltinType.DiscriminatedType;
+  export const GraphqlType = AbstractBuiltinType.GraphqlType;
+  export type GraphqlType = AbstractBuiltinType.GraphqlType;
+  export type JsType = AbstractBuiltinType.JsType;
+  export type JsonType = AbstractBuiltinType.JsonType;
 }

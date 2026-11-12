@@ -6,8 +6,9 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class TermType<
@@ -19,7 +20,7 @@ export class TermType<
 > extends AbstractTermType {
   override readonly conversionFunction: Maybe<AbstractTermType.ConversionFunction> =
     Maybe.empty();
-  override readonly filterFunction = new ReferenceCallable(
+  override readonly filterFunction = new BuiltinCallable(
     this.reusables.snippets.filterTerm,
   );
   override readonly jsTypes = [
@@ -27,11 +28,11 @@ export class TermType<
   ] as const;
   override readonly kind = "Term";
   override readonly nodeKinds: ReadonlySet<NodeKind>;
-  override readonly toJsonObjectFunction = new ReferenceCallable(
+  override readonly toJsonObjectFunction = new BuiltinCallable(
     this.reusables.snippets.termToJsonObject,
   );
   override readonly toJsonValueFunction = this.toJsonObjectFunction;
-  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
+  override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
     this.reusables.snippets.termSparqlWherePatterns,
   );
 
@@ -71,7 +72,7 @@ export class TermType<
 
   @Memoize()
   override get fromJsonObjectFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.termFromJsonObject}<${this.expression}>`,
     );
   }
@@ -82,7 +83,7 @@ export class TermType<
 
   @Memoize()
   override get fromRdfResourceValuesFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.termFromRdfResourceValues}<${this.expression}>`,
     );
   }
@@ -124,11 +125,6 @@ export class TermType<
   }
 
   @Memoize()
-  override get schemaType(): Code {
-    return code`${this.reusables.snippets.TermSchema}<${this.expression}>`;
-  }
-
-  @Memoize()
   protected override get inlineExpression(): Code {
     return code`(${joinCode(
       [...this.nodeKinds]
@@ -150,10 +146,18 @@ export class TermType<
     )})`;
   }
 
-  protected override get schemaInitializers() {
-    return super.schemaInitializers.concat(
-      code`types: ${arrayOf(...[...this.nodeKinds].map(NodeKind.toTermType))}`,
-    );
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    return new SchemaObject({
+      properties: {
+        ...super.schema.properties,
+        types: code`types: ${arrayOf(...[...this.nodeKinds].map(NodeKind.toTermType))}`,
+      },
+      type: new SchemaObject.BuiltinType(
+        code`${this.reusables.snippets.TermSchema}<${this.expression}>`,
+      ),
+      variable: super.schema.variable,
+    });
   }
 
   override graphqlResolveExpression(

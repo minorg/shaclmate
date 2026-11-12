@@ -3,9 +3,10 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
 import { InlineCallable } from "./InlineCallable.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import type { Snippet } from "./Snippet.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -104,7 +105,7 @@ export class SetType<
 
   @Memoize()
   override get fromJsonValueFunction(): AbstractCollectionType<ItemTypeT>["fromJsonValueFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.arrayFromJsonArray}(${this.itemType.fromJsonValueFunction.annotatedUsage})`,
     );
   }
@@ -116,13 +117,13 @@ export class SetType<
   @Memoize()
   override get fromRdfResourceValuesFunction(): Callable {
     return new InlineCallable(
-      code`${this._mutable ? this.reusables.snippets.mutableSetFromRdfResourceValues : this.reusables.snippets.setFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
+      code`${this._mutable ? this.reusables.snippets.mutableSetFromRdfResourceValues : this.reusables.snippets.setFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schema.type.expression}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
     );
   }
 
   @Memoize()
   override get toJsonValueFunction(): AbstractCollectionType<ItemTypeT>["toJsonValueFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.arrayToJsonArray}(${this.itemType.toJsonValueFunction.annotatedUsage})`,
     );
   }
@@ -138,25 +139,31 @@ export class SetType<
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Callable {
     return new InlineCallable(
-      code`${this.reusables.snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction.unannotatedUsage})`,
+      code`${this.reusables.snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schema.type.expression}>(${this.itemType.valueSparqlConstructTriplesFunction.unannotatedUsage})`,
     );
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Callable {
     return new InlineCallable(
-      code`${this.reusables.snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
+      code`${this.reusables.snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schema.type.expression}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
     );
   }
 
-  protected override get schemaInitializers() {
-    let schemaInitializers = super.schemaInitializers;
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
     if (this.minCount > 0n) {
-      schemaInitializers = schemaInitializers.concat(
-        code`minCount: ${Number(this.minCount)}`,
-      );
+      return new SchemaObject({
+        properties: {
+          ...super.schema.properties,
+          minCount: code`minCount: ${Number(this.minCount)}`,
+        },
+        type: super.schema.type,
+        variable: super.schema.variable,
+      });
+    } else {
+      return super.schema;
     }
-    return schemaInitializers;
   }
 
   override toRdfResourceValuesExpression({

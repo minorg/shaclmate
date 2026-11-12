@@ -4,7 +4,8 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 export class LangStringType extends AbstractLiteralType {
@@ -23,15 +24,15 @@ export class LangStringType extends AbstractLiteralType {
         },
       ],
     });
-  override readonly filterFunction = new ReferenceCallable(
+  override readonly filterFunction = new BuiltinCallable(
     this.reusables.snippets.filterLiteral,
   );
   override readonly filterType = code`${this.reusables.snippets.LiteralFilter}`;
-  override readonly fromJsonObjectFunction = new ReferenceCallable(
+  override readonly fromJsonObjectFunction = new BuiltinCallable(
     this.reusables.snippets.langStringFromJsonObject,
   );
   override readonly fromJsonValueFunction = this.fromJsonObjectFunction;
-  override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
+  override readonly fromRdfResourceValuesFunction = new BuiltinCallable(
     this.reusables.snippets.langStringFromRdfResourceValues,
   );
   override readonly jsTypes = [
@@ -50,13 +51,11 @@ export class LangStringType extends AbstractLiteralType {
   override readonly jsonValueType: AbstractLiteralType["jsonValueType"] =
     this.jsonObjectType;
   override readonly kind = "LangString";
-  override readonly schemaType =
-    code`${this.reusables.snippets.LangStringSchema}`;
-  override readonly toJsonObjectFunction = new ReferenceCallable(
+  override readonly toJsonObjectFunction = new BuiltinCallable(
     this.reusables.snippets.langStringToJsonObject,
   );
   override readonly toJsonValueFunction = this.toJsonObjectFunction;
-  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
+  override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
     this.reusables.snippets.langStringSparqlWherePatterns,
   );
 
@@ -86,14 +85,21 @@ export class LangStringType extends AbstractLiteralType {
     throw new Error("not implemented");
   }
 
-  protected override get schemaInitializers() {
-    let initializers = super.schemaInitializers;
-    if (this.languageIn.length > 0) {
-      initializers = initializers.concat(
-        code`languageIn: ${arrayOf(...this.languageIn)}`,
-      );
-    }
-    return initializers;
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    return new SchemaObject({
+      properties:
+        this.languageIn.length > 0
+          ? {
+              ...super.schema.properties,
+              languageIn: code`languageIn: ${arrayOf(...this.languageIn)}`,
+            }
+          : super.schema.properties,
+      type: new SchemaObject.BuiltinType(
+        this.reusables.snippets.LangStringSchema,
+      ),
+      variable: super.schema.variable,
+    });
   }
 
   override graphqlResolveExpression(

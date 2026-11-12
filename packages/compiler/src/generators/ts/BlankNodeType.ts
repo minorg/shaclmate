@@ -1,9 +1,11 @@
 import type { BlankNode } from "@rdfjs/types";
 
 import { Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { code } from "./ts-poet-wrapper.js";
 
 export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
@@ -24,34 +26,32 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
         },
       ],
     });
-  override readonly filterFunction = new ReferenceCallable(
+  override readonly filterFunction = new BuiltinCallable(
     this.reusables.snippets.filterBlankNode,
   );
   override readonly filterType =
     code`${this.reusables.snippets.BlankNodeFilter}`;
-  override readonly fromJsonValueFunction = new ReferenceCallable(
-    this.reusables.snippets.blankNodeFromJsonString,
-  );
-  override readonly fromJsonObjectFunction = new ReferenceCallable(
+  override readonly fromJsonObjectFunction = new BuiltinCallable(
     this.reusables.snippets.blankNodeFromJsonObject,
   );
-  override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
+  override readonly fromJsonValueFunction = new BuiltinCallable(
+    this.reusables.snippets.blankNodeFromJsonString,
+  );
+  override readonly fromRdfResourceValuesFunction = new BuiltinCallable(
     this.reusables.snippets.blankNodeFromRdfResourceValues,
   );
   override readonly kind = "BlankNode";
   override readonly nodeKinds = nodeKinds;
-  override readonly parseFunction = new ReferenceCallable(
+  override readonly parseFunction = new BuiltinCallable(
     this.reusables.snippets.parseBlankNode,
   );
-  override readonly schemaType =
-    code`${this.reusables.snippets.BlankNodeSchema}`;
-  override readonly toJsonValueFunction = new ReferenceCallable(
-    this.reusables.snippets.blankNodeToJsonString,
-  );
-  override readonly toJsonObjectFunction = new ReferenceCallable(
+  override readonly toJsonObjectFunction = new BuiltinCallable(
     this.reusables.snippets.blankNodeToJsonObject,
   );
-  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
+  override readonly toJsonValueFunction = new BuiltinCallable(
+    this.reusables.snippets.blankNodeToJsonString,
+  );
+  override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
     this.reusables.snippets.blankNodeSparqlWherePatterns,
   );
 
@@ -65,6 +65,17 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
       ...superParameters,
       hasValues: [],
       in_: [],
+    });
+  }
+
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    return new SchemaObject({
+      properties: super.schema.properties,
+      type: new SchemaObject.BuiltinType(
+        this.reusables.snippets.BlankNodeSchema,
+      ),
+      variable: super.schema.variable,
     });
   }
 }

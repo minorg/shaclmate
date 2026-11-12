@@ -12,6 +12,7 @@ import type {
 import { AbstractType_JsType } from "./_AbstractType/AbstractType_JsType.js";
 import { AbstractConstruct } from "./AbstractConstruct.js";
 import type { Callable } from "./Callable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import {
   type Code,
   code,
@@ -165,9 +166,18 @@ export abstract class AbstractType extends AbstractConstruct {
   abstract readonly referencesNamedType: boolean;
 
   /**
-   * TypeScript type describing .schema.
+   * TypeScript object describing this type, for runtime use.
    */
-  abstract readonly schemaType: Code;
+
+  get schema(): SchemaObject<SchemaObject.Type> {
+    return new SchemaObject({
+      properties: {
+        kind: code`kind: ${literalOf(this.kind)}`,
+      },
+      type: new SchemaObject.AbstractType(this.kind),
+      variable: this.name.map((name) => code`${name}.schema`),
+    });
+  }
 
   /**
    * Identifier of the shape this type was derived from.
@@ -193,7 +203,7 @@ export abstract class AbstractType extends AbstractConstruct {
 
   /**
    * Function that takes
-   * - a schema of this.schemaType
+   * - a schema of this.schema.type
    * - a value of this.type
    *
    * and validates the value against the schema, returning
@@ -210,7 +220,7 @@ export abstract class AbstractType extends AbstractConstruct {
    * The function takes a parameters object with the following parameters:
    * - filter: an instance of filterType | undefined
    * - ignoreRdfType: boolean
-   * - schema: instance of this.schemaType
+   * - schema: instance of this.schema.type
    * - valueVariable: rdfjs.Variable of the value of this type
    * - variablePrefix: string prefix to use for new variables
    */
@@ -223,7 +233,7 @@ export abstract class AbstractType extends AbstractConstruct {
    * - filter: an instance of filterType | undefined
    * - preferredLanguages: array of preferred language code (strings) | undefined
    * - propertyPatterns: array of sparqljs.Pattern's for the property; may be empty
-   * - schema: instance of this.schemaType
+   * - schema: instance of this.schema.type
    * - valueVariable: rdfjs.Variable of the value of this type
    * - variablePrefix: string prefix to use for new variables
    */
@@ -295,31 +305,6 @@ ${joinCode(
   }
 
   /**
-   * TypeScript object describing this type, for runtime use.
-   */
-  @Memoize()
-  get schema(): Code {
-    return this.name
-      .map((name) => code`${name}.schema`)
-      .orDefaultLazy(() => this.schemaExpression());
-  }
-
-  @Memoize()
-  get schemaVariable(): Maybe<Code> {
-    if (!this.configuration.features.has("Object.schema")) {
-      return Maybe.empty();
-    }
-    return this.name.map((name) => code`${name}.schema`);
-  }
-
-  /**
-   * Helper to compose the result of schema along the type hierarchy.
-   */
-  protected get schemaInitializers(): readonly Code[] {
-    return [code`kind: ${literalOf(this.kind)} as const`];
-  }
-
-  /**
    * An expression that resolves a value of this type in the GraphQL server.
    */
   abstract graphqlResolveExpression(parameters: {
@@ -362,17 +347,12 @@ ${joinCode(
    */
   abstract toStringExpression(parameters: { variables: { value: Code } }): Code;
 
-  @Memoize()
-  protected schemaExpression(): Code {
-    return code`{ ${joinCode(this.schemaInitializers.concat(), { on: ", " })} }`;
-  }
-
   protected staticModuleDeclarations(_name: string): Record<string, Code> {
     const staticModuleDeclarations: Record<string, Code> = {};
 
     if (this.configuration.features.has("Object.schema")) {
       staticModuleDeclarations["schema"] =
-        code`export const schema = ${this.schemaExpression()}`;
+        code`export const schema = ${this.schema.literalExpression};`;
       staticModuleDeclarations["Schema"] =
         code`export type Schema = typeof schema;`;
     }

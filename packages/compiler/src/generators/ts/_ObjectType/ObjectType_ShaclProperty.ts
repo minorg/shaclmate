@@ -2,7 +2,8 @@ import type { PropertyPath } from "@rdfx/resource";
 
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
+import type { CodeThunk } from "../CodeThunk.js";
+import { SchemaObject } from "../SchemaObject.js";
 import type { Type } from "../Type.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
@@ -151,42 +152,63 @@ export class ObjectType_ShaclProperty<
     });
   }
 
-  override get schema(): Maybe<Code> {
-    const initializers = [code`kind: ${literalOf(this.kind)}`];
-    if (
-      this.configuration.features.has("Object.fromRdf") ||
-      this.configuration.features.has("Object.toRdf")
-    ) {
-      initializers.push(code`path: ${this.propertyPathToCode(this.path)}`);
-    }
-    // Use a getter if the type is recursive or the type is an object type, which may have forward references in the file
-    if (this.recursive || this.type.referencesNamedType) {
-      initializers.push(code`get type() { return ${this.type.schema}; }`);
-    } else {
-      initializers.push(code`type: ${this.type.schema}`);
-    }
-    return Maybe.of(code`{ ${joinCode(initializers, { on: ", " })} }`);
+  @Memoize()
+  override get schema() {
+    return Maybe.of(this._schema);
   }
 
-  override get schemaType(): Maybe<Code> {
-    const initializers = [code`readonly kind: ${literalOf(this.kind)}`];
+  @Memoize()
+  private get _schema(): SchemaObject<SchemaObject.UserDefinedType> {
+    // if (
+    //   this.objectType.name.extract() === "DirectRecursiveStruct" ||
+    //   this.objectType.name.extract() === "IndirectRecursiveStruct"
+    // ) {
+    //   console.log("test");
+    // }
+
+    const properties: Record<string, CodeThunk> = {
+      kind: code`kind: ${literalOf(this.kind)}`,
+    };
+    const typeMembers: Record<string, CodeThunk> = {
+      kind: code`readonly kind: ${literalOf(this.kind)}`,
+    };
+
     if (
       this.configuration.features.has("Object.fromRdf") ||
       this.configuration.features.has("Object.toRdf")
     ) {
-      initializers.push(
-        code`readonly path: ${this.reusables.snippets.PropertyPath}`,
-      );
+      properties["path"] = code`path: ${this.propertyPathToCode(this.path)}`;
+      typeMembers["path"] =
+        code`readonly path: ${this.reusables.snippets.PropertyPath}`;
     }
-    initializers.push(code`readonly type: ${this.type.schemaType}`);
-    return Maybe.of(code`{ ${joinCode(initializers, { on: ", " })} }`);
+
+    // Use a getter if the type is recursive or the type is an object type, which may have forward references in the file
+    if (this.recursive || this.type.referencesNamedType) {
+      properties["type"] = () =>
+        code`get type() { return ${this.type.schema.expression}; }`;
+      typeMembers["type"] = () =>
+        code`readonly type: ${this.type.schema.type.expression}`;
+    } else {
+      properties["type"] = code`type: ${this.type.schema.expression}`;
+      typeMembers["type"] =
+        code`readonly type: ${this.type.schema.type.expression}`;
+    }
+
+    return new SchemaObject({
+      properties,
+      type: new SchemaObject.UserDefinedType({
+        members: typeMembers,
+        name: Maybe.empty(),
+      }),
+      variable: this.schemaVariable,
+    });
   }
 
   @Memoize()
   private get typeSchemaVariable(): Code {
-    return this.objectType.name
-      .map((name) => code`${name}.schema.properties.${this.name}.type`)
-      .orDefaultLazy(() => this.type.schema);
+    return this.schemaVariable
+      .map((schemaVariable) => code`${schemaVariable}.type`)
+      .orDefaultLazy(() => this.type.schema.expression);
   }
 
   override createInitializer({
@@ -253,11 +275,11 @@ export class ObjectType_ShaclProperty<
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.name}:
-        ${this.reusables.snippets.shaclPropertyFromRdf}<${this.type.expression}, ${this.type.schemaType}>({
+        ${this.reusables.snippets.shaclPropertyFromRdf}<${this.type.expression}, ${this.type.schema.type.expression}>({
           ...${variables.options},
           focusResource: ${variables.focusResource},
           ignoreRdfType: true,
-          propertySchema: ${this.schemaVariable},
+          propertySchema: ${this._schema.expression},
           typeFromRdfResourceValues: ${this.type.fromRdfResourceValuesFunction.unannotatedUsage} 
         })`,
     );
@@ -286,7 +308,7 @@ export class ObjectType_ShaclProperty<
         focusIdentifier: variables.focusIdentifier,
         ignoreRdfType: true,
         propertyName: this.name,
-        propertySchema: this.schemaVariable,
+        propertySchema: this._schema.expression,
         typeSparqlConstructTriples:
           this.type.valueSparqlConstructTriplesFunction.unannotatedUsage,
         variablePrefix: variables.variablePrefix,
@@ -310,7 +332,7 @@ export class ObjectType_ShaclProperty<
         ignoreRdfType: true,
         preferredLanguages: variables.preferredLanguages,
         propertyName: this.name,
-        propertySchema: this.schemaVariable,
+        propertySchema: this._schema.expression,
         typeSparqlWherePatterns:
           this.type.valueSparqlWherePatternsFunction.unannotatedUsage,
         variablePrefix: variables.variablePrefix,
@@ -357,7 +379,7 @@ export class ObjectType_ShaclProperty<
     }
 
     const propertyPath = this.objectType.name
-      .map(() => code`${this.schemaVariable}.path`)
+      .map(() => code`${this._schema.expression}.path`)
       .orDefault(this.propertyPathToCode(this.path));
 
     const { object: objectVariable, ...otherVariables } = variables;

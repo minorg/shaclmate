@@ -2,14 +2,14 @@ import type { Literal } from "@rdfjs/types";
 import { LiteralDecoder } from "@rdfx/literal";
 
 import { AbstractDateType } from "./AbstractDateType.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class DateTimeType extends AbstractDateType {
-  override readonly fromJsonObjectFunction = new ReferenceCallable(
+  override readonly fromJsonObjectFunction = new BuiltinCallable(
     this.reusables.snippets.dateTimeFromJsonObject,
   );
-  override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
+  override readonly fromRdfResourceValuesFunction = new BuiltinCallable(
     this.reusables.snippets.dateTimeFromRdfResourceValues,
   );
   override readonly graphqlType = new DateTimeType.GraphqlType(
@@ -17,14 +17,14 @@ export class DateTimeType extends AbstractDateType {
     this.reusables,
   );
   protected override readonly jsonStringFormat = "datetime";
-  override readonly hashFunction = new ReferenceCallable(
+  override readonly hashFunction = new BuiltinCallable(
     this.reusables.snippets.hashDateTime,
   );
   override readonly kind = "DateTime";
-  override readonly toJsonValueFunction = new ReferenceCallable(
+  override readonly toJsonValueFunction = new BuiltinCallable(
     this.reusables.snippets.dateTimeToJsonString,
   );
-  override readonly toJsonObjectFunction = new ReferenceCallable(
+  override readonly toJsonObjectFunction = new BuiltinCallable(
     code`${this.reusables.snippets.dateToJsonObject}(${this.rdfjsTermExpression(this.datatype)})`,
   );
 

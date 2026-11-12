@@ -4,6 +4,7 @@ import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
+import { SchemaObject } from "../SchemaObject.js";
 import {
   arrayOf,
   type Code,
@@ -52,13 +53,6 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
   }
 
   @Memoize()
-  override get schema(): Maybe<Code> {
-    return Maybe.of(
-      code`${{ fromRdfType: this.rdfjsTermExpression(this.fromRdfType), kind: this.kind, toRdfTypes: this.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)) }}`,
-    );
-  }
-
-  @Memoize()
   get jsonObjectMember(): ObjectType_AbstractProperty["jsonObjectMember"] {
     return Maybe.of({
       description: Maybe.empty(),
@@ -80,10 +74,28 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
   }
 
   @Memoize()
-  override get schemaType(): Maybe<Code> {
-    return Maybe.of(
-      code`${{ fromRdfType: code`${this.reusables.imports.NamedNode}`, kind: this.kind, toRdfTypes: code`readonly ${this.reusables.imports.NamedNode}[]` }}`,
-    );
+  override get schema(): Maybe<SchemaObject<SchemaObject.UserDefinedType>> {
+    return Maybe.of(this._schema);
+  }
+
+  @Memoize()
+  private get _schema(): SchemaObject<SchemaObject.UserDefinedType> {
+    return new SchemaObject({
+      properties: {
+        fromRdfType: code`fromRdfType: ${this.rdfjsTermExpression(this.fromRdfType)}`,
+        kind: code`kind: ${literalOf(this.kind)}`,
+        toRdfTypes: code`toRdfTypes: ${arrayOf(...this.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)))}`,
+      },
+      type: new SchemaObject.UserDefinedType({
+        members: {
+          fromRdfType: code`fromRdfType: ${this.reusables.imports.NamedNode}`,
+          kind: code`kind: ${literalOf(this.kind)}`,
+          toRdfTypes: code`toRdfTypes: readonly ${this.reusables.imports.NamedNode}[]`,
+        },
+        name: Maybe.empty(),
+      }),
+      variable: this.schemaVariable,
+    });
   }
 
   override createInitializer(): Maybe<Code> {
@@ -111,7 +123,7 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.name}: !${variables.ignoreRdfType} ? ${this.reusables.snippets.ensureRdfResourceType}(${variables.focusResource}, ${arrayOf(
-        code`(${this.schemaVariable}).fromRdfType`,
+        code`(${this._schema.expression}).fromRdfType`,
       )}, ${{ graph: variables.graph }}) : ${this.reusables.imports.Right}(true as const)`,
     );
   }
@@ -205,7 +217,7 @@ type: "optional" as const
     return [
       code`\
 if (!${variables.ignoreRdfType}) {
-  ${variables.resource}.add(${this.rdfjsTermExpression(rdf.type)}, ${this.schemaVariable}.toRdfTypes, ${variables.graph});
+  ${variables.resource}.add(${this.rdfjsTermExpression(rdf.type)}, ${this._schema.expression}.toRdfTypes, ${variables.graph});
 }`,
     ];
   }

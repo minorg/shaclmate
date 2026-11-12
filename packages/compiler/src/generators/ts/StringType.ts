@@ -6,8 +6,9 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
@@ -19,7 +20,7 @@ export class StringType extends AbstractPrimitiveType<string> {
 
   override readonly conversionFunction: Maybe<AbstractPrimitiveType.ConversionFunction> =
     Maybe.empty();
-  override readonly filterFunction = new ReferenceCallable(
+  override readonly filterFunction = new BuiltinCallable(
     this.reusables.snippets.filterString,
   );
   override readonly filterType = code`${this.reusables.snippets.StringFilter}`;
@@ -27,7 +28,7 @@ export class StringType extends AbstractPrimitiveType<string> {
     code`${this.reusables.imports.GraphQLString}`,
     this.reusables,
   );
-  override readonly hashFunction = new ReferenceCallable(
+  override readonly hashFunction = new BuiltinCallable(
     this.reusables.snippets.hashString,
   );
   override readonly jsTypes = [
@@ -44,7 +45,7 @@ export class StringType extends AbstractPrimitiveType<string> {
           : undefined,
     });
   override readonly kind = "String";
-  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
+  override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
     this.reusables.snippets.stringSparqlWherePatterns,
   );
 
@@ -60,38 +61,40 @@ export class StringType extends AbstractPrimitiveType<string> {
 
   @Memoize()
   get fromJsonObjectFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.stringFromJsonObject}<${this.expression}>`,
     );
   }
 
   @Memoize()
   override get fromJsonValueFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.stringFromJsonString}<${this.expression}>`,
     );
   }
 
   @Memoize()
   get fromRdfResourceValuesFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.stringFromRdfResourceValues}<${this.expression}>`,
     );
   }
 
   @Memoize()
-  override get schemaType(): Code {
-    return code`${this.reusables.snippets.StringSchema}<${this.expression}>`;
-  }
-
-  protected override get schemaInitializers(): readonly Code[] {
-    let initializers = super.schemaInitializers;
-    if (this.languageIn.length > 0) {
-      initializers = initializers.concat(
-        code`languageIn: ${arrayOf(...this.languageIn)}`,
-      );
-    }
-    return initializers;
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    return new SchemaObject({
+      properties:
+        this.languageIn.length > 0
+          ? {
+              ...super.schema.properties,
+              languageIn: code`languageIn: ${arrayOf(...this.languageIn)}`,
+            }
+          : super.schema.properties,
+      type: new SchemaObject.BuiltinType(
+        code`${this.reusables.snippets.StringSchema}<${this.expression}>`,
+      ),
+      variable: super.schema.variable,
+    });
   }
 
   override toRdfResourceValuesExpression({

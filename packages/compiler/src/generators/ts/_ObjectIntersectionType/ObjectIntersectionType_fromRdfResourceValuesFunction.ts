@@ -10,5 +10,5 @@ export function ObjectIntersectionType_fromRdfResourceValuesFunctionExpression(
 export function ObjectIntersectionType_fromRdfResourceValuesFunctionType(
   this: ObjectIntersectionType,
 ): Code {
-  return code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.discriminatedType.map((discriminatedType) => discriminatedType.expression).orDefault(this.expression)}, ${this.schemaType}>`;
+  return code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.discriminatedType.map((discriminatedType) => discriminatedType.expression).orDefault(this.expression)}, ${this.schema.type.expression}>`;
 }

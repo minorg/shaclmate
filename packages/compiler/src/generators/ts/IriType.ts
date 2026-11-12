@@ -5,62 +5,55 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
 import { InlineCallable } from "./InlineCallable.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
-import {
-  arrayOf,
-  type Code,
-  code,
-  joinCode,
-  literalOf,
-} from "./ts-poet-wrapper.js";
+import { SchemaObject } from "./SchemaObject.js";
+import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class IriType extends AbstractIdentifierType<NamedNode> {
-  override readonly filterFunction = new ReferenceCallable(
+  override readonly filterFunction = new BuiltinCallable(
     this.reusables.snippets.filterIri,
   );
   override readonly filterType = code`${this.reusables.snippets.IriFilter}`;
   override readonly kind = "Iri";
   override readonly nodeKinds = nodeKinds;
-  override readonly schemaType =
-    code`${this.reusables.snippets.IriSchema}<${this.valueTypeExpression}>`;
-  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
+  override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
     this.reusables.snippets.iriSparqlWherePatterns,
   );
 
   @Memoize()
   override get fromJsonValueFunction(): AbstractIdentifierType<NamedNode>["fromJsonValueFunction"] {
     if (this.in_.length > 0) {
-      return new ReferenceCallable(
+      return new BuiltinCallable(
         code`${this.reusables.snippets.iriLiteralFromJsonString}<${this.valueTypeExpression}>`,
       );
     } else {
-      return new ReferenceCallable(this.reusables.snippets.iriFromJsonString);
+      return new BuiltinCallable(this.reusables.snippets.iriFromJsonString);
     }
   }
 
   @Memoize()
   override get fromJsonObjectFunction(): AbstractIdentifierType<NamedNode>["fromJsonObjectFunction"] {
     if (this.in_.length > 0) {
-      return new ReferenceCallable(
+      return new BuiltinCallable(
         code`${this.reusables.snippets.iriLiteralFromJsonObject}<${this.valueTypeExpression}>`,
       );
     } else {
-      return new ReferenceCallable(this.reusables.snippets.iriFromJsonObject);
+      return new BuiltinCallable(this.reusables.snippets.iriFromJsonObject);
     }
   }
 
   @Memoize()
   override get toJsonValueFunction(): AbstractIdentifierType<NamedNode>["toJsonValueFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.iriToJsonString}<${this.valueTypeExpression}>`,
     );
   }
 
   @Memoize()
   override get toJsonObjectFunction(): AbstractIdentifierType<NamedNode>["toJsonObjectFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.iriToJsonObject}<${this.valueTypeExpression}>`,
     );
   }
@@ -117,7 +110,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
 
   @Memoize()
   get fromRdfResourceValuesFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.iriFromRdfResourceValues}<${this.valueTypeExpression}>`,
     );
   }
@@ -129,7 +122,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
         code`(identifier: string) => ${this.reusables.snippets.parseIri}(identifier).chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${this.reusables.imports.Right}(identifier as ${this.expression});`))} default: return ${this.reusables.imports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`,
       );
     }
-    return new ReferenceCallable(this.reusables.snippets.parseIri);
+    return new BuiltinCallable(this.reusables.snippets.parseIri);
   }
 
   @Memoize()
@@ -153,22 +146,22 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
     };
   }
 
-  protected override get schemaInitializers(): readonly Code[] {
-    if (this.in_.length === 0 || this.name.isNothing()) {
-      return super.schemaInitializers;
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    const thisProperties: Record<string, Code> = {};
+    if (this.in_.length > 0 && this.name.isJust()) {
+      thisProperties["in"] =
+        code`in: inValues.map(inValue => ${this.reusables.imports.dataFactory}.namedNode(inValue))`;
+      thisProperties["inValues"] = code`inValues`;
     }
 
-    let initializers = [code`kind: ${literalOf(this.kind)} as const`];
-    if (this.hasValues.length > 0) {
-      initializers = initializers.concat(
-        code`hasValues: ${arrayOf(...this.hasValues.map((hasValue) => this.rdfjsTermExpression(hasValue)))}`,
-      );
-    }
-    initializers = initializers.concat(
-      code`in: inValues.map(inValue => ${this.reusables.imports.dataFactory}.namedNode(inValue))`,
-      code`inValues`,
-    );
-    return initializers;
+    return new SchemaObject({
+      properties: { ...super.schema.properties, ...thisProperties },
+      type: new SchemaObject.BuiltinType(
+        code`${this.reusables.snippets.IriSchema}<${this.valueTypeExpression}>`,
+      ),
+      variable: super.schema.variable,
+    });
   }
 
   @Memoize()
