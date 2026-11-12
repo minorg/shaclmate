@@ -1,8 +1,8 @@
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
@@ -11,14 +11,14 @@ import { type Code, code } from "./ts-poet-wrapper.js";
 export abstract class AbstractNumericType<
   ValueT extends bigint | number,
 > extends AbstractPrimitiveType<ValueT> {
-  override readonly hashFunction = new ReferenceCallable(
+  override readonly hashFunction = new BuiltinCallable(
     this.reusables.snippets.hashNumeric,
   );
   abstract override readonly kind: "BigInt" | "Float" | "Int";
 
   @Memoize()
   override get filterFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.filterNumeric}<${this.expression}>`,
     );
   }
@@ -35,7 +35,7 @@ export abstract class AbstractNumericType<
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.numericSparqlWherePatterns}<${this.expression}>`,
     );
   }

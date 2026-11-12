@@ -3,9 +3,9 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
 import { InlineCallable } from "./InlineCallable.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
 import { SchemaObject } from "./SchemaObject.js";
 import type { Snippet } from "./Snippet.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
@@ -105,7 +105,7 @@ export class SetType<
 
   @Memoize()
   override get fromJsonValueFunction(): AbstractCollectionType<ItemTypeT>["fromJsonValueFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.arrayFromJsonArray}(${this.itemType.fromJsonValueFunction.annotatedUsage})`,
     );
   }
@@ -123,7 +123,7 @@ export class SetType<
 
   @Memoize()
   override get toJsonValueFunction(): AbstractCollectionType<ItemTypeT>["toJsonValueFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.arrayToJsonArray}(${this.itemType.toJsonValueFunction.annotatedUsage})`,
     );
   }

@@ -5,8 +5,8 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractNumericType } from "./AbstractNumericType.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class IntType extends AbstractNumericType<number> {
@@ -23,21 +23,21 @@ export class IntType extends AbstractNumericType<number> {
 
   @Memoize()
   get fromJsonObjectFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.intFromJsonObject}<${this.expression}>`,
     );
   }
 
   @Memoize()
   override get fromJsonValueFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.intFromJsonNumber}<${this.expression}>`,
     );
   }
 
   @Memoize()
   get fromRdfResourceValuesFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.intFromRdfResourceValues}<${this.expression}>`,
     );
   }

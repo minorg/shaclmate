@@ -5,55 +5,55 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
 import { InlineCallable } from "./InlineCallable.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
 import { SchemaObject } from "./SchemaObject.js";
 import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class IriType extends AbstractIdentifierType<NamedNode> {
-  override readonly filterFunction = new ReferenceCallable(
+  override readonly filterFunction = new BuiltinCallable(
     this.reusables.snippets.filterIri,
   );
   override readonly filterType = code`${this.reusables.snippets.IriFilter}`;
   override readonly kind = "Iri";
   override readonly nodeKinds = nodeKinds;
-  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
+  override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
     this.reusables.snippets.iriSparqlWherePatterns,
   );
 
   @Memoize()
   override get fromJsonValueFunction(): AbstractIdentifierType<NamedNode>["fromJsonValueFunction"] {
     if (this.in_.length > 0) {
-      return new ReferenceCallable(
+      return new BuiltinCallable(
         code`${this.reusables.snippets.iriLiteralFromJsonString}<${this.valueTypeExpression}>`,
       );
     } else {
-      return new ReferenceCallable(this.reusables.snippets.iriFromJsonString);
+      return new BuiltinCallable(this.reusables.snippets.iriFromJsonString);
     }
   }
 
   @Memoize()
   override get fromJsonObjectFunction(): AbstractIdentifierType<NamedNode>["fromJsonObjectFunction"] {
     if (this.in_.length > 0) {
-      return new ReferenceCallable(
+      return new BuiltinCallable(
         code`${this.reusables.snippets.iriLiteralFromJsonObject}<${this.valueTypeExpression}>`,
       );
     } else {
-      return new ReferenceCallable(this.reusables.snippets.iriFromJsonObject);
+      return new BuiltinCallable(this.reusables.snippets.iriFromJsonObject);
     }
   }
 
   @Memoize()
   override get toJsonValueFunction(): AbstractIdentifierType<NamedNode>["toJsonValueFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.iriToJsonString}<${this.valueTypeExpression}>`,
     );
   }
 
   @Memoize()
   override get toJsonObjectFunction(): AbstractIdentifierType<NamedNode>["toJsonObjectFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.iriToJsonObject}<${this.valueTypeExpression}>`,
     );
   }
@@ -110,7 +110,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
 
   @Memoize()
   get fromRdfResourceValuesFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.iriFromRdfResourceValues}<${this.valueTypeExpression}>`,
     );
   }
@@ -122,7 +122,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
         code`(identifier: string) => ${this.reusables.snippets.parseIri}(identifier).chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${this.reusables.imports.Right}(identifier as ${this.expression});`))} default: return ${this.reusables.imports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`,
       );
     }
-    return new ReferenceCallable(this.reusables.snippets.parseIri);
+    return new BuiltinCallable(this.reusables.snippets.parseIri);
   }
 
   @Memoize()

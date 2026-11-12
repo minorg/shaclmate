@@ -3,11 +3,11 @@ import type { Snippet } from "./Snippet.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
- * A callable that's a reference to a snippet, an import, or a global function.
+ * A callable that's a reference to a built-in snippet, an import, or a global function.
  *
  * Callers assume the referent carries its own type annotations, so there's no distinction between annotated and unannotated usage.
  */
-export class ReferenceCallable extends AbstractCallable {
+export class BuiltinCallable extends AbstractCallable {
   override readonly annotatedUsage: Code;
   override readonly unannotatedUsage: Code;
 

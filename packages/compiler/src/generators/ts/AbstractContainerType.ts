@@ -6,6 +6,7 @@ import type { BigDecimalType } from "./BigDecimalType.js";
 import type { BigIntType } from "./BigIntType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { BooleanType } from "./BooleanType.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
 import type { DateTimeType } from "./DateTimeType.js";
 import type { DateType } from "./DateType.js";
@@ -20,7 +21,6 @@ import type { LiteralType } from "./LiteralType.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
 import { SchemaObject } from "./SchemaObject.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
@@ -95,7 +95,7 @@ export abstract class AbstractContainerType<
 
   @Memoize()
   protected get itemValidationFunctionDefault(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       this.reusables.snippets.identityValidationFunction,
     );
   }

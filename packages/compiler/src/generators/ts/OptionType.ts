@@ -3,10 +3,10 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractContainerType } from "./AbstractContainerType.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
 import { codeEquals } from "./codeEquals.js";
 import { InlineCallable } from "./InlineCallable.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
 import { SchemaObject } from "./SchemaObject.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -71,14 +71,14 @@ export class OptionType<
 
   @Memoize()
   override get fromJsonValueFunction(): AbstractContainerType<ItemTypeT>["fromJsonValueFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.maybeFromJsonValue}(${this.itemType.fromJsonValueFunction.annotatedUsage})`,
     );
   }
 
   @Memoize()
   override get fromJsonObjectFunction(): AbstractContainerType<ItemTypeT>["fromJsonObjectFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.maybeFromJsonObject}(${this.itemType.fromJsonObjectFunction.annotatedUsage})`,
     );
   }
@@ -128,14 +128,14 @@ export class OptionType<
 
   @Memoize()
   override get toJsonValueFunction(): AbstractContainerType<ItemTypeT>["toJsonValueFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.maybeToJsonValue}(${this.itemType.toJsonValueFunction.annotatedUsage})`,
     );
   }
 
   @Memoize()
   override get toJsonObjectFunction(): AbstractContainerType<ItemTypeT>["toJsonObjectFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.maybeToJsonObject}(${this.itemType.toJsonObjectFunction.annotatedUsage})`,
     );
   }

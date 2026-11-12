@@ -4,7 +4,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import { SchemaObject } from "./SchemaObject.js";
 import type { Typeof } from "./Typeof.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
@@ -35,15 +35,15 @@ export class LiteralType extends AbstractLiteralType {
         },
       ],
     });
-  override readonly filterFunction = new ReferenceCallable(
+  override readonly filterFunction = new BuiltinCallable(
     this.reusables.snippets.filterLiteral,
   );
   override readonly filterType = code`${this.reusables.snippets.LiteralFilter}`;
-  override readonly fromJsonObjectFunction = new ReferenceCallable(
+  override readonly fromJsonObjectFunction = new BuiltinCallable(
     this.reusables.snippets.literalFromJsonObject,
   );
   override readonly fromJsonValueFunction = this.fromJsonObjectFunction;
-  override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
+  override readonly fromRdfResourceValuesFunction = new BuiltinCallable(
     this.reusables.snippets.literalFromRdfResourceValues,
   );
   override readonly jsTypes = [
@@ -52,11 +52,11 @@ export class LiteralType extends AbstractLiteralType {
   override readonly jsonValueType: AbstractLiteralType["jsonValueType"] =
     this.jsonObjectType;
   override readonly kind = "Literal";
-  override readonly toJsonObjectFunction = new ReferenceCallable(
+  override readonly toJsonObjectFunction = new BuiltinCallable(
     this.reusables.snippets.literalToJsonObject,
   );
   override readonly toJsonValueFunction = this.toJsonObjectFunction;
-  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
+  override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
     this.reusables.snippets.literalSparqlWherePatterns,
   );
 

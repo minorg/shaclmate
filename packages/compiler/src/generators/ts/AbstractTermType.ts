@@ -5,9 +5,9 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractBuiltinType } from "./AbstractBuiltinType.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
 import { InlineCallable } from "./InlineCallable.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 /**
@@ -25,13 +25,13 @@ export abstract class AbstractTermType<
     | Literal
     | NamedNode,
 > extends AbstractBuiltinType {
-  readonly equalsFunction = new ReferenceCallable(
+  readonly equalsFunction = new BuiltinCallable(
     this.reusables.snippets.booleanEquals,
   );
   override readonly graphqlArgs: AbstractBuiltinType["graphqlArgs"] =
     Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
-  override readonly hashFunction = new ReferenceCallable(
+  override readonly hashFunction = new BuiltinCallable(
     this.reusables.snippets.hashTerm,
   );
   readonly in_: readonly ConstantTermT[];

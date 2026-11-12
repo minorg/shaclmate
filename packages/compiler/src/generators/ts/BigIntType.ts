@@ -5,8 +5,8 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractNumericType } from "./AbstractNumericType.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BigIntType extends AbstractNumericType<bigint> {
@@ -47,35 +47,35 @@ export class BigIntType extends AbstractNumericType<bigint> {
 
   @Memoize()
   override get fromJsonObjectFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.bigIntFromJsonObject}<${this.expression}>`,
     );
   }
 
   @Memoize()
   override get fromJsonValueFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.bigIntFromJsonString}<${this.jsonValueType.expression}, ${this.expression}>`,
     );
   }
 
   @Memoize()
   override get fromRdfResourceValuesFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.bigIntFromRdfResourceValues}<${this.expression}>`,
     );
   }
 
   @Memoize()
   override get toJsonObjectFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.bigIntToJsonObject}(${this.rdfjsTermExpression(this.datatype)})`,
     );
   }
 
   @Memoize()
   override get toJsonValueFunction(): Callable {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.bigIntToJsonString}`,
     );
   }

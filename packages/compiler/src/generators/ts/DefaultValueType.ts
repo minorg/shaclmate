@@ -6,8 +6,8 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import { InlineCallable } from "./InlineCallable.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
 import type { Type } from "./Type.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -75,14 +75,14 @@ export class DefaultValueType<
 
   @Memoize()
   override get fromJsonObjectFunction(): AbstractContainerType<ItemTypeT>["fromJsonObjectFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.defaultValueFromJsonObject}(${this.itemType.fromJsonObjectFunction.annotatedUsage})`,
     );
   }
 
   @Memoize()
   override get fromJsonValueFunction(): AbstractContainerType<ItemTypeT>["fromJsonValueFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.defaultValueFromJsonValue}(${this.itemType.fromJsonValueFunction.annotatedUsage})`,
     );
   }

@@ -4,7 +4,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
@@ -15,20 +15,20 @@ export abstract class AbstractPrimitiveType<
 > extends AbstractTypedLiteralType<ValueT> {
   protected abstract readonly decodedIn: readonly ValueT[];
 
-  override readonly equalsFunction = new ReferenceCallable(
+  override readonly equalsFunction = new BuiltinCallable(
     this.reusables.snippets.strictEquals,
   );
 
   @Memoize()
   override get toJsonObjectFunction(): AbstractTypedLiteralType<ValueT>["toJsonObjectFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.primitiveToJsonObject}<${this.expression}>(${this.rdfjsTermExpression(this.datatype)})`,
     );
   }
 
   @Memoize()
   override get toJsonValueFunction(): AbstractTypedLiteralType<ValueT>["toJsonValueFunction"] {
-    return new ReferenceCallable(
+    return new BuiltinCallable(
       code`${this.reusables.snippets.primitiveToJsonValue}<${this.expression}>`,
     );
   }

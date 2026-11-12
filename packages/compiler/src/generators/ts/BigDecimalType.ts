@@ -4,7 +4,7 @@ import type { Decimal } from "decimal.js";
 import { Maybe } from "purify-ts";
 
 import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
-import { ReferenceCallable } from "./ReferenceCallable.js";
+import { BuiltinCallable } from "./BuiltinCallable.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
@@ -38,37 +38,37 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
         },
       ],
     });
-  override readonly filterFunction = new ReferenceCallable(
+  override readonly filterFunction = new BuiltinCallable(
     this.reusables.snippets.filterBigDecimal,
   );
   override readonly filterType =
     code`${this.reusables.snippets.NumericFilter}<${this.reusables.imports.BigDecimal}>`;
-  override readonly fromJsonValueFunction = new ReferenceCallable(
+  override readonly fromJsonValueFunction = new BuiltinCallable(
     this.reusables.snippets.bigDecimalFromJsonString,
   );
-  override readonly fromJsonObjectFunction = new ReferenceCallable(
+  override readonly fromJsonObjectFunction = new BuiltinCallable(
     this.reusables.snippets.bigDecimalFromJsonObject,
   );
-  override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
+  override readonly fromRdfResourceValuesFunction = new BuiltinCallable(
     this.reusables.snippets.bigDecimalFromRdfResourceValues,
   );
   override readonly graphqlType = new AbstractTypedLiteralType.GraphqlType(
     code`${this.reusables.imports.GraphQLString}`,
     this.reusables,
   );
-  override readonly hashFunction = new ReferenceCallable(
+  override readonly hashFunction = new BuiltinCallable(
     this.reusables.snippets.hashBigDecimal,
   );
   override readonly kind = "BigDecimal";
   override readonly schemaType =
     code`${this.reusables.snippets.NumericSchema}<${this.reusables.imports.BigDecimal}>`;
-  override readonly toJsonValueFunction = new ReferenceCallable(
+  override readonly toJsonValueFunction = new BuiltinCallable(
     this.reusables.snippets.bigDecimalToJsonString,
   );
-  override readonly toJsonObjectFunction = new ReferenceCallable(
+  override readonly toJsonObjectFunction = new BuiltinCallable(
     code`${this.reusables.snippets.bigDecimalToJsonObject}(${this.rdfjsTermExpression(this.datatype)})`,
   );
-  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
+  override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
     this.reusables.snippets.bigDecimalSparqlWherePatterns,
   );
 
