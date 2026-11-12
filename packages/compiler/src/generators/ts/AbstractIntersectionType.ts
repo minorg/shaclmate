@@ -10,6 +10,7 @@ import { AbstractIntersectionType_valueSparqlConstructTriplesFunctionExpression 
 import { AbstractIntersectionType_valueSparqlWherePatternsFunctionExpression } from "./_AbstractIntersectionType/AbstractIntersectionType_valueSparqlWherePatternsFunction.js";
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
 import type { ObjectType } from "./ObjectType.js";
+import { SchemaObject } from "./SchemaObject.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -108,13 +109,26 @@ export abstract class AbstractIntersectionType<
     );
   }
 
-  protected override get schemaInitializers(): readonly Code[] {
-    return super.schemaInitializers.concat(
-      code`members: [${joinCode(
-        this.members.map(({ type }) => type.schema),
-        { on: "," },
-      )}] as const`,
-    );
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.UserDefinedType> {
+    return new SchemaObject({
+      properties: super.schema.properties.concat(
+        code`members: [${joinCode(
+          this.members.map(({ type }) => type.schema.expression),
+          { on: "," },
+        )}] as const`,
+      ),
+      type: new SchemaObject.UserDefinedType({
+        members: super.schema.type.members.concat(
+          code`members: [${joinCode(
+            this.members.map(({ type }) => type.schema.type.expression),
+            { on: ", " },
+          )}]`,
+        ),
+        name: super.schema.type.name,
+      }),
+      variable: super.schema.variable,
+    });
   }
 
   protected filterTypeExpression(): Code {
@@ -122,16 +136,6 @@ export abstract class AbstractIntersectionType<
       this.members.map(({ type }) => type.filterType),
       { on: " & " },
     );
-  }
-
-  protected schemaTypeExpression(): Code {
-    return code`${{
-      kind: this.kind,
-      members: code`[${joinCode(
-        this.members.map(({ type }) => type.schema.type.expression),
-        { on: ", " },
-      )}]`,
-    }}`;
   }
 }
 

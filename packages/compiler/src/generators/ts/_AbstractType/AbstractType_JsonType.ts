@@ -111,7 +111,7 @@ export function parse(json: unknown): ${this.reusables.imports.Either}<Error, ${
 
     if (this.configuration.features.has("Object.JSON.schema")) {
       moduleDeclarations.push(
-        code`export function schema() { return ${this.schemaExpression} satisfies ${this.schema.type.expressionExpression({ unqualifiedName })}; }`,
+        code`export function schema() { return ${this.schemaExpression} satisfies ${this.schemaTypeExpression({ unqualifiedName })}; }`,
       );
     }
 
@@ -391,7 +391,7 @@ class JsonObjectType extends AbstractJsonType {
         (shorthand) =>
           code`${this.reusables.imports.z}.ZodType<${unqualifiedName}, ${unqualifiedName} | ${shorthand.type.expression}>`,
       )
-      .orDefault(super.schema.type.expressionExpression({ unqualifiedName }));
+      .orDefault(super.schemaTypeExpression({ unqualifiedName }));
   }
 
   private get uiSchemaFunctionExpression() {
