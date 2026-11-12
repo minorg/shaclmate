@@ -149,11 +149,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   @Memoize()
   override get schema(): SchemaObject<SchemaObject.BuiltinType> {
     const thisProperties: Record<string, Code> = {};
-    if (this.hasValues.length > 0) {
-      thisProperties["hasValues"] =
-        code`hasValues: ${arrayOf(...this.hasValues.map((hasValue) => this.rdfjsTermExpression(hasValue)))}`;
-    }
-    if (this.in_.length > 0) {
+    if (this.in_.length > 0 && this.name.isJust()) {
       thisProperties["in"] =
         code`in: inValues.map(inValue => ${this.reusables.imports.dataFactory}.namedNode(inValue))`;
       thisProperties["inValues"] = code`inValues`;

@@ -175,7 +175,7 @@ export abstract class AbstractType extends AbstractConstruct {
         kind: code`kind: ${literalOf(this.kind)}`,
       },
       type: new SchemaObject.AbstractType(this.kind),
-      variable: Maybe.empty(),
+      variable: this.name.map((name) => code`${name}.schema`),
     });
   }
 
@@ -348,7 +348,16 @@ ${joinCode(
   abstract toStringExpression(parameters: { variables: { value: Code } }): Code;
 
   protected staticModuleDeclarations(_name: string): Record<string, Code> {
-    return {};
+    const staticModuleDeclarations: Record<string, Code> = {};
+
+    if (this.configuration.features.has("Object.schema")) {
+      staticModuleDeclarations["schema"] =
+        code`export const schema = ${this.schema.literalExpression};`;
+      staticModuleDeclarations["Schema"] =
+        code`export type Schema = typeof schema;`;
+    }
+
+    return staticModuleDeclarations;
   }
 }
 
