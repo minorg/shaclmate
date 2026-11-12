@@ -1,14 +1,14 @@
 import { Memoize } from "typescript-memoize";
-import { AbstractStructuredType } from "./AbstractStructuredType.js";
+import { AbstractUserDefinedType } from "./AbstractUserDefinedType.js";
 import type { Type } from "./Type.js";
 
 /**
- * Abstract base class for discriminated unions and intersections.
+ * A compound of types, such as an intersection or union.
  */
 export abstract class AbstractCompoundType<
   MemberT extends { type: MemberTypeT },
   MemberTypeT extends Type,
-> extends AbstractStructuredType {
+> extends AbstractUserDefinedType {
   abstract readonly members: readonly MemberT[];
 
   @Memoize()
@@ -24,7 +24,7 @@ export abstract class AbstractCompoundType<
   }
 
   @Memoize()
-  get toRdfResourceValueTypes(): AbstractStructuredType["toRdfResourceValueTypes"] {
+  get toRdfResourceValueTypes(): AbstractUserDefinedType["toRdfResourceValueTypes"] {
     const set = new Set<"BlankNode" | "Literal" | "NamedNode">();
     for (const member of this.members) {
       for (const value of member.type.toRdfResourceValueTypes) {
@@ -36,9 +36,9 @@ export abstract class AbstractCompoundType<
 }
 
 export namespace AbstractCompoundType {
-  export type ConversionFunction = AbstractStructuredType.ConversionFunction;
-  export type DiscriminatedType = AbstractStructuredType.DiscriminatedType;
-  export type GraphqlType = AbstractStructuredType.GraphqlType;
-  export type JsonType = AbstractStructuredType.JsonType;
-  export type JsType = AbstractStructuredType.JsType;
+  export type ConversionFunction = AbstractUserDefinedType.ConversionFunction;
+  export type DiscriminatedType = AbstractUserDefinedType.DiscriminatedType;
+  export type GraphqlType = AbstractUserDefinedType.GraphqlType;
+  export type JsonType = AbstractUserDefinedType.JsonType;
+  export type JsType = AbstractUserDefinedType.JsType;
 }

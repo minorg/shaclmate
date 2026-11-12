@@ -11,7 +11,7 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 /**
  * Abstract base class for AbstractCompoundType and StructType.
  */
-export abstract class AbstractStructuredType extends AbstractType {
+export abstract class AbstractUserDefinedType extends AbstractType {
   @Memoize()
   override get equalsFunction(): Callable {
     return this._function({
@@ -332,7 +332,7 @@ export abstract class AbstractStructuredType extends AbstractType {
   }
 }
 
-export namespace AbstractStructuredType {
+export namespace AbstractUserDefinedType {
   export type ConversionFunction = AbstractType.ConversionFunction;
   export type DiscriminatedType = AbstractType.DiscriminatedType;
   export type GraphqlType = AbstractType.GraphqlType;
