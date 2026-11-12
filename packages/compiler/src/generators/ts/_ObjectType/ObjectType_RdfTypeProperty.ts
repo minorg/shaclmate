@@ -84,7 +84,7 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
       properties: [
         code`fromRdfType: ${this.rdfjsTermExpression(this.fromRdfType)}`,
         code`kind: ${literalOf(this.kind)}`,
-        code`toRdfTypes: ${this.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType))}`,
+        code`toRdfTypes: ${arrayOf(...this.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)))}`,
       ],
       type: new SchemaObject.UserDefinedType({
         members: [
