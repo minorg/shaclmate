@@ -217,27 +217,31 @@ export class ObjectType extends AbstractUserDefinedType {
   override get schema(): SchemaObject<SchemaObject.UserDefinedType> {
     return new SchemaObject({
       properties: super.schema.properties.concat(
-        code`properties: { ${joinCode(
-          this.properties.flatMap((property) =>
-            property.schema
-              .map((schema) => [code`${property.name}: ${schema.expression}`])
-              .orDefault([]),
-          ),
-          { on: "," },
-        )} }`,
-      ),
-      type: new SchemaObject.UserDefinedType({
-        members: super.schema.type.members.concat(
+        () =>
           code`properties: { ${joinCode(
             this.properties.flatMap((property) =>
               property.schema
-                .map((schema) => [
-                  code`${property.name}: ${schema.type.expression}`,
+                .map((propertySchema) => [
+                  code`${property.name}: ${propertySchema.literalExpression}`,
                 ])
                 .orDefault([]),
             ),
             { on: "," },
           )} }`,
+      ),
+      type: new SchemaObject.UserDefinedType({
+        members: super.schema.type.members.concat(
+          () =>
+            code`properties: { ${joinCode(
+              this.properties.flatMap((property) =>
+                property.schema
+                  .map((propertySchema) => [
+                    code`${property.name}: ${propertySchema.type.literalExpression}`,
+                  ])
+                  .orDefault([]),
+              ),
+              { on: "," },
+            )} }`,
         ),
         name: super.schema.type.name,
       }),
