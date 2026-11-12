@@ -197,7 +197,7 @@ export class ObjectType_ShaclProperty<
   private get typeSchemaVariable(): Code {
     return this.schemaVariable
       .map((schemaVariable) => code`${schemaVariable}.type`)
-      .orDefault(this.type.schema.expression);
+      .orDefaultLazy(() => this.type.schema.expression);
   }
 
   override createInitializer({

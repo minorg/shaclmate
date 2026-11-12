@@ -41,7 +41,7 @@ export class SchemaObject<TypeT extends SchemaObject.Type> {
    */
   @Memoize()
   get expression(): Code {
-    return this.variable.orDefault(this.literalExpression);
+    return this.variable.orDefaultLazy(() => this.literalExpression);
   }
 
   /**
@@ -120,7 +120,7 @@ export namespace SchemaObject {
      */
     @Memoize()
     get expression(): Code {
-      return this.name.orDefault(this.literalExpression);
+      return this.name.orDefaultLazy(() => this.literalExpression);
     }
 
     /**
