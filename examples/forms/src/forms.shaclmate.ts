@@ -892,13 +892,13 @@ export namespace FormStruct {
         $sequenceRecord({
           $identifier: $identifierFromJsonString(jsonObject["@id"], {
             ...options,
-            schema: { kind: "Identifier" as const },
+            schema: { kind: "Identifier" } as const,
           }),
           requiredStringProperty: $stringFromJsonString<string>(
             jsonObject["requiredStringProperty"],
             {
               ...options,
-              schema: { kind: "String" as const, datatype: $xsd_string },
+              schema: { kind: "String", datatype: $xsd_string } as const,
             },
           ),
         }).chain(((parameters) =>
@@ -1111,73 +1111,75 @@ export namespace FormStruct {
   }
 
   export const schema = {
+    kind: "Object",
     properties: {
       $identifier: {
         kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
+        type: { kind: "Identifier" } as const,
+      } as const,
       emptyStringSetProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/emptyStringSetProperty",
         ),
         type: {
-          kind: "Set" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
+          kind: "Set",
+          itemType: { kind: "String", datatype: $xsd_string } as const,
+        } as const,
+      } as const,
       nestedStructProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/nestedStructProperty"),
         type: {
+          kind: "Object",
           properties: {
             $identifier: {
               kind: "Identifier",
-              type: { kind: "Identifier" as const },
-            },
+              type: { kind: "Identifier" } as const,
+            } as const,
             requiredStringProperty: {
               kind: "Shacl",
               path: dataFactory.namedNode(
                 "http://example.com/requiredStringProperty",
               ),
-              type: { kind: "String" as const, datatype: $xsd_string },
-            },
+              type: { kind: "String", datatype: $xsd_string } as const,
+            } as const,
           },
         } as const,
-      },
+      } as const,
       nonEmptyStringSetProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/nonEmptyStringSetProperty",
         ),
         type: {
-          kind: "Set" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
+          kind: "Set",
+          itemType: { kind: "String", datatype: $xsd_string } as const,
           minCount: 1,
-        },
-      },
+        } as const,
+      } as const,
       optionalStringProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
         type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, datatype: $xsd_string },
-        },
-      },
+          kind: "Option",
+          itemType: { kind: "String", datatype: $xsd_string } as const,
+        } as const,
+      } as const,
       requiredIntProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/requiredIntProperty"),
-        type: { kind: "Int" as const, datatype: $xsd_int },
-      },
+        type: { kind: "Int", datatype: $xsd_int } as const,
+      } as const,
       requiredStringProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
-        type: { kind: "String" as const, datatype: $xsd_string },
-      },
+        type: { kind: "String", datatype: $xsd_string } as const,
+      } as const,
     },
   } as const;
 

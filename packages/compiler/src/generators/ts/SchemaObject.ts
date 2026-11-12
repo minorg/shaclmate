@@ -49,7 +49,7 @@ export class SchemaObject<TypeT extends SchemaObject.Type> {
    */
   @Memoize()
   get literalExpression(): Code {
-    return code`{ ${joinCode(this.properties.concat(), { on: ", " })} }`;
+    return code`{ ${joinCode(this.properties.concat(), { on: ", " })} } as const`;
   }
 
   toString(): string {

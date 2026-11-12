@@ -8,7 +8,7 @@ import type { Callable } from "./Callable.js";
 import { codeEquals } from "./codeEquals.js";
 import { InlineCallable } from "./InlineCallable.js";
 import { SchemaObject } from "./SchemaObject.js";
-import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class OptionType<
   ItemTypeT extends OptionType.ItemType,
