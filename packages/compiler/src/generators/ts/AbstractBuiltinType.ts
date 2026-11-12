@@ -5,7 +5,11 @@ import type { SchemaObject } from "./SchemaObject.js";
  * Abstract base class for built-in types (container types, term types, et al.) -- anything that is not user-defined.
  */
 export abstract class AbstractBuiltinType extends AbstractType {
-  abstract override readonly schema: SchemaObject<SchemaObject.BuiltinType>;
+  override get schema(): SchemaObject<
+    SchemaObject.AbstractType | SchemaObject.BuiltinType
+  > {
+    return super.schema;
+  }
 }
 
 export namespace AbstractBuiltinType {

@@ -12,7 +12,7 @@ import type {
 import { AbstractType_JsType } from "./_AbstractType/AbstractType_JsType.js";
 import { AbstractConstruct } from "./AbstractConstruct.js";
 import type { Callable } from "./Callable.js";
-import type { SchemaObject } from "./SchemaObject.js";
+import { SchemaObject } from "./SchemaObject.js";
 import {
   type Code,
   code,
@@ -168,7 +168,14 @@ export abstract class AbstractType extends AbstractConstruct {
   /**
    * TypeScript object describing this type, for runtime use.
    */
-  abstract readonly schema: SchemaObject;
+
+  get schema(): SchemaObject<SchemaObject.Type> {
+    return new SchemaObject({
+      properties: [code`kind: ${literalOf(this.kind)} as const`],
+      type: SchemaObject.AbstractType.instance,
+      variable: Maybe.empty(),
+    });
+  }
 
   /**
    * Identifier of the shape this type was derived from.

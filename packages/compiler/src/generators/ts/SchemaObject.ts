@@ -55,6 +55,19 @@ export class SchemaObject<TypeT extends SchemaObject.Type> {
 
 export namespace SchemaObject {
   /**
+   * Placeholder for abstract base classes.
+   */
+  export class AbstractType {
+    static readonly instance = new AbstractType();
+
+    private constructor() {}
+
+    get expression(): Code {
+      throw new Error("should never be called");
+    }
+  }
+
+  /**
    * A built-in schema object type from a snippet or import.
    */
   export class BuiltinType {
@@ -107,5 +120,5 @@ export namespace SchemaObject {
     }
   }
 
-  export type Type = BuiltinType | UserDefinedType;
+  export type Type = AbstractType | BuiltinType | UserDefinedType;
 }

@@ -4,8 +4,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { Callable } from "./Callable.js";
 import { InlineCallable } from "./InlineCallable.js";
-import { SchemaObject } from "./SchemaObject.js";
-import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class for ListType and SetType.
@@ -67,21 +66,6 @@ export abstract class AbstractCollectionType<
 
   override get mutable(): boolean {
     return this._mutable || this.itemType.mutable;
-  }
-
-  @Memoize()
-  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
-    return new SchemaObject({
-      properties: [code`kind: ${literalOf(this.kind)} as const`].concat(
-        this.recursive || this.referencesNamedType
-          ? code`get itemType() { return ${this.itemType.schema.expression}; }`
-          : code`itemType: ${this.itemType.schema.expression}`,
-      ),
-      type: new SchemaObject.BuiltinType(
-        code`${this.reusables.snippets.CollectionSchema}<${this.itemType.schema.type.expression}>`,
-      ),
-      variable: Maybe.empty(),
-    });
   }
 
   @Memoize()

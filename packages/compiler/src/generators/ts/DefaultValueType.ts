@@ -8,6 +8,7 @@ import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import { BuiltinCallable } from "./BuiltinCallable.js";
 import { InlineCallable } from "./InlineCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import type { Type } from "./Type.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -18,8 +19,6 @@ export class DefaultValueType<
   override readonly equalsFunction = this.itemType.equalsFunction;
   override readonly filterFunction = this.itemType.filterFunction;
   override readonly filterType = this.itemType.filterType;
-  override readonly schemaType =
-    code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.schema.type.expression}>`;
   override readonly fromRdfResourceValuesFunction = new InlineCallable(
     code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schema.type.expression}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
   );
@@ -87,10 +86,17 @@ export class DefaultValueType<
     );
   }
 
-  protected override get schemaInitializers() {
-    return super.schemaInitializers.concat(
-      code`defaultValue: ${this.rdfjsTermExpression(this.defaultValue)}`,
-    );
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    return new SchemaObject({
+      properties: super.schema.properties.concat(
+        code`defaultValue: ${this.rdfjsTermExpression(this.defaultValue)}`,
+      ),
+      type: new SchemaObject.BuiltinType(
+        code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.schema.type.expression}>`,
+      ),
+      variable: super.schema.variable,
+    });
   }
 
   @Memoize()

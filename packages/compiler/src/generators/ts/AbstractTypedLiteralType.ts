@@ -46,7 +46,9 @@ export abstract class AbstractTypedLiteralType<
   }
 
   @Memoize()
-  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+  override get schema(): SchemaObject<
+    SchemaObject.AbstractType | SchemaObject.BuiltinType
+  > {
     return new SchemaObject({
       ...super.schema,
       properties: super.schema.properties.concat(

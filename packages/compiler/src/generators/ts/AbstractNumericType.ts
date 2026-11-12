@@ -3,6 +3,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
@@ -29,8 +30,13 @@ export abstract class AbstractNumericType<
   }
 
   @Memoize()
-  override get schemaType(): Code {
-    return code`${this.reusables.snippets.NumericSchema}<${this.expression}>`;
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    return new SchemaObject({
+      ...super.schema,
+      type: new SchemaObject.BuiltinType(
+        code`${this.reusables.snippets.NumericSchema}<${this.expression}>`,
+      ),
+    });
   }
 
   @Memoize()

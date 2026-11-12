@@ -32,9 +32,9 @@ export abstract class AbstractUserDefinedType extends AbstractType {
   }
 
   @Memoize()
-  get schema(): SchemaObject<SchemaObject.UserDefinedType> {
+  override get schema(): SchemaObject<SchemaObject.UserDefinedType> {
     return new SchemaObject({
-      properties: [code`kind: ${literalOf(this.kind)} as const`],
+      ...super.schema,
       type: new SchemaObject.UserDefinedType({
         members: [code`kind: ${literalOf(this.kind)}`],
         name: this.name.map((name) => code`${name}.Schema`),
