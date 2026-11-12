@@ -8,6 +8,7 @@ import { InlineCallable } from "./InlineCallable.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { OptionType } from "./OptionType.js";
+import { SchemaObject } from "./SchemaObject.js";
 import type { SetType } from "./SetType.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -144,14 +145,6 @@ export abstract class AbstractLazyType<
     return this.partialType.referencesNamedType;
   }
 
-  @Memoize()
-  override get schemaType(): Code {
-    return code`${{
-      kind: this.kind,
-      partialType: this.partialType.schema.type.expression,
-    }}`;
-  }
-
   override get toJsonObjectFunction(): AbstractBuiltinType["toJsonObjectFunction"] {
     return new InlineCallable(
       code`(value) => ${this.partialType.toJsonObjectFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
@@ -194,10 +187,19 @@ export abstract class AbstractLazyType<
     );
   }
 
-  protected override get schemaInitializers(): readonly Code[] {
-    return super.schemaInitializers.concat(
-      code`get partialType() { return ${this.partialType.schema}; }`,
-    );
+  @Memoize()
+  override get schema(): SchemaObject<
+    SchemaObject.AbstractType | SchemaObject.BuiltinType
+  > {
+    return new SchemaObject({
+      ...super.schema,
+      properties: super.schema.properties.concat(
+        code`get partialType() { return ${this.partialType.schema.expression}; }`,
+      ),
+      type: new SchemaObject.BuiltinType(
+        code`${this.reusables.snippets.LazySchema}<${this.partialType.schema.type.expression}>`,
+      ),
+    });
   }
 
   override toLoggableExpression({

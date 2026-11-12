@@ -36,6 +36,7 @@ import { snippets_LangStringJsonObject } from "./_snippets/snippets_LangStringJs
 import { snippets_LangStringSchema } from "./_snippets/snippets_LangStringSchema.js";
 import { snippets_Lazy } from "./_snippets/snippets_Lazy.js";
 import { snippets_LazyOption } from "./_snippets/snippets_LazyOption.js";
+import { snippets_LazySchema } from "./_snippets/snippets_LazySchema.js";
 import { snippets_LazySet } from "./_snippets/snippets_LazySet.js";
 import { snippets_LiteralFilter } from "./_snippets/snippets_LiteralFilter.js";
 import { snippets_LiteralJsonObject } from "./_snippets/snippets_LiteralJsonObject.js";
@@ -437,6 +438,11 @@ export class Snippets {
   @Memoize()
   get LazyOption(): Snippet {
     return this.snippet(snippets_LazyOption);
+  }
+
+  @Memoize()
+  get LazySchema(): Snippet {
+    return this.snippet(snippets_LazySchema);
   }
 
   @Memoize()

@@ -107,12 +107,7 @@ export abstract class ObjectType_AbstractProperty {
   /**
    * TypeScript object describing this property, for runtime use.
    */
-  abstract readonly schema: Maybe<SchemaObject>;
-
-  /**
-   * TypeScript type describing .schema.
-   */
-  abstract readonly schemaType: Maybe<Code>;
+  abstract readonly schema: Maybe<SchemaObject<SchemaObject.Type>>;
 
   constructor({
     configuration,
