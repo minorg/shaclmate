@@ -194,10 +194,10 @@ export class ObjectType_ShaclProperty<
   }
 
   @Memoize()
-  private get schemaTypeExpression(): Code {
+  private get typeSchemaVariable(): Code {
     return this.schemaVariable
       .map((schemaVariable) => code`${schemaVariable}.type`)
-      .orDefault(this._schema.expression);
+      .orDefault(this.type.schema.expression);
   }
 
   override createInitializer({
@@ -213,11 +213,11 @@ export class ObjectType_ShaclProperty<
       this.type.validationFunction.extract()?.unannotatedUsage;
     let rhs: Code;
     if (conversionFunction && validationFunction) {
-      rhs = code`${conversionFunction}(${parameterVariable}, ${defaultNamespaceVariable}).chain(value => ${validationFunction}(${this.schemaTypeExpression}, value))`;
+      rhs = code`${conversionFunction}(${parameterVariable}, ${defaultNamespaceVariable}).chain(value => ${validationFunction}(${this.typeSchemaVariable}, value))`;
     } else if (conversionFunction) {
       rhs = code`${conversionFunction}(${parameterVariable}, ${defaultNamespaceVariable})`;
     } else if (validationFunction) {
-      rhs = code`${validationFunction}(${this.schemaTypeExpression}, ${parameterVariable})`;
+      rhs = code`${validationFunction}(${this.typeSchemaVariable}, ${parameterVariable})`;
     } else {
       rhs = code`${this.reusables.imports.Either}.of(${parameterVariable})`;
     }
@@ -253,7 +253,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["fromJsonObjectInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: (${this.type.fromJsonValueFunction.unannotatedUsage})(${variables.jsonObject}["${this.name}"], { ...${variables.options}, schema: ${this.schemaTypeExpression} })`,
+      code`${this.name}: (${this.type.fromJsonValueFunction.unannotatedUsage})(${variables.jsonObject}["${this.name}"], { ...${variables.options}, schema: ${this.typeSchemaVariable} })`,
     );
   }
 

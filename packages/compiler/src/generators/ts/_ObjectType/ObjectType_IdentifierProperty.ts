@@ -193,7 +193,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     ObjectType_AbstractProperty["fromJsonObjectInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: (${this.type.fromJsonValueFunction.unannotatedUsage})(${variables.jsonObject}["@id"], { ...${variables.options}, schema: ${this.schemaTypeExpression} })`,
+      code`${this.name}: (${this.type.fromJsonValueFunction.unannotatedUsage})(${variables.jsonObject}["@id"], { ...${variables.options}, schema: ${this.typeSchemaVariable} })`,
     );
   }
 
@@ -205,7 +205,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     return Maybe.of(
       code`${this.name}: ${this.type.fromRdfResourceValuesFunction.annotatedUsage}(
           ${this.reusables.snippets.rdfResourceIdentifierValues}(${variables.focusResource}),
-          { ...${variables.options}, focusResource: ${variables.focusResource}, propertyPath: ${this.rdfjsTermExpression(rdf.subject)}, schema: ${this.schemaTypeExpression} }
+          { ...${variables.options}, focusResource: ${variables.focusResource}, propertyPath: ${this.rdfjsTermExpression(rdf.subject)}, schema: ${this.typeSchemaVariable} }
         ).chain(values => values.head())`,
     );
   }
@@ -236,7 +236,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
         ignoreRdfType: true, // Unused
         preferredLanguages: variables.preferredLanguages,
         propertyPatterns: code`[]`,
-        schema: this.schemaTypeExpression,
+        schema: this.typeSchemaVariable,
         valueVariable: variables.focusIdentifier,
         variablePrefix: variables.variablePrefix, // Unused
       }})`,
@@ -293,9 +293,9 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
   }
 
   @Memoize()
-  private schemaTypeExpression(): Code {
+  private get typeSchemaVariable(): Code {
     return this.schemaVariable
       .map((schemaVariable) => code`${schemaVariable}.type`)
-      .orDefault(this._schema.expression);
+      .orDefault(this.type.schema.expression);
   }
 }
