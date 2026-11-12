@@ -29,17 +29,7 @@ export function ObjectType_jsonObjectType(
 
     shorthand = {
       transformer: new InlineCallable(
-        code`\
-(idString, ctx) => ${identifierProperty.type.fromJsonValueFunction.unannotatedUsage}(idString, { schema: ${identifierProperty.schema.unsafeCoerce().expression} })
-  .map(id => ({ ${literalOf(identifierProperty.jsonObjectMember.unsafeCoerce().name)}: id }))
-  .mapLeft(error => {
-    ctx.issues.push({
-      code: "custom",
-      message: error.message,
-      input: idString,
-    });
-    return ${this.reusables.imports.z}.NEVER;
-  })`,
+        code`(id) => ({ ${literalOf(identifierProperty.jsonObjectMember.unsafeCoerce().name)}: id })`,
       ),
       type: identifierProperty.type.jsonValueType,
     };
