@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
-import { AbstractType } from "./AbstractType.js";
+import { AbstractBuiltinType } from "./AbstractBuiltinType.js";
 import type { BigDecimalType } from "./BigDecimalType.js";
 import type { BigIntType } from "./BigIntType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -32,8 +32,8 @@ import { code } from "./ts-poet-wrapper.js";
  */
 export abstract class AbstractContainerType<
   ItemTypeT extends AbstractContainerType.ItemType,
-> extends AbstractType {
-  override readonly discriminatedType: Maybe<AbstractType.DiscriminatedType> =
+> extends AbstractBuiltinType {
+  override readonly discriminatedType: Maybe<AbstractBuiltinType.DiscriminatedType> =
     Maybe.empty();
   abstract override readonly kind: "DefaultValue" | "List" | "Option" | "Set";
 
@@ -49,7 +49,7 @@ export abstract class AbstractContainerType<
     ...superParameters
   }: {
     itemType: ItemTypeT;
-  } & ConstructorParameters<typeof AbstractType>[0]) {
+  } & ConstructorParameters<typeof AbstractBuiltinType>[0]) {
     super(superParameters);
     this.itemType = itemType;
   }
@@ -81,7 +81,7 @@ export abstract class AbstractContainerType<
   }
 
   @Memoize()
-  protected get itemConversionFunctionDefault(): AbstractType.ConversionFunction {
+  protected get itemConversionFunctionDefault(): AbstractBuiltinType.ConversionFunction {
     return {
       code: code`${this.reusables.snippets.identityConversionFunction}`,
       sourceTypes: [
@@ -102,10 +102,10 @@ export abstract class AbstractContainerType<
 }
 
 export namespace AbstractContainerType {
-  export type ConversionFunction = AbstractType.ConversionFunction;
-  export type DiscriminatedType = AbstractType.DiscriminatedType;
-  export const GraphqlType = AbstractType.GraphqlType;
-  export type GraphqlType = AbstractType.GraphqlType;
+  export type ConversionFunction = AbstractBuiltinType.ConversionFunction;
+  export type DiscriminatedType = AbstractBuiltinType.DiscriminatedType;
+  export const GraphqlType = AbstractBuiltinType.GraphqlType;
+  export type GraphqlType = AbstractBuiltinType.GraphqlType;
 
   export type ItemType =
     | BigDecimalType
@@ -160,5 +160,5 @@ export namespace AbstractContainerType {
     }
   }
 
-  export type JsonType = AbstractType.JsonType;
+  export type JsonType = AbstractBuiltinType.JsonType;
 }

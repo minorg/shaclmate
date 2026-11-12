@@ -4,7 +4,7 @@ import { NodeKind } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
-import { AbstractType } from "./AbstractType.js";
+import { AbstractBuiltinType } from "./AbstractBuiltinType.js";
 import type { Callable } from "./Callable.js";
 import { InlineCallable } from "./InlineCallable.js";
 import { ReferenceCallable } from "./ReferenceCallable.js";
@@ -24,11 +24,12 @@ export abstract class AbstractTermType<
     | BlankNode
     | Literal
     | NamedNode,
-> extends AbstractType {
+> extends AbstractBuiltinType {
   readonly equalsFunction = new ReferenceCallable(
     this.reusables.snippets.booleanEquals,
   );
-  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: AbstractBuiltinType["graphqlArgs"] =
+    Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
   override readonly hashFunction = new ReferenceCallable(
     this.reusables.snippets.hashTerm,
@@ -37,7 +38,7 @@ export abstract class AbstractTermType<
   override readonly mutable: boolean = false;
   abstract readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly recursive = false;
-  override readonly validationFunction: AbstractType["validationFunction"] =
+  override readonly validationFunction: AbstractBuiltinType["validationFunction"] =
     Maybe.empty();
 
   constructor({
@@ -47,7 +48,7 @@ export abstract class AbstractTermType<
   }: {
     hasValues: readonly ConstantTermT[];
     in_: readonly ConstantTermT[];
-  } & ConstructorParameters<typeof AbstractType>[0]) {
+  } & ConstructorParameters<typeof AbstractBuiltinType>[0]) {
     super(superParameters);
     this.hasValues = hasValues;
     this.in_ = in_;
@@ -89,13 +90,15 @@ export abstract class AbstractTermType<
 
   override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
+  }: Parameters<
+    AbstractBuiltinType["toRdfResourceValuesExpression"]
+  >[0]): Code {
     return code`[${variables.value}]`;
   }
 
   override toStringExpression({
     variables,
-  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
+  }: Parameters<AbstractBuiltinType["toStringExpression"]>[0]): Code {
     return code`${variables.value}.toString()`;
   }
 
@@ -110,10 +113,10 @@ export abstract class AbstractTermType<
 }
 
 export namespace AbstractTermType {
-  export type ConversionFunction = AbstractType.ConversionFunction;
-  export type DiscriminatedType = AbstractType.DiscriminatedType;
-  export const GraphqlType = AbstractType.GraphqlType;
-  export type GraphqlType = AbstractType.GraphqlType;
-  export type JsType = AbstractType.JsType;
-  export type JsonType = AbstractType.JsonType;
+  export type ConversionFunction = AbstractBuiltinType.ConversionFunction;
+  export type DiscriminatedType = AbstractBuiltinType.DiscriminatedType;
+  export const GraphqlType = AbstractBuiltinType.GraphqlType;
+  export type GraphqlType = AbstractBuiltinType.GraphqlType;
+  export type JsType = AbstractBuiltinType.JsType;
+  export type JsonType = AbstractBuiltinType.JsonType;
 }

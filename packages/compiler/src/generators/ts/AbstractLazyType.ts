@@ -2,7 +2,7 @@ import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
-import { AbstractType } from "./AbstractType.js";
+import { AbstractBuiltinType } from "./AbstractBuiltinType.js";
 import type { Callable } from "./Callable.js";
 import { InlineCallable } from "./InlineCallable.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
@@ -14,7 +14,7 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 export abstract class AbstractLazyType<
   PartialTypeT extends AbstractLazyType.PartialTypeConstraint,
   ResolveTypeT extends AbstractLazyType.ResolveTypeConstraint,
-> extends AbstractType {
+> extends AbstractBuiltinType {
   protected abstract readonly partialItemType: AbstractLazyType.ItemTypeConstraint;
   protected abstract readonly resolveItemType: AbstractLazyType.ItemTypeConstraint;
   protected abstract readonly runtimeClass: {
@@ -23,13 +23,13 @@ export abstract class AbstractLazyType<
     readonly rawName: Code;
   };
 
-  override readonly discriminatedType: AbstractType["discriminatedType"] =
+  override readonly discriminatedType: AbstractBuiltinType["discriminatedType"] =
     Maybe.empty();
   abstract override readonly kind: "Lazy" | "LazyOption" | "LazySet";
   override readonly mutable = false;
   readonly partialType: PartialTypeT;
   readonly resolveType: ResolveTypeT;
-  override readonly validationFunction: AbstractType["validationFunction"] =
+  override readonly validationFunction: AbstractBuiltinType["validationFunction"] =
     Maybe.empty();
 
   constructor({
@@ -39,7 +39,7 @@ export abstract class AbstractLazyType<
   }: {
     partialType: PartialTypeT;
     resolveType: ResolveTypeT;
-  } & ConstructorParameters<typeof AbstractType>[0]) {
+  } & ConstructorParameters<typeof AbstractBuiltinType>[0]) {
     super(superParameters);
     this.partialType = partialType;
     this.resolveType = resolveType;
@@ -69,7 +69,7 @@ export abstract class AbstractLazyType<
     return this.partialType.filterType;
   }
 
-  override get fromJsonObjectFunction(): AbstractType["fromJsonObjectFunction"] {
+  override get fromJsonObjectFunction(): AbstractBuiltinType["fromJsonObjectFunction"] {
     return new InlineCallable(
       code`(jsonObject, fromJsonObjectOptions) => ${this.partialType.fromJsonObjectFunction.annotatedUsage}(jsonObject, { ...fromJsonObjectOptions, schema: fromJsonObjectOptions.schema.partialType })
         .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.resolverFunctionExpression({ variables: { factoryFunctionOptions: code`fromJsonObjectOptions` } })} }))`,
@@ -79,7 +79,7 @@ export abstract class AbstractLazyType<
     );
   }
 
-  override get fromJsonValueFunction(): AbstractType["fromJsonValueFunction"] {
+  override get fromJsonValueFunction(): AbstractBuiltinType["fromJsonValueFunction"] {
     return new InlineCallable(
       code`(jsonValue, fromJsonValueOptions) => ${this.partialType.fromJsonValueFunction.annotatedUsage}(jsonValue, { ...fromJsonValueOptions, schema: fromJsonValueOptions.schema.partialType })
         .map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.resolverFunctionExpression({ variables: { factoryFunctionOptions: code`fromJsonValueOptions` } })} }))`,
@@ -102,7 +102,7 @@ export abstract class AbstractLazyType<
     );
   }
 
-  override get graphqlType(): AbstractType.GraphqlType {
+  override get graphqlType(): AbstractBuiltinType.GraphqlType {
     return this.resolveType.graphqlType;
   }
 
@@ -118,7 +118,7 @@ export abstract class AbstractLazyType<
   }
 
   @Memoize()
-  override get jsTypes(): readonly AbstractType.JsType[] {
+  override get jsTypes(): readonly AbstractBuiltinType.JsType[] {
     return [
       {
         className: this.runtimeClass.rawName,
@@ -128,11 +128,11 @@ export abstract class AbstractLazyType<
     ];
   }
 
-  get jsonObjectType(): AbstractType["jsonObjectType"] {
+  get jsonObjectType(): AbstractBuiltinType["jsonObjectType"] {
     return this.partialType.jsonObjectType;
   }
 
-  get jsonValueType(): AbstractType["jsonValueType"] {
+  get jsonValueType(): AbstractBuiltinType["jsonValueType"] {
     return this.partialType.jsonValueType;
   }
 
@@ -152,7 +152,7 @@ export abstract class AbstractLazyType<
     }}`;
   }
 
-  override get toJsonObjectFunction(): AbstractType["toJsonObjectFunction"] {
+  override get toJsonObjectFunction(): AbstractBuiltinType["toJsonObjectFunction"] {
     return new InlineCallable(
       code`(value) => ${this.partialType.toJsonObjectFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
       {
@@ -161,7 +161,7 @@ export abstract class AbstractLazyType<
     );
   }
 
-  override get toJsonValueFunction(): AbstractType["toJsonValueFunction"] {
+  override get toJsonValueFunction(): AbstractBuiltinType["toJsonValueFunction"] {
     return new InlineCallable(
       code`(value) => ${this.partialType.toJsonValueFunction.unannotatedUsage}(value.${this.runtimeClass.partialPropertyName})`,
       {
@@ -170,7 +170,7 @@ export abstract class AbstractLazyType<
     );
   }
 
-  get toRdfResourceValueTypes(): AbstractType["toRdfResourceValueTypes"] {
+  get toRdfResourceValueTypes(): AbstractBuiltinType["toRdfResourceValueTypes"] {
     return this.partialType.toRdfResourceValueTypes;
   }
 
@@ -202,7 +202,7 @@ export abstract class AbstractLazyType<
 
   override toLoggableExpression({
     variables,
-  }: Parameters<AbstractType["toLoggableExpression"]>[0]): Code {
+  }: Parameters<AbstractBuiltinType["toLoggableExpression"]>[0]): Code {
     return this.partialType.toLoggableExpression({
       variables: {
         value: code`${variables.value}.${this.runtimeClass.partialPropertyName}`,
@@ -212,7 +212,9 @@ export abstract class AbstractLazyType<
 
   override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
+  }: Parameters<
+    AbstractBuiltinType["toRdfResourceValuesExpression"]
+  >[0]): Code {
     return this.partialType.toRdfResourceValuesExpression({
       variables: {
         ...variables,
@@ -223,7 +225,7 @@ export abstract class AbstractLazyType<
 
   override toStringExpression({
     variables,
-  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
+  }: Parameters<AbstractBuiltinType["toStringExpression"]>[0]): Code {
     return this.partialType.toStringExpression({
       variables: {
         value: code`${variables.value}.${this.runtimeClass.partialPropertyName}`,
@@ -318,9 +320,9 @@ export namespace AbstractLazyType {
     | SetType<ItemTypeConstraint>;
   export type ResolveTypeConstraint = PartialTypeConstraint;
 
-  export type ConversionFunction = AbstractType.ConversionFunction;
-  export type DiscriminatedType = AbstractType.DiscriminatedType;
-  export const GraphqlType = AbstractType.GraphqlType;
-  export type GraphqlType = AbstractType.GraphqlType;
-  export type JsonType = AbstractType.JsonType;
+  export type ConversionFunction = AbstractBuiltinType.ConversionFunction;
+  export type DiscriminatedType = AbstractBuiltinType.DiscriminatedType;
+  export const GraphqlType = AbstractBuiltinType.GraphqlType;
+  export type GraphqlType = AbstractBuiltinType.GraphqlType;
+  export type JsonType = AbstractBuiltinType.JsonType;
 }

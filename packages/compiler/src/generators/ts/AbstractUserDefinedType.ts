@@ -9,7 +9,7 @@ import { InlineCallable } from "./InlineCallable.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
- * Abstract base class for AbstractCompoundType and StructType.
+ * Abstract base class for user-defined types (compound types, object types).
  */
 export abstract class AbstractUserDefinedType extends AbstractType {
   @Memoize()
