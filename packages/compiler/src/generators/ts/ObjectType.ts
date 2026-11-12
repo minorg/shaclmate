@@ -38,6 +38,7 @@ import {
 } from "./_ObjectType/ObjectType_hashFunction.js";
 import { ObjectType_IdentifierProperty } from "./_ObjectType/ObjectType_IdentifierProperty.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
+import { ObjectType_jsonObjectType } from "./_ObjectType/ObjectType_jsonObjectType.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import type { ObjectType_Property } from "./_ObjectType/ObjectType_Property.js";
 import { ObjectType_RdfTypeProperty } from "./_ObjectType/ObjectType_RdfTypeProperty.js";
@@ -70,7 +71,6 @@ import type { BlankNodeType } from "./BlankNodeType.js";
 import type { Callable } from "./Callable.js";
 import { DeclaredCallable } from "./DeclaredCallable.js";
 import type { IdentifierType } from "./IdentifierType.js";
-import { InlineCallable } from "./InlineCallable.js";
 import type { IriType } from "./IriType.js";
 import { SchemaObject } from "./SchemaObject.js";
 import type { Type } from "./Type.js";
@@ -210,51 +210,7 @@ export class ObjectType extends AbstractUserDefinedType {
 
   @Memoize()
   override get jsonObjectType(): AbstractUserDefinedType["jsonObjectType"] {
-    // If the JSON object type is { "@id": string }, allow a shorthand of string => that type.
-    let shorthand:
-      | { transformer: Callable; type: AbstractUserDefinedType.JsonType }
-      | undefined;
-    this.identifierProperty.ifJust((identifierProperty) => {
-      const fromJsonObjectInitializerParameters = {
-        variables: { context: code``, jsonObject: code``, options: code`` },
-      };
-      if (
-        this.properties.some(
-          (property) =>
-            !Object.is(property, identifierProperty) &&
-            property
-              .fromJsonObjectInitializer(fromJsonObjectInitializerParameters)
-              .isJust(),
-        )
-      ) {
-        return;
-      }
-
-      shorthand = {
-        transformer: new InlineCallable(
-          code`\
-(idString, ctx) => ${identifierProperty.type.fromJsonValueFunction.unannotatedUsage}(idString, { schema: ${identifierProperty.schema} })
-  .map(id => ({ ${literalOf(identifierProperty.jsonObjectMember.unsafeCoerce().name)}: id }))
-  .mapLeft(error => {
-    ctx.issues.push({
-      code: "custom",
-      message: error.message,
-      input: idString,
-    });
-    return ${this.reusables.imports.z}.NEVER;
-  })`,
-        ),
-        type: identifierProperty.type.jsonValueType,
-      };
-    });
-
-    return this.jsonTypeFactory.createJsonObjectType(
-      this.properties.flatMap((property) => property.jsonObjectMember.toList()),
-      {
-        name: this.name.map((name) => [name, "Json"]).extract(),
-        shorthand,
-      },
-    );
+    return ObjectType_jsonObjectType.call(this);
   }
 
   @Memoize()
