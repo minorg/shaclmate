@@ -116,7 +116,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     return new SchemaObject({
       properties: [
         code`kind: ${literalOf(this.kind)}`,
-        code`type: ${this.type.schema}`,
+        code`type: ${this.type.schema.expression}`,
       ],
       type: new SchemaObject.UserDefinedType({
         members: [

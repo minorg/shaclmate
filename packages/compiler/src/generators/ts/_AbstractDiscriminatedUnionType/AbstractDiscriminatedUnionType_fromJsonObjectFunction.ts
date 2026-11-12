@@ -15,7 +15,7 @@ ${joinCode(
     const mapAndWrapValue = codeEquals(wrappedValue, valueVariable)
       ? ""
       : code`.map(${valueVariable} => (${wrappedValue}))`;
-    return code`if (value.${this.configuration.objectDiscriminantProperty.jsonName} === ${literalOf(primaryDiscriminantValue)}) { return ${type.fromJsonObjectFunction.unannotatedUsage}(value, { ...options, schema: ${this.schema}.members[${literalOf(primaryDiscriminantValue)}].type })${mapAndWrapValue} as ${this.reusables.imports.Either}<Error, ${this.expression}>; }`;
+    return code`if (value.${this.configuration.objectDiscriminantProperty.jsonName} === ${literalOf(primaryDiscriminantValue)}) { return ${type.fromJsonObjectFunction.unannotatedUsage}(value, { ...options, schema: ${this.schema.expression}.members[${literalOf(primaryDiscriminantValue)}].type })${mapAndWrapValue} as ${this.reusables.imports.Either}<Error, ${this.expression}>; }`;
   }),
 )}
 

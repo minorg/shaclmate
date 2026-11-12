@@ -30,7 +30,7 @@ export function ObjectType_jsonObjectType(
     shorthand = {
       transformer: new InlineCallable(
         code`\
-(idString, ctx) => ${identifierProperty.type.fromJsonValueFunction.unannotatedUsage}(idString, { schema: ${identifierProperty.schema} })
+(idString, ctx) => ${identifierProperty.type.fromJsonValueFunction.unannotatedUsage}(idString, { schema: ${identifierProperty.schema.unsafeCoerce().expression} })
   .map(id => ({ ${literalOf(identifierProperty.jsonObjectMember.unsafeCoerce().name)}: id }))
   .mapLeft(error => {
     ctx.issues.push({

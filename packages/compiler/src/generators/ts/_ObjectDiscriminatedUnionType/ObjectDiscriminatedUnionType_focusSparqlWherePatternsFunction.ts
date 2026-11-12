@@ -19,7 +19,7 @@ if (focusIdentifier.termType === "Variable") {
       ignoreRdfType: false,
       preferredLanguages,
       propertyPatterns: [],
-      schema: ${this.identifierType.schema},
+      schema: ${this.identifierType.schema.expression},
       valueVariable: focusIdentifier,
       variablePrefix,
   }));

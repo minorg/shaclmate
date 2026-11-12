@@ -51,6 +51,10 @@ export class SchemaObject<TypeT extends SchemaObject.Type> {
   get literalExpression(): Code {
     return code`{ ${joinCode(this.properties.concat(), { on: ", " })} }`;
   }
+
+  toString(): string {
+    throw new Error("should never be called");
+  }
 }
 
 export namespace SchemaObject {
@@ -58,11 +62,15 @@ export namespace SchemaObject {
    * Placeholder for abstract base classes.
    */
   export class AbstractType {
-    static readonly instance = new AbstractType();
-
-    private constructor() {}
+    constructor(private readonly ownerKind: string) {}
 
     get expression(): Code {
+      throw new Error(
+        `should never be called (instantiated by ${this.ownerKind})`,
+      );
+    }
+
+    toString(): string {
       throw new Error("should never be called");
     }
   }
@@ -75,6 +83,10 @@ export namespace SchemaObject {
 
     constructor(expression: Code | Snippet) {
       this.expression = code`${expression}`;
+    }
+
+    toString(): string {
+      throw new Error("should never be called");
     }
   }
 
@@ -116,7 +128,14 @@ export namespace SchemaObject {
      */
     @Memoize()
     get literalExpression(): Code {
-      return code`{ ${joinCode(this.members.concat(), { on: ", " })} }`;
+      return code`{ ${joinCode(
+        this.members.map((member) => code`${member};`),
+        { on: ", " },
+      )} }`;
+    }
+
+    toString(): string {
+      throw new Error("should never be called");
     }
   }
 

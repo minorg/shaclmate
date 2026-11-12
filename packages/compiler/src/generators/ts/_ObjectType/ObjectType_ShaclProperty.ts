@@ -174,9 +174,11 @@ export class ObjectType_ShaclProperty<
 
     // Use a getter if the type is recursive or the type is an object type, which may have forward references in the file
     if (this.recursive || this.type.referencesNamedType) {
-      properties.push(code`get type() { return ${this.type.schema}; }`);
+      properties.push(
+        code`get type() { return ${this.type.schema.expression}; }`,
+      );
     } else {
-      properties.push(code`type: ${this.type.schema}`);
+      properties.push(code`type: ${this.type.schema.expression}`);
     }
 
     typeMembers.push(code`readonly type: ${this.type.schema.type.expression}`);
