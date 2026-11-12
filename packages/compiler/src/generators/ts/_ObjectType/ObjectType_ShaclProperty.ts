@@ -268,7 +268,7 @@ export class ObjectType_ShaclProperty<
           ...${variables.options},
           focusResource: ${variables.focusResource},
           ignoreRdfType: true,
-          propertySchema: ${this.schema.unsafeCoerce()},
+          propertySchema: ${this._schema.expression},
           typeFromRdfResourceValues: ${this.type.fromRdfResourceValuesFunction.unannotatedUsage} 
         })`,
     );
@@ -297,7 +297,7 @@ export class ObjectType_ShaclProperty<
         focusIdentifier: variables.focusIdentifier,
         ignoreRdfType: true,
         propertyName: this.name,
-        propertySchema: this.schema.unsafeCoerce(),
+        propertySchema: this._schema.expression,
         typeSparqlConstructTriples:
           this.type.valueSparqlConstructTriplesFunction.unannotatedUsage,
         variablePrefix: variables.variablePrefix,
@@ -321,7 +321,7 @@ export class ObjectType_ShaclProperty<
         ignoreRdfType: true,
         preferredLanguages: variables.preferredLanguages,
         propertyName: this.name,
-        propertySchema: this.schema.unsafeCoerce(),
+        propertySchema: this._schema.expression,
         typeSparqlWherePatterns:
           this.type.valueSparqlWherePatternsFunction.unannotatedUsage,
         variablePrefix: variables.variablePrefix,
@@ -368,7 +368,7 @@ export class ObjectType_ShaclProperty<
     }
 
     const propertyPath = this.objectType.name
-      .map(() => code`${this.schema.unsafeCoerce()}.path`)
+      .map(() => code`${this._schema.expression}.path`)
       .orDefault(this.propertyPathToCode(this.path));
 
     const { object: objectVariable, ...otherVariables } = variables;

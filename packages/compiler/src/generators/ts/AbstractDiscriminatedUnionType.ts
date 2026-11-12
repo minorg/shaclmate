@@ -350,7 +350,7 @@ export abstract class AbstractDiscriminatedUnionType<
             ({ discriminantValues, type, primaryDiscriminantValue }) =>
               code`${literalOf(primaryDiscriminantValue)}: ${{
                 discriminantValues: discriminantValues,
-                type: type.schema,
+                type: type.schema.expression,
               }}`,
           ),
           { on: "," },
