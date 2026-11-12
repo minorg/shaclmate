@@ -3,7 +3,7 @@ import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
+import { SchemaObject } from "../SchemaObject.js";
 import {
   arrayOf,
   type Code,
@@ -73,16 +73,24 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
   }
 
   @Memoize()
-  override get schemaType(): Maybe<Code> {
+  override get schema(): Maybe<SchemaObject<SchemaObject.UserDefinedType>> {
     return Maybe.of(
-      code`${{ fromRdfType: code`${this.reusables.imports.NamedNode}`, kind: this.kind, toRdfTypes: code`readonly ${this.reusables.imports.NamedNode}[]` }}`,
-    );
-  }
-
-  @Memoize()
-  protected override get schemaExpression(): Maybe<Code> {
-    return Maybe.of(
-      code`${{ fromRdfType: this.rdfjsTermExpression(this.fromRdfType), kind: this.kind, toRdfTypes: this.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)) }}`,
+      new SchemaObject({
+        properties: [
+          code`fromRdfType: ${this.rdfjsTermExpression(this.fromRdfType)}`,
+          code`kind: ${literalOf(this.kind)}`,
+          code`toRdfTypes: ${this.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType))}`,
+        ],
+        type: new SchemaObject.UserDefinedType({
+          members: [
+            code`fromRdfType: ${this.reusables.imports.NamedNode}`,
+            code`kind: ${literalOf(this.kind)}`,
+            code`toRdfTypes: readonly ${this.reusables.imports.NamedNode}[]`,
+          ],
+          name: Maybe.empty(),
+        }),
+        variable: this.schemaVariable,
+      }),
     );
   }
 

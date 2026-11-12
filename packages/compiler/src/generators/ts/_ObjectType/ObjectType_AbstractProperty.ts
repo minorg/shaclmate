@@ -19,11 +19,6 @@ export abstract class ObjectType_AbstractProperty {
   protected readonly reusables: Reusables;
 
   /**
-   * TypeScript object describing this property, for runtime use.
-   */
-  protected abstract readonly schemaExpression: Maybe<Code>;
-
-  /**
    * Optional parameter to include in the parameters object of constructor function.
    */
   abstract readonly createFunctionParameter: Maybe<{
@@ -107,7 +102,7 @@ export abstract class ObjectType_AbstractProperty {
   /**
    * TypeScript object describing this property, for runtime use.
    */
-  abstract readonly schema: Maybe<SchemaObject<SchemaObject.Type>>;
+  abstract readonly schema: Maybe<SchemaObject<SchemaObject.UserDefinedType>>;
 
   constructor({
     configuration,
@@ -280,7 +275,7 @@ export abstract class ObjectType_AbstractProperty {
   ) => Code;
 
   @Memoize()
-  protected schemaVariable(): Maybe<Code> {
+  protected get schemaVariable(): Maybe<Code> {
     return this.objectType.name.map(
       (name) => code`${name}.schema.properties.${this.name}`,
     );

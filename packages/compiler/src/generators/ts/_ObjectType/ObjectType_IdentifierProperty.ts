@@ -4,9 +4,11 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import type { BlankNodeType } from "../BlankNodeType.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import type { IriType } from "../IriType.js";
+import { SchemaObject } from "../SchemaObject.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { ObjectType_AbstractProperty } from "./ObjectType_AbstractProperty.js";
 
@@ -104,25 +106,27 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     });
   }
 
-  protected override get schemaExpression(): Maybe<Code> {
-    return Maybe.of(
-      code`{ ${joinCode(
-        [code`kind: ${literalOf(this.kind)}`, code`type: ${this.type.schema}`],
-        { on: ", " },
-      )} }`,
-    );
+  @Memoize()
+  override get schema() {
+    return Maybe.of(this._schema);
   }
 
-  override get schemaType(): Maybe<Code> {
-    return Maybe.of(
-      code`{ ${joinCode(
-        [
+  @Memoize()
+  private get _schema(): SchemaObject<SchemaObject.UserDefinedType> {
+    return new SchemaObject({
+      properties: [
+        code`kind: ${literalOf(this.kind)}`,
+        code`type: ${this.type.schema}`,
+      ],
+      type: new SchemaObject.UserDefinedType({
+        members: [
           code`readonly kind: ${literalOf(this.kind)}`,
           code`readonly type: ${this.type.schema.type.expression}`,
         ],
-        { on: ", " },
-      )} }`,
-    );
+        name: Maybe.empty(),
+      }),
+      variable: this.schemaVariable,
+    });
   }
 
   @Memoize()
@@ -130,12 +134,6 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     return this.objectType.name
       .map((objectTypeAlias) => code`${objectTypeAlias}.Identifier`)
       .orDefault(this.type.expression);
-  }
-
-  private get typeSchemaVariable(): Code {
-    return this.objectType.name
-      .map((name) => code`${name}.schema.properties.${this.name}.type`)
-      .orDefaultLazy(() => this.type.schema);
   }
 
   override createInitializer({
@@ -195,7 +193,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     ObjectType_AbstractProperty["fromJsonObjectInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: (${this.type.fromJsonValueFunction.unannotatedUsage})(${variables.jsonObject}["@id"], { ...${variables.options}, schema: ${this.typeSchemaVariable} })`,
+      code`${this.name}: (${this.type.fromJsonValueFunction.unannotatedUsage})(${variables.jsonObject}["@id"], { ...${variables.options}, schema: ${this.schemaTypeExpression} })`,
     );
   }
 
@@ -207,7 +205,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     return Maybe.of(
       code`${this.name}: ${this.type.fromRdfResourceValuesFunction.annotatedUsage}(
           ${this.reusables.snippets.rdfResourceIdentifierValues}(${variables.focusResource}),
-          { ...${variables.options}, focusResource: ${variables.focusResource}, propertyPath: ${this.rdfjsTermExpression(rdf.subject)}, schema: ${this.typeSchemaVariable} }
+          { ...${variables.options}, focusResource: ${variables.focusResource}, propertyPath: ${this.rdfjsTermExpression(rdf.subject)}, schema: ${this.schemaTypeExpression} }
         ).chain(values => values.head())`,
     );
   }
@@ -238,7 +236,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
         ignoreRdfType: true, // Unused
         preferredLanguages: variables.preferredLanguages,
         propertyPatterns: code`[]`,
-        schema: this.typeSchemaVariable,
+        schema: this.schemaTypeExpression,
         valueVariable: variables.focusIdentifier,
         variablePrefix: variables.variablePrefix, // Unused
       }})`,
@@ -292,5 +290,12 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     return Maybe.of(
       code`${literalOf(this.name)}: ${this.type.toStringExpression({ variables: { value: code`${variables.object}.${this.name}()` } })}`,
     );
+  }
+
+  @Memoize()
+  private schemaTypeExpression(): Code {
+    return this.schemaVariable
+      .map((schemaVariable) => code`${schemaVariable}.type`)
+      .orDefault(this._schema.expression);
   }
 }

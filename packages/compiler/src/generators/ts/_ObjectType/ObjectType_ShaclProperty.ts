@@ -3,6 +3,7 @@ import type { PropertyPath } from "@rdfx/resource";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
+import { SchemaObject } from "../SchemaObject.js";
 import type { Type } from "../Type.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
@@ -151,42 +152,50 @@ export class ObjectType_ShaclProperty<
     });
   }
 
-  protected override get schemaExpression(): Maybe<Code> {
-    const initializers = [code`kind: ${literalOf(this.kind)}`];
-    if (
-      this.configuration.features.has("Object.fromRdf") ||
-      this.configuration.features.has("Object.toRdf")
-    ) {
-      initializers.push(code`path: ${this.propertyPathToCode(this.path)}`);
-    }
-    // Use a getter if the type is recursive or the type is an object type, which may have forward references in the file
-    if (this.recursive || this.type.referencesNamedType) {
-      initializers.push(code`get type() { return ${this.type.schema}; }`);
-    } else {
-      initializers.push(code`type: ${this.type.schema}`);
-    }
-    return Maybe.of(code`{ ${joinCode(initializers, { on: ", " })} }`);
-  }
-
-  override get schemaType(): Maybe<Code> {
-    const initializers = [code`readonly kind: ${literalOf(this.kind)}`];
-    if (
-      this.configuration.features.has("Object.fromRdf") ||
-      this.configuration.features.has("Object.toRdf")
-    ) {
-      initializers.push(
-        code`readonly path: ${this.reusables.snippets.PropertyPath}`,
-      );
-    }
-    initializers.push(code`readonly type: ${this.type.schema.type.expression}`);
-    return Maybe.of(code`{ ${joinCode(initializers, { on: ", " })} }`);
+  @Memoize()
+  override get schema() {
+    return Maybe.of(this._schema);
   }
 
   @Memoize()
-  private get typeSchemaVariable(): Code {
-    return this.objectType.name
-      .map((name) => code`${name}.schema.properties.${this.name}.type`)
-      .orDefaultLazy(() => this.type.schema);
+  private get _schema(): SchemaObject<SchemaObject.UserDefinedType> {
+    const properties: Code[] = [code`kind: ${literalOf(this.kind)}`];
+    const typeMembers: Code[] = [code`readonly kind: ${literalOf(this.kind)}`];
+
+    if (
+      this.configuration.features.has("Object.fromRdf") ||
+      this.configuration.features.has("Object.toRdf")
+    ) {
+      properties.push(code`path: ${this.propertyPathToCode(this.path)}`);
+      typeMembers.push(
+        code`readonly path: ${this.reusables.snippets.PropertyPath}`,
+      );
+    }
+
+    // Use a getter if the type is recursive or the type is an object type, which may have forward references in the file
+    if (this.recursive || this.type.referencesNamedType) {
+      properties.push(code`get type() { return ${this.type.schema}; }`);
+    } else {
+      properties.push(code`type: ${this.type.schema}`);
+    }
+
+    typeMembers.push(code`readonly type: ${this.type.schema.type.expression}`);
+
+    return new SchemaObject({
+      properties,
+      type: new SchemaObject.UserDefinedType({
+        members: typeMembers,
+        name: Maybe.empty(),
+      }),
+      variable: this.schemaVariable,
+    });
+  }
+
+  @Memoize()
+  private get schemaTypeExpression(): Code {
+    return this.schemaVariable
+      .map((schemaVariable) => code`${schemaVariable}.type`)
+      .orDefault(this._schema.expression);
   }
 
   override createInitializer({
@@ -202,11 +211,11 @@ export class ObjectType_ShaclProperty<
       this.type.validationFunction.extract()?.unannotatedUsage;
     let rhs: Code;
     if (conversionFunction && validationFunction) {
-      rhs = code`${conversionFunction}(${parameterVariable}, ${defaultNamespaceVariable}).chain(value => ${validationFunction}(${this.typeSchemaVariable}, value))`;
+      rhs = code`${conversionFunction}(${parameterVariable}, ${defaultNamespaceVariable}).chain(value => ${validationFunction}(${this.schemaTypeExpression}, value))`;
     } else if (conversionFunction) {
       rhs = code`${conversionFunction}(${parameterVariable}, ${defaultNamespaceVariable})`;
     } else if (validationFunction) {
-      rhs = code`${validationFunction}(${this.typeSchemaVariable}, ${parameterVariable})`;
+      rhs = code`${validationFunction}(${this.schemaTypeExpression}, ${parameterVariable})`;
     } else {
       rhs = code`${this.reusables.imports.Either}.of(${parameterVariable})`;
     }
@@ -242,7 +251,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["fromJsonObjectInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: (${this.type.fromJsonValueFunction.unannotatedUsage})(${variables.jsonObject}["${this.name}"], { ...${variables.options}, schema: ${this.typeSchemaVariable} })`,
+      code`${this.name}: (${this.type.fromJsonValueFunction.unannotatedUsage})(${variables.jsonObject}["${this.name}"], { ...${variables.options}, schema: ${this.schemaTypeExpression} })`,
     );
   }
 
