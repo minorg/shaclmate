@@ -50,10 +50,11 @@ export abstract class AbstractTypedLiteralType<
     SchemaObject.AbstractType | SchemaObject.BuiltinType
   > {
     return new SchemaObject({
-      ...super.schema,
       properties: super.schema.properties.concat(
         code`datatype: ${this.rdfjsTermExpression(this.datatype)}`,
       ),
+      type: new SchemaObject.AbstractType("AbstractTypedLiteralType"),
+      variable: super.schema.variable,
     });
   }
 

@@ -85,10 +85,11 @@ export class IdentifierType extends AbstractIdentifierType<
   @Memoize()
   override get schema(): SchemaObject<SchemaObject.BuiltinType> {
     return new SchemaObject({
-      ...super.schema,
+      properties: super.schema.properties,
       type: new SchemaObject.BuiltinType(
         this.reusables.snippets.IdentifierSchema,
       ),
+      variable: super.schema.variable,
     });
   }
 }

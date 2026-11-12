@@ -71,10 +71,11 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   @Memoize()
   override get schema(): SchemaObject<SchemaObject.BuiltinType> {
     return new SchemaObject({
-      ...super.schema,
+      properties: super.schema.properties,
       type: new SchemaObject.BuiltinType(
         this.reusables.snippets.BlankNodeSchema,
       ),
+      variable: super.schema.variable,
     });
   }
 }

@@ -1,5 +1,6 @@
 import type { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+import { CodeThunk } from "./CodeThunk.js";
 import type { Snippet } from "./Snippet.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -10,7 +11,7 @@ export class SchemaObject<TypeT extends SchemaObject.Type> {
   /**
    * Object literal properties, usually property assignments like name: value without a terminating comma.
    */
-  readonly properties: readonly Code[];
+  readonly properties: readonly CodeThunk[];
 
   /**
    * Type of the schema object.
@@ -27,7 +28,7 @@ export class SchemaObject<TypeT extends SchemaObject.Type> {
     type,
     variable,
   }: {
-    properties: readonly Code[];
+    properties: readonly CodeThunk[];
     type: TypeT;
     variable: Maybe<Code>;
   }) {
@@ -49,7 +50,7 @@ export class SchemaObject<TypeT extends SchemaObject.Type> {
    */
   @Memoize()
   get literalExpression(): Code {
-    return code`{ ${joinCode(this.properties.concat(), { on: ", " })} } as const`;
+    return code`{ ${joinCode(this.properties.map(CodeThunk.evaluate), { on: ", " })} } as const`;
   }
 
   toString(): string {
@@ -97,7 +98,7 @@ export namespace SchemaObject {
     /**
      * Members of the schema object type, usually property signatures like name: string.
      */
-    readonly members: readonly Code[];
+    readonly members: readonly CodeThunk[];
 
     /**
      * Name of the type, can be used in type annotations.
@@ -108,7 +109,7 @@ export namespace SchemaObject {
       members,
       name,
     }: {
-      members: readonly Code[];
+      members: readonly CodeThunk[];
       name: Maybe<Code>;
     }) {
       this.members = members;
@@ -129,7 +130,7 @@ export namespace SchemaObject {
     @Memoize()
     get literalExpression(): Code {
       return code`{ ${joinCode(
-        this.members.map((member) => code`${member};`),
+        this.members.map((member) => code`${CodeThunk.evaluate(member)};`),
       )} }`;
     }
 

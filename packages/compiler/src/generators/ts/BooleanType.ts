@@ -60,10 +60,11 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   @Memoize()
   override get schema(): SchemaObject<SchemaObject.BuiltinType> {
     return new SchemaObject({
-      ...super.schema,
+      properties: super.schema.properties,
       type: new SchemaObject.BuiltinType(
         code`${this.reusables.snippets.BooleanSchema}<${this.expression}>`,
       ),
+      variable: super.schema.variable,
     });
   }
 

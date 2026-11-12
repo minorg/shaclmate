@@ -220,9 +220,7 @@ export class ObjectType extends AbstractUserDefinedType {
         code`properties: { ${joinCode(
           this.properties.flatMap((property) =>
             property.schema
-              .map((schema) => [
-                code`${property.name}: ${schema.literalExpression}`,
-              ])
+              .map((schema) => [code`${property.name}: ${schema.expression}`])
               .orDefault([]),
           ),
           { on: "," },
@@ -234,7 +232,7 @@ export class ObjectType extends AbstractUserDefinedType {
             this.properties.flatMap((property) =>
               property.schema
                 .map((schema) => [
-                  code`${property.name}: ${schema.type.literalExpression}`,
+                  code`${property.name}: ${schema.type.expression}`,
                 ])
                 .orDefault([]),
             ),

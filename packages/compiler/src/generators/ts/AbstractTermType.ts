@@ -93,8 +93,9 @@ export abstract class AbstractTermType<
     }
 
     return new SchemaObject({
-      ...super.schema,
       properties: super.schema.properties.concat(thisProperties),
+      type: new SchemaObject.AbstractType("AbstractTermType"),
+      variable: super.schema.variable,
     });
   }
 

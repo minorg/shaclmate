@@ -32,10 +32,11 @@ export abstract class AbstractNumericType<
   @Memoize()
   override get schema(): SchemaObject<SchemaObject.BuiltinType> {
     return new SchemaObject({
-      ...super.schema,
+      properties: super.schema.properties,
       type: new SchemaObject.BuiltinType(
         code`${this.reusables.snippets.NumericSchema}<${this.expression}>`,
       ),
+      variable: super.schema.variable,
     });
   }
 

@@ -45,8 +45,9 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
   @Memoize()
   override get schema(): SchemaObject<SchemaObject.BuiltinType> {
     return new SchemaObject({
-      ...super.schema,
+      properties: super.schema.properties,
       type: new SchemaObject.BuiltinType(this.reusables.snippets.DateSchema),
+      variable: super.schema.variable,
     });
   }
 

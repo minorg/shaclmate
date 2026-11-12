@@ -75,10 +75,11 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
   @Memoize()
   override get schema(): SchemaObject<SchemaObject.BuiltinType> {
     return new SchemaObject({
-      ...super.schema,
+      properties: super.schema.properties,
       type: new SchemaObject.BuiltinType(
         code`${this.reusables.snippets.NumericSchema}<${this.reusables.imports.BigDecimal}>`,
       ),
+      variable: super.schema.variable,
     });
   }
 

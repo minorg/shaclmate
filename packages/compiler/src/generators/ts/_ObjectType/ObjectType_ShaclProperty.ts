@@ -2,7 +2,7 @@ import type { PropertyPath } from "@rdfx/resource";
 
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
+import type { CodeThunk } from "../CodeThunk.js";
 import { SchemaObject } from "../SchemaObject.js";
 import type { Type } from "../Type.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
@@ -159,8 +159,17 @@ export class ObjectType_ShaclProperty<
 
   @Memoize()
   private get _schema(): SchemaObject<SchemaObject.UserDefinedType> {
-    const properties: Code[] = [code`kind: ${literalOf(this.kind)}`];
-    const typeMembers: Code[] = [code`readonly kind: ${literalOf(this.kind)}`];
+    // if (
+    //   this.objectType.name.extract() === "DirectRecursiveStruct" ||
+    //   this.objectType.name.extract() === "IndirectRecursiveStruct"
+    // ) {
+    //   console.log("test");
+    // }
+
+    const properties: CodeThunk[] = [code`kind: ${literalOf(this.kind)}`];
+    const typeMembers: CodeThunk[] = [
+      code`readonly kind: ${literalOf(this.kind)}`,
+    ];
 
     if (
       this.configuration.features.has("Object.fromRdf") ||
@@ -175,13 +184,17 @@ export class ObjectType_ShaclProperty<
     // Use a getter if the type is recursive or the type is an object type, which may have forward references in the file
     if (this.recursive || this.type.referencesNamedType) {
       properties.push(
-        code`get type() { return ${this.type.schema.expression}; }`,
+        () => code`get type() { return ${this.type.schema.expression}; }`,
+      );
+      typeMembers.push(
+        () => code`readonly type: ${this.type.schema.type.expression}`,
       );
     } else {
       properties.push(code`type: ${this.type.schema.expression}`);
+      typeMembers.push(
+        code`readonly type: ${this.type.schema.type.expression}`,
+      );
     }
-
-    typeMembers.push(code`readonly type: ${this.type.schema.type.expression}`);
 
     return new SchemaObject({
       properties,
