@@ -25,7 +25,7 @@ import { SchemaObject } from "./SchemaObject.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
-import { code } from "./ts-poet-wrapper.js";
+import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class for types that contain other types e.g., ListType, OptionType, SetType.
@@ -60,24 +60,6 @@ export abstract class AbstractContainerType<
 
   get referencesNamedType(): boolean {
     return this.name.isJust() || this.itemType.referencesNamedType;
-  }
-
-  @Memoize()
-  override get schema(): SchemaObject {
-    return new SchemaObject({
-      properties: super.schema.properties.concat(
-        this.recursive || this.referencesNamedType
-          ? code`get itemType() { return ${this.itemType.schema}; }`
-          : code`itemType: ${this.itemType.schema}`,
-      ),
-      type: new SchemaObject.Type({
-        members: super.schema.type.members.concat(
-          code`itemType: ${this.itemType.schema.type.expression}`,
-        ),
-        name: super.schema.type.name,
-      }),
-      variable: super.schema.variable,
-    });
   }
 
   @Memoize()

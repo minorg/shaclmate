@@ -7,6 +7,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
@@ -31,8 +32,6 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   override readonly jsonValueType: AbstractPrimitiveType.JsonType =
     this.jsonTypeFactory.createJsonBooleanType({ in_: this.decodedIn });
   override readonly kind = "Boolean";
-  override readonly schemaType =
-    code`${this.reusables.snippets.BooleanSchema}<${this.expression}>`;
   override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
     this.reusables.snippets.booleanSparqlWherePatterns,
   );
@@ -56,6 +55,16 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     return new BuiltinCallable(
       code`${this.reusables.snippets.booleanFromRdfResourceValues}<${this.expression}>`,
     );
+  }
+
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    return new SchemaObject({
+      ...super.schema,
+      type: new SchemaObject.BuiltinType(
+        code`${this.reusables.snippets.BooleanSchema}<${this.expression}>`,
+      ),
+    });
   }
 
   override toRdfResourceValuesExpression({

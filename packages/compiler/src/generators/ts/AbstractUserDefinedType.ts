@@ -6,7 +6,8 @@ import type { Callable } from "./Callable.js";
 import type { CodeThunk } from "./CodeThunk.js";
 import { DeclaredCallable } from "./DeclaredCallable.js";
 import { InlineCallable } from "./InlineCallable.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { SchemaObject } from "./SchemaObject.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class for user-defined types (compound types, object types).
@@ -27,6 +28,18 @@ export abstract class AbstractUserDefinedType extends AbstractType {
       type: () => this.filterFunctionType(),
       unannotatedExpression: () => this.filterFunctionExpression(),
       unqualifiedName: "filter",
+    });
+  }
+
+  @Memoize()
+  get schema(): SchemaObject<SchemaObject.UserDefinedType> {
+    return new SchemaObject({
+      properties: [code`kind: ${literalOf(this.kind)} as const`],
+      type: new SchemaObject.UserDefinedType({
+        members: [code`kind: ${literalOf(this.kind)}`],
+        name: this.name.map((name) => code`${name}.Schema`),
+      }),
+      variable: this.name.map((name) => code`${name}.schema`),
     });
   }
 
@@ -269,6 +282,13 @@ export abstract class AbstractUserDefinedType extends AbstractType {
 
     if (this.configuration.features.has("Object.fromRdf")) {
       addFunctionDeclaration(this.fromRdfResourceValuesFunction);
+    }
+
+    if (this.configuration.features.has("Object.schema")) {
+      staticModuleDeclarations["schema"] =
+        code`export const schema = ${this.schema.literalExpression}`;
+      staticModuleDeclarations["Schema"] =
+        code`export type Schema = typeof schema;`;
     }
 
     if (this.configuration.features.has("Object.SPARQL")) {

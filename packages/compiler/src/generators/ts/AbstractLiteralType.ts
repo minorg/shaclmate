@@ -1,6 +1,7 @@
 import type { Literal } from "@rdfjs/types";
-
+import { Memoize } from "typescript-memoize";
 import { AbstractTermType } from "./AbstractTermType.js";
+import { SchemaObject } from "./SchemaObject.js";
 
 /**
  * Abstract base class of all types that are literals in RDF.
@@ -30,6 +31,14 @@ export abstract class AbstractLiteralType extends AbstractTermType<
       snippet: this.reusables.snippets.LiteralJsonObject,
     },
   );
+
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    return new SchemaObject({
+      ...super.schema,
+      type: new SchemaObject.BuiltinType(this.reusables.snippets.LiteralSchema),
+    });
+  }
 
   override readonly nodeKinds = nodeKinds;
 }

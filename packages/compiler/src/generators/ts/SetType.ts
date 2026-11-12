@@ -151,23 +151,18 @@ export class SetType<
   }
 
   @Memoize()
-  override get schema(): SchemaObject {
-    return new SchemaObject({
-      properties:
-        this.minCount > 0n
-          ? super.schema.properties.concat(
-              code`minCount: ${Number(this.minCount)}`,
-            )
-          : super.schema.properties,
-      type: new SchemaObject.Type({
-        members:
-          this.minCount > 0n
-            ? super.schema.type.members.concat(code`minCount: number`)
-            : super.schema.type.members,
-        name: super.schema.type.name,
-      }),
-      variable: super.schema.variable,
-    });
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    if (this.minCount > 0n) {
+      return new SchemaObject({
+        properties: super.schema.properties.concat(
+          code`minCount: ${Number(this.minCount)}`,
+        ),
+        type: super.schema.type,
+        variable: super.schema.variable,
+      });
+    } else {
+      return super.schema;
+    }
   }
 
   override toRdfResourceValuesExpression({

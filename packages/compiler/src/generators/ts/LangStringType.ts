@@ -86,7 +86,7 @@ export class LangStringType extends AbstractLiteralType {
   }
 
   @Memoize()
-  override get schema(): SchemaObject {
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
     return new SchemaObject({
       properties:
         this.languageIn.length > 0
@@ -94,15 +94,9 @@ export class LangStringType extends AbstractLiteralType {
               code`languageIn: ${arrayOf(...this.languageIn)}`,
             )
           : super.schema.properties,
-      type: new SchemaObject.Type({
-        members:
-          this.languageIn.length > 0
-            ? super.schema.type.members.concat(
-                code`languageIn: readonly string[]`,
-              )
-            : super.schema.type.members,
-        name: Maybe.of(code`${this.reusables.snippets.LangStringSchema}`),
-      }),
+      type: new SchemaObject.BuiltinType(
+        this.reusables.snippets.LangStringSchema,
+      ),
       variable: super.schema.variable,
     });
   }

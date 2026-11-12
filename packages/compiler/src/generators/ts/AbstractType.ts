@@ -12,7 +12,7 @@ import type {
 import { AbstractType_JsType } from "./_AbstractType/AbstractType_JsType.js";
 import { AbstractConstruct } from "./AbstractConstruct.js";
 import type { Callable } from "./Callable.js";
-import { SchemaObject } from "./SchemaObject.js";
+import type { SchemaObject } from "./SchemaObject.js";
 import {
   type Code,
   code,
@@ -166,6 +166,11 @@ export abstract class AbstractType extends AbstractConstruct {
   abstract readonly referencesNamedType: boolean;
 
   /**
+   * TypeScript object describing this type, for runtime use.
+   */
+  abstract readonly schema: SchemaObject;
+
+  /**
    * Identifier of the shape this type was derived from.
    */
   readonly shapeIdentifier: BlankNode | NamedNode;
@@ -291,21 +296,6 @@ ${joinCode(
   }
 
   /**
-   * TypeScript object describing this type, for runtime use.
-   */
-  @Memoize()
-  get schema(): SchemaObject {
-    return new SchemaObject({
-      properties: [code`kind: ${literalOf(this.kind)} as const`],
-      type: new SchemaObject.Type({
-        members: [code`kind: ${literalOf(this.kind)}`],
-        name: this.name.map((name) => code`${name}.Schema`),
-      }),
-      variable: this.name.map((name) => code`${name}.schema`),
-    });
-  }
-
-  /**
    * An expression that resolves a value of this type in the GraphQL server.
    */
   abstract graphqlResolveExpression(parameters: {
@@ -349,16 +339,7 @@ ${joinCode(
   abstract toStringExpression(parameters: { variables: { value: Code } }): Code;
 
   protected staticModuleDeclarations(_name: string): Record<string, Code> {
-    const staticModuleDeclarations: Record<string, Code> = {};
-
-    if (this.configuration.features.has("Object.schema")) {
-      staticModuleDeclarations["schema"] =
-        code`export const schema = ${this.schema.literalExpression}`;
-      staticModuleDeclarations["Schema"] =
-        code`export type Schema = typeof schema;`;
-    }
-
-    return staticModuleDeclarations;
+    return {};
   }
 }
 

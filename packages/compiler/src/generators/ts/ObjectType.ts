@@ -258,7 +258,7 @@ export class ObjectType extends AbstractUserDefinedType {
   }
 
   @Memoize()
-  override get schema(): SchemaObject {
+  override get schema(): SchemaObject<SchemaObject.UserDefinedType> {
     return new SchemaObject({
       properties: super.schema.properties.concat(
         this.properties.flatMap(
@@ -266,7 +266,7 @@ export class ObjectType extends AbstractUserDefinedType {
             property.schema.map((schema) => schema.properties).extract() ?? [],
         ),
       ),
-      type: new SchemaObject.Type({
+      type: new SchemaObject.UserDefinedType({
         members: super.schema.type.members.concat(
           this.properties.flatMap(
             (property) =>

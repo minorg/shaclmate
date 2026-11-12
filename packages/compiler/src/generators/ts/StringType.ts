@@ -81,7 +81,7 @@ export class StringType extends AbstractPrimitiveType<string> {
   }
 
   @Memoize()
-  override get schema(): SchemaObject {
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
     return new SchemaObject({
       properties:
         this.languageIn.length > 0
@@ -89,17 +89,9 @@ export class StringType extends AbstractPrimitiveType<string> {
               code`languageIn: ${arrayOf(...this.languageIn)}`,
             )
           : super.schema.properties,
-      type: new SchemaObject.Type({
-        members:
-          this.languageIn.length > 0
-            ? super.schema.type.members.concat(
-                code`languageIn: readonly string[]`,
-              )
-            : super.schema.type.members,
-        name: Maybe.of(
-          code`${this.reusables.snippets.StringSchema}<${this.expression}>`,
-        ),
-      }),
+      type: new SchemaObject.BuiltinType(
+        code`${this.reusables.snippets.StringSchema}<${this.expression}>`,
+      ),
       variable: super.schema.variable,
     });
   }

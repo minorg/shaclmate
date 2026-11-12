@@ -9,13 +9,7 @@ import { AbstractTermType } from "./AbstractTermType.js";
 import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
 import { SchemaObject } from "./SchemaObject.js";
-import {
-  arrayOf,
-  type Code,
-  code,
-  joinCode,
-  literalOf,
-} from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class TermType<
   ConstantTermT extends Literal | NamedNode = Literal | NamedNode,
@@ -153,30 +147,16 @@ export class TermType<
   }
 
   @Memoize()
-  override get schema(): SchemaObject {
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
     return new SchemaObject({
       properties: super.schema.properties.concat(
         code`types: ${arrayOf(...[...this.nodeKinds].map(NodeKind.toTermType))}`,
       ),
-      type: new SchemaObject.Type({
-        members: super.schema.type.members.concat(
-          code`types: ${joinCode(
-            [...this.nodeKinds]
-              .map(NodeKind.toTermType)
-              .map((termType) => code`${literalOf(termType)}`),
-            { on: " | " },
-          )}`,
-        ),
-        name: Maybe.of(
-          code`${this.reusables.snippets.TermSchema}<${this.expression}>`,
-        ),
-      }),
+      type: new SchemaObject.BuiltinType(
+        code`${this.reusables.snippets.TermSchema}<${this.expression}>`,
+      ),
       variable: super.schema.variable,
     });
-  }
-
-  protected override get schemaInitializers() {
-    return super.schemaInitializers.concat();
   }
 
   override graphqlResolveExpression(

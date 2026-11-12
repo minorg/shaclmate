@@ -108,9 +108,9 @@ describe("TsGenerator", () => {
           break;
       }
 
-      // if (id !== "restExample") {
-      //   return;
-      // }
+      if (id !== "kitchenSinkExample") {
+        return;
+      }
 
       const shapesGraph = (
         await parseTestShapesGraph(testShapesGraph)

@@ -8,7 +8,8 @@ import { AbstractBuiltinType } from "./AbstractBuiltinType.js";
 import { BuiltinCallable } from "./BuiltinCallable.js";
 import type { Callable } from "./Callable.js";
 import { InlineCallable } from "./InlineCallable.js";
-import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
+import { SchemaObject } from "./SchemaObject.js";
+import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class for all types that are terms in RDF (i.e., identifiers, literals).
@@ -73,19 +74,29 @@ export abstract class AbstractTermType<
     return new InlineCallable(code`((_: object) => [])`);
   }
 
-  protected override get schemaInitializers() {
-    let initializers = super.schemaInitializers;
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    const properties: Code[] = [code`kind: ${literalOf(this.kind)} as const`];
+
     if (this.hasValues.length > 0) {
-      initializers = initializers.concat(
+      properties.push(
         code`hasValues: ${arrayOf(...this.hasValues.map((hasValue) => this.rdfjsTermExpression(hasValue)))}`,
       );
     }
+
     if (this.in_.length > 0) {
-      initializers = initializers.concat(
+      properties.push(
         code`in: ${arrayOf(...this.in_.map((in_) => this.valueExpression(in_)))} as const`,
       );
     }
-    return initializers;
+
+    return new SchemaObject({
+      properties,
+      type: new SchemaObject.BuiltinType(
+        code`${this.reusables.snippets.TermSchema}<${this.expression}>`,
+      ),
+      variable: Maybe.empty(),
+    });
   }
 
   override toRdfResourceValuesExpression({

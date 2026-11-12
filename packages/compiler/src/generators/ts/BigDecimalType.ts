@@ -2,17 +2,17 @@ import type { Literal } from "@rdfjs/types";
 
 import type { Decimal } from "decimal.js";
 import { Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 
 import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
 import { BuiltinCallable } from "./BuiltinCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
   protected override readonly inlineExpression =
     code`${this.reusables.imports.BigDecimal}`;
 
-  override readonly jsonValueType: AbstractTypedLiteralType.JsonType =
-    this.jsonTypeFactory.createJsonStringType();
   override readonly jsTypes = [
     {
       className: code`${this.reusables.imports.BigDecimal}`,
@@ -43,11 +43,11 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
   );
   override readonly filterType =
     code`${this.reusables.snippets.NumericFilter}<${this.reusables.imports.BigDecimal}>`;
-  override readonly fromJsonValueFunction = new BuiltinCallable(
-    this.reusables.snippets.bigDecimalFromJsonString,
-  );
   override readonly fromJsonObjectFunction = new BuiltinCallable(
     this.reusables.snippets.bigDecimalFromJsonObject,
+  );
+  override readonly fromJsonValueFunction = new BuiltinCallable(
+    this.reusables.snippets.bigDecimalFromJsonString,
   );
   override readonly fromRdfResourceValuesFunction = new BuiltinCallable(
     this.reusables.snippets.bigDecimalFromRdfResourceValues,
@@ -59,18 +59,28 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
   override readonly hashFunction = new BuiltinCallable(
     this.reusables.snippets.hashBigDecimal,
   );
+  override readonly jsonValueType: AbstractTypedLiteralType.JsonType =
+    this.jsonTypeFactory.createJsonStringType();
   override readonly kind = "BigDecimal";
-  override readonly schemaType =
-    code`${this.reusables.snippets.NumericSchema}<${this.reusables.imports.BigDecimal}>`;
-  override readonly toJsonValueFunction = new BuiltinCallable(
-    this.reusables.snippets.bigDecimalToJsonString,
-  );
   override readonly toJsonObjectFunction = new BuiltinCallable(
     code`${this.reusables.snippets.bigDecimalToJsonObject}(${this.rdfjsTermExpression(this.datatype)})`,
+  );
+  override readonly toJsonValueFunction = new BuiltinCallable(
+    this.reusables.snippets.bigDecimalToJsonString,
   );
   override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
     this.reusables.snippets.bigDecimalSparqlWherePatterns,
   );
+
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    return new SchemaObject({
+      ...super.schema,
+      type: new SchemaObject.BuiltinType(
+        code`${this.reusables.snippets.NumericSchema}<${this.reusables.imports.BigDecimal}>`,
+      ),
+    });
+  }
 
   override graphqlResolveExpression({
     variables,

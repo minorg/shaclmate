@@ -1,9 +1,11 @@
 import type { BlankNode } from "@rdfjs/types";
 
 import { Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { BuiltinCallable } from "./BuiltinCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { code } from "./ts-poet-wrapper.js";
 
 export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
@@ -29,11 +31,11 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   );
   override readonly filterType =
     code`${this.reusables.snippets.BlankNodeFilter}`;
-  override readonly fromJsonValueFunction = new BuiltinCallable(
-    this.reusables.snippets.blankNodeFromJsonString,
-  );
   override readonly fromJsonObjectFunction = new BuiltinCallable(
     this.reusables.snippets.blankNodeFromJsonObject,
+  );
+  override readonly fromJsonValueFunction = new BuiltinCallable(
+    this.reusables.snippets.blankNodeFromJsonString,
   );
   override readonly fromRdfResourceValuesFunction = new BuiltinCallable(
     this.reusables.snippets.blankNodeFromRdfResourceValues,
@@ -43,13 +45,11 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   override readonly parseFunction = new BuiltinCallable(
     this.reusables.snippets.parseBlankNode,
   );
-  override readonly schemaType =
-    code`${this.reusables.snippets.BlankNodeSchema}`;
-  override readonly toJsonValueFunction = new BuiltinCallable(
-    this.reusables.snippets.blankNodeToJsonString,
-  );
   override readonly toJsonObjectFunction = new BuiltinCallable(
     this.reusables.snippets.blankNodeToJsonObject,
+  );
+  override readonly toJsonValueFunction = new BuiltinCallable(
+    this.reusables.snippets.blankNodeToJsonString,
   );
   override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
     this.reusables.snippets.blankNodeSparqlWherePatterns,
@@ -65,6 +65,16 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
       ...superParameters,
       hasValues: [],
       in_: [],
+    });
+  }
+
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    return new SchemaObject({
+      ...super.schema,
+      type: new SchemaObject.BuiltinType(
+        this.reusables.snippets.BlankNodeSchema,
+      ),
     });
   }
 }

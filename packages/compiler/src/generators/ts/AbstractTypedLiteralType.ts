@@ -1,9 +1,10 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
 
 import { Maybe } from "purify-ts";
-
+import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
@@ -44,10 +45,14 @@ export abstract class AbstractTypedLiteralType<
     this.datatype = datatype;
   }
 
-  protected override get schemaInitializers(): readonly Code[] {
-    return super.schemaInitializers.concat(
-      code`datatype: ${this.rdfjsTermExpression(this.datatype)}`,
-    );
+  @Memoize()
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    return new SchemaObject({
+      ...super.schema,
+      properties: super.schema.properties.concat(
+        code`datatype: ${this.rdfjsTermExpression(this.datatype)}`,
+      ),
+    });
   }
 
   override graphqlResolveExpression({

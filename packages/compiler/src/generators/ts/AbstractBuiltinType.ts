@@ -1,9 +1,12 @@
 import { AbstractType } from "./AbstractType.js";
+import type { SchemaObject } from "./SchemaObject.js";
 
 /**
  * Abstract base class for built-in types (container types, term types, et al.) -- anything that is not user-defined.
  */
-export abstract class AbstractBuiltinType extends AbstractType {}
+export abstract class AbstractBuiltinType extends AbstractType {
+  abstract override readonly schema: SchemaObject<SchemaObject.BuiltinType>;
+}
 
 export namespace AbstractBuiltinType {
   export type ConversionFunction = AbstractType.ConversionFunction;

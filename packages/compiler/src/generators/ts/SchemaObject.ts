@@ -6,7 +6,7 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 /**
  * Runtime schema/metadata objects for types and properties.
  */
-export class SchemaObject {
+export class SchemaObject<TypeT extends SchemaObject.Type> {
   /**
    * Object literal properties, usually property assignments like name: value without a terminating comma.
    */
@@ -15,7 +15,7 @@ export class SchemaObject {
   /**
    * Type of the schema object.
    */
-  readonly type: SchemaObject.Type;
+  readonly type: TypeT;
 
   /**
    * Variable pointing to the schema object.
@@ -28,7 +28,7 @@ export class SchemaObject {
     variable,
   }: {
     properties: readonly Code[];
-    type: SchemaObject.Type;
+    type: TypeT;
     variable: Maybe<Code>;
   }) {
     this.properties = properties;
@@ -54,7 +54,21 @@ export class SchemaObject {
 }
 
 export namespace SchemaObject {
-  export class ObjectType {
+  /**
+   * A built-in schema object type from a snippet or import.
+   */
+  export class BuiltinType {
+    readonly expression: Code;
+
+    constructor(expression: Code | Snippet) {
+      this.expression = code`${expression}`;
+    }
+  }
+
+  /**
+   * A user-defined schema object type, typically corresponding to user-defined types.
+   */
+  export class UserDefinedType {
     /**
      * Members of the schema object type, usually property signatures like name: string.
      */
@@ -93,11 +107,5 @@ export namespace SchemaObject {
     }
   }
 
-  export class ReferenceType {
-    readonly expression: Code;
-
-    constructor(reference: Code | Snippet) {
-      this.expression = code`${reference}`;
-    }
-  }
+  export type Type = BuiltinType | UserDefinedType;
 }

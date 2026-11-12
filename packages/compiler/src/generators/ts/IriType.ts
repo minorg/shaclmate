@@ -147,15 +147,11 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   }
 
   @Memoize()
-  override get schema(): SchemaObject {
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
     const thisProperties: Code[] = [];
-    const thisTypeMembers: Code[] = [];
     if (this.hasValues.length > 0) {
       thisProperties.push(
         code`hasValues: ${arrayOf(...this.hasValues.map((hasValue) => this.rdfjsTermExpression(hasValue)))}`,
-      );
-      thisTypeMembers.push(
-        code`hasValues: readonly ${this.reusables.imports.NamedNode}[]`,
       );
     }
     if (this.in_.length > 0) {
@@ -167,12 +163,9 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
 
     return new SchemaObject({
       properties: super.schema.properties.concat(thisProperties),
-      type: new SchemaObject.Type({
-        members: super.schema.type.members.concat(thisTypeMembers),
-        name: Maybe.of(
-          code`${this.reusables.snippets.IriSchema}<${this.valueTypeExpression}>`,
-        ),
-      }),
+      type: new SchemaObject.BuiltinType(
+        code`${this.reusables.snippets.IriSchema}<${this.valueTypeExpression}>`,
+      ),
       variable: super.schema.variable,
     });
   }
