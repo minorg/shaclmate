@@ -81,17 +81,17 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
   @Memoize()
   private get _schema(): SchemaObject<SchemaObject.UserDefinedType> {
     return new SchemaObject({
-      properties: [
-        code`fromRdfType: ${this.rdfjsTermExpression(this.fromRdfType)}`,
-        code`kind: ${literalOf(this.kind)}`,
-        code`toRdfTypes: ${arrayOf(...this.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)))}`,
-      ],
+      properties: {
+        fromRdfType: code`fromRdfType: ${this.rdfjsTermExpression(this.fromRdfType)}`,
+        kind: code`kind: ${literalOf(this.kind)}`,
+        toRdfTypes: code`toRdfTypes: ${arrayOf(...this.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)))}`,
+      },
       type: new SchemaObject.UserDefinedType({
-        members: [
-          code`fromRdfType: ${this.reusables.imports.NamedNode}`,
-          code`kind: ${literalOf(this.kind)}`,
-          code`toRdfTypes: readonly ${this.reusables.imports.NamedNode}[]`,
-        ],
+        members: {
+          fromRdfType: code`fromRdfType: ${this.reusables.imports.NamedNode}`,
+          kind: code`kind: ${literalOf(this.kind)}`,
+          toRdfTypes: code`toRdfTypes: readonly ${this.reusables.imports.NamedNode}[]`,
+        },
         name: Maybe.empty(),
       }),
       variable: this.schemaVariable,

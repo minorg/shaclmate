@@ -192,9 +192,10 @@ export abstract class AbstractLazyType<
     SchemaObject.AbstractType | SchemaObject.BuiltinType
   > {
     return new SchemaObject({
-      properties: super.schema.properties.concat(
-        code`get partialType() { return ${this.partialType.schema.expression}; }`,
-      ),
+      properties: {
+        ...super.schema.properties,
+        partialType: code`get partialType() { return ${this.partialType.schema.expression}; }`,
+      },
       type: new SchemaObject.BuiltinType(
         code`${this.reusables.snippets.LazySchema}<${this.partialType.schema.type.expression}>`,
       ),

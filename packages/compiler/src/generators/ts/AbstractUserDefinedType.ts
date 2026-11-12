@@ -36,7 +36,7 @@ export abstract class AbstractUserDefinedType extends AbstractType {
     return new SchemaObject({
       properties: super.schema.properties,
       type: new SchemaObject.UserDefinedType({
-        members: [code`kind: ${literalOf(this.kind)}`],
+        members: { kind: code`kind: ${literalOf(this.kind)}` },
         name: this.name.map((name) => code`${name}.Schema`),
       }),
       variable: this.name.map((name) => code`${name}.schema`),

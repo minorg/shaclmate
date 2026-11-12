@@ -78,22 +78,20 @@ export abstract class AbstractTermType<
   override get schema(): SchemaObject<
     SchemaObject.AbstractType | SchemaObject.BuiltinType
   > {
-    const thisProperties: Code[] = [];
+    const thisProperties: Record<string, Code> = {};
 
     if (this.hasValues.length > 0) {
-      thisProperties.push(
-        code`hasValues: ${arrayOf(...this.hasValues.map((hasValue) => this.rdfjsTermExpression(hasValue)))}`,
-      );
+      thisProperties["hasValues"] =
+        code`hasValues: ${arrayOf(...this.hasValues.map((hasValue) => this.rdfjsTermExpression(hasValue)))}`;
     }
 
     if (this.in_.length > 0) {
-      thisProperties.push(
-        code`in: ${arrayOf(...this.in_.map((in_) => this.valueExpression(in_)))} as const`,
-      );
+      thisProperties["in"] =
+        code`in: ${arrayOf(...this.in_.map((in_) => this.valueExpression(in_)))} as const`;
     }
 
     return new SchemaObject({
-      properties: super.schema.properties.concat(thisProperties),
+      properties: { ...super.schema.properties, ...thisProperties },
       type: new SchemaObject.AbstractType("AbstractTermType"),
       variable: super.schema.variable,
     });

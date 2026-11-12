@@ -171,7 +171,9 @@ export abstract class AbstractType extends AbstractConstruct {
 
   get schema(): SchemaObject<SchemaObject.Type> {
     return new SchemaObject({
-      properties: [code`kind: ${literalOf(this.kind)}`],
+      properties: {
+        kind: code`kind: ${literalOf(this.kind)}`,
+      },
       type: new SchemaObject.AbstractType(this.kind),
       variable: Maybe.empty(),
     });

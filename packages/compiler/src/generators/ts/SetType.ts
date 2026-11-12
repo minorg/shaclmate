@@ -154,9 +154,10 @@ export class SetType<
   override get schema(): SchemaObject<SchemaObject.BuiltinType> {
     if (this.minCount > 0n) {
       return new SchemaObject({
-        properties: super.schema.properties.concat(
-          code`minCount: ${Number(this.minCount)}`,
-        ),
+        properties: {
+          ...super.schema.properties,
+          minCount: code`minCount: ${Number(this.minCount)}`,
+        },
         type: super.schema.type,
         variable: super.schema.variable,
       });

@@ -9,9 +9,19 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
  */
 export class SchemaObject<TypeT extends SchemaObject.Type> {
   /**
-   * Object literal properties, usually property assignments like name: value without a terminating comma.
+   * Object literal properties, usually property assignments like name: value
+   * without a terminating comma.
+   *
+   * Note the name is repeated between the key and the value:
+   *   { name: code`name: value` }
+   * Only the value is incorporated into generated code. The keys are used to sort properties.
+   *
+   * This enables overwriting in the *Type tree while also supporting non-property assignments such as
+   *   { name: code`get name() { return value; }` }
+   * or
+   *   { shorthand: code `shorthand` }
    */
-  readonly properties: readonly CodeThunk[];
+  readonly properties: Readonly<Record<string, CodeThunk>>;
 
   /**
    * Type of the schema object.
@@ -28,7 +38,7 @@ export class SchemaObject<TypeT extends SchemaObject.Type> {
     type,
     variable,
   }: {
-    properties: readonly CodeThunk[];
+    properties: Readonly<Record<string, CodeThunk>>;
     type: TypeT;
     variable: Maybe<Code>;
   }) {
@@ -50,7 +60,12 @@ export class SchemaObject<TypeT extends SchemaObject.Type> {
    */
   @Memoize()
   get literalExpression(): Code {
-    return code`{ ${joinCode(this.properties.map(CodeThunk.evaluate), { on: ", " })} } as const`;
+    return code`{ ${joinCode(
+      Object.keys(this.properties)
+        .sort()
+        .map((key) => CodeThunk.evaluate(this.properties[key])),
+      { on: ", " },
+    )} } as const`;
   }
 
   toString(): string {
@@ -97,8 +112,14 @@ export namespace SchemaObject {
   export class UserDefinedType {
     /**
      * Members of the schema object type, usually property signatures like name: string.
+     *
+     * Note the name is repeated between the key and the value:
+     *   { name: code`name: string` }
+     * This enables overwriting in the *Type tree. Unlike property assignments (above),
+     * we don't really need to support other member types (index signatures, methods, et al.).
+     * Rather, the name is repeated here for consistency with property assignments.
      */
-    readonly members: readonly CodeThunk[];
+    readonly members: Readonly<Record<string, CodeThunk>>;
 
     /**
      * Name of the type, can be used in type annotations.
@@ -109,7 +130,7 @@ export namespace SchemaObject {
       members,
       name,
     }: {
-      members: readonly CodeThunk[];
+      members: Readonly<Record<string, CodeThunk>>;
       name: Maybe<Code>;
     }) {
       this.members = members;
@@ -130,7 +151,9 @@ export namespace SchemaObject {
     @Memoize()
     get literalExpression(): Code {
       return code`{ ${joinCode(
-        this.members.map((member) => code`${CodeThunk.evaluate(member)};`),
+        Object.keys(this.members)
+          .sort()
+          .map((key) => code`${CodeThunk.evaluate(this.members[key])};`),
       )} }`;
     }
 

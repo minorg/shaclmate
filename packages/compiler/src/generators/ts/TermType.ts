@@ -149,9 +149,10 @@ export class TermType<
   @Memoize()
   override get schema(): SchemaObject<SchemaObject.BuiltinType> {
     return new SchemaObject({
-      properties: super.schema.properties.concat(
-        code`types: ${arrayOf(...[...this.nodeKinds].map(NodeKind.toTermType))}`,
-      ),
+      properties: {
+        ...super.schema.properties,
+        types: code`types: ${arrayOf(...[...this.nodeKinds].map(NodeKind.toTermType))}`,
+      },
       type: new SchemaObject.BuiltinType(
         code`${this.reusables.snippets.TermSchema}<${this.expression}>`,
       ),

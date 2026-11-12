@@ -89,9 +89,10 @@ export class DefaultValueType<
   @Memoize()
   override get schema(): SchemaObject<SchemaObject.BuiltinType> {
     return new SchemaObject({
-      properties: super.schema.properties.concat(
-        code`defaultValue: ${this.rdfjsTermExpression(this.defaultValue)}`,
-      ),
+      properties: {
+        ...super.schema.properties,
+        defaultValue: code`defaultValue: ${this.rdfjsTermExpression(this.defaultValue)}`,
+      },
       type: new SchemaObject.BuiltinType(
         code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.schema.type.expression}>`,
       ),

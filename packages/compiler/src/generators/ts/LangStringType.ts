@@ -90,9 +90,10 @@ export class LangStringType extends AbstractLiteralType {
     return new SchemaObject({
       properties:
         this.languageIn.length > 0
-          ? super.schema.properties.concat(
-              code`languageIn: ${arrayOf(...this.languageIn)}`,
-            )
+          ? {
+              ...super.schema.properties,
+              languageIn: code`languageIn: ${arrayOf(...this.languageIn)}`,
+            }
           : super.schema.properties,
       type: new SchemaObject.BuiltinType(
         this.reusables.snippets.LangStringSchema,

@@ -166,34 +166,32 @@ export class ObjectType_ShaclProperty<
     //   console.log("test");
     // }
 
-    const properties: CodeThunk[] = [code`kind: ${literalOf(this.kind)}`];
-    const typeMembers: CodeThunk[] = [
-      code`readonly kind: ${literalOf(this.kind)}`,
-    ];
+    const properties: Record<string, CodeThunk> = {
+      kind: code`kind: ${literalOf(this.kind)}`,
+    };
+    const typeMembers: Record<string, CodeThunk> = {
+      kind: code`readonly kind: ${literalOf(this.kind)}`,
+    };
 
     if (
       this.configuration.features.has("Object.fromRdf") ||
       this.configuration.features.has("Object.toRdf")
     ) {
-      properties.push(code`path: ${this.propertyPathToCode(this.path)}`);
-      typeMembers.push(
-        code`readonly path: ${this.reusables.snippets.PropertyPath}`,
-      );
+      properties["path"] = code`path: ${this.propertyPathToCode(this.path)}`;
+      typeMembers["path"] =
+        code`readonly path: ${this.reusables.snippets.PropertyPath}`;
     }
 
     // Use a getter if the type is recursive or the type is an object type, which may have forward references in the file
     if (this.recursive || this.type.referencesNamedType) {
-      properties.push(
-        () => code`get type() { return ${this.type.schema.expression}; }`,
-      );
-      typeMembers.push(
-        () => code`readonly type: ${this.type.schema.type.expression}`,
-      );
+      properties["type"] = () =>
+        code`get type() { return ${this.type.schema.expression}; }`;
+      typeMembers["type"] = () =>
+        code`readonly type: ${this.type.schema.type.expression}`;
     } else {
-      properties.push(code`type: ${this.type.schema.expression}`);
-      typeMembers.push(
-        code`readonly type: ${this.type.schema.type.expression}`,
-      );
+      properties["type"] = code`type: ${this.type.schema.expression}`;
+      typeMembers["type"] =
+        code`readonly type: ${this.type.schema.type.expression}`;
     }
 
     return new SchemaObject({

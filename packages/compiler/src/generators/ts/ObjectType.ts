@@ -216,8 +216,9 @@ export class ObjectType extends AbstractUserDefinedType {
   @Memoize()
   override get schema(): SchemaObject<SchemaObject.UserDefinedType> {
     return new SchemaObject({
-      properties: super.schema.properties.concat(
-        () =>
+      properties: {
+        ...super.schema.properties,
+        properties: () =>
           code`properties: { ${joinCode(
             this.properties.flatMap((property) =>
               property.schema
@@ -228,10 +229,11 @@ export class ObjectType extends AbstractUserDefinedType {
             ),
             { on: "," },
           )} }`,
-      ),
+      },
       type: new SchemaObject.UserDefinedType({
-        members: super.schema.type.members.concat(
-          () =>
+        members: {
+          ...super.schema.type.members,
+          properties: () =>
             code`properties: { ${joinCode(
               this.properties.flatMap((property) =>
                 property.schema
@@ -242,7 +244,7 @@ export class ObjectType extends AbstractUserDefinedType {
               ),
               { on: "," },
             )} }`,
-        ),
+        },
         name: super.schema.type.name,
       }),
       variable: super.schema.variable,

@@ -67,11 +67,13 @@ export abstract class AbstractContainerType<
     SchemaObject.AbstractType | SchemaObject.BuiltinType
   > {
     return new SchemaObject({
-      properties: super.schema.properties.concat(
-        this.recursive || this.referencesNamedType
-          ? code`get itemType() { return ${this.itemType.schema.expression}; }`
-          : code`itemType: ${this.itemType.schema.expression}`,
-      ),
+      properties: {
+        ...super.schema.properties,
+        itemType:
+          this.recursive || this.referencesNamedType
+            ? code`get itemType() { return ${this.itemType.schema.expression}; }`
+            : code`itemType: ${this.itemType.schema.expression}`,
+      },
       type: new SchemaObject.AbstractType("AbstractContainerType"),
       variable: super.schema.variable,
     });

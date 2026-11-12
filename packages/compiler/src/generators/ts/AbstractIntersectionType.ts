@@ -112,19 +112,21 @@ export abstract class AbstractIntersectionType<
   @Memoize()
   override get schema(): SchemaObject<SchemaObject.UserDefinedType> {
     return new SchemaObject({
-      properties: super.schema.properties.concat(
-        code`members: [${joinCode(
+      properties: {
+        ...super.schema.properties,
+        members: code`members: [${joinCode(
           this.members.map(({ type }) => type.schema.expression),
           { on: "," },
         )}] as const`,
-      ),
+      },
       type: new SchemaObject.UserDefinedType({
-        members: super.schema.type.members.concat(
-          code`members: [${joinCode(
+        members: {
+          ...super.schema.type.members,
+          members: code`members: [${joinCode(
             this.members.map(({ type }) => type.schema.type.expression),
             { on: ", " },
           )}]`,
-        ),
+        },
         name: super.schema.type.name,
       }),
       variable: super.schema.variable,

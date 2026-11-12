@@ -114,15 +114,15 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
   @Memoize()
   private get _schema(): SchemaObject<SchemaObject.UserDefinedType> {
     return new SchemaObject({
-      properties: [
-        code`kind: ${literalOf(this.kind)}`,
-        code`type: ${this.type.schema.expression}`,
-      ],
+      properties: {
+        kind: code`kind: ${literalOf(this.kind)}`,
+        type: code`type: ${this.type.schema.expression}`,
+      },
       type: new SchemaObject.UserDefinedType({
-        members: [
-          code`readonly kind: ${literalOf(this.kind)}`,
-          code`readonly type: ${this.type.schema.type.expression}`,
-        ],
+        members: {
+          kind: code`readonly kind: ${literalOf(this.kind)}`,
+          type: code`readonly type: ${this.type.schema.type.expression}`,
+        },
         name: Maybe.empty(),
       }),
       variable: this.schemaVariable,
@@ -134,6 +134,13 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     return this.objectType.name
       .map((objectTypeAlias) => code`${objectTypeAlias}.Identifier`)
       .orDefault(this.type.expression);
+  }
+
+  @Memoize()
+  private get typeSchemaVariable(): Code {
+    return this.schemaVariable
+      .map((schemaVariable) => code`${schemaVariable}.type`)
+      .orDefault(this.type.schema.expression);
   }
 
   override createInitializer({
@@ -290,12 +297,5 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     return Maybe.of(
       code`${literalOf(this.name)}: ${this.type.toStringExpression({ variables: { value: code`${variables.object}.${this.name}()` } })}`,
     );
-  }
-
-  @Memoize()
-  private get typeSchemaVariable(): Code {
-    return this.schemaVariable
-      .map((schemaVariable) => code`${schemaVariable}.type`)
-      .orDefault(this.type.schema.expression);
   }
 }
