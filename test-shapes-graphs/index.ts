@@ -84,6 +84,21 @@ export const testShapesGraphs = {
     kind: "stress",
   },
 
+  formsExample: {
+    description: "Forms example",
+    filePaths: [
+      path.join(
+        thisDirectoryPath,
+        "..",
+        "examples",
+        "forms",
+        "src",
+        "forms.shaclmate.ttl",
+      ),
+    ],
+    kind: "example",
+  },
+
   graphqlExample: {
     description: "GraphQL example",
     filePaths: [
