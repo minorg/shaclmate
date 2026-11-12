@@ -118,7 +118,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
       code`{ ${joinCode(
         [
           code`readonly kind: ${literalOf(this.kind)}`,
-          code`readonly type: ${this.type.schemaType}`,
+          code`readonly type: ${this.type.schema.type.expression}`,
         ],
         { on: ", " },
       )} }`,

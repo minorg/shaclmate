@@ -8,13 +8,8 @@ import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import type { Callable } from "./Callable.js";
 import { InlineCallable } from "./InlineCallable.js";
 import { ReferenceCallable } from "./ReferenceCallable.js";
-import {
-  arrayOf,
-  type Code,
-  code,
-  joinCode,
-  literalOf,
-} from "./ts-poet-wrapper.js";
+import { SchemaObject } from "./SchemaObject.js";
+import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class IriType extends AbstractIdentifierType<NamedNode> {
   override readonly filterFunction = new ReferenceCallable(
@@ -23,8 +18,6 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   override readonly filterType = code`${this.reusables.snippets.IriFilter}`;
   override readonly kind = "Iri";
   override readonly nodeKinds = nodeKinds;
-  override readonly schemaType =
-    code`${this.reusables.snippets.IriSchema}<${this.valueTypeExpression}>`;
   override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.iriSparqlWherePatterns,
   );
@@ -153,22 +146,35 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
     };
   }
 
-  protected override get schemaInitializers(): readonly Code[] {
-    if (this.in_.length === 0 || this.name.isNothing()) {
-      return super.schemaInitializers;
-    }
-
-    let initializers = [code`kind: ${literalOf(this.kind)} as const`];
+  @Memoize()
+  override get schema(): SchemaObject {
+    const thisProperties: Code[] = [];
+    const thisTypeMembers: Code[] = [];
     if (this.hasValues.length > 0) {
-      initializers = initializers.concat(
+      thisProperties.push(
         code`hasValues: ${arrayOf(...this.hasValues.map((hasValue) => this.rdfjsTermExpression(hasValue)))}`,
       );
+      thisTypeMembers.push(
+        code`hasValues: readonly ${this.reusables.imports.NamedNode}[]`,
+      );
     }
-    initializers = initializers.concat(
-      code`in: inValues.map(inValue => ${this.reusables.imports.dataFactory}.namedNode(inValue))`,
-      code`inValues`,
-    );
-    return initializers;
+    if (this.in_.length > 0) {
+      thisProperties.push(
+        code`in: inValues.map(inValue => ${this.reusables.imports.dataFactory}.namedNode(inValue))`,
+        code`inValues`,
+      );
+    }
+
+    return new SchemaObject({
+      properties: super.schema.properties.concat(thisProperties),
+      type: new SchemaObject.Type({
+        members: super.schema.type.members.concat(thisTypeMembers),
+        name: Maybe.of(
+          code`${this.reusables.snippets.IriSchema}<${this.valueTypeExpression}>`,
+        ),
+      }),
+      variable: super.schema.variable,
+    });
   }
 
   @Memoize()

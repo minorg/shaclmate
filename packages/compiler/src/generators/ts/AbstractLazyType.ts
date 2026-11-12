@@ -97,7 +97,7 @@ export abstract class AbstractLazyType<
     ${this.partialType.fromRdfResourceValuesFunction.annotatedUsage}(values, { ...fromRdfResourceValuesOptions, schema: fromRdfResourceValuesOptions.schema.partialType })
       .map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: ${this.resolverFunctionExpression({ variables: { factoryFunctionOptions: code`fromRdfResourceValuesOptions` } })} })))`,
       {
-        type: code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`,
+        type: code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schema.type.expression}>`,
       },
     );
   }
@@ -148,7 +148,7 @@ export abstract class AbstractLazyType<
   override get schemaType(): Code {
     return code`${{
       kind: this.kind,
-      partialType: this.partialType.schemaType,
+      partialType: this.partialType.schema.type.expression,
     }}`;
   }
 
@@ -179,7 +179,7 @@ export abstract class AbstractLazyType<
     return new InlineCallable(
       code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlConstructTriplesFunction.annotatedUsage}({ ...otherParameters, schema: schema.partialType }))`,
       {
-        type: code`${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>`,
+        type: code`${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schema.type.expression}>`,
       },
     );
   }
@@ -189,7 +189,7 @@ export abstract class AbstractLazyType<
     return new InlineCallable(
       code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlWherePatternsFunction.annotatedUsage}({ ...otherParameters, schema: schema.partialType }))`,
       {
-        type: code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>`,
+        type: code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schema.type.expression}>`,
       },
     );
   }

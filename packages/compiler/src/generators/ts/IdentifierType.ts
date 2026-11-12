@@ -2,9 +2,10 @@ import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 
 import { Maybe } from "purify-ts";
-
+import { Memoize } from "typescript-memoize";
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { ReferenceCallable } from "./ReferenceCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { code } from "./ts-poet-wrapper.js";
 
 export class IdentifierType extends AbstractIdentifierType<
@@ -56,8 +57,6 @@ export class IdentifierType extends AbstractIdentifierType<
   override readonly parseFunction = new ReferenceCallable(
     this.reusables.snippets.parseIdentifier,
   );
-  override readonly schemaType =
-    code`${this.reusables.snippets.IdentifierSchema}`;
   override readonly toJsonValueFunction = new ReferenceCallable(
     this.reusables.snippets.identifierToJsonString,
   );
@@ -80,6 +79,17 @@ export class IdentifierType extends AbstractIdentifierType<
       ...parameters,
       hasValues: [],
       in_: [],
+    });
+  }
+
+  @Memoize()
+  override get schema(): SchemaObject {
+    return new SchemaObject({
+      ...super.schema,
+      type: new SchemaObject.Type({
+        ...super.schema.type,
+        name: Maybe.of(code`${this.reusables.snippets.IdentifierSchema}`),
+      }),
     });
   }
 }

@@ -107,7 +107,7 @@ export class ListType<
   @Memoize()
   override get fromRdfResourceValuesFunction(): Callable {
     return new InlineCallable(
-      code`${this._mutable ? this.reusables.snippets.mutableListFromRdfResourceValues : this.reusables.snippets.listFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
+      code`${this._mutable ? this.reusables.snippets.mutableListFromRdfResourceValues : this.reusables.snippets.listFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schema.type.expression}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
     );
   }
 
@@ -133,14 +133,14 @@ export class ListType<
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Callable {
     return new InlineCallable(
-      code`${this.reusables.snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction.unannotatedUsage})`,
+      code`${this.reusables.snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schema.type.expression}>(${this.itemType.valueSparqlConstructTriplesFunction.unannotatedUsage})`,
     );
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Callable {
     return new InlineCallable(
-      code`${this.reusables.snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
+      code`${this.reusables.snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schema.type.expression}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
     );
   }
 

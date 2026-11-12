@@ -2,6 +2,9 @@ import { Memoize } from "typescript-memoize";
 import { AbstractStructuredType } from "./AbstractStructuredType.js";
 import type { Type } from "./Type.js";
 
+/**
+ * Abstract base class for discriminated unions and intersections.
+ */
 export abstract class AbstractCompoundType<
   MemberT extends { type: MemberTypeT },
   MemberTypeT extends Type,

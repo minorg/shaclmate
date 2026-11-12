@@ -6,6 +6,7 @@ import { Memoize } from "typescript-memoize";
 import type { AbstractType } from "../AbstractType.js";
 import type { Reusables } from "../Reusables.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
+import type { SchemaObject } from "../SchemaObject.js";
 import type { TsGenerator } from "../TsGenerator.js";
 import type { Type } from "../Type.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
@@ -104,6 +105,11 @@ export abstract class ObjectType_AbstractProperty {
   abstract readonly recursive: boolean;
 
   /**
+   * TypeScript object describing this property, for runtime use.
+   */
+  abstract readonly schema: Maybe<SchemaObject>;
+
+  /**
    * TypeScript type describing .schema.
    */
   abstract readonly schemaType: Maybe<Code>;
@@ -134,16 +140,6 @@ export abstract class ObjectType_AbstractProperty {
       logger: this.logger,
       snippets: this.reusables.snippets,
     });
-  }
-
-  /**
-   * TypeScript object describing this property, for runtime use.
-   */
-  @Memoize()
-  get schema(): Maybe<Code> {
-    return this.objectType.name
-      .map((name) => code`${name}.schema.properties.${this.name}`)
-      .altLazy(() => this.schemaExpression);
   }
 
   /**
@@ -287,4 +283,11 @@ export abstract class ObjectType_AbstractProperty {
   protected readonly rdfjsTermExpression: (
     parameters: Parameters<typeof rdfjsTermExpression>[0],
   ) => Code;
+
+  @Memoize()
+  protected schemaVariable(): Maybe<Code> {
+    return this.objectType.name.map(
+      (name) => code`${name}.schema.properties.${this.name}`,
+    );
+  }
 }

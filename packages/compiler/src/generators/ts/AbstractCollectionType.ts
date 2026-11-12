@@ -4,6 +4,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { Callable } from "./Callable.js";
 import { InlineCallable } from "./InlineCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
@@ -69,8 +70,16 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  override get schemaType(): Code {
-    return code`${this.reusables.snippets.CollectionSchema}<${this.itemType.schemaType}>`;
+  override get schema(): SchemaObject {
+    return new SchemaObject({
+      ...super.schema,
+      type: new SchemaObject.Type({
+        ...super.schema.type,
+        name: Maybe.of(
+          code`${this.reusables.snippets.CollectionSchema}<${this.itemType.schema.type.expression}>`,
+        ),
+      }),
+    });
   }
 
   @Memoize()

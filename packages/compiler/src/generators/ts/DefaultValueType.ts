@@ -19,9 +19,9 @@ export class DefaultValueType<
   override readonly filterFunction = this.itemType.filterFunction;
   override readonly filterType = this.itemType.filterType;
   override readonly schemaType =
-    code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.schemaType}>`;
+    code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.schema.type.expression}>`;
   override readonly fromRdfResourceValuesFunction = new InlineCallable(
-    code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
+    code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schema.type.expression}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
   );
   override readonly graphqlArgs: AbstractContainerType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
@@ -44,7 +44,7 @@ export class DefaultValueType<
   override readonly valueSparqlConstructTriplesFunction =
     this.itemType.valueSparqlConstructTriplesFunction;
   override readonly valueSparqlWherePatternsFunction = new InlineCallable(
-    code`${this.reusables.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
+    code`${this.reusables.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schema.type.expression}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
   );
 
   constructor({

@@ -7,6 +7,7 @@ import type { Callable } from "./Callable.js";
 import { codeEquals } from "./codeEquals.js";
 import { InlineCallable } from "./InlineCallable.js";
 import { ReferenceCallable } from "./ReferenceCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class OptionType<
@@ -85,7 +86,7 @@ export class OptionType<
   @Memoize()
   override get fromRdfResourceValuesFunction(): Callable {
     return new InlineCallable(
-      code`${this.reusables.snippets.maybeFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
+      code`${this.reusables.snippets.maybeFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schema.type.expression}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
     );
   }
 
@@ -113,8 +114,16 @@ export class OptionType<
   }
 
   @Memoize()
-  override get schemaType(): Code {
-    return code`${this.reusables.snippets.MaybeSchema}<${this.itemType.schemaType}>`;
+  override get schema(): SchemaObject {
+    return new SchemaObject({
+      ...super.schema,
+      type: new SchemaObject.Type({
+        ...super.schema.type,
+        name: Maybe.of(
+          code`${this.reusables.snippets.MaybeSchema}<${this.itemType.schema.type.expression}>`,
+        ),
+      }),
+    });
   }
 
   @Memoize()
@@ -149,14 +158,14 @@ export class OptionType<
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Callable {
     return new InlineCallable(
-      code`${this.reusables.snippets.maybeSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction.unannotatedUsage})`,
+      code`${this.reusables.snippets.maybeSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schema.type.expression}>(${this.itemType.valueSparqlConstructTriplesFunction.unannotatedUsage})`,
     );
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Callable {
     return new InlineCallable(
-      code`${this.reusables.snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
+      code`${this.reusables.snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schema.type.expression}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
     );
   }
 

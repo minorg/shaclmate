@@ -42,8 +42,6 @@ import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_object
 import type { ObjectType_Property } from "./_ObjectType/ObjectType_Property.js";
 import { ObjectType_RdfTypeProperty } from "./_ObjectType/ObjectType_RdfTypeProperty.js";
 import { ObjectType_ShaclProperty } from "./_ObjectType/ObjectType_ShaclProperty.js";
-import { ObjectType_schemaExpression } from "./_ObjectType/ObjectType_schemaExpression.js";
-import { ObjectType_schemaTypeExpression } from "./_ObjectType/ObjectType_schemaTypeExpression.js";
 import { ObjectType_sparqlConstructQueryFunction } from "./_ObjectType/ObjectType_sparqlConstructQueryFunction.js";
 import { ObjectType_sparqlConstructQueryStringFunction } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunction.js";
 import {
@@ -74,6 +72,7 @@ import { DeclaredCallable } from "./DeclaredCallable.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { InlineCallable } from "./InlineCallable.js";
 import type { IriType } from "./IriType.js";
+import { SchemaObject } from "./SchemaObject.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
@@ -97,8 +96,6 @@ export class ObjectType extends AbstractStructuredType {
     ObjectType_fromRdfResourceValuesFunctionType;
   protected override hashFunctionExpression = ObjectType_hashFunctionExpression;
   protected override hashFunctionType = ObjectType_hashFunctionType;
-  protected override schemaExpression = ObjectType_schemaExpression;
-  protected override schemaTypeExpression = ObjectType_schemaTypeExpression;
   protected override toJsonObjectFunctionExpression =
     ObjectType_toJsonObjectFunctionExpression;
   protected override toJsonObjectFunctionType =
@@ -258,6 +255,29 @@ export class ObjectType extends AbstractStructuredType {
         shorthand,
       },
     );
+  }
+
+  @Memoize()
+  override get schema(): SchemaObject {
+    return new SchemaObject({
+      properties: super.schema.properties.concat(
+        this.properties.flatMap(
+          (property) =>
+            property.schema.map((schema) => schema.properties).extract() ?? [],
+        ),
+      ),
+      type: new SchemaObject.Type({
+        members: super.schema.type.members.concat(
+          this.properties.flatMap(
+            (property) =>
+              property.schema.map((schema) => schema.type.members).extract() ??
+              [],
+          ),
+        ),
+        name: super.schema.type.name,
+      }),
+      variable: super.schema.variable,
+    });
   }
 
   @Memoize()

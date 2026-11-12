@@ -8,7 +8,14 @@ import { Memoize } from "typescript-memoize";
 import { AbstractTermType } from "./AbstractTermType.js";
 import type { Callable } from "./Callable.js";
 import { ReferenceCallable } from "./ReferenceCallable.js";
-import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { SchemaObject } from "./SchemaObject.js";
+import {
+  arrayOf,
+  type Code,
+  code,
+  joinCode,
+  literalOf,
+} from "./ts-poet-wrapper.js";
 
 export class TermType<
   ConstantTermT extends Literal | NamedNode = Literal | NamedNode,
@@ -124,11 +131,6 @@ export class TermType<
   }
 
   @Memoize()
-  override get schemaType(): Code {
-    return code`${this.reusables.snippets.TermSchema}<${this.expression}>`;
-  }
-
-  @Memoize()
   protected override get inlineExpression(): Code {
     return code`(${joinCode(
       [...this.nodeKinds]
@@ -150,10 +152,31 @@ export class TermType<
     )})`;
   }
 
+  @Memoize()
+  override get schema(): SchemaObject {
+    return new SchemaObject({
+      properties: super.schema.properties.concat(
+        code`types: ${arrayOf(...[...this.nodeKinds].map(NodeKind.toTermType))}`,
+      ),
+      type: new SchemaObject.Type({
+        members: super.schema.type.members.concat(
+          code`types: ${joinCode(
+            [...this.nodeKinds]
+              .map(NodeKind.toTermType)
+              .map((termType) => code`${literalOf(termType)}`),
+            { on: " | " },
+          )}`,
+        ),
+        name: Maybe.of(
+          code`${this.reusables.snippets.TermSchema}<${this.expression}>`,
+        ),
+      }),
+      variable: super.schema.variable,
+    });
+  }
+
   protected override get schemaInitializers() {
-    return super.schemaInitializers.concat(
-      code`types: ${arrayOf(...[...this.nodeKinds].map(NodeKind.toTermType))}`,
-    );
+    return super.schemaInitializers.concat();
   }
 
   override graphqlResolveExpression(

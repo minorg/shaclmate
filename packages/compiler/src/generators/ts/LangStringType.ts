@@ -5,6 +5,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { ReferenceCallable } from "./ReferenceCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 export class LangStringType extends AbstractLiteralType {
@@ -50,8 +51,6 @@ export class LangStringType extends AbstractLiteralType {
   override readonly jsonValueType: AbstractLiteralType["jsonValueType"] =
     this.jsonObjectType;
   override readonly kind = "LangString";
-  override readonly schemaType =
-    code`${this.reusables.snippets.LangStringSchema}`;
   override readonly toJsonObjectFunction = new ReferenceCallable(
     this.reusables.snippets.langStringToJsonObject,
   );
@@ -86,14 +85,26 @@ export class LangStringType extends AbstractLiteralType {
     throw new Error("not implemented");
   }
 
-  protected override get schemaInitializers() {
-    let initializers = super.schemaInitializers;
-    if (this.languageIn.length > 0) {
-      initializers = initializers.concat(
-        code`languageIn: ${arrayOf(...this.languageIn)}`,
-      );
-    }
-    return initializers;
+  @Memoize()
+  override get schema(): SchemaObject {
+    return new SchemaObject({
+      properties:
+        this.languageIn.length > 0
+          ? super.schema.properties.concat(
+              code`languageIn: ${arrayOf(...this.languageIn)}`,
+            )
+          : super.schema.properties,
+      type: new SchemaObject.Type({
+        members:
+          this.languageIn.length > 0
+            ? super.schema.type.members.concat(
+                code`languageIn: readonly string[]`,
+              )
+            : super.schema.type.members,
+        name: Maybe.of(code`${this.reusables.snippets.LangStringSchema}`),
+      }),
+      variable: super.schema.variable,
+    });
   }
 
   override graphqlResolveExpression(

@@ -178,7 +178,7 @@ export class ObjectType_ShaclProperty<
         code`readonly path: ${this.reusables.snippets.PropertyPath}`,
       );
     }
-    initializers.push(code`readonly type: ${this.type.schemaType}`);
+    initializers.push(code`readonly type: ${this.type.schema.type.expression}`);
     return Maybe.of(code`{ ${joinCode(initializers, { on: ", " })} }`);
   }
 
@@ -253,7 +253,7 @@ export class ObjectType_ShaclProperty<
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.name}:
-        ${this.reusables.snippets.shaclPropertyFromRdf}<${this.type.expression}, ${this.type.schemaType}>({
+        ${this.reusables.snippets.shaclPropertyFromRdf}<${this.type.expression}, ${this.type.schema.type.expression}>({
           ...${variables.options},
           focusResource: ${variables.focusResource},
           ignoreRdfType: true,

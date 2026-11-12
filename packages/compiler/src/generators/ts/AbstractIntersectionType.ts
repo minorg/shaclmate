@@ -128,7 +128,7 @@ export abstract class AbstractIntersectionType<
     return code`${{
       kind: this.kind,
       members: code`[${joinCode(
-        this.members.map(({ type }) => type.schemaType),
+        this.members.map(({ type }) => type.schema.type.expression),
         { on: ", " },
       )}]`,
     }}`;

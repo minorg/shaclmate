@@ -8,6 +8,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import type { Callable } from "./Callable.js";
 import { ReferenceCallable } from "./ReferenceCallable.js";
+import { SchemaObject } from "./SchemaObject.js";
 import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
@@ -80,18 +81,27 @@ export class StringType extends AbstractPrimitiveType<string> {
   }
 
   @Memoize()
-  override get schemaType(): Code {
-    return code`${this.reusables.snippets.StringSchema}<${this.expression}>`;
-  }
-
-  protected override get schemaInitializers(): readonly Code[] {
-    let initializers = super.schemaInitializers;
-    if (this.languageIn.length > 0) {
-      initializers = initializers.concat(
-        code`languageIn: ${arrayOf(...this.languageIn)}`,
-      );
-    }
-    return initializers;
+  override get schema(): SchemaObject {
+    return new SchemaObject({
+      properties:
+        this.languageIn.length > 0
+          ? super.schema.properties.concat(
+              code`languageIn: ${arrayOf(...this.languageIn)}`,
+            )
+          : super.schema.properties,
+      type: new SchemaObject.Type({
+        members:
+          this.languageIn.length > 0
+            ? super.schema.type.members.concat(
+                code`languageIn: readonly string[]`,
+              )
+            : super.schema.type.members,
+        name: Maybe.of(
+          code`${this.reusables.snippets.StringSchema}<${this.expression}>`,
+        ),
+      }),
+      variable: super.schema.variable,
+    });
   }
 
   override toRdfResourceValuesExpression({

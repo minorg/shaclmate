@@ -69,13 +69,6 @@ export abstract class AbstractStructuredType extends AbstractType {
     });
   }
 
-  @Memoize()
-  override get schemaType(): Code {
-    return this.name
-      .map((name) => code`${name}.Schema`)
-      .orDefaultLazy(() => this.schemaTypeExpression());
-  }
-
   override get toJsonValueFunction(): Callable {
     return this.toJsonObjectFunction;
   }
@@ -227,7 +220,7 @@ export abstract class AbstractStructuredType extends AbstractType {
   protected abstract fromRdfResourceValuesFunctionExpression(): Code;
 
   protected fromRdfResourceValuesFunctionType(): Code {
-    return code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`;
+    return code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schema.type.expression}>`;
   }
 
   protected abstract hashFunctionExpression(): Code;
@@ -235,8 +228,6 @@ export abstract class AbstractStructuredType extends AbstractType {
   protected hashFunctionType(): Code {
     return code`${this.reusables.snippets.HashFunction}<${this.expression}>`;
   }
-
-  protected abstract schemaTypeExpression(): Code;
 
   protected override staticModuleDeclarations(
     name: string,
@@ -331,13 +322,13 @@ export abstract class AbstractStructuredType extends AbstractType {
   protected abstract valueSparqlConstructTriplesFunctionExpression(): Code;
 
   protected valueSparqlConstructTriplesType(): Code {
-    return code`${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>`;
+    return code`${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schema.type.expression}>`;
   }
 
   protected abstract valueSparqlWherePatternsFunctionExpression(): Code;
 
   protected valueSparqlWherePatternsFunctionType(): Code {
-    return code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>`;
+    return code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schema.type.expression}>`;
   }
 }
 

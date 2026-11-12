@@ -12,7 +12,7 @@ export function AbstractDiscriminatedUnionType_schemaTypeExpression<
         ({ type, primaryDiscriminantValue }) =>
           code`readonly ${literalOf(primaryDiscriminantValue)}: ${{
             discriminantValues: code`readonly (number | string)[]`,
-            type: type.schemaType,
+            type: type.schema.type.expression,
           }}`,
       ),
       { on: ";" },
