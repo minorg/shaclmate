@@ -1,24 +1,27 @@
 {
   "dependencies": {
+    "@rdfjs/types": "~2.0.1",
     "@rdfx/collection": "0.0.62",
     "@rdfx/curie": "0.0.62",
     "@rdfx/data-factory": "0.0.62",
+    "@rdfx/literal": "0.0.62",
     "@rdfx/resource": "0.0.62",
+    "@rdfx/string": "0.0.62",
     "decimal.js": "~10.6.0",
     "purify-ts": "~2.1.4",
     "sparqljs": "3.7.3",
     "zod": "~4.1.12"
   },
   "devDependencies": {
-    "@rdfjs/namespace": "~2.0.1",
     "@rdfx/fs": "0.0.62",
     "@rdfx/serializer": "0.0.62",
     "@rdfx/sparql-client": "0.0.62",
+    "@rdfx/testing": "0.0.62",
     "@tpluscode/rdf-ns-builders": "~4.3.0",
-    "@types/rdfjs__namespace": "~2.0.10",
     "@types/sparqljs": "3.1.12",
     "js-sha256": "~0.11.0",
-    "oxigraph": "0.5.8"
+    "oxigraph": "0.5.8",
+    "rdf-validate-shacl": "0.6.5"
   },
   "files": [
     "dist/index.d.ts",
