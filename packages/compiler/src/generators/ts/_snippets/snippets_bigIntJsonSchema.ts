@@ -8,5 +8,5 @@ export const snippets_bigIntJsonSchema: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}bigIntJsonSchema`,
     code`\
-const ${syntheticNamePrefix}bigIntJsonSchema = ${imports.z}.union([${imports.z}.string().regex(/^-?\d+$/), ${imports.z}.number().int()]).transform((v) => BigInt(v).toString()) as unknown as ${imports.z}.ZodType<string, string>;`,
+const ${syntheticNamePrefix}bigIntJsonSchema = ${imports.z}.union([${imports.z}.string().regex(/^-?\\d+$/), ${imports.z}.number().int()]).transform((v) => BigInt(v).toString()) as unknown as ${imports.z}.ZodType<string, string>;`,
   );

@@ -350,7 +350,7 @@ function $bigIntFromRdfResourceValues<BigIntT extends bigint>(
 }
 
 const $bigIntJsonSchema = z
-  .union([z.string().regex(/^-?d+$/), z.number().int()])
+  .union([z.string().regex(/^-?\d+$/), z.number().int()])
   .transform((v) => BigInt(v).toString()) as unknown as z.ZodType<
   string,
   string
