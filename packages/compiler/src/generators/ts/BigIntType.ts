@@ -15,7 +15,7 @@ export class BigIntType extends AbstractNumericType<bigint> {
   );
 
   override readonly jsTypes = [{ typeof: "bigint" } as const];
-  override readonly conversionFunction: Maybe<AbstractNumericType.ConversionFunction> =
+  readonly conversionFunction: Maybe<AbstractNumericType.ConversionFunction> =
     this.in_.length > 0
       ? Maybe.empty()
       : Maybe.of({
@@ -40,14 +40,9 @@ export class BigIntType extends AbstractNumericType<bigint> {
     this.reusables,
   );
   override readonly jsonValueType: AbstractNumericType.JsonType =
-    this.jsonTypeFactory.createJsonUnionType([
-      this.jsonTypeFactory.createJsonNumberType({
-        in_: this.decodedIn.map((in_) => Number(in_)),
-      }),
-      this.jsonTypeFactory.createJsonStringType({
-        in_: this.decodedIn.map((in_) => in_.toString()),
-      }),
-    ]);
+    this.jsonTypeFactory.createJsonStringType({
+      in_: this.decodedIn.map((in_) => in_.toString()),
+    });
   override readonly kind = "BigInt";
 
   @Memoize()
