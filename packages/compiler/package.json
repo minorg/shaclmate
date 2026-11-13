@@ -2,13 +2,13 @@
   "dependencies": {
     "@shaclmate/shacl-ast": "4.0.100",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/collection": "0.0.59",
-    "@rdfx/curie": "0.0.59",
-    "@rdfx/data-factory": "0.0.59",
-    "@rdfx/literal": "0.0.59",
-    "@rdfx/logger": "0.0.59",
-    "@rdfx/resource": "0.0.59",
-    "@rdfx/string": "0.0.59",
+    "@rdfx/collection": "0.0.62",
+    "@rdfx/curie": "0.0.62",
+    "@rdfx/data-factory": "0.0.62",
+    "@rdfx/literal": "0.0.62",
+    "@rdfx/logger": "0.0.62",
+    "@rdfx/resource": "0.0.62",
+    "@rdfx/string": "0.0.62",
     "@sindresorhus/base62": "~0.1.0",
     "@tpluscode/rdf-ns-builders": "~4.3.0",
     "change-case": "~5.4.4",
@@ -22,7 +22,7 @@
     "uri-template": "~2.0.0"
   },
   "devDependencies": {
-    "@rdfx/fs": "0.0.59",
+    "@rdfx/fs": "0.0.62",
     "typescript": "6.0.3"
   },
   "files": [
