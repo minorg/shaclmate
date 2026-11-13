@@ -2,11 +2,11 @@
   "dependencies": {
     "@hono/zod-validator": "~0.9.1",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/collection": "0.0.62",
-    "@rdfx/curie": "0.0.62",
-    "@rdfx/data-factory": "0.0.62",
-    "@rdfx/logger": "0.0.62",
-    "@rdfx/resource": "0.0.62",
+    "@rdfx/collection": "0.0.63",
+    "@rdfx/curie": "0.0.63",
+    "@rdfx/data-factory": "0.0.63",
+    "@rdfx/logger": "0.0.63",
+    "@rdfx/resource": "0.0.63",
     "hono": "~4.13.13",
     "purify-ts": "~2.1.4"
   },
