@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "4.0.102",
+    "@shaclmate/shacl-ast": "4.0.103",
     "@rdfjs/types": "~2.0.1",
     "@rdfx/collection": "0.0.63",
     "@rdfx/curie": "0.0.63",
@@ -586,8 +586,8 @@
     "dist/generators/ts/_snippets/snippets_arrayToJsonArray.js",
     "dist/generators/ts/_snippets/snippets_bigDecimalFromJsonObject.d.ts",
     "dist/generators/ts/_snippets/snippets_bigDecimalFromJsonObject.js",
-    "dist/generators/ts/_snippets/snippets_bigDecimalFromJsonString.d.ts",
-    "dist/generators/ts/_snippets/snippets_bigDecimalFromJsonString.js",
+    "dist/generators/ts/_snippets/snippets_bigDecimalFromJsonValue.d.ts",
+    "dist/generators/ts/_snippets/snippets_bigDecimalFromJsonValue.js",
     "dist/generators/ts/_snippets/snippets_bigDecimalFromRdfResourceValues.d.ts",
     "dist/generators/ts/_snippets/snippets_bigDecimalFromRdfResourceValues.js",
     "dist/generators/ts/_snippets/snippets_bigDecimalLiteral.d.ts",
@@ -600,8 +600,8 @@
     "dist/generators/ts/_snippets/snippets_bigDecimalToJsonString.js",
     "dist/generators/ts/_snippets/snippets_bigIntFromJsonObject.d.ts",
     "dist/generators/ts/_snippets/snippets_bigIntFromJsonObject.js",
-    "dist/generators/ts/_snippets/snippets_bigIntFromJsonString.d.ts",
-    "dist/generators/ts/_snippets/snippets_bigIntFromJsonString.js",
+    "dist/generators/ts/_snippets/snippets_bigIntFromJsonValue.d.ts",
+    "dist/generators/ts/_snippets/snippets_bigIntFromJsonValue.js",
     "dist/generators/ts/_snippets/snippets_bigIntFromRdfResourceValues.d.ts",
     "dist/generators/ts/_snippets/snippets_bigIntFromRdfResourceValues.js",
     "dist/generators/ts/_snippets/snippets_bigIntToJsonObject.d.ts",
@@ -976,5 +976,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.102"
+  "version": "4.0.103"
 }
