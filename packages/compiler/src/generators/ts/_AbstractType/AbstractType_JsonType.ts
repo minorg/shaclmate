@@ -483,10 +483,26 @@ class JsonStringType extends AbstractJsonPrimitiveType<string> {
           .map((format) => {
             invariant(this.minLength.isNothing());
             switch (format) {
+              case "bigdecimal":
+                return code`\
+(${this.reusables.imports.z}.union([${this.reusables.imports.z}.string(), ${this.reusables.imports.z}.number()]).transform((v, ctx) => {
+  try {
+    const d = new ${this.reusables.imports.BigDecimal}(v);
+    if (!d.isFinite()) {
+      throw new Error("not finite");
+    }
+    return d.toFixed();
+  } catch {
+    ctx.issues.push({ code: "custom", message: "Invalid decimal", input: v });
+    return ${this.reusables.imports.z}.NEVER;
+  }
+}) as unknown as ${this.reusables.imports.z}.ZodType<string, string>)`;
+              case "bigint":
+                return code`(${this.reusables.imports.z}.union([${this.reusables.imports.z}.string().regex(/^-?\d+$/), ${this.reusables.imports.z}.number().int()]).transform((v) => BigInt(v).toString()) as unknown as ${this.reusables.imports.z}.ZodType<string, string>)`;
               case "date":
-                return code`${this.reusables.imports.z}.iso.date()`;
+                return code`${this.reusables.imports.z}.coerce.date().transform((v) => v.toISOString().slice(0, 10))`;
               case "datetime":
-                return code`${this.reusables.imports.z}.iso.datetime()`;
+                return code`${this.reusables.imports.z}.coerce.date().transform((v) => v.toISOString())`;
               default:
                 format satisfies never;
                 throw new RangeError(format);
@@ -740,5 +756,5 @@ namespace JsonObjectType {
 
 // biome-ignore lint/correctness/noUnusedVariables: used for types
 namespace JsonStringType {
-  export type Format = "date" | "datetime";
+  export type Format = "bigdecimal" | "bigint" | "date" | "datetime";
 }

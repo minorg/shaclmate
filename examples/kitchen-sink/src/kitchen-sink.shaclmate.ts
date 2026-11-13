@@ -15637,9 +15637,18 @@ export namespace DatesStruct {
       return z.object({
         "@id": z.string().min(1),
         "@type": z.string(),
-        date: z.iso.date().optional(),
-        dateTime: z.iso.datetime().optional(),
-        dateTimeStamp: z.iso.datetime().optional(),
+        date: z.coerce
+          .date()
+          .transform((v) => v.toISOString().slice(0, 10))
+          .optional(),
+        dateTime: z.coerce
+          .date()
+          .transform((v) => v.toISOString())
+          .optional(),
+        dateTimeStamp: z.coerce
+          .date()
+          .transform((v) => v.toISOString())
+          .optional(),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -16625,8 +16634,10 @@ export namespace DefaultValuesStruct {
       return z.object({
         "@id": z.string().min(1),
         "@type": z.string(),
-        dateDefaultValue: z.iso.date(),
-        dateTimeDefaultValue: z.iso.datetime(),
+        dateDefaultValue: z.coerce
+          .date()
+          .transform((v) => v.toISOString().slice(0, 10)),
+        dateTimeDefaultValue: z.coerce.date().transform((v) => v.toISOString()),
         falseBooleanDefaultValue: z.boolean(),
         numberDefaultValue: z.number(),
         stringDefaultValue: z.string(),
@@ -22931,7 +22942,10 @@ export namespace InPropertiesStruct {
         "@id": z.string().min(1),
         "@type": z.string(),
         inBooleans: z.literal(true).optional(),
-        inDateTimes: z.iso.datetime().optional(),
+        inDateTimes: z.coerce
+          .date()
+          .transform((v) => v.toISOString())
+          .optional(),
         inDoubles: z.literal([1, 2]).optional(),
         inIntegers: z.enum(["1", "2"]).optional(),
         inIris: z
@@ -39402,20 +39416,86 @@ export namespace NumericsStruct {
         "@id": z.string().min(1),
         "@type": z.string(),
         byteNumeric: z.number().optional(),
-        decimalNumeric: z.string().optional(),
+        decimalNumeric: (
+          z.union([z.string(), z.number()]).transform((v, ctx) => {
+            try {
+              const d = new BigDecimal(v);
+              if (!d.isFinite()) {
+                throw new Error("not finite");
+              }
+              return d.toFixed();
+            } catch {
+              ctx.issues.push({
+                code: "custom",
+                message: "Invalid decimal",
+                input: v,
+              });
+              return z.NEVER;
+            }
+          }) as unknown as z.ZodType<string, string>
+        ).optional(),
         doubleNumeric: z.number().optional(),
         floatNumeric: z.number().optional(),
-        integerNumeric: z.string().optional(),
+        integerNumeric: (
+          z
+            .union([z.string().regex(/^-?d+$/), z.number().int()])
+            .transform((v) => BigInt(v).toString()) as unknown as z.ZodType<
+            string,
+            string
+          >
+        ).optional(),
         intNumeric: z.number().optional(),
-        longNumeric: z.string().optional(),
-        negativeIntegerNumeric: z.string().optional(),
-        nonNegativeIntegerNumeric: z.string().optional(),
-        nonPositiveIntegerNumeric: z.string().optional(),
-        positiveIntegerNumeric: z.string().optional(),
+        longNumeric: (
+          z
+            .union([z.string().regex(/^-?d+$/), z.number().int()])
+            .transform((v) => BigInt(v).toString()) as unknown as z.ZodType<
+            string,
+            string
+          >
+        ).optional(),
+        negativeIntegerNumeric: (
+          z
+            .union([z.string().regex(/^-?d+$/), z.number().int()])
+            .transform((v) => BigInt(v).toString()) as unknown as z.ZodType<
+            string,
+            string
+          >
+        ).optional(),
+        nonNegativeIntegerNumeric: (
+          z
+            .union([z.string().regex(/^-?d+$/), z.number().int()])
+            .transform((v) => BigInt(v).toString()) as unknown as z.ZodType<
+            string,
+            string
+          >
+        ).optional(),
+        nonPositiveIntegerNumeric: (
+          z
+            .union([z.string().regex(/^-?d+$/), z.number().int()])
+            .transform((v) => BigInt(v).toString()) as unknown as z.ZodType<
+            string,
+            string
+          >
+        ).optional(),
+        positiveIntegerNumeric: (
+          z
+            .union([z.string().regex(/^-?d+$/), z.number().int()])
+            .transform((v) => BigInt(v).toString()) as unknown as z.ZodType<
+            string,
+            string
+          >
+        ).optional(),
         shortNumeric: z.number().optional(),
         unsignedByteNumeric: z.number().optional(),
         unsignedIntNumeric: z.number().optional(),
-        unsignedLongNumeric: z.string().optional(),
+        unsignedLongNumeric: (
+          z
+            .union([z.string().regex(/^-?d+$/), z.number().int()])
+            .transform((v) => BigInt(v).toString()) as unknown as z.ZodType<
+            string,
+            string
+          >
+        ).optional(),
         unsignedShortNumeric: z.number().optional(),
       }) satisfies z.ZodType<Json>;
     }
@@ -50206,8 +50286,14 @@ export namespace TermsStruct {
         "@type": z.string(),
         blankNodeTerm: z.string().min(1).optional(),
         booleanTerm: z.boolean().optional(),
-        dateTerm: z.iso.date().optional(),
-        dateTimeTerm: z.iso.datetime().optional(),
+        dateTerm: z.coerce
+          .date()
+          .transform((v) => v.toISOString().slice(0, 10))
+          .optional(),
+        dateTimeTerm: z.coerce
+          .date()
+          .transform((v) => v.toISOString())
+          .optional(),
         doubleTerm: z.number().optional(),
         identifierTerm: z.string().min(1).optional(),
         iriTerm: z.string().min(1).optional(),

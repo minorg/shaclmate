@@ -41,6 +41,7 @@ export class BigIntType extends AbstractNumericType<bigint> {
   );
   override readonly jsonValueType: AbstractNumericType.JsonType =
     this.jsonTypeFactory.createJsonStringType({
+      format: this.decodedIn.length === 0 ? "bigint" : undefined,
       in_: this.decodedIn.map((in_) => in_.toString()),
     });
   override readonly kind = "BigInt";
