@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "4.0.100",
+    "@shaclmate/shacl-ast": "4.0.101",
     "@rdfjs/types": "~2.0.1",
     "@rdfx/collection": "0.0.62",
     "@rdfx/curie": "0.0.62",
@@ -978,5 +978,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.100"
+  "version": "4.0.101"
 }
