@@ -1,6 +1,6 @@
 import type { BlankNode, DatasetCore, NamedNode, Term } from "@rdfjs/types";
 import { datasetFactory, type PrefixMap, TermMap } from "@rdfx/collection";
-import { Curie } from "@rdfx/curie";
+import { type Curie, shrinkIri } from "@rdfx/curie";
 import dataFactory from "@rdfx/data-factory";
 import type { Logger } from "@rdfx/logger";
 import { ResourceSet } from "@rdfx/resource";
@@ -57,7 +57,7 @@ export class ShapesGraph extends AbstractShapesGraph<
         if (cachedCurie) {
           return cachedCurie as TermT;
         }
-        const curie = Curie.fromIri(term, {
+        const curie = shrinkIri(term, {
           prefixMap: options.prefixMap!,
         }).extract();
         if (curie) {
