@@ -47,7 +47,7 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
     this.reusables.snippets.bigDecimalFromJsonObject,
   );
   override readonly fromJsonValueFunction = new BuiltinCallable(
-    this.reusables.snippets.bigDecimalFromJsonValue,
+    this.reusables.snippets.bigDecimalFromJsonString,
   );
   override readonly fromRdfResourceValuesFunction = new BuiltinCallable(
     this.reusables.snippets.bigDecimalFromRdfResourceValues,

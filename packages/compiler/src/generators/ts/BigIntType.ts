@@ -60,7 +60,7 @@ export class BigIntType extends AbstractNumericType<bigint> {
   @Memoize()
   override get fromJsonValueFunction(): Callable {
     return new BuiltinCallable(
-      code`${this.reusables.snippets.bigIntFromJsonValue}<${this.jsonValueType.expression}, ${this.expression}>`,
+      code`${this.reusables.snippets.bigIntFromJsonString}<${this.jsonValueType.expression}, ${this.expression}>`,
     );
   }
 

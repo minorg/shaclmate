@@ -172,8 +172,8 @@ const $bigDecimalFromJsonObject: $FromJsonFunction<
     LiteralDecoder.decodeBigDecimalLiteral,
   );
 
-const $bigDecimalFromJsonValue: $FromJsonFunction<
-  number | string,
+const $bigDecimalFromJsonString: $FromJsonFunction<
+  string,
   BigDecimal,
   $NumericSchema<BigDecimal>
 > = (jsonValue) => Either.encase(() => new BigDecimal(jsonValue));
@@ -305,7 +305,7 @@ function $bigIntFromJsonObject<BigIntT extends bigint>(
 }
 
 function $bigIntFromJsonString<
-  JsonValueT extends number | string,
+  JsonValueT extends string,
   BigIntT extends bigint,
 >(
   jsonValue: JsonValueT,
@@ -22843,7 +22843,7 @@ export namespace InPropertiesStruct {
         },
       ),
       inIntegers: $maybeFromJsonValue(
-        $bigIntFromJsonString<1 | 2 | "1" | "2", 1n | 2n>,
+        $bigIntFromJsonString<"1" | "2", 1n | 2n>,
       )(jsonObject["inIntegers"], {
         ...options,
         schema: InPropertiesStruct.schema.properties.inIntegers.type,
@@ -22912,7 +22912,7 @@ export namespace InPropertiesStruct {
     inBooleans?: true;
     inDateTimes?: string;
     inDoubles?: 1 | 2;
-    inIntegers?: 1 | 2 | "1" | "2";
+    inIntegers?: "1" | "2";
     inIris?: "http://example.com/InIri1" | "http://example.com/InIri2";
     inStrings?: "text" | "html";
   };
@@ -22933,10 +22933,7 @@ export namespace InPropertiesStruct {
         inBooleans: z.literal(true).optional(),
         inDateTimes: z.iso.datetime().optional(),
         inDoubles: z.literal([1, 2]).optional(),
-        inIntegers: z
-          .literal([1, 2])
-          .or(z.enum(["1", "2"]))
-          .optional(),
+        inIntegers: z.enum(["1", "2"]).optional(),
         inIris: z
           .enum(["http://example.com/InIri1", "http://example.com/InIri2"])
           .optional(),
@@ -39220,7 +39217,7 @@ export namespace NumericsStruct {
           schema: NumericsStruct.schema.properties.byteNumeric.type,
         },
       ),
-      decimalNumeric: $maybeFromJsonValue($bigDecimalFromJsonValue)(
+      decimalNumeric: $maybeFromJsonValue($bigDecimalFromJsonString)(
         jsonObject["decimalNumeric"],
         {
           ...options,
@@ -39242,7 +39239,7 @@ export namespace NumericsStruct {
         },
       ),
       integerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<number | string, bigint>,
+        $bigIntFromJsonString<string, bigint>,
       )(jsonObject["integerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.integerNumeric.type,
@@ -39254,32 +39251,33 @@ export namespace NumericsStruct {
           schema: NumericsStruct.schema.properties.intNumeric.type,
         },
       ),
-      longNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<number | string, bigint>,
-      )(jsonObject["longNumeric"], {
-        ...options,
-        schema: NumericsStruct.schema.properties.longNumeric.type,
-      }),
+      longNumeric: $maybeFromJsonValue($bigIntFromJsonString<string, bigint>)(
+        jsonObject["longNumeric"],
+        {
+          ...options,
+          schema: NumericsStruct.schema.properties.longNumeric.type,
+        },
+      ),
       negativeIntegerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<number | string, bigint>,
+        $bigIntFromJsonString<string, bigint>,
       )(jsonObject["negativeIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.negativeIntegerNumeric.type,
       }),
       nonNegativeIntegerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<number | string, bigint>,
+        $bigIntFromJsonString<string, bigint>,
       )(jsonObject["nonNegativeIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.nonNegativeIntegerNumeric.type,
       }),
       nonPositiveIntegerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<number | string, bigint>,
+        $bigIntFromJsonString<string, bigint>,
       )(jsonObject["nonPositiveIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.nonPositiveIntegerNumeric.type,
       }),
       positiveIntegerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<number | string, bigint>,
+        $bigIntFromJsonString<string, bigint>,
       )(jsonObject["positiveIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.positiveIntegerNumeric.type,
@@ -39306,7 +39304,7 @@ export namespace NumericsStruct {
         },
       ),
       unsignedLongNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<number | string, bigint>,
+        $bigIntFromJsonString<string, bigint>,
       )(jsonObject["unsignedLongNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.unsignedLongNumeric.type,
@@ -39373,20 +39371,20 @@ export namespace NumericsStruct {
     "@id": string;
     "@type": string;
     byteNumeric?: number;
-    decimalNumeric?: number | string;
+    decimalNumeric?: string;
     doubleNumeric?: number;
     floatNumeric?: number;
-    integerNumeric?: number | string;
+    integerNumeric?: string;
     intNumeric?: number;
-    longNumeric?: number | string;
-    negativeIntegerNumeric?: number | string;
-    nonNegativeIntegerNumeric?: number | string;
-    nonPositiveIntegerNumeric?: number | string;
-    positiveIntegerNumeric?: number | string;
+    longNumeric?: string;
+    negativeIntegerNumeric?: string;
+    nonNegativeIntegerNumeric?: string;
+    nonPositiveIntegerNumeric?: string;
+    positiveIntegerNumeric?: string;
     shortNumeric?: number;
     unsignedByteNumeric?: number;
     unsignedIntNumeric?: number;
-    unsignedLongNumeric?: number | string;
+    unsignedLongNumeric?: string;
     unsignedShortNumeric?: number;
   };
 
@@ -39404,20 +39402,20 @@ export namespace NumericsStruct {
         "@id": z.string().min(1),
         "@type": z.string(),
         byteNumeric: z.number().optional(),
-        decimalNumeric: z.number().or(z.string()).optional(),
+        decimalNumeric: z.string().optional(),
         doubleNumeric: z.number().optional(),
         floatNumeric: z.number().optional(),
-        integerNumeric: z.number().or(z.string()).optional(),
+        integerNumeric: z.string().optional(),
         intNumeric: z.number().optional(),
-        longNumeric: z.number().or(z.string()).optional(),
-        negativeIntegerNumeric: z.number().or(z.string()).optional(),
-        nonNegativeIntegerNumeric: z.number().or(z.string()).optional(),
-        nonPositiveIntegerNumeric: z.number().or(z.string()).optional(),
-        positiveIntegerNumeric: z.number().or(z.string()).optional(),
+        longNumeric: z.string().optional(),
+        negativeIntegerNumeric: z.string().optional(),
+        nonNegativeIntegerNumeric: z.string().optional(),
+        nonPositiveIntegerNumeric: z.string().optional(),
+        positiveIntegerNumeric: z.string().optional(),
         shortNumeric: z.number().optional(),
         unsignedByteNumeric: z.number().optional(),
         unsignedIntNumeric: z.number().optional(),
-        unsignedLongNumeric: z.number().or(z.string()).optional(),
+        unsignedLongNumeric: z.string().optional(),
         unsignedShortNumeric: z.number().optional(),
       }) satisfies z.ZodType<Json>;
     }
