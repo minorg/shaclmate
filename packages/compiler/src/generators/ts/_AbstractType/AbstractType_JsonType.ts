@@ -484,25 +484,13 @@ class JsonStringType extends AbstractJsonPrimitiveType<string> {
             invariant(this.minLength.isNothing());
             switch (format) {
               case "bigdecimal":
-                return code`\
-(${this.reusables.imports.z}.union([${this.reusables.imports.z}.string(), ${this.reusables.imports.z}.number()]).transform((v, ctx) => {
-  try {
-    const d = new ${this.reusables.imports.BigDecimal}(v);
-    if (!d.isFinite()) {
-      throw new Error("not finite");
-    }
-    return d.toFixed();
-  } catch {
-    ctx.issues.push({ code: "custom", message: "Invalid decimal", input: v });
-    return ${this.reusables.imports.z}.NEVER;
-  }
-}) as unknown as ${this.reusables.imports.z}.ZodType<string, string>)`;
+                return code`${this.reusables.snippets.bigDecimalJsonSchema}`;
               case "bigint":
-                return code`(${this.reusables.imports.z}.union([${this.reusables.imports.z}.string().regex(/^-?\d+$/), ${this.reusables.imports.z}.number().int()]).transform((v) => BigInt(v).toString()) as unknown as ${this.reusables.imports.z}.ZodType<string, string>)`;
+                return code`${this.reusables.snippets.bigIntJsonSchema}`;
               case "date":
-                return code`${this.reusables.imports.z}.coerce.date().transform((v) => v.toISOString().slice(0, 10))`;
+                return code`${this.reusables.snippets.dateJsonSchema}`;
               case "datetime":
-                return code`${this.reusables.imports.z}.coerce.date().transform((v) => v.toISOString())`;
+                return code`${this.reusables.snippets.dateTimeJsonSchema}`;
               default:
                 format satisfies never;
                 throw new RangeError(format);

@@ -81,6 +81,7 @@ import { snippets_arrayToJsonArray } from "./_snippets/snippets_arrayToJsonArray
 import { snippets_bigDecimalFromJsonObject } from "./_snippets/snippets_bigDecimalFromJsonObject.js";
 import { snippets_bigDecimalFromJsonString } from "./_snippets/snippets_bigDecimalFromJsonString.js";
 import { snippets_bigDecimalFromRdfResourceValues } from "./_snippets/snippets_bigDecimalFromRdfResourceValues.js";
+import { snippets_bigDecimalJsonSchema } from "./_snippets/snippets_bigDecimalJsonSchema.js";
 import { snippets_bigDecimalLiteral } from "./_snippets/snippets_bigDecimalLiteral.js";
 import { snippets_bigDecimalSparqlWherePatterns } from "./_snippets/snippets_bigDecimalSparqlWherePatterns.js";
 import { snippets_bigDecimalToJsonObject } from "./_snippets/snippets_bigDecimalToJsonObject.js";
@@ -88,6 +89,7 @@ import { snippets_bigDecimalToJsonString } from "./_snippets/snippets_bigDecimal
 import { snippets_bigIntFromJsonObject } from "./_snippets/snippets_bigIntFromJsonObject.js";
 import { snippets_bigIntFromJsonString } from "./_snippets/snippets_bigIntFromJsonString.js";
 import { snippets_bigIntFromRdfResourceValues } from "./_snippets/snippets_bigIntFromRdfResourceValues.js";
+import { snippets_bigIntJsonSchema } from "./_snippets/snippets_bigIntJsonSchema.js";
 import { snippets_bigIntToJsonObject } from "./_snippets/snippets_bigIntToJsonObject.js";
 import { snippets_bigIntToJsonString } from "./_snippets/snippets_bigIntToJsonString.js";
 import { snippets_blankNodeFromJsonObject } from "./_snippets/snippets_blankNodeFromJsonObject.js";
@@ -130,9 +132,11 @@ import { snippets_dateEquals } from "./_snippets/snippets_dateEquals.js";
 import { snippets_dateFromJsonObject } from "./_snippets/snippets_dateFromJsonObject.js";
 import { snippets_dateFromJsonString } from "./_snippets/snippets_dateFromJsonString.js";
 import { snippets_dateFromRdfResourceValues } from "./_snippets/snippets_dateFromRdfResourceValues.js";
+import { snippets_dateJsonSchema } from "./_snippets/snippets_dateJsonSchema.js";
 import { snippets_dateSparqlWherePatterns } from "./_snippets/snippets_dateSparqlWherePatterns.js";
 import { snippets_dateTimeFromJsonObject } from "./_snippets/snippets_dateTimeFromJsonObject.js";
 import { snippets_dateTimeFromRdfResourceValues } from "./_snippets/snippets_dateTimeFromRdfResourceValues.js";
+import { snippets_dateTimeJsonSchema } from "./_snippets/snippets_dateTimeJsonSchema.js";
 import { snippets_dateTimeToJsonString } from "./_snippets/snippets_dateTimeToJsonString.js";
 import { snippets_dateToJsonObject } from "./_snippets/snippets_dateToJsonObject.js";
 import { snippets_dateToJsonString } from "./_snippets/snippets_dateToJsonString.js";
@@ -665,6 +669,11 @@ export class Snippets {
   }
 
   @Memoize()
+  get bigDecimalJsonSchema(): Snippet {
+    return this.snippet(snippets_bigDecimalJsonSchema);
+  }
+
+  @Memoize()
   get bigDecimalLiteral(): Snippet {
     return this.snippet(snippets_bigDecimalLiteral);
   }
@@ -697,6 +706,11 @@ export class Snippets {
   @Memoize()
   get bigIntFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_bigIntFromRdfResourceValues);
+  }
+
+  @Memoize()
+  get bigIntJsonSchema(): Snippet {
+    return this.snippet(snippets_bigIntJsonSchema);
   }
 
   @Memoize()
@@ -910,6 +924,11 @@ export class Snippets {
   }
 
   @Memoize()
+  get dateJsonSchema(): Snippet {
+    return this.snippet(snippets_dateJsonSchema);
+  }
+
+  @Memoize()
   get dateSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_dateSparqlWherePatterns);
   }
@@ -922,6 +941,11 @@ export class Snippets {
   @Memoize()
   get dateTimeFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_dateTimeFromRdfResourceValues);
+  }
+
+  @Memoize()
+  get dateTimeJsonSchema(): Snippet {
+    return this.snippet(snippets_dateTimeJsonSchema);
   }
 
   @Memoize()
