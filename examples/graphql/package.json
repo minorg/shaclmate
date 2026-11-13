@@ -2,6 +2,7 @@
   "dependencies": {
     "@rdfjs/types": "~2.0.1",
     "@rdfx/collection": "0.0.62",
+    "@rdfx/curie": "0.0.62",
     "@rdfx/data-factory": "0.0.62",
     "@rdfx/resource": "0.0.62",
     "graphql": "16.11.0",

@@ -209,6 +209,7 @@ const workspaces = {
           "@mui/material",
           "@mui/x-date-pickers",
           "@rdfx/collection",
+          "@rdfx/curie",
           "@rdfx/data-factory",
           "@rdfx/resource",
           "@rdfx/serializer",
@@ -257,6 +258,7 @@ const workspaces = {
         external: [
           "@rdfjs/types",
           "@rdfx/collection",
+          "@rdfx/curie",
           "@rdfx/data-factory",
           "@rdfx/resource",
           "graphql",
@@ -273,6 +275,7 @@ const workspaces = {
       dependencies: {
         external: [
           "@rdfx/collection",
+          "@rdfx/curie",
           "@rdfx/data-factory",
           "@rdfx/resource",
           "decimal.js",
@@ -302,6 +305,7 @@ const workspaces = {
           "@hono/zod-validator",
           "@rdfjs/types",
           "@rdfx/collection",
+          "@rdfx/curie",
           "@rdfx/data-factory",
           "@rdfx/logger",
           "@rdfx/resource",

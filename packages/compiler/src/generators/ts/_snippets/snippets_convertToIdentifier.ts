@@ -14,7 +14,7 @@ function ${syntheticNamePrefix}convertToIdentifier<DefaultNamespaceT extends ${s
     case "object":
       return ${imports.Either}.of(value);
     case "string":
-      return ${imports.expandIri}(value, { defaultNamespace });
+      return ${imports.expandIri}(value, { dataFactory: ${imports.dataFactory}, defaultNamespace });
     case "undefined":
       return ${imports.Either}.of(${imports.dataFactory}.blankNode());
   }

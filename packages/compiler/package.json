@@ -790,8 +790,6 @@
     "dist/generators/ts/_snippets/snippets_iriFromJsonString.js",
     "dist/generators/ts/_snippets/snippets_iriFromRdfResourceValues.d.ts",
     "dist/generators/ts/_snippets/snippets_iriFromRdfResourceValues.js",
-    "dist/generators/ts/_snippets/snippets_iriFromString.d.ts",
-    "dist/generators/ts/_snippets/snippets_iriFromString.js",
     "dist/generators/ts/_snippets/snippets_iriLiteralFromJsonObject.d.ts",
     "dist/generators/ts/_snippets/snippets_iriLiteralFromJsonObject.js",
     "dist/generators/ts/_snippets/snippets_iriLiteralFromJsonString.d.ts",

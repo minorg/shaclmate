@@ -6,7 +6,8 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
-import { datasetFactory, type PrefixMap } from "@rdfx/collection";
+import { datasetFactory } from "@rdfx/collection";
+import { expandIri } from "@rdfx/curie";
 import dataFactory from "@rdfx/data-factory";
 import { LiteralFactory } from "@rdfx/literal";
 import {
@@ -106,9 +107,10 @@ function $convertToIdentifierProperty<
       return Either.of(() => captureIdentifier);
     }
     case "string":
-      return $iriFromString(identifier, { defaultNamespace }).map(
-        (iri) => () => iri,
-      );
+      return expandIri(identifier, {
+        dataFactory: dataFactory,
+        defaultNamespace,
+      }).map((iri) => () => iri);
     case "undefined": {
       const captureIdentifier = dataFactory.blankNode();
       return Either.of(() => captureIdentifier);
@@ -133,9 +135,10 @@ function $convertToIriIdentifierProperty<
       return Either.of(() => captureIdentifier);
     }
     case "string": {
-      return $iriFromString(identifier, { defaultNamespace }).map(
-        (iri) => () => iri,
-      );
+      return expandIri(identifier, {
+        dataFactory: dataFactory,
+        defaultNamespace,
+      }).map((iri) => () => iri);
     }
   }
 }
@@ -515,70 +518,6 @@ function $iriFromRdfResourceValues<IriT extends string = string>(
         : (value.toIri() as Either<Error, NamedNode<IriT>>),
     ),
   );
-}
-
-export function $iriFromString(
-  string: string,
-  options?: { defaultNamespace?: $NamespaceBuilder; prefixMap?: PrefixMap },
-): Either<Error, NamedNode> {
-  if (string.trim().length === 0) {
-    return Left(new Error("empty/blank IRI"));
-  }
-
-  const defaultNamespace = options?.defaultNamespace;
-
-  const colonIndex = string.indexOf(":");
-  if (colonIndex === -1) {
-    // No : in the string.
-    if (defaultNamespace) {
-      return Right(defaultNamespace(string));
-    } else {
-      return Left(new Error(`ill-formed IRI: ${string}`));
-    }
-  }
-
-  const prefix = string.substring(0, colonIndex);
-  const path = string.substring(colonIndex + 1);
-  if (path.length === 0) {
-    return Left(new Error(`ill-formed IRI: ${string}`));
-  }
-
-  // Absolute IRIs with scheme:// always win over prefixes with the same name.
-  switch (prefix.toLowerCase()) {
-    case "file":
-    case "ftp":
-    case "http":
-    case "https":
-    case "git":
-    case "irc":
-    case "ldap":
-    case "postgres":
-    case "rtsp":
-    case "sftp":
-    case "smb":
-    case "ssh":
-    case "ws":
-    case "wss":
-      if (path.startsWith("//")) {
-        return Right(dataFactory.namedNode(string));
-      }
-      break;
-  }
-
-  const prefixMap = options?.prefixMap;
-  if (prefixMap) {
-    const prefixNamespace = prefixMap.get(prefix);
-    if (prefixNamespace !== undefined) {
-      return Right(dataFactory.namedNode(`${prefixNamespace.value}${path}`));
-    }
-  }
-
-  if (prefix.length === 0 && defaultNamespace) {
-    // a "" prefixMap entry takes precedence, above.
-    return Right(defaultNamespace(path));
-  }
-
-  return Right(dataFactory.namedNode(string));
 }
 
 interface $IriSchema<IriT extends string = string> {

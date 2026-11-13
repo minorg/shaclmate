@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@rdfx/collection": "0.0.62",
+    "@rdfx/curie": "0.0.62",
     "@rdfx/data-factory": "0.0.62",
     "@rdfx/resource": "0.0.62",
     "decimal.js": "~10.6.0",
