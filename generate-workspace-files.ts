@@ -5,7 +5,7 @@ import path from "node:path";
 import url from "node:url";
 import type { CompilerOptions } from "typescript";
 
-const VERSION = "4.0.101";
+const VERSION = "4.0.102";
 
 const rdfxVersion = "0.0.62";
 const vitestVersion = "~4.1.5";
@@ -36,9 +36,9 @@ const externalDependencies = {
   "@rdfx/testing": rdfxVersion,
   "@sindresorhus/base62": "~0.1.0",
   "@tpluscode/rdf-ns-builders": "~4.3.0",
-  "@tsconfig/node20": "^20",
+  "@tsconfig/node22": "^22",
   "@tsconfig/strictest": "~2.0.8",
-  "@types/node": "^20",
+  "@types/node": "^22",
   "@types/rdfjs__namespace": "~2.0.10",
   "@types/react": "~18",
   "@types/react-dom": "~18",
@@ -103,7 +103,7 @@ const exampleTsconfig: Tsconfig = {
   },
   extends: [
     "@tsconfig/strictest/tsconfig.json",
-    "@tsconfig/node20/tsconfig.json",
+    "@tsconfig/node22/tsconfig.json",
   ],
   include: ["src/**/*.ts"],
 };
@@ -123,7 +123,7 @@ const publishTsconfig: Tsconfig = {
   },
   extends: [
     "@tsconfig/strictest/tsconfig.json",
-    "@tsconfig/node20/tsconfig.json",
+    "@tsconfig/node22/tsconfig.json",
   ],
   include: ["src/**/*.ts"],
 };
@@ -627,7 +627,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
             },
             extends: [
               "@tsconfig/strictest/tsconfig.json",
-              "@tsconfig/node20/tsconfig.json",
+              "@tsconfig/node22/tsconfig.json",
             ],
             include: ["./**/*.ts", "../src/**/*"],
           },
@@ -648,7 +648,7 @@ fs.writeFileSync(
         [
           "@biomejs/biome",
           "@rdfx/testing",
-          "@tsconfig/node20",
+          "@tsconfig/node22",
           "@tsconfig/strictest",
           "@types/node",
           "@vitest/coverage-v8",
@@ -717,7 +717,7 @@ fs.writeFileSync(
         types: ["node"],
       },
       extends: [
-        "@tsconfig/node20/tsconfig.json",
+        "@tsconfig/node22/tsconfig.json",
         "@tsconfig/strictest/tsconfig.json",
       ],
       include: [
