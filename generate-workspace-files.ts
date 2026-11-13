@@ -368,6 +368,7 @@ const workspaces = {
       dependencies: {
         external: [
           "@rdfjs/types",
+          "@rdfx/curie",
           "@rdfx/data-factory",
           "@rdfx/resource",
           "@rdfx/string",

@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@rdfjs/types": "~2.0.1",
+    "@rdfx/curie": "0.0.62",
     "@rdfx/data-factory": "0.0.62",
     "@rdfx/resource": "0.0.62",
     "@rdfx/string": "0.0.62",

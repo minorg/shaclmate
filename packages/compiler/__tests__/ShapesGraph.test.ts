@@ -1,6 +1,7 @@
-import { type ShapesGraph, TsGenerator } from "@shaclmate/compiler";
 import { beforeAll, describe, it } from "vitest";
 import { testShapesGraphs } from "../../../test-shapes-graphs/index.js";
+import { TsGenerator } from "../src/generators/ts/TsGenerator.js";
+import type { ShapesGraph } from "../src/input/ShapesGraph.js";
 import { logger } from "./logger.js";
 import { parseTestShapesGraph } from "./parseTestShapesGraph.js";
 
