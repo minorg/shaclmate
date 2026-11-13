@@ -5,9 +5,9 @@ import path from "node:path";
 import url from "node:url";
 import type { CompilerOptions } from "typescript";
 
-const VERSION = "4.0.100";
+const VERSION = "4.0.101";
 
-const rdfxVersion = "0.0.59";
+const rdfxVersion = "0.0.62";
 const vitestVersion = "~4.1.5";
 
 const externalDependencies = {
@@ -209,7 +209,10 @@ const workspaces = {
           "@mui/material",
           "@mui/x-date-pickers",
           "@rdfx/collection",
+          "@rdfx/curie",
           "@rdfx/data-factory",
+          "@rdfx/literal",
+          "@rdfx/string",
           "@rdfx/resource",
           "@rdfx/serializer",
           "@rdfjs/types",
@@ -257,7 +260,10 @@ const workspaces = {
         external: [
           "@rdfjs/types",
           "@rdfx/collection",
+          "@rdfx/curie",
           "@rdfx/data-factory",
+          "@rdfx/literal",
+          "@rdfx/string",
           "@rdfx/resource",
           "graphql",
           "graphql-yoga",
@@ -272,9 +278,13 @@ const workspaces = {
     "kitchen-sink": {
       dependencies: {
         external: [
+          "@rdfjs/types",
           "@rdfx/collection",
+          "@rdfx/curie",
           "@rdfx/data-factory",
+          "@rdfx/literal",
           "@rdfx/resource",
+          "@rdfx/string",
           "decimal.js",
           "purify-ts",
           "sparqljs",
@@ -283,15 +293,15 @@ const workspaces = {
       },
       devDependencies: {
         external: [
-          "@rdfjs/namespace",
           "@rdfx/fs",
           "@rdfx/serializer",
           "@rdfx/sparql-client",
+          "@rdfx/testing",
           "@tpluscode/rdf-ns-builders",
-          "@types/rdfjs__namespace",
           "@types/sparqljs",
           "js-sha256",
           "oxigraph",
+          "rdf-validate-shacl",
         ],
       },
       tsconfig: exampleTsconfig,
@@ -302,6 +312,7 @@ const workspaces = {
           "@hono/zod-validator",
           "@rdfjs/types",
           "@rdfx/collection",
+          "@rdfx/curie",
           "@rdfx/data-factory",
           "@rdfx/logger",
           "@rdfx/resource",
@@ -357,6 +368,7 @@ const workspaces = {
       dependencies: {
         external: [
           "@rdfjs/types",
+          "@rdfx/curie",
           "@rdfx/data-factory",
           "@rdfx/resource",
           "@rdfx/string",

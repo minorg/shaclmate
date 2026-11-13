@@ -8,6 +8,7 @@ export class Imports {
   readonly datasetFactory = imp("datasetFactory@@rdfx/collection");
   readonly Either = imp("Either@purify-ts");
   readonly EitherAsync = imp("EitherAsync@purify-ts");
+  readonly expandIri = imp("expandIri@@rdfx/curie");
   readonly GraphQLBigInt = imp("BigInt:GraphQLBigInt@graphql-scalars");
   readonly GraphQLBoolean = imp("GraphQLBoolean@graphql");
   readonly GraphQLDate = imp("Date:GraphQLDate@graphql-scalars");
