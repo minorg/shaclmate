@@ -381,6 +381,19 @@ class JsonObjectType extends AbstractJsonType {
       .orDefault(objectSchema);
   }
 
+  protected override schemaTypeExpression({
+    unqualifiedName,
+  }: {
+    unqualifiedName: string;
+  }): Code {
+    return this.shorthand
+      .map(
+        (shorthand) =>
+          code`${this.reusables.imports.z}.ZodType<${unqualifiedName}, ${unqualifiedName} | ${shorthand.type.expression}>`,
+      )
+      .orDefault(super.schemaTypeExpression({ unqualifiedName }));
+  }
+
   private get uiSchemaFunctionExpression() {
     const variables = { scopePrefix: code`(_options?.scopePrefix ?? "#")` };
 
@@ -428,19 +441,6 @@ class JsonObjectType extends AbstractJsonType {
     return moduleDeclarations;
   }
 
-  protected override schemaTypeExpression({
-    unqualifiedName,
-  }: {
-    unqualifiedName: string;
-  }): Code {
-    return this.shorthand
-      .map(
-        (shorthand) =>
-          code`${this.reusables.imports.z}.ZodType<${unqualifiedName}, ${unqualifiedName} | ${shorthand.type.expression}>`,
-      )
-      .orDefault(super.schemaTypeExpression({ unqualifiedName }));
-  }
-
   private memberType(memberI: number): JsonType {
     if (this.cachedMemberTypes[memberI] === null) {
       this.cachedMemberTypes[memberI] =
@@ -483,10 +483,14 @@ class JsonStringType extends AbstractJsonPrimitiveType<string> {
           .map((format) => {
             invariant(this.minLength.isNothing());
             switch (format) {
+              case "bigdecimal":
+                return code`${this.reusables.snippets.bigDecimalJsonSchema}`;
+              case "bigint":
+                return code`${this.reusables.snippets.bigIntJsonSchema}`;
               case "date":
-                return code`${this.reusables.imports.z}.iso.date()`;
+                return code`${this.reusables.snippets.dateJsonSchema}`;
               case "datetime":
-                return code`${this.reusables.imports.z}.iso.datetime()`;
+                return code`${this.reusables.snippets.dateTimeJsonSchema}`;
               default:
                 format satisfies never;
                 throw new RangeError(format);
@@ -664,56 +668,6 @@ class JsonTypeFactory {
       snippet: Maybe.fromNullable(options?.snippet),
     });
   }
-
-  createJsonUnionType(
-    memberTypes: readonly JsonType[],
-    options?: {
-      name?: AbstractJsonType.Name;
-      recursive?: boolean;
-      snippet?: Snippet;
-    },
-  ): JsonUnionType {
-    return new JsonUnionType({
-      ...this.constructorParameters,
-      memberTypes,
-      name: Maybe.fromNullable(options?.name),
-      recursive: !!options?.recursive,
-      snippet: Maybe.fromNullable(options?.snippet),
-    });
-  }
-}
-
-class JsonUnionType extends AbstractJsonType {
-  override readonly kind = "JsonUnion";
-  readonly memberTypes: readonly JsonType[];
-
-  constructor({
-    memberTypes,
-    ...superParameters
-  }: {
-    memberTypes: readonly JsonType[];
-    recursive: boolean;
-  } & ConstructorParameters<typeof AbstractJsonType>[0]) {
-    super(superParameters);
-    this.memberTypes = memberTypes;
-  }
-
-  @Memoize()
-  protected get inlineExpression(): Code {
-    return code`(${joinCode(
-      this.memberTypes.map((memberType) => memberType.expression),
-      { on: " | " },
-    )})`;
-  }
-
-  @Memoize()
-  protected get schemaExpression(): Code {
-    return joinCode(
-      this.memberTypes.map((memberType, memberI) =>
-        memberI === 0 ? memberType.schema : code`.or(${memberType.schema})`,
-      ),
-    );
-  }
 }
 
 type JsonType =
@@ -723,14 +677,12 @@ type JsonType =
   | JsonIntersectionType
   | JsonNumberType
   | JsonObjectType
-  | JsonStringType
-  | JsonUnionType;
+  | JsonStringType;
 
 export type AbstractType_JsonType = JsonType;
 
 export type AbstractType_JsonTypeFactory = JsonTypeFactory;
 
-// biome-ignore lint/correctness/noUnusedVariables: It's not actually unused.
 namespace JsonDiscriminatedUnionType {
   export interface Member {
     readonly discriminantValue: number | string;
@@ -792,5 +744,5 @@ namespace JsonObjectType {
 
 // biome-ignore lint/correctness/noUnusedVariables: used for types
 namespace JsonStringType {
-  export type Format = "date" | "datetime";
+  export type Format = "bigdecimal" | "bigint" | "date" | "datetime";
 }

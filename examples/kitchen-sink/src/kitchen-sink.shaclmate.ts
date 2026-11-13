@@ -172,8 +172,8 @@ const $bigDecimalFromJsonObject: $FromJsonFunction<
     LiteralDecoder.decodeBigDecimalLiteral,
   );
 
-const $bigDecimalFromJsonValue: $FromJsonFunction<
-  number | string,
+const $bigDecimalFromJsonString: $FromJsonFunction<
+  string,
   BigDecimal,
   $NumericSchema<BigDecimal>
 > = (jsonValue) => Either.encase(() => new BigDecimal(jsonValue));
@@ -185,6 +185,21 @@ const $bigDecimalFromRdfResourceValues: $FromRdfResourceValuesFunction<
   $termLikeFromRdfResourceValues(values, options).chain((values) =>
     values.chainMap((value) => value.toBigDecimal(options.schema.in)),
   );
+
+const $bigDecimalJsonSchema = z
+  .union([z.string(), z.number()])
+  .transform((v, ctx) => {
+    try {
+      const d = new BigDecimal(v);
+      if (!d.isFinite()) {
+        throw new Error("not finite");
+      }
+      return d.toFixed();
+    } catch {
+      ctx.issues.push({ code: "custom", message: "Invalid decimal", input: v });
+      return z.NEVER;
+    }
+  }) as unknown as z.ZodType<string, string>;
 
 /**
  * Create a Literal from a BigDecimal.
@@ -305,7 +320,7 @@ function $bigIntFromJsonObject<BigIntT extends bigint>(
 }
 
 function $bigIntFromJsonString<
-  JsonValueT extends number | string,
+  JsonValueT extends string,
   BigIntT extends bigint,
 >(
   jsonValue: JsonValueT,
@@ -333,6 +348,13 @@ function $bigIntFromRdfResourceValues<BigIntT extends bigint>(
     ),
   );
 }
+
+const $bigIntJsonSchema = z
+  .union([z.string().regex(/^-?\d+$/), z.number().int()])
+  .transform((v) => BigInt(v).toString()) as unknown as z.ZodType<
+  string,
+  string
+>;
 
 function $bigIntToJsonObject(
   datatype: NamedNode,
@@ -996,6 +1018,10 @@ const $dateFromRdfResourceValues: $FromRdfResourceValuesFunction<
     ),
   );
 
+const $dateJsonSchema = z.coerce
+  .date()
+  .transform((v) => v.toISOString().slice(0, 10));
+
 interface $DateSchema {
   readonly datatype: NamedNode;
   readonly hasValues?: readonly Literal[];
@@ -1131,6 +1157,8 @@ const $dateTimeFromRdfResourceValues: $FromRdfResourceValuesFunction<
         : value.toDateTime(),
     ),
   );
+
+const $dateTimeJsonSchema = z.coerce.date().transform((v) => v.toISOString());
 
 const $dateTimeToJsonString: $ToJsonFunction<Date, string> = (date) =>
   date.toISOString();
@@ -15637,9 +15665,9 @@ export namespace DatesStruct {
       return z.object({
         "@id": z.string().min(1),
         "@type": z.string(),
-        date: z.iso.date().optional(),
-        dateTime: z.iso.datetime().optional(),
-        dateTimeStamp: z.iso.datetime().optional(),
+        date: $dateJsonSchema.optional(),
+        dateTime: $dateTimeJsonSchema.optional(),
+        dateTimeStamp: $dateTimeJsonSchema.optional(),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -16625,8 +16653,8 @@ export namespace DefaultValuesStruct {
       return z.object({
         "@id": z.string().min(1),
         "@type": z.string(),
-        dateDefaultValue: z.iso.date(),
-        dateTimeDefaultValue: z.iso.datetime(),
+        dateDefaultValue: $dateJsonSchema,
+        dateTimeDefaultValue: $dateTimeJsonSchema,
         falseBooleanDefaultValue: z.boolean(),
         numberDefaultValue: z.number(),
         stringDefaultValue: z.string(),
@@ -22843,7 +22871,7 @@ export namespace InPropertiesStruct {
         },
       ),
       inIntegers: $maybeFromJsonValue(
-        $bigIntFromJsonString<1 | 2 | "1" | "2", 1n | 2n>,
+        $bigIntFromJsonString<"1" | "2", 1n | 2n>,
       )(jsonObject["inIntegers"], {
         ...options,
         schema: InPropertiesStruct.schema.properties.inIntegers.type,
@@ -22912,7 +22940,7 @@ export namespace InPropertiesStruct {
     inBooleans?: true;
     inDateTimes?: string;
     inDoubles?: 1 | 2;
-    inIntegers?: 1 | 2 | "1" | "2";
+    inIntegers?: "1" | "2";
     inIris?: "http://example.com/InIri1" | "http://example.com/InIri2";
     inStrings?: "text" | "html";
   };
@@ -22931,12 +22959,9 @@ export namespace InPropertiesStruct {
         "@id": z.string().min(1),
         "@type": z.string(),
         inBooleans: z.literal(true).optional(),
-        inDateTimes: z.iso.datetime().optional(),
+        inDateTimes: $dateTimeJsonSchema.optional(),
         inDoubles: z.literal([1, 2]).optional(),
-        inIntegers: z
-          .literal([1, 2])
-          .or(z.enum(["1", "2"]))
-          .optional(),
+        inIntegers: z.enum(["1", "2"]).optional(),
         inIris: z
           .enum(["http://example.com/InIri1", "http://example.com/InIri2"])
           .optional(),
@@ -39220,7 +39245,7 @@ export namespace NumericsStruct {
           schema: NumericsStruct.schema.properties.byteNumeric.type,
         },
       ),
-      decimalNumeric: $maybeFromJsonValue($bigDecimalFromJsonValue)(
+      decimalNumeric: $maybeFromJsonValue($bigDecimalFromJsonString)(
         jsonObject["decimalNumeric"],
         {
           ...options,
@@ -39242,7 +39267,7 @@ export namespace NumericsStruct {
         },
       ),
       integerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<number | string, bigint>,
+        $bigIntFromJsonString<string, bigint>,
       )(jsonObject["integerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.integerNumeric.type,
@@ -39254,32 +39279,33 @@ export namespace NumericsStruct {
           schema: NumericsStruct.schema.properties.intNumeric.type,
         },
       ),
-      longNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<number | string, bigint>,
-      )(jsonObject["longNumeric"], {
-        ...options,
-        schema: NumericsStruct.schema.properties.longNumeric.type,
-      }),
+      longNumeric: $maybeFromJsonValue($bigIntFromJsonString<string, bigint>)(
+        jsonObject["longNumeric"],
+        {
+          ...options,
+          schema: NumericsStruct.schema.properties.longNumeric.type,
+        },
+      ),
       negativeIntegerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<number | string, bigint>,
+        $bigIntFromJsonString<string, bigint>,
       )(jsonObject["negativeIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.negativeIntegerNumeric.type,
       }),
       nonNegativeIntegerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<number | string, bigint>,
+        $bigIntFromJsonString<string, bigint>,
       )(jsonObject["nonNegativeIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.nonNegativeIntegerNumeric.type,
       }),
       nonPositiveIntegerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<number | string, bigint>,
+        $bigIntFromJsonString<string, bigint>,
       )(jsonObject["nonPositiveIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.nonPositiveIntegerNumeric.type,
       }),
       positiveIntegerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<number | string, bigint>,
+        $bigIntFromJsonString<string, bigint>,
       )(jsonObject["positiveIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.positiveIntegerNumeric.type,
@@ -39306,7 +39332,7 @@ export namespace NumericsStruct {
         },
       ),
       unsignedLongNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<number | string, bigint>,
+        $bigIntFromJsonString<string, bigint>,
       )(jsonObject["unsignedLongNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.unsignedLongNumeric.type,
@@ -39373,20 +39399,20 @@ export namespace NumericsStruct {
     "@id": string;
     "@type": string;
     byteNumeric?: number;
-    decimalNumeric?: number | string;
+    decimalNumeric?: string;
     doubleNumeric?: number;
     floatNumeric?: number;
-    integerNumeric?: number | string;
+    integerNumeric?: string;
     intNumeric?: number;
-    longNumeric?: number | string;
-    negativeIntegerNumeric?: number | string;
-    nonNegativeIntegerNumeric?: number | string;
-    nonPositiveIntegerNumeric?: number | string;
-    positiveIntegerNumeric?: number | string;
+    longNumeric?: string;
+    negativeIntegerNumeric?: string;
+    nonNegativeIntegerNumeric?: string;
+    nonPositiveIntegerNumeric?: string;
+    positiveIntegerNumeric?: string;
     shortNumeric?: number;
     unsignedByteNumeric?: number;
     unsignedIntNumeric?: number;
-    unsignedLongNumeric?: number | string;
+    unsignedLongNumeric?: string;
     unsignedShortNumeric?: number;
   };
 
@@ -39404,20 +39430,20 @@ export namespace NumericsStruct {
         "@id": z.string().min(1),
         "@type": z.string(),
         byteNumeric: z.number().optional(),
-        decimalNumeric: z.number().or(z.string()).optional(),
+        decimalNumeric: $bigDecimalJsonSchema.optional(),
         doubleNumeric: z.number().optional(),
         floatNumeric: z.number().optional(),
-        integerNumeric: z.number().or(z.string()).optional(),
+        integerNumeric: $bigIntJsonSchema.optional(),
         intNumeric: z.number().optional(),
-        longNumeric: z.number().or(z.string()).optional(),
-        negativeIntegerNumeric: z.number().or(z.string()).optional(),
-        nonNegativeIntegerNumeric: z.number().or(z.string()).optional(),
-        nonPositiveIntegerNumeric: z.number().or(z.string()).optional(),
-        positiveIntegerNumeric: z.number().or(z.string()).optional(),
+        longNumeric: $bigIntJsonSchema.optional(),
+        negativeIntegerNumeric: $bigIntJsonSchema.optional(),
+        nonNegativeIntegerNumeric: $bigIntJsonSchema.optional(),
+        nonPositiveIntegerNumeric: $bigIntJsonSchema.optional(),
+        positiveIntegerNumeric: $bigIntJsonSchema.optional(),
         shortNumeric: z.number().optional(),
         unsignedByteNumeric: z.number().optional(),
         unsignedIntNumeric: z.number().optional(),
-        unsignedLongNumeric: z.number().or(z.string()).optional(),
+        unsignedLongNumeric: $bigIntJsonSchema.optional(),
         unsignedShortNumeric: z.number().optional(),
       }) satisfies z.ZodType<Json>;
     }
@@ -50208,8 +50234,8 @@ export namespace TermsStruct {
         "@type": z.string(),
         blankNodeTerm: z.string().min(1).optional(),
         booleanTerm: z.boolean().optional(),
-        dateTerm: z.iso.date().optional(),
-        dateTimeTerm: z.iso.datetime().optional(),
+        dateTerm: $dateJsonSchema.optional(),
+        dateTimeTerm: $dateTimeJsonSchema.optional(),
         doubleTerm: z.number().optional(),
         identifierTerm: z.string().min(1).optional(),
         iriTerm: z.string().min(1).optional(),
