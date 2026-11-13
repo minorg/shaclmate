@@ -1,14 +1,14 @@
 import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-export const snippets_bigDecimalFromJsonString: SnippetFactory = ({
+export const snippets_bigDecimalFromJsonValue: SnippetFactory = ({
   imports,
   snippets,
   syntheticNamePrefix,
 }) =>
   conditionalOutput(
-    `${syntheticNamePrefix}bigDecimalFromJsonString`,
+    `${syntheticNamePrefix}bigDecimalFromJsonValue`,
     code`\
-const ${syntheticNamePrefix}bigDecimalFromJsonString: ${snippets.FromJsonFunction}<string, ${imports.BigDecimal}, ${snippets.NumericSchema}<${imports.BigDecimal}>> = 
+const ${syntheticNamePrefix}bigDecimalFromJsonValue: ${snippets.FromJsonFunction}<number | string, ${imports.BigDecimal}, ${snippets.NumericSchema}<${imports.BigDecimal}>> = 
   (jsonValue) => ${imports.Either}.encase(() => new ${imports.BigDecimal}(jsonValue));`,
   );

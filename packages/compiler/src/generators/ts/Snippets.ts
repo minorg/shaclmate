@@ -79,14 +79,14 @@ import { snippets_arrayFromJsonArray } from "./_snippets/snippets_arrayFromJsonA
 import { snippets_arrayIntersection } from "./_snippets/snippets_arrayIntersection.js";
 import { snippets_arrayToJsonArray } from "./_snippets/snippets_arrayToJsonArray.js";
 import { snippets_bigDecimalFromJsonObject } from "./_snippets/snippets_bigDecimalFromJsonObject.js";
-import { snippets_bigDecimalFromJsonString } from "./_snippets/snippets_bigDecimalFromJsonString.js";
+import { snippets_bigDecimalFromJsonValue } from "./_snippets/snippets_bigDecimalFromJsonValue.js";
 import { snippets_bigDecimalFromRdfResourceValues } from "./_snippets/snippets_bigDecimalFromRdfResourceValues.js";
 import { snippets_bigDecimalLiteral } from "./_snippets/snippets_bigDecimalLiteral.js";
 import { snippets_bigDecimalSparqlWherePatterns } from "./_snippets/snippets_bigDecimalSparqlWherePatterns.js";
 import { snippets_bigDecimalToJsonObject } from "./_snippets/snippets_bigDecimalToJsonObject.js";
 import { snippets_bigDecimalToJsonString } from "./_snippets/snippets_bigDecimalToJsonString.js";
 import { snippets_bigIntFromJsonObject } from "./_snippets/snippets_bigIntFromJsonObject.js";
-import { snippets_bigIntFromJsonString } from "./_snippets/snippets_bigIntFromJsonString.js";
+import { snippets_bigIntFromJsonValue } from "./_snippets/snippets_bigIntFromJsonValue.js";
 import { snippets_bigIntFromRdfResourceValues } from "./_snippets/snippets_bigIntFromRdfResourceValues.js";
 import { snippets_bigIntToJsonObject } from "./_snippets/snippets_bigIntToJsonObject.js";
 import { snippets_bigIntToJsonString } from "./_snippets/snippets_bigIntToJsonString.js";
@@ -655,8 +655,8 @@ export class Snippets {
   }
 
   @Memoize()
-  get bigDecimalFromJsonString(): Snippet {
-    return this.snippet(snippets_bigDecimalFromJsonString);
+  get bigDecimalFromJsonValue(): Snippet {
+    return this.snippet(snippets_bigDecimalFromJsonValue);
   }
 
   @Memoize()
@@ -690,8 +690,8 @@ export class Snippets {
   }
 
   @Memoize()
-  get bigIntFromJsonString(): Snippet {
-    return this.snippet(snippets_bigIntFromJsonString);
+  get bigIntFromJsonValue(): Snippet {
+    return this.snippet(snippets_bigIntFromJsonValue);
   }
 
   @Memoize()
