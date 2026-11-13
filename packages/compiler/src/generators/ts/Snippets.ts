@@ -181,7 +181,6 @@ import { snippets_intFromRdfResourceValues } from "./_snippets/snippets_intFromR
 import { snippets_iriFromJsonObject } from "./_snippets/snippets_iriFromJsonObject.js";
 import { snippets_iriFromJsonString } from "./_snippets/snippets_iriFromJsonString.js";
 import { snippets_iriFromRdfResourceValues } from "./_snippets/snippets_iriFromRdfResourceValues.js";
-import { snippets_iriFromString } from "./_snippets/snippets_iriFromString.js";
 import { snippets_iriLiteralFromJsonObject } from "./_snippets/snippets_iriLiteralFromJsonObject.js";
 import { snippets_iriLiteralFromJsonString } from "./_snippets/snippets_iriLiteralFromJsonString.js";
 import { snippets_iriSparqlWherePatterns } from "./_snippets/snippets_iriSparqlWherePatterns.js";
@@ -1163,11 +1162,6 @@ export class Snippets {
   @Memoize()
   get iriFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_iriFromRdfResourceValues);
-  }
-
-  @Memoize()
-  get iriFromString(): Snippet {
-    return this.snippet(snippets_iriFromString);
   }
 
   @Memoize()

@@ -10,6 +10,6 @@ export const snippets_iriFromJsonString: SnippetFactory = ({
     `${syntheticNamePrefix}iriFromJsonString`,
     code`\
 function ${syntheticNamePrefix}iriFromJsonString(jsonString: string, options: Parameters<${snippets.FromJsonFunction}<string, ${imports.NamedNode}, object>>[1]): ${imports.Either}<Error, ${imports.NamedNode}> {
-  return ${snippets.iriFromString}(jsonString, options);
+  return ${imports.expandIri}(jsonString, options);
 }`,
   );

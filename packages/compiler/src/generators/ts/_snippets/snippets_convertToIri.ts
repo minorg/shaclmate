@@ -14,7 +14,7 @@ function ${syntheticNamePrefix}convertToIri<DefaultNamespaceT extends ${snippets
     case "object":
       return ${imports.Either}.of(value);
     case "string":
-      return ${snippets.iriFromString}(value, { defaultNamespace });
+      return ${imports.expandIri}(value, { defaultNamespace });
   }
 }`,
   );
