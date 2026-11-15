@@ -6026,7 +6026,7 @@ export namespace AnonymousTypesStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/AnonymousTypesStruct"),
         anonymousStruct: z
           .object({
             "@id": z.string().min(1),
@@ -6589,7 +6589,9 @@ export namespace BlankNodeIdentifierStruct {
 
     export function schema() {
       return z.object({
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default("http://example.com/BlankNodeIdentifierStruct"),
         blankNodeIdentifierString: z.string().optional(),
       }) satisfies z.ZodType<Json>;
     }
@@ -7158,7 +7160,9 @@ export namespace BlankNodeOrIriIdentifierStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default("http://example.com/BlankNodeOrIriIdentifierStruct"),
         blankNodeOrIriIdentifierString: z.string().optional(),
       }) satisfies z.ZodType<Json>;
     }
@@ -8115,7 +8119,9 @@ export namespace ClassConstraintsStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default("http://example.com/ClassConstraintsStruct"),
         iriClass: z.string().min(1).optional().meta({
           description:
             "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
@@ -9794,7 +9800,9 @@ export namespace ConvertibleTypesStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default("http://example.com/ConvertibleTypesStruct"),
         convertibleIri: z.string().min(1),
         convertibleIriNonEmptySet: z.array(z.string().min(1)).min(1),
         convertibleIriOption: z.string().min(1).optional(),
@@ -14278,7 +14286,9 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default("http://example.com/DatatypeDiscriminatedUnionsStruct"),
         dateOrDateTime: z
           .discriminatedUnion("$type", [
             $TypedLiteralJsonObject
@@ -15664,7 +15674,7 @@ export namespace DatesStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/DatesStruct"),
         date: $dateJsonSchema.optional(),
         dateTime: $dateTimeJsonSchema.optional(),
         dateTimeStamp: $dateTimeJsonSchema.optional(),
@@ -16652,7 +16662,7 @@ export namespace DefaultValuesStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/DefaultValuesStruct"),
         dateDefaultValue: $dateJsonSchema,
         dateTimeDefaultValue: $dateTimeJsonSchema,
         falseBooleanDefaultValue: z.boolean(),
@@ -17277,7 +17287,7 @@ export namespace DirectRecursiveStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/DirectRecursiveStruct"),
         directRecursive: z
           .lazy(
             (): z.ZodType<DirectRecursiveStruct.Json> =>
@@ -17944,7 +17954,7 @@ export namespace DisplayStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/DisplayStruct"),
         explicitFalseDisplay: z
           .string()
           .meta({ description: "Explicity exclude from the display" }),
@@ -19059,7 +19069,7 @@ export namespace ExplicitRdfTypeStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/RdfType"),
         explicitRdfTypeString: z.string(),
       }) satisfies z.ZodType<Json>;
     }
@@ -20738,7 +20748,9 @@ export namespace IndirectRecursiveStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default("http://example.com/IndirectRecursiveStruct"),
         indirectRecursiveHelper: z
           .lazy(
             (): z.ZodType<IndirectRecursiveStructHelper.Json> =>
@@ -21301,7 +21313,9 @@ export namespace IndirectRecursiveStructHelper {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default("http://example.com/IndirectRecursiveStructHelper"),
         indirectRecursive: z
           .lazy(
             (): z.ZodType<IndirectRecursiveStruct.Json> =>
@@ -21902,7 +21916,7 @@ export namespace InIdentifierStruct {
           "http://example.com/InIdentifierStructInstance1",
           "http://example.com/InIdentifierStructInstance2",
         ]),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/InIdentifierStruct"),
         inIdentifierString: z.string().optional(),
       }) satisfies z.ZodType<Json>;
     }
@@ -22957,7 +22971,7 @@ export namespace InPropertiesStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/InPropertiesStruct"),
         inBooleans: z.literal(true).optional(),
         inDateTimes: $dateTimeJsonSchema.optional(),
         inDoubles: z.literal([1, 2]).optional(),
@@ -24094,7 +24108,7 @@ export namespace IriIdentifierStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/IriIdentifierStruct"),
         iriIdentifierString: z.string().optional(),
       }) satisfies z.ZodType<Json>;
     }
@@ -25372,7 +25386,7 @@ export namespace LangStringStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/LangStringStruct"),
         langString: $LangStringJsonObject.schema().optional(),
         langStringOrString: z
           .discriminatedUnion("$type", [
@@ -26504,7 +26518,11 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default(
+            "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct",
+          ),
         lazilyResolved: z.string(),
       }) satisfies z.ZodType<Json>;
     }
@@ -27068,7 +27086,11 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default(
+            "http://example.com/LazilyResolvedDiscriminatedUnionMember1",
+          ),
         lazilyResolved: z.string(),
       }) satisfies z.ZodType<Json>;
     }
@@ -27623,7 +27645,11 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default(
+            "http://example.com/LazilyResolvedDiscriminatedUnionMember2",
+          ),
         lazilyResolved: z.string(),
       }) satisfies z.ZodType<Json>;
     }
@@ -31815,7 +31841,7 @@ export namespace ListSetsStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/ListSetsStruct"),
         listDiscriminatedUnionSet: z
           .array(
             z.discriminatedUnion("$type", [
@@ -33087,7 +33113,7 @@ export namespace ListsStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/ListsStruct"),
         iriList: z.array(z.string().min(1)).optional(),
         stringList: z.array(z.string()).optional(),
         stringListList: z.array(z.array(z.string())).optional(),
@@ -33966,7 +33992,9 @@ export namespace MutablePropertiesStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default("http://example.com/MutablePropertiesStruct"),
         mutableList: z.array(z.string()).optional().meta({
           description:
             "List-valued property that can't be reassigned but whose value can be mutated",
@@ -34664,7 +34692,7 @@ export namespace NamedTypesStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/NamedTypesStruct"),
         inIri: z.enum(InIri.schema.in.map((_) => _.value)),
         inLiteral: z.enum(InLiteral.schema.in),
         namedDatatype: z.string(),
@@ -35224,7 +35252,7 @@ export namespace NewName {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/OverrideNameStruct"),
         newNameString: z.string().optional(),
       }) satisfies z.ZodType<Json>;
     }
@@ -36087,7 +36115,7 @@ export namespace NodeKindsStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/NodeKindsStruct"),
         blankNodeKind: z.string().min(1),
         blankNodeOrIriNodeKind: z.string().min(1),
         blankNodeOrLiteralNodeKind: $TermJsonObject.schema(),
@@ -39428,7 +39456,7 @@ export namespace NumericsStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/NumericsStruct"),
         byteNumeric: z.number().optional(),
         decimalNumeric: $bigDecimalJsonSchema.optional(),
         doubleNumeric: z.number().optional(),
@@ -40800,7 +40828,9 @@ export namespace PartialDiscriminatedUnionMember1 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default("http://example.com/StructDiscriminatedUnionMember1"),
         lazilyResolved: z.string(),
       }) satisfies z.ZodType<Json>;
     }
@@ -41338,7 +41368,9 @@ export namespace PartialDiscriminatedUnionMember2 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default("http://example.com/StructDiscriminatedUnionMember2"),
         lazilyResolved: z.string(),
       }) satisfies z.ZodType<Json>;
     }
@@ -43298,7 +43330,7 @@ export namespace PropertyNamesStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/PropertyNamesStruct"),
         actualName1: z.string().meta({
           description: "sh:path: overrides property shape identifier",
         }),
@@ -44007,7 +44039,7 @@ export namespace PropertyPathsStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/PropertyPathsStruct"),
         inversePath: z.string().min(1).optional(),
         predicatePath: z.string().optional(),
       }) satisfies z.ZodType<Json>;
@@ -44589,7 +44621,9 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default("http://example.com/RecursiveDiscriminatedUnionMember1"),
         recursiveDiscriminatedUnionMember1Property: z
           .lazy(
             (): z.ZodType<RecursiveDiscriminatedUnion.Json> =>
@@ -45171,7 +45205,9 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default("http://example.com/RecursiveDiscriminatedUnionMember2"),
         recursiveDiscriminatedUnionMember2Property: z
           .lazy(
             (): z.ZodType<RecursiveDiscriminatedUnion.Json> =>
@@ -45844,7 +45880,9 @@ export namespace StructDiscriminatedUnionMember1 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default("http://example.com/StructDiscriminatedUnionMember1"),
         structDiscriminatedUnionMember1Distinct: z.string(),
         structDiscriminatedUnionMemberCommon: z.string(),
       }) satisfies z.ZodType<Json>;
@@ -46518,7 +46556,9 @@ export namespace StructDiscriminatedUnionMember2 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default("http://example.com/StructDiscriminatedUnionMember2"),
         structDiscriminatedUnionMember2Distinct: z.string(),
         structDiscriminatedUnionMemberCommon: z.string(),
       }) satisfies z.ZodType<Json>;
@@ -47594,7 +47634,9 @@ export namespace StructIntersectionMember1 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default("http://example.com/StructIntersectionMember1"),
         structIntersectionMember1Distinct: z.string(),
         structIntersectionMemberCommon: z.string(),
       }) satisfies z.ZodType<Json>;
@@ -48251,7 +48293,9 @@ export namespace StructIntersectionMember2 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z
+          .string()
+          .default("http://example.com/StructIntersectionMember2"),
         structIntersectionMember2Distinct: z.string(),
         structIntersectionMemberCommon: z.string(),
       }) satisfies z.ZodType<Json>;
@@ -48789,7 +48833,7 @@ export namespace TargetClassStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/RdfType"),
         targetClassString: z.string(),
       }) satisfies z.ZodType<Json>;
     }
@@ -50231,7 +50275,7 @@ export namespace TermsStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.string(),
+        "@type": z.string().default("http://example.com/TermsStruct"),
         blankNodeTerm: z.string().min(1).optional(),
         booleanTerm: z.boolean().optional(),
         dateTerm: $dateJsonSchema.optional(),

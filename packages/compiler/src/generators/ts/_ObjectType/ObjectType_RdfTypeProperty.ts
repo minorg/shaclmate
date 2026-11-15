@@ -62,10 +62,13 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
       recursive: this.recursive,
       type:
         this.toRdfTypes.length === 1
-          ? this.jsonTypeFactory.createJsonStringType()
+          ? this.jsonTypeFactory.createJsonStringType({
+              default: this.toRdfTypes[0].value,
+            })
           : this.jsonTypeFactory.createJsonArrayType(
               this.jsonTypeFactory.createJsonStringType(),
               {
+                default: this.toRdfTypes.map((toRdfType) => toRdfType.value),
                 minCount: 1n,
               },
             ),

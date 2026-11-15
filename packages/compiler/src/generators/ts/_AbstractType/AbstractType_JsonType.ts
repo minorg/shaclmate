@@ -174,19 +174,24 @@ abstract class AbstractJsonPrimitiveType<
 }
 
 class JsonArrayType extends AbstractJsonType {
+  private readonly default: Maybe<JsonValue[]>;
+
   readonly itemType: JsonType;
   override readonly kind = "JsonArray";
   readonly minCount: bigint;
 
   constructor({
+    default_,
     itemType,
     minCount,
     ...superParameters
   }: {
+    default_: Maybe<JsonValue[]>;
     itemType: JsonType;
     minCount: bigint;
   } & ConstructorParameters<typeof AbstractJsonType>[0]) {
     super(superParameters);
+    this.default = default_;
     this.itemType = itemType;
     this.minCount = minCount;
   }
@@ -381,19 +386,6 @@ class JsonObjectType extends AbstractJsonType {
       .orDefault(objectSchema);
   }
 
-  protected override schemaTypeExpression({
-    unqualifiedName,
-  }: {
-    unqualifiedName: string;
-  }): Code {
-    return this.shorthand
-      .map(
-        (shorthand) =>
-          code`${this.reusables.imports.z}.ZodType<${unqualifiedName}, ${unqualifiedName} | ${shorthand.type.expression}>`,
-      )
-      .orDefault(super.schemaTypeExpression({ unqualifiedName }));
-  }
-
   private get uiSchemaFunctionExpression() {
     const variables = { scopePrefix: code`(_options?.scopePrefix ?? "#")` };
 
@@ -441,6 +433,19 @@ class JsonObjectType extends AbstractJsonType {
     return moduleDeclarations;
   }
 
+  protected override schemaTypeExpression({
+    unqualifiedName,
+  }: {
+    unqualifiedName: string;
+  }): Code {
+    return this.shorthand
+      .map(
+        (shorthand) =>
+          code`${this.reusables.imports.z}.ZodType<${unqualifiedName}, ${unqualifiedName} | ${shorthand.type.expression}>`,
+      )
+      .orDefault(super.schemaTypeExpression({ unqualifiedName }));
+  }
+
   private memberType(memberI: number): JsonType {
     if (this.cachedMemberTypes[memberI] === null) {
       this.cachedMemberTypes[memberI] =
@@ -453,6 +458,7 @@ class JsonObjectType extends AbstractJsonType {
 }
 
 class JsonStringType extends AbstractJsonPrimitiveType<string> {
+  private readonly default: Maybe<string>;
   private readonly format: Maybe<JsonStringType.Format>;
   private readonly minLength: Maybe<bigint>;
 
@@ -461,25 +467,29 @@ class JsonStringType extends AbstractJsonPrimitiveType<string> {
   override readonly kind = "JsonString";
 
   constructor({
+    default_,
     format,
     minLength,
     ...superParameters
   }: {
+    default_: Maybe<string>;
     format: Maybe<JsonStringType.Format>;
     in_: readonly string[];
     inReference: Maybe<Code>;
     minLength: Maybe<bigint>;
   } & ConstructorParameters<typeof AbstractJsonPrimitiveType<string>>[0]) {
     super(superParameters);
+    this.default = default_;
     this.format = format;
     this.minLength = minLength;
   }
 
   @Memoize()
   protected override get schemaExpression(): Code {
+    let schemaExpression: Code;
     switch (this.in_.length) {
       case 0: {
-        return this.format
+        schemaExpression = this.format
           .map((format) => {
             invariant(this.minLength.isNothing());
             switch (format) {
@@ -503,14 +513,21 @@ class JsonStringType extends AbstractJsonPrimitiveType<string> {
             });
             return schema;
           });
+        break;
       }
       case 1:
         invariant(this.format.isNothing());
-        return code`${this.reusables.imports.z}.literal(${literalOf(this.in_[0])})`;
+        schemaExpression = code`${this.reusables.imports.z}.literal(${literalOf(this.in_[0])})`;
+        break;
       default:
         invariant(this.format.isNothing());
-        return code`${this.reusables.imports.z}.enum(${this.inReference.orDefault(code`${arrayOf(...this.in_)}`)})`;
+        schemaExpression = code`${this.reusables.imports.z}.enum(${this.inReference.orDefault(code`${arrayOf(...this.in_)}`)})`;
+        break;
     }
+    this.default.ifJust((default_) => {
+      schemaExpression = code`${schemaExpression}.default(${literalOf(default_)})`;
+    });
+    return schemaExpression;
   }
 }
 
@@ -530,6 +547,7 @@ class JsonTypeFactory {
   createJsonArrayType(
     itemType: JsonType,
     options?: {
+      default?: JsonValue[];
       minCount?: bigint;
       name?: AbstractJsonType.Name;
       snippet?: Snippet;
@@ -537,6 +555,7 @@ class JsonTypeFactory {
   ): JsonArrayType {
     return new JsonArrayType({
       ...this.constructorParameters,
+      default_: Maybe.fromNullable(options?.default),
       itemType,
       minCount: options?.minCount ?? 0n,
       name: Maybe.fromNullable(options?.name),
@@ -651,6 +670,7 @@ class JsonTypeFactory {
   }
 
   createJsonStringType(options?: {
+    default?: string;
     format?: JsonStringType.Format;
     in_?: readonly string[];
     inReference?: Code;
@@ -660,6 +680,7 @@ class JsonTypeFactory {
   }): JsonStringType {
     return new JsonStringType({
       ...this.constructorParameters,
+      default_: Maybe.fromNullable(options?.default),
       format: Maybe.fromNullable(options?.format),
       in_: options?.in_ ?? [],
       inReference: Maybe.fromNullable(options?.inReference),
@@ -678,6 +699,12 @@ type JsonType =
   | JsonNumberType
   | JsonObjectType
   | JsonStringType;
+
+type JsonArray = JsonValue[];
+type JsonObject = { [key: string]: JsonValue };
+type JsonPrimitive = boolean | number | string;
+
+type JsonValue = JsonArray | JsonObject | JsonPrimitive;
 
 export type AbstractType_JsonType = JsonType;
 

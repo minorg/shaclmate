@@ -21,6 +21,21 @@ describe("fromJson", () => {
     });
   }
 
+  it("default @type", ({ expect }) => {
+    const explicitRdfTypeStructJson =
+      kitchenSink.ExplicitRdfTypeStruct.Json.parse({
+        "@id": "http://example.com/instance",
+        explicitRdfTypeString: "test",
+      }).unsafeCoerce();
+    expect(explicitRdfTypeStructJson["@type"]).toStrictEqual(
+      "http://example.com/RdfType",
+    );
+    const explicitRdfTypeStruct = kitchenSink.ExplicitRdfTypeStruct.fromJson(
+      explicitRdfTypeStructJson,
+    ).unsafeCoerce();
+    expect(explicitRdfTypeStruct.explicitRdfTypeString).toStrictEqual("test");
+  });
+
   describe("input transformations", () => {
     describe("bigdecimal", () => {
       for (const inputFormat of ["number", "string"] as const) {
