@@ -49,6 +49,9 @@ export abstract class AbstractIdentifierType<
   @Memoize()
   get jsonValueType(): AbstractTermType["jsonValueType"] {
     return this.jsonTypeFactory.createJsonStringType({
+      default: this.nodeKinds.has("BlankNode")
+        ? code`() => \`_:\${${this.reusables.imports.dataFactory}.blankNode().value}\``
+        : undefined,
       minLength: 1n,
     });
   }

@@ -21,6 +21,32 @@ describe("fromJson", () => {
     });
   }
 
+  it("implicit blank node @id", ({ expect }) => {
+    const json = kitchenSink.NonClassStruct.Json.parse({
+      nonClassString: "test",
+    }).unsafeCoerce();
+    expect(json["@id"].startsWith("_:")).toStrictEqual(true);
+    const struct = kitchenSink.NonClassStruct.fromJson(json).unsafeCoerce();
+    expect(struct.$identifier().termType).toStrictEqual("BlankNode");
+    expect(struct.$identifier().value).toStrictEqual(json["@id"].slice(2));
+    expect(struct.nonClassString).toStrictEqual("test");
+  });
+
+  it("default @type", ({ expect }) => {
+    const explicitRdfTypeStructJson =
+      kitchenSink.ExplicitRdfTypeStruct.Json.parse({
+        "@id": "http://example.com/instance",
+        explicitRdfTypeString: "test",
+      }).unsafeCoerce();
+    expect(explicitRdfTypeStructJson["@type"]).toStrictEqual(
+      "http://example.com/RdfType",
+    );
+    const explicitRdfTypeStruct = kitchenSink.ExplicitRdfTypeStruct.fromJson(
+      explicitRdfTypeStructJson,
+    ).unsafeCoerce();
+    expect(explicitRdfTypeStruct.explicitRdfTypeString).toStrictEqual("test");
+  });
+
   describe("input transformations", () => {
     describe("bigdecimal", () => {
       for (const inputFormat of ["number", "string"] as const) {

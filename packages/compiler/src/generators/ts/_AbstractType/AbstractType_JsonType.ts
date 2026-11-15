@@ -58,9 +58,14 @@ abstract class AbstractJsonType {
     }
 
     const moduleDeclarations = this.moduleDeclarations({ unqualifiedName });
-    if (moduleDeclarations.length > 0) {
+    if (Object.keys(moduleDeclarations).length > 0) {
       declarations.push(
-        code`export namespace Json { ${joinCode(moduleDeclarations, { on: "\n\n" })} }`,
+        code`export namespace Json { ${joinCode(
+          Object.keys(moduleDeclarations)
+            .sort()
+            .map((key) => moduleDeclarations[key]),
+          { on: "\n\n" },
+        )} }`,
       );
     }
 
@@ -97,33 +102,24 @@ abstract class AbstractJsonType {
     unqualifiedName,
   }: {
     unqualifiedName: string;
-  }): Code[] {
-    const moduleDeclarations: Code[] = [];
+  }): Record<string, Code> {
+    const moduleDeclarations: Record<string, Code> = {};
 
     if (this.configuration.features.has("Object.JSON.parse")) {
-      moduleDeclarations.push(code`\
+      moduleDeclarations["parse"] = code`\
 export function parse(json: unknown): ${this.reusables.imports.Either}<Error, ${unqualifiedName}> {
   const jsonSafeParseResult = schema().safeParse(json);
   if (!jsonSafeParseResult.success) { return ${this.reusables.imports.Left}(jsonSafeParseResult.error); }
   return ${this.reusables.imports.Right}(jsonSafeParseResult.data);
-}`);
+}`;
     }
 
     if (this.configuration.features.has("Object.JSON.schema")) {
-      moduleDeclarations.push(
-        code`export function schema() { return ${this.schemaExpression} satisfies ${this.schemaTypeExpression({ unqualifiedName })}; }`,
-      );
+      moduleDeclarations["schema"] =
+        code`export function schema() { return ${this.schemaExpression} satisfies ${this.reusables.imports.z}.ZodType<${unqualifiedName}>; }`;
     }
 
     return moduleDeclarations;
-  }
-
-  protected schemaTypeExpression({
-    unqualifiedName,
-  }: {
-    unqualifiedName: string;
-  }): Code {
-    return code`${this.reusables.imports.z}.ZodType<${unqualifiedName}>`;
   }
 }
 
@@ -174,19 +170,24 @@ abstract class AbstractJsonPrimitiveType<
 }
 
 class JsonArrayType extends AbstractJsonType {
+  private readonly default: Maybe<JsonValue[]>;
+
   readonly itemType: JsonType;
   override readonly kind = "JsonArray";
   readonly minCount: bigint;
 
   constructor({
+    default_,
     itemType,
     minCount,
     ...superParameters
   }: {
+    default_: Maybe<JsonValue[]>;
     itemType: JsonType;
     minCount: bigint;
   } & ConstructorParameters<typeof AbstractJsonType>[0]) {
     super(superParameters);
+    this.default = default_;
     this.itemType = itemType;
     this.minCount = minCount;
   }
@@ -202,6 +203,9 @@ class JsonArrayType extends AbstractJsonType {
     if (this.minCount > 0n) {
       expression = code`${expression}.min(${this.minCount})`;
     }
+    this.default.ifJust((default_) => {
+      expression = code`${expression}.default(${literalOf(default_)})`;
+    });
     return expression;
   }
 }
@@ -381,19 +385,6 @@ class JsonObjectType extends AbstractJsonType {
       .orDefault(objectSchema);
   }
 
-  protected override schemaTypeExpression({
-    unqualifiedName,
-  }: {
-    unqualifiedName: string;
-  }): Code {
-    return this.shorthand
-      .map(
-        (shorthand) =>
-          code`${this.reusables.imports.z}.ZodType<${unqualifiedName}, ${unqualifiedName} | ${shorthand.type.expression}>`,
-      )
-      .orDefault(super.schemaTypeExpression({ unqualifiedName }));
-  }
-
   private get uiSchemaFunctionExpression() {
     const variables = { scopePrefix: code`(_options?.scopePrefix ?? "#")` };
 
@@ -427,15 +418,25 @@ class JsonObjectType extends AbstractJsonType {
     );
   }
 
-  protected override moduleDeclarations(parameters: {
+  protected override moduleDeclarations({
+    unqualifiedName,
+  }: {
     unqualifiedName: string;
-  }): Code[] {
-    const moduleDeclarations = super.moduleDeclarations(parameters);
+  }): Record<string, Code> {
+    const moduleDeclarations = {
+      ...super.moduleDeclarations({ unqualifiedName }),
+    };
+
+    if (this.configuration.features.has("Object.JSON.schema")) {
+      this.shorthand.ifJust((shorthand) => {
+        moduleDeclarations["schema"] =
+          code`export function schema() { return ${this.schemaExpression} as unknown as ${this.reusables.imports.z}.ZodType<${unqualifiedName}, ${unqualifiedName} | ${shorthand.type.expression}>; }`;
+      });
+    }
 
     if (this.configuration.features.has("Object.JSON.uiSchema")) {
-      moduleDeclarations.push(
-        code`export const uiSchema = ${this.uiSchemaFunctionExpression};`,
-      );
+      moduleDeclarations["uiSchema"] =
+        code`export const uiSchema = ${this.uiSchemaFunctionExpression};`;
     }
 
     return moduleDeclarations;
@@ -453,6 +454,7 @@ class JsonObjectType extends AbstractJsonType {
 }
 
 class JsonStringType extends AbstractJsonPrimitiveType<string> {
+  private readonly default: Maybe<Code | string>;
   private readonly format: Maybe<JsonStringType.Format>;
   private readonly minLength: Maybe<bigint>;
 
@@ -461,25 +463,29 @@ class JsonStringType extends AbstractJsonPrimitiveType<string> {
   override readonly kind = "JsonString";
 
   constructor({
+    default_,
     format,
     minLength,
     ...superParameters
   }: {
+    default_: Maybe<Code | string>;
     format: Maybe<JsonStringType.Format>;
     in_: readonly string[];
     inReference: Maybe<Code>;
     minLength: Maybe<bigint>;
   } & ConstructorParameters<typeof AbstractJsonPrimitiveType<string>>[0]) {
     super(superParameters);
+    this.default = default_;
     this.format = format;
     this.minLength = minLength;
   }
 
   @Memoize()
   protected override get schemaExpression(): Code {
+    let schemaExpression: Code;
     switch (this.in_.length) {
       case 0: {
-        return this.format
+        schemaExpression = this.format
           .map((format) => {
             invariant(this.minLength.isNothing());
             switch (format) {
@@ -503,14 +509,21 @@ class JsonStringType extends AbstractJsonPrimitiveType<string> {
             });
             return schema;
           });
+        break;
       }
       case 1:
         invariant(this.format.isNothing());
-        return code`${this.reusables.imports.z}.literal(${literalOf(this.in_[0])})`;
+        schemaExpression = code`${this.reusables.imports.z}.literal(${literalOf(this.in_[0])})`;
+        break;
       default:
         invariant(this.format.isNothing());
-        return code`${this.reusables.imports.z}.enum(${this.inReference.orDefault(code`${arrayOf(...this.in_)}`)})`;
+        schemaExpression = code`${this.reusables.imports.z}.enum(${this.inReference.orDefault(code`${arrayOf(...this.in_)}`)})`;
+        break;
     }
+    this.default.ifJust((default_) => {
+      schemaExpression = code`${schemaExpression}.default(${typeof default_ === "string" ? literalOf(default_) : default_})`;
+    });
+    return schemaExpression;
   }
 }
 
@@ -530,6 +543,7 @@ class JsonTypeFactory {
   createJsonArrayType(
     itemType: JsonType,
     options?: {
+      default?: JsonValue[];
       minCount?: bigint;
       name?: AbstractJsonType.Name;
       snippet?: Snippet;
@@ -537,6 +551,7 @@ class JsonTypeFactory {
   ): JsonArrayType {
     return new JsonArrayType({
       ...this.constructorParameters,
+      default_: Maybe.fromNullable(options?.default),
       itemType,
       minCount: options?.minCount ?? 0n,
       name: Maybe.fromNullable(options?.name),
@@ -651,6 +666,7 @@ class JsonTypeFactory {
   }
 
   createJsonStringType(options?: {
+    default?: Code | string;
     format?: JsonStringType.Format;
     in_?: readonly string[];
     inReference?: Code;
@@ -660,6 +676,7 @@ class JsonTypeFactory {
   }): JsonStringType {
     return new JsonStringType({
       ...this.constructorParameters,
+      default_: Maybe.fromNullable(options?.default),
       format: Maybe.fromNullable(options?.format),
       in_: options?.in_ ?? [],
       inReference: Maybe.fromNullable(options?.inReference),
@@ -670,6 +687,14 @@ class JsonTypeFactory {
   }
 }
 
+type JsonArray = JsonValue[];
+
+type JsonObject = {
+  [key: string]: JsonValue;
+};
+
+type JsonPrimitive = boolean | number | string;
+
 type JsonType =
   | JsonArrayType
   | JsonBooleanType
@@ -678,6 +703,8 @@ type JsonType =
   | JsonNumberType
   | JsonObjectType
   | JsonStringType;
+
+type JsonValue = JsonArray | JsonObject | JsonPrimitive;
 
 export type AbstractType_JsonType = JsonType;
 
