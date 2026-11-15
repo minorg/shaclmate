@@ -207,6 +207,9 @@ class JsonArrayType extends AbstractJsonType {
     if (this.minCount > 0n) {
       expression = code`${expression}.min(${this.minCount})`;
     }
+    this.default.ifJust((default_) => {
+      expression = code`${expression}.default(${literalOf(default_)})`;
+    });
     return expression;
   }
 }
@@ -458,7 +461,7 @@ class JsonObjectType extends AbstractJsonType {
 }
 
 class JsonStringType extends AbstractJsonPrimitiveType<string> {
-  private readonly default: Maybe<string>;
+  private readonly default: Maybe<Code | string>;
   private readonly format: Maybe<JsonStringType.Format>;
   private readonly minLength: Maybe<bigint>;
 
@@ -472,7 +475,7 @@ class JsonStringType extends AbstractJsonPrimitiveType<string> {
     minLength,
     ...superParameters
   }: {
-    default_: Maybe<string>;
+    default_: Maybe<Code | string>;
     format: Maybe<JsonStringType.Format>;
     in_: readonly string[];
     inReference: Maybe<Code>;
@@ -525,7 +528,7 @@ class JsonStringType extends AbstractJsonPrimitiveType<string> {
         break;
     }
     this.default.ifJust((default_) => {
-      schemaExpression = code`${schemaExpression}.default(${literalOf(default_)})`;
+      schemaExpression = code`${schemaExpression}.default(${typeof default_ === "string" ? literalOf(default_) : default_})`;
     });
     return schemaExpression;
   }
@@ -670,7 +673,7 @@ class JsonTypeFactory {
   }
 
   createJsonStringType(options?: {
-    default?: string;
+    default?: Code | string;
     format?: JsonStringType.Format;
     in_?: readonly string[];
     inReference?: Code;

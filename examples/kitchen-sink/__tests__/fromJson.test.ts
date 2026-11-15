@@ -21,6 +21,17 @@ describe("fromJson", () => {
     });
   }
 
+  it("implicit blank node @id", ({ expect }) => {
+    const json = kitchenSink.NonClassStruct.Json.parse({
+      nonClassString: "test",
+    }).unsafeCoerce();
+    expect(json["@id"].startsWith("_:")).toStrictEqual(true);
+    const struct = kitchenSink.NonClassStruct.fromJson(json).unsafeCoerce();
+    expect(struct.$identifier().termType).toStrictEqual("BlankNode");
+    expect(struct.$identifier().value).toStrictEqual(json["@id"].slice(2));
+    expect(struct.nonClassString).toStrictEqual("test");
+  });
+
   it("default @type", ({ expect }) => {
     const explicitRdfTypeStructJson =
       kitchenSink.ExplicitRdfTypeStruct.Json.parse({

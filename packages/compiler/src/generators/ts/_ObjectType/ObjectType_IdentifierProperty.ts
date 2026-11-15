@@ -91,14 +91,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
       name: "@id",
       optional: false,
       recursive: this.recursive,
-      type:
-        this.type.in_.length > 0 && this.type.kind === "Iri"
-          ? this.jsonTypeFactory.createJsonStringType({
-              in_: this.type.in_.map((iri) => iri.value),
-            })
-          : this.jsonTypeFactory.createJsonStringType({
-              minLength: 1n,
-            }),
+      type: this.type.jsonValueType,
       uiSchemaElement: Maybe.of(
         ({ variables }) =>
           code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/@id\`, type: "Control" }`,

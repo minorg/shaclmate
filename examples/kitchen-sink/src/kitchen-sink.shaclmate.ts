@@ -4686,10 +4686,16 @@ export namespace $DefaultPartial {
 
     export function schema() {
       return z.union([
-        z.object({ "@id": z.string().min(1) }),
+        z.object({
+          "@id": z
+            .string()
+            .min(1)
+            .default(() => `_:${dataFactory.blankNode().value}`),
+        }),
         z
           .string()
           .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`)
           .transform((id) => ({ "@id": id })),
       ]) satisfies z.ZodType<Json, Json | string>;
     }
@@ -6025,17 +6031,21 @@ export namespace AnonymousTypesStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/AnonymousTypesStruct"),
         anonymousStruct: z
           .object({
-            "@id": z.string().min(1),
+            "@id": z
+              .string()
+              .min(1)
+              .default(() => `_:${dataFactory.blankNode().value}`),
             anonymousStructString: z.string(),
           })
           .optional()
-          .meta({
-            description: "Anonymous struct node shape",
-          }),
+          .meta({ description: "Anonymous struct node shape" }),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -7159,7 +7169,10 @@ export namespace BlankNodeOrIriIdentifierStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default("http://example.com/BlankNodeOrIriIdentifierStruct"),
@@ -8118,7 +8131,10 @@ export namespace ClassConstraintsStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default("http://example.com/ClassConstraintsStruct"),
@@ -8126,10 +8142,15 @@ export namespace ClassConstraintsStruct {
           description:
             "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
         }),
-        multiClass: z.string().min(1).optional().meta({
-          description:
-            "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
-        }),
+        multiClass: z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`)
+          .optional()
+          .meta({
+            description:
+              "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+          }),
         nodeClass1: NonClassStruct.Json.schema().optional().meta({
           description:
             "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target",
@@ -8138,10 +8159,15 @@ export namespace ClassConstraintsStruct {
           description:
             "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target",
         }),
-        singleClass: z.string().min(1).optional().meta({
-          description:
-            "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
-        }),
+        singleClass: z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`)
+          .optional()
+          .meta({
+            description:
+              "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+          }),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -9799,7 +9825,10 @@ export namespace ConvertibleTypesStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default("http://example.com/ConvertibleTypesStruct"),
@@ -14285,7 +14314,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default("http://example.com/DatatypeDiscriminatedUnionsStruct"),
@@ -15673,7 +15705,10 @@ export namespace DatesStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/DatesStruct"),
         date: $dateJsonSchema.optional(),
         dateTime: $dateTimeJsonSchema.optional(),
@@ -16661,7 +16696,10 @@ export namespace DefaultValuesStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/DefaultValuesStruct"),
         dateDefaultValue: $dateJsonSchema,
         dateTimeDefaultValue: $dateTimeJsonSchema,
@@ -17286,7 +17324,10 @@ export namespace DirectRecursiveStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/DirectRecursiveStruct"),
         directRecursive: z
           .lazy(
@@ -17953,7 +17994,10 @@ export namespace DisplayStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/DisplayStruct"),
         explicitFalseDisplay: z
           .string()
@@ -18537,8 +18581,17 @@ export namespace ExplicitFromToRdfTypesStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
-        "@type": z.array(z.string()).min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
+        "@type": z
+          .array(z.string())
+          .min(1)
+          .default([
+            "http://example.com/ToRdfType",
+            "http://example.com/FromRdfType",
+          ]),
         explicitFromToRdfTypesString: z.string(),
       }) satisfies z.ZodType<Json>;
     }
@@ -19068,7 +19121,10 @@ export namespace ExplicitRdfTypeStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/RdfType"),
         explicitRdfTypeString: z.string(),
       }) satisfies z.ZodType<Json>;
@@ -19557,7 +19613,10 @@ export namespace HasValuesStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         hasIriValue: z.string().min(1),
         hasLiteralValue: z.string(),
       }) satisfies z.ZodType<Json>;
@@ -20175,7 +20234,10 @@ export namespace IgnoredPropertiesStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         severityDefaultProperty: z.string().meta({
           description:
             "A property without an sh:severity defaults to sh:Violation severity and is not ignored",
@@ -20747,7 +20809,10 @@ export namespace IndirectRecursiveStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default("http://example.com/IndirectRecursiveStruct"),
@@ -21312,7 +21377,10 @@ export namespace IndirectRecursiveStructHelper {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default("http://example.com/IndirectRecursiveStructHelper"),
@@ -22970,7 +23038,10 @@ export namespace InPropertiesStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/InPropertiesStruct"),
         inBooleans: z.literal(true).optional(),
         inDateTimes: $dateTimeJsonSchema.optional(),
@@ -23563,7 +23634,10 @@ export namespace IntersectionPropertiesStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         namedStructIntersection: StructIntersection.Json.schema(),
       }) satisfies z.ZodType<Json>;
     }
@@ -25385,7 +25459,10 @@ export namespace LangStringStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/LangStringStruct"),
         langString: $LangStringJsonObject.schema().optional(),
         langStringOrString: z
@@ -25971,7 +26048,10 @@ export namespace LanguageInStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         languageIn: z.array($LangStringJsonObject.schema()).min(1),
       }) satisfies z.ZodType<Json>;
     }
@@ -26517,7 +26597,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default(
@@ -27085,7 +27168,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default(
@@ -27644,7 +27730,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default(
@@ -30260,7 +30349,10 @@ export namespace LazyPropertiesStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         optionalLazyToResolvedBlankNodeOrIriIdentifier:
           $DefaultPartial.Json.schema().optional(),
         optionalLazyToResolvedDiscriminatedUnion:
@@ -31840,7 +31932,10 @@ export namespace ListSetsStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/ListSetsStruct"),
         listDiscriminatedUnionSet: z
           .array(
@@ -33112,7 +33207,10 @@ export namespace ListsStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/ListsStruct"),
         iriList: z.array(z.string().min(1)).optional(),
         stringList: z.array(z.string()).optional(),
@@ -33991,7 +34089,10 @@ export namespace MutablePropertiesStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default("http://example.com/MutablePropertiesStruct"),
@@ -34691,7 +34792,10 @@ export namespace NamedTypesStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/NamedTypesStruct"),
         inIri: z.enum(InIri.schema.in.map((_) => _.value)),
         inLiteral: z.enum(InLiteral.schema.in),
@@ -35251,7 +35355,10 @@ export namespace NewName {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/OverrideNameStruct"),
         newNameString: z.string().optional(),
       }) satisfies z.ZodType<Json>;
@@ -36114,10 +36221,19 @@ export namespace NodeKindsStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/NodeKindsStruct"),
-        blankNodeKind: z.string().min(1),
-        blankNodeOrIriNodeKind: z.string().min(1),
+        blankNodeKind: z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
+        blankNodeOrIriNodeKind: z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         blankNodeOrLiteralNodeKind: $TermJsonObject.schema(),
         iriNodeKind: z.string().min(1),
         iriOrLiteralNodeKind: $TermJsonObject.schema(),
@@ -36611,7 +36727,10 @@ export namespace NonClassStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         nonClassString: z.string(),
       }) satisfies z.ZodType<Json>;
     }
@@ -37068,7 +37187,10 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         noRdfTypeDiscriminatedUnionMember1String: z.string(),
       }) satisfies z.ZodType<Json>;
     }
@@ -37535,7 +37657,10 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         noRdfTypeDiscriminatedUnionMember2String: z.string(),
       }) satisfies z.ZodType<Json>;
     }
@@ -39455,7 +39580,10 @@ export namespace NumericsStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/NumericsStruct"),
         byteNumeric: z.number().optional(),
         decimalNumeric: $bigDecimalJsonSchema.optional(),
@@ -40287,7 +40415,10 @@ export namespace OrderedStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         orderedC: z.string(),
         orderedB: z.string(),
         orderedA: z.string(),
@@ -40827,7 +40958,10 @@ export namespace PartialDiscriminatedUnionMember1 {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default("http://example.com/StructDiscriminatedUnionMember1"),
@@ -41367,7 +41501,10 @@ export namespace PartialDiscriminatedUnionMember2 {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default("http://example.com/StructDiscriminatedUnionMember2"),
@@ -41798,7 +41935,10 @@ export namespace PartialStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         lazilyResolved: z.string(),
       }) satisfies z.ZodType<Json>;
     }
@@ -42509,7 +42649,10 @@ export namespace PropertyCardinalitiesStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         emptySet: z
           .array(z.string())
           .optional()
@@ -43329,7 +43472,10 @@ export namespace PropertyNamesStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/PropertyNamesStruct"),
         actualName1: z.string().meta({
           description: "sh:path: overrides property shape identifier",
@@ -44038,7 +44184,10 @@ export namespace PropertyPathsStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/PropertyPathsStruct"),
         inversePath: z.string().min(1).optional(),
         predicatePath: z.string().optional(),
@@ -44620,7 +44769,10 @@ export namespace RecursiveDiscriminatedUnionMember1 {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default("http://example.com/RecursiveDiscriminatedUnionMember1"),
@@ -45204,7 +45356,10 @@ export namespace RecursiveDiscriminatedUnionMember2 {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default("http://example.com/RecursiveDiscriminatedUnionMember2"),
@@ -45879,7 +46034,10 @@ export namespace StructDiscriminatedUnionMember1 {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default("http://example.com/StructDiscriminatedUnionMember1"),
@@ -46555,7 +46713,10 @@ export namespace StructDiscriminatedUnionMember2 {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default("http://example.com/StructDiscriminatedUnionMember2"),
@@ -47009,7 +47170,10 @@ export namespace StructInheritance1 {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         structInheritance1: z.string(),
       }) satisfies z.ZodType<Json>;
     }
@@ -47633,7 +47797,10 @@ export namespace StructIntersectionMember1 {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default("http://example.com/StructIntersectionMember1"),
@@ -48292,7 +48459,10 @@ export namespace StructIntersectionMember2 {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
           .string()
           .default("http://example.com/StructIntersectionMember2"),
@@ -48832,7 +49002,10 @@ export namespace TargetClassStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/RdfType"),
         targetClassString: z.string(),
       }) satisfies z.ZodType<Json>;
@@ -50274,14 +50447,25 @@ export namespace TermsStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/TermsStruct"),
-        blankNodeTerm: z.string().min(1).optional(),
+        blankNodeTerm: z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`)
+          .optional(),
         booleanTerm: z.boolean().optional(),
         dateTerm: $dateJsonSchema.optional(),
         dateTimeTerm: $dateTimeJsonSchema.optional(),
         doubleTerm: z.number().optional(),
-        identifierTerm: z.string().min(1).optional(),
+        identifierTerm: z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`)
+          .optional(),
         iriTerm: z.string().min(1).optional(),
         langStringTerm: $LangStringJsonObject.schema().optional(),
         literalTerm: $LiteralJsonObject.schema().optional(),
@@ -56384,7 +56568,10 @@ export namespace UnionDiscriminantsStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         optionalIriOrString: z
           .discriminatedUnion("$type", [
             $IdentifierJsonObject
@@ -61492,7 +61679,13 @@ export namespace StructInheritance2 {
 
     export function schema() {
       return StructInheritance1.Json.schema().and(
-        z.object({ "@id": z.string().min(1), structInheritance2: z.string() }),
+        z.object({
+          "@id": z
+            .string()
+            .min(1)
+            .default(() => `_:${dataFactory.blankNode().value}`),
+          structInheritance2: z.string(),
+        }),
       ) satisfies z.ZodType<Json>;
     }
   }
@@ -62292,7 +62485,13 @@ export namespace StructInheritance3 {
 
     export function schema() {
       return StructInheritance2.Json.schema().and(
-        z.object({ "@id": z.string().min(1), structInheritance3: z.string() }),
+        z.object({
+          "@id": z
+            .string()
+            .min(1)
+            .default(() => `_:${dataFactory.blankNode().value}`),
+          structInheritance3: z.string(),
+        }),
       ) satisfies z.ZodType<Json>;
     }
   }
