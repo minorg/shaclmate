@@ -58,9 +58,14 @@ abstract class AbstractJsonType {
     }
 
     const moduleDeclarations = this.moduleDeclarations({ unqualifiedName });
-    if (moduleDeclarations.length > 0) {
+    if (Object.keys(moduleDeclarations).length > 0) {
       declarations.push(
-        code`export namespace Json { ${joinCode(moduleDeclarations, { on: "\n\n" })} }`,
+        code`export namespace Json { ${joinCode(
+          Object.keys(moduleDeclarations)
+            .sort()
+            .map((key) => moduleDeclarations[key]),
+          { on: "\n\n" },
+        )} }`,
       );
     }
 
@@ -97,33 +102,24 @@ abstract class AbstractJsonType {
     unqualifiedName,
   }: {
     unqualifiedName: string;
-  }): Code[] {
-    const moduleDeclarations: Code[] = [];
+  }): Record<string, Code> {
+    const moduleDeclarations: Record<string, Code> = {};
 
     if (this.configuration.features.has("Object.JSON.parse")) {
-      moduleDeclarations.push(code`\
+      moduleDeclarations["parse"] = code`\
 export function parse(json: unknown): ${this.reusables.imports.Either}<Error, ${unqualifiedName}> {
   const jsonSafeParseResult = schema().safeParse(json);
   if (!jsonSafeParseResult.success) { return ${this.reusables.imports.Left}(jsonSafeParseResult.error); }
   return ${this.reusables.imports.Right}(jsonSafeParseResult.data);
-}`);
+}`;
     }
 
     if (this.configuration.features.has("Object.JSON.schema")) {
-      moduleDeclarations.push(
-        code`export function schema() { return ${this.schemaExpression} satisfies ${this.schemaTypeExpression({ unqualifiedName })}; }`,
-      );
+      moduleDeclarations["schema"] =
+        code`export function schema() { return ${this.schemaExpression} satisfies ${this.reusables.imports.z}.ZodType<${unqualifiedName}>; }`;
     }
 
     return moduleDeclarations;
-  }
-
-  protected schemaTypeExpression({
-    unqualifiedName,
-  }: {
-    unqualifiedName: string;
-  }): Code {
-    return code`${this.reusables.imports.z}.ZodType<${unqualifiedName}>`;
   }
 }
 
@@ -422,31 +418,28 @@ class JsonObjectType extends AbstractJsonType {
     );
   }
 
-  protected override moduleDeclarations(parameters: {
-    unqualifiedName: string;
-  }): Code[] {
-    const moduleDeclarations = super.moduleDeclarations(parameters);
-
-    if (this.configuration.features.has("Object.JSON.uiSchema")) {
-      moduleDeclarations.push(
-        code`export const uiSchema = ${this.uiSchemaFunctionExpression};`,
-      );
-    }
-
-    return moduleDeclarations;
-  }
-
-  protected override schemaTypeExpression({
+  protected override moduleDeclarations({
     unqualifiedName,
   }: {
     unqualifiedName: string;
-  }): Code {
-    return this.shorthand
-      .map(
-        (shorthand) =>
-          code`${this.reusables.imports.z}.ZodType<${unqualifiedName}, ${unqualifiedName} | ${shorthand.type.expression}>`,
-      )
-      .orDefault(super.schemaTypeExpression({ unqualifiedName }));
+  }): Record<string, Code> {
+    const moduleDeclarations = {
+      ...super.moduleDeclarations({ unqualifiedName }),
+    };
+
+    if (this.configuration.features.has("Object.JSON.schema")) {
+      this.shorthand.ifJust((shorthand) => {
+        moduleDeclarations["schema"] =
+          code`export function schema() { return ${this.schemaExpression} as unknown as ${this.reusables.imports.z}.ZodType<${unqualifiedName}, ${unqualifiedName} | ${shorthand.type.expression}>; }`;
+      });
+    }
+
+    if (this.configuration.features.has("Object.JSON.uiSchema")) {
+      moduleDeclarations["uiSchema"] =
+        code`export const uiSchema = ${this.uiSchemaFunctionExpression};`;
+    }
+
+    return moduleDeclarations;
   }
 
   private memberType(memberI: number): JsonType {
@@ -694,6 +687,14 @@ class JsonTypeFactory {
   }
 }
 
+type JsonArray = JsonValue[];
+
+type JsonObject = {
+  [key: string]: JsonValue;
+};
+
+type JsonPrimitive = boolean | number | string;
+
 type JsonType =
   | JsonArrayType
   | JsonBooleanType
@@ -702,10 +703,6 @@ type JsonType =
   | JsonNumberType
   | JsonObjectType
   | JsonStringType;
-
-type JsonArray = JsonValue[];
-type JsonObject = { [key: string]: JsonValue };
-type JsonPrimitive = boolean | number | string;
 
 type JsonValue = JsonArray | JsonObject | JsonPrimitive;
 

@@ -4697,7 +4697,7 @@ export namespace $DefaultPartial {
           .min(1)
           .default(() => `_:${dataFactory.blankNode().value}`)
           .transform((id) => ({ "@id": id })),
-      ]) satisfies z.ZodType<Json, Json | string>;
+      ]) as unknown as z.ZodType<Json, Json | string>;
     }
 
     export const uiSchema = (_options?: { scopePrefix?: string }): any => {
@@ -5030,7 +5030,7 @@ export namespace $NamedDefaultPartial {
           .string()
           .min(1)
           .transform((id) => ({ "@id": id })),
-      ]) satisfies z.ZodType<Json, Json | string>;
+      ]) as unknown as z.ZodType<Json, Json | string>;
     }
 
     export const uiSchema = (_options?: { scopePrefix?: string }): any => {
