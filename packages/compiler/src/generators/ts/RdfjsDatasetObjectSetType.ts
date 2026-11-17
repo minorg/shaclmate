@@ -22,12 +22,6 @@ export class RdfjsDatasetObjectSetType extends AbstractObjectSetType {
       query: `query?: ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>`,
     };
 
-    const typeParameters = {
-      ObjectT: code`ObjectT extends { readonly $identifier: () => ObjectIdentifierT }`,
-      ObjectFilterT: code`ObjectFilterT`,
-      ObjectIdentifierT: code`ObjectIdentifierT extends ${this.reusables.imports.BlankNode} | ${this.reusables.imports.NamedNode}`,
-    };
-
     return code`\
 export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticNamePrefix}ObjectSet {
   readonly #dataset: ${this.reusables.imports.DatasetCore} | (() => ${this.reusables.imports.DatasetCore});
@@ -57,40 +51,40 @@ export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticN
         const delegatingMethods: Code[] = [
           // object
           code`\
-async ${methodSignatures.object.name}(${methodSignatures.object.parameters}): ${methodSignatures.object.returnType} {
+async ${methodSignatures.object.name}(${methodSignatures.object.parameters}): ${methodSignatures.object.asyncReturnType} {
   return this.${methodSignatures.object.name}Sync(identifier, options);
 }`,
           // objectSync
           code`\
-${methodSignatures.object.name}Sync(${methodSignatures.object.parameters}): ${this.reusables.imports.Either}<Error, ${namedObjectType.expression}> {
+${methodSignatures.object.name}Sync(${methodSignatures.object.parameters}): ${methodSignatures.object.syncReturnType} {
   return this.${methodSignatures.objects.name}Sync({ identifiers: [identifier], preferredLanguages: options?.preferredLanguages }).map(objects => objects[0]);
 }`,
 
           // objectCount
           code`\
-async ${methodSignatures.objectCount.name}(${methodSignatures.objectCount.parameters}): ${methodSignatures.objectCount.returnType} {
+async ${methodSignatures.objectCount.name}(${methodSignatures.objectCount.parameters}): ${methodSignatures.objectCount.asyncReturnType} {
   return this.${methodSignatures.objectCount.name}Sync(query);
 }`,
           // objectCountSync
           code`\
-${methodSignatures.objectCount.name}Sync(${methodSignatures.objectCount.parameters}): ${this.reusables.imports.Either}<Error, number> {
+${methodSignatures.objectCount.name}Sync(${methodSignatures.objectCount.parameters}): ${methodSignatures.objectCount.syncReturnType} {
   return this.${methodSignatures.objects.name}Sync(query).map(objects => objects.length);
 }`,
 
           // objectIdentifiers
           code`\
-async ${methodSignatures.objectIdentifiers.name}(${methodSignatures.objectIdentifiers.parameters}): ${methodSignatures.objectIdentifiers.returnType} {
+async ${methodSignatures.objectIdentifiers.name}(${methodSignatures.objectIdentifiers.parameters}): ${methodSignatures.objectIdentifiers.asyncReturnType} {
   return this.${methodSignatures.objectIdentifiers.name}Sync(query);
 }`,
           // objectIdentifiersSync
           code`\
-${methodSignatures.objectIdentifiers.name}Sync(${methodSignatures.objectIdentifiers.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.identifierTypeAlias}[]> {
+${methodSignatures.objectIdentifiers.name}Sync(${methodSignatures.objectIdentifiers.parameters}): ${methodSignatures.objectIdentifiers.syncReturnType} {
   return this.${methodSignatures.objects.name}Sync(query).map(objects => objects.map(object => object.${syntheticNamePrefix}identifier()));
 }`,
 
           // objects
           code`\
-async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): ${methodSignatures.objects.returnType} {
+async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): ${methodSignatures.objects.asyncReturnType} {
   return this.${methodSignatures.objects.name}Sync(query);
 }`,
           // objectsSync has per-object type logic, not just forwarding
@@ -125,13 +119,13 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
         switch (namedObjectType.kind) {
           case "Object": {
             return delegatingMethods.concat(code`\
-${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.expression}[]> {
-  return this.#objectsSync<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType(namedObjectType)}, query);
+${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${methodSignatures.objects.syncReturnType} {
+  return this.#objectsSync<${namedObjectType.discriminatedType.unsafeCoerce().expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType(namedObjectType)}, query);
 }`);
           }
           case "ObjectDiscriminatedUnion":
             return delegatingMethods.concat(code`\
-${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.expression}[]> {
+${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${methodSignatures.objects.syncReturnType} {
   return this.#objectDiscriminatedUnionsSync<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>([
     ${joinCode(
       namedObjectType.members.map((member) =>
@@ -145,8 +139,8 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
 }`);
           case "ObjectIntersection":
             return delegatingMethods.concat(code`\
-${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.expression}[]> {
-  return this.#objectsSync<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType(
+${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${methodSignatures.objects.syncReturnType} {
+  return this.#objectsSync<${namedObjectType.discriminatedType.unsafeCoerce().expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType(
     namedObjectType,
   )}, query);
 }`);
@@ -163,7 +157,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
       )
         ? [
             code`\
-#objectsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectType: ${namedObjectTypeType}, ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {
+#objectsSync<${this.typeParameters.ObjectT}, ${this.typeParameters.ObjectFilterT}, ${this.typeParameters.ObjectIdentifierT}>(namedObjectType: ${namedObjectTypeType}, ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {
   const graph = query?.graph ?? this.#graph;
 
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
@@ -259,7 +253,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
       )
         ? [
             code`\
-#objectDiscriminatedUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectTypes: readonly ${namedObjectTypeType}[], ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {
+#objectDiscriminatedUnionsSync<${this.typeParameters.ObjectT}, ${this.typeParameters.ObjectFilterT}, ${this.typeParameters.ObjectIdentifierT}>(namedObjectTypes: readonly ${namedObjectTypeType}[], ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {
   const graph = query?.graph ?? this.#graph;
 
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;

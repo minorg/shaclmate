@@ -3120,7 +3120,7 @@ export interface $ObjectSet {
   lazyObject(
     identifier: LazyObject.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazyObject>>;
+  ): Promise<Either<Error, LazyObject.Discriminated>>;
 
   lazyObjectCount(
     query?: Pick<
@@ -3135,12 +3135,12 @@ export interface $ObjectSet {
 
   lazyObjects(
     query?: $ObjectSet.Query<LazyObject.Filter, LazyObject.Identifier>,
-  ): Promise<Either<Error, readonly LazyObject[]>>;
+  ): Promise<Either<Error, readonly LazyObject.Discriminated[]>>;
 
   rootObject(
     identifier: RootObject.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, RootObject>>;
+  ): Promise<Either<Error, RootObject.Discriminated>>;
 
   rootObjectCount(
     query?: Pick<
@@ -3155,12 +3155,12 @@ export interface $ObjectSet {
 
   rootObjects(
     query?: $ObjectSet.Query<RootObject.Filter, RootObject.Identifier>,
-  ): Promise<Either<Error, readonly RootObject[]>>;
+  ): Promise<Either<Error, readonly RootObject.Discriminated[]>>;
 
   unionMember1(
     identifier: UnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, UnionMember1>>;
+  ): Promise<Either<Error, UnionMember1.Discriminated>>;
 
   unionMember1Count(
     query?: Pick<
@@ -3175,12 +3175,12 @@ export interface $ObjectSet {
 
   unionMember1s(
     query?: $ObjectSet.Query<UnionMember1.Filter, UnionMember1.Identifier>,
-  ): Promise<Either<Error, readonly UnionMember1[]>>;
+  ): Promise<Either<Error, readonly UnionMember1.Discriminated[]>>;
 
   unionMember2(
     identifier: UnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, UnionMember2>>;
+  ): Promise<Either<Error, UnionMember2.Discriminated>>;
 
   unionMember2Count(
     query?: Pick<
@@ -3195,7 +3195,7 @@ export interface $ObjectSet {
 
   unionMember2s(
     query?: $ObjectSet.Query<UnionMember2.Filter, UnionMember2.Identifier>,
-  ): Promise<Either<Error, readonly UnionMember2[]>>;
+  ): Promise<Either<Error, readonly UnionMember2.Discriminated[]>>;
 }
 
 export namespace $ObjectSet {
@@ -3314,14 +3314,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async lazyObject(
     identifier: LazyObject.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazyObject>> {
+  ): Promise<Either<Error, LazyObject.Discriminated>> {
     return this.lazyObjectSync(identifier, options);
   }
 
   lazyObjectSync(
     identifier: LazyObject.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, LazyObject> {
+  ): Either<Error, LazyObject.Discriminated> {
     return this.lazyObjectsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -3362,15 +3362,15 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazyObjects(
     query?: $ObjectSet.Query<LazyObject.Filter, LazyObject.Identifier>,
-  ): Promise<Either<Error, readonly LazyObject[]>> {
+  ): Promise<Either<Error, readonly LazyObject.Discriminated[]>> {
     return this.lazyObjectsSync(query);
   }
 
   lazyObjectsSync(
     query?: $ObjectSet.Query<LazyObject.Filter, LazyObject.Identifier>,
-  ): Either<Error, readonly LazyObject[]> {
+  ): Either<Error, readonly LazyObject.Discriminated[]> {
     return this.#objectsSync<
-      LazyObject,
+      LazyObject.Discriminated,
       LazyObject.Filter,
       LazyObject.Identifier
     >(
@@ -3386,14 +3386,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async rootObject(
     identifier: RootObject.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, RootObject>> {
+  ): Promise<Either<Error, RootObject.Discriminated>> {
     return this.rootObjectSync(identifier, options);
   }
 
   rootObjectSync(
     identifier: RootObject.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, RootObject> {
+  ): Either<Error, RootObject.Discriminated> {
     return this.rootObjectsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -3434,15 +3434,15 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async rootObjects(
     query?: $ObjectSet.Query<RootObject.Filter, RootObject.Identifier>,
-  ): Promise<Either<Error, readonly RootObject[]>> {
+  ): Promise<Either<Error, readonly RootObject.Discriminated[]>> {
     return this.rootObjectsSync(query);
   }
 
   rootObjectsSync(
     query?: $ObjectSet.Query<RootObject.Filter, RootObject.Identifier>,
-  ): Either<Error, readonly RootObject[]> {
+  ): Either<Error, readonly RootObject.Discriminated[]> {
     return this.#objectsSync<
-      RootObject,
+      RootObject.Discriminated,
       RootObject.Filter,
       RootObject.Identifier
     >(
@@ -3458,14 +3458,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async unionMember1(
     identifier: UnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, UnionMember1>> {
+  ): Promise<Either<Error, UnionMember1.Discriminated>> {
     return this.unionMember1Sync(identifier, options);
   }
 
   unionMember1Sync(
     identifier: UnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, UnionMember1> {
+  ): Either<Error, UnionMember1.Discriminated> {
     return this.unionMember1sSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -3506,15 +3506,15 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async unionMember1s(
     query?: $ObjectSet.Query<UnionMember1.Filter, UnionMember1.Identifier>,
-  ): Promise<Either<Error, readonly UnionMember1[]>> {
+  ): Promise<Either<Error, readonly UnionMember1.Discriminated[]>> {
     return this.unionMember1sSync(query);
   }
 
   unionMember1sSync(
     query?: $ObjectSet.Query<UnionMember1.Filter, UnionMember1.Identifier>,
-  ): Either<Error, readonly UnionMember1[]> {
+  ): Either<Error, readonly UnionMember1.Discriminated[]> {
     return this.#objectsSync<
-      UnionMember1,
+      UnionMember1.Discriminated,
       UnionMember1.Filter,
       UnionMember1.Identifier
     >(
@@ -3530,14 +3530,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async unionMember2(
     identifier: UnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, UnionMember2>> {
+  ): Promise<Either<Error, UnionMember2.Discriminated>> {
     return this.unionMember2Sync(identifier, options);
   }
 
   unionMember2Sync(
     identifier: UnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, UnionMember2> {
+  ): Either<Error, UnionMember2.Discriminated> {
     return this.unionMember2sSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -3578,15 +3578,15 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async unionMember2s(
     query?: $ObjectSet.Query<UnionMember2.Filter, UnionMember2.Identifier>,
-  ): Promise<Either<Error, readonly UnionMember2[]>> {
+  ): Promise<Either<Error, readonly UnionMember2.Discriminated[]>> {
     return this.unionMember2sSync(query);
   }
 
   unionMember2sSync(
     query?: $ObjectSet.Query<UnionMember2.Filter, UnionMember2.Identifier>,
-  ): Either<Error, readonly UnionMember2[]> {
+  ): Either<Error, readonly UnionMember2.Discriminated[]> {
     return this.#objectsSync<
-      UnionMember2,
+      UnionMember2.Discriminated,
       UnionMember2.Filter,
       UnionMember2.Identifier
     >(
@@ -3600,7 +3600,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   #objectsSync<
-    ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
+    ObjectT extends {
+      readonly $identifier: () => ObjectIdentifierT;
+      $type: string;
+    },
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
@@ -3722,7 +3725,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   #objectDiscriminatedUnionsSync<
-    ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
+    ObjectT extends {
+      readonly $identifier: () => ObjectIdentifierT;
+      $type: string;
+    },
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(

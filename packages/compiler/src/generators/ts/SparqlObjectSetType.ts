@@ -18,12 +18,6 @@ export class SparqlObjectSetType extends AbstractObjectSetType {
     };
     const sparqlClientType = code`{ queryBindings: (query: string) => Promise<readonly Record<string, ${this.reusables.imports.BlankNode} | ${this.reusables.imports.Literal} | ${this.reusables.imports.NamedNode}>[]>; queryQuads: (query: string) => Promise<readonly ${this.reusables.imports.Quad}[]>; }`;
 
-    const typeParameters = {
-      ObjectT: code`ObjectT extends { readonly $identifier: () => ObjectIdentifierT }`,
-      ObjectFilterT: code`ObjectFilterT`,
-      ObjectIdentifierT: code`ObjectIdentifierT extends ${this.reusables.imports.BlankNode} | ${this.reusables.imports.NamedNode}`,
-    };
-
     return code`\
 export class ${syntheticNamePrefix}SparqlObjectSet implements ${syntheticNamePrefix}ObjectSet {
   readonly #countVariable = ${this.reusables.imports.dataFactory}.variable!("count");;
@@ -47,19 +41,19 @@ ${joinCode(
 
     return [
       code`\
-async ${methodSignatures.object.name}(${methodSignatures.object.parameters}): ${methodSignatures.object.returnType} {
+async ${methodSignatures.object.name}(${methodSignatures.object.parameters}): ${methodSignatures.object.asyncReturnType} {
   return (await this.${methodSignatures.objects.name}({ identifiers: [identifier], preferredLanguages: options?.preferredLanguages })).map(objects => objects[0]);
 }`,
       code`\
-async ${methodSignatures.objectCount.name}(${methodSignatures.objectCount.parameters}): ${methodSignatures.objectCount.returnType} {
+async ${methodSignatures.objectCount.name}(${methodSignatures.objectCount.parameters}): ${methodSignatures.objectCount.asyncReturnType} {
   return this.#objectCount<${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType}, query);
 }`,
       code`\
-async ${methodSignatures.objectIdentifiers.name}(${methodSignatures.objectIdentifiers.parameters}): ${methodSignatures.objectIdentifiers.returnType} {
+async ${methodSignatures.objectIdentifiers.name}(${methodSignatures.objectIdentifiers.parameters}): ${methodSignatures.objectIdentifiers.asyncReturnType} {
   return this.#objectIdentifiers<${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType}, query);
 }`,
       code`\
-async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): ${methodSignatures.objects.returnType} {
+async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): ${methodSignatures.objects.asyncReturnType} {
   return this.#objects<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType}, query);
 }`,
     ];
@@ -102,7 +96,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
     return identifiers;
   }
 
-  async #objectIdentifiers<${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(${parameters.selectObjectTypeType}, ${parameters.query}): Promise<${this.reusables.imports.Either}<Error, readonly ObjectIdentifierT[]>> {
+  async #objectIdentifiers<${this.typeParameters.ObjectFilterT}, ${this.typeParameters.ObjectIdentifierT}>(${parameters.selectObjectTypeType}, ${parameters.query}): Promise<${this.reusables.imports.Either}<Error, readonly ObjectIdentifierT[]>> {
     if (query?.identifiers) {
       return ${this.reusables.imports.Right}(query.identifiers);
     }
@@ -143,7 +137,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
     );  
   }
 
-  async #objects<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(${parameters.constructObjectType}, ${parameters.query}): Promise<${this.reusables.imports.Either}<Error, readonly ObjectT[]>> {
+  async #objects<${this.typeParameters.ObjectT}, ${this.typeParameters.ObjectFilterT}, ${this.typeParameters.ObjectIdentifierT}>(${parameters.constructObjectType}, ${parameters.query}): Promise<${this.reusables.imports.Either}<Error, readonly ObjectT[]>> {
     return ${this.reusables.imports.EitherAsync}(async ({ liftEither }) => {
       const identifiers = await liftEither(await this.#objectIdentifiers<ObjectFilterT, ObjectIdentifierT>(namedObjectType, query));
       if (identifiers.length === 0) {
@@ -173,7 +167,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
     });
   }
 
-  async #objectCount<${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(${parameters.selectObjectTypeType}, ${parameters.query}): Promise<${this.reusables.imports.Either}<Error, number>> {
+  async #objectCount<${this.typeParameters.ObjectFilterT}, ${this.typeParameters.ObjectIdentifierT}>(${parameters.selectObjectTypeType}, ${parameters.query}): Promise<${this.reusables.imports.Either}<Error, number>> {
     const wherePatterns = this.#wherePatterns(namedObjectType, query);
     if (wherePatterns.length === 0) {
       return ${this.reusables.imports.Left}(new Error("no SPARQL WHERE patterns for count"));
@@ -208,7 +202,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
     );
   }
 
-  #wherePatterns<${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(${parameters.selectObjectTypeType}, ${parameters.query}): readonly ${this.reusables.imports.sparqljs}.Pattern[] {
+  #wherePatterns<${this.typeParameters.ObjectFilterT}, ${this.typeParameters.ObjectIdentifierT}>(${parameters.selectObjectTypeType}, ${parameters.query}): readonly ${this.reusables.imports.sparqljs}.Pattern[] {
     // Patterns should be most to least specific.
     let patterns: ${this.reusables.imports.sparqljs}.Pattern[] = [];
 
@@ -235,7 +229,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
 }
   
 export namespace ${syntheticNamePrefix}SparqlObjectSet {
-  export type Query<${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}> = ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT, ObjectIdentifierT> & { readonly order?: (objectVariable: ${this.reusables.imports.Variable}) => readonly ${this.reusables.imports.sparqljs}.Ordering[]; readonly where?: (objectVariable: ${this.reusables.imports.Variable}) => readonly ${this.reusables.imports.sparqljs}.Pattern[] };
+  export type Query<${this.typeParameters.ObjectFilterT}, ${this.typeParameters.ObjectIdentifierT}> = ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT, ObjectIdentifierT> & { readonly order?: (objectVariable: ${this.reusables.imports.Variable}) => readonly ${this.reusables.imports.sparqljs}.Ordering[]; readonly where?: (objectVariable: ${this.reusables.imports.Variable}) => readonly ${this.reusables.imports.sparqljs}.Pattern[] };
 }`;
   }
 }

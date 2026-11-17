@@ -1,5 +1,9 @@
 import type { Logger } from "@rdfx/logger";
+
 import type { Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
+
+import type { AbstractType } from "./AbstractType.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
@@ -10,12 +14,14 @@ import { type Code, code } from "./ts-poet-wrapper.js";
 export abstract class AbstractObjectSetType {
   protected readonly configuration: TsGenerator.Configuration;
   protected readonly logger: Logger;
-  protected readonly reusables: Reusables;
   protected readonly namedObjectTypes: readonly (
     | ObjectDiscriminatedUnionType
     | ObjectIntersectionType
     | ObjectType
   )[];
+  protected readonly reusables: Reusables;
+
+  abstract readonly declaration: Code;
 
   constructor({
     configuration,
@@ -38,10 +44,18 @@ export abstract class AbstractObjectSetType {
     this.reusables = reusables;
   }
 
-  abstract readonly declaration: Code;
+  @Memoize()
+  protected get typeParameters() {
+    return {
+      ObjectT: code`ObjectT extends { readonly $identifier: () => ObjectIdentifierT; ${this.configuration.objectDiscriminantProperty.name}: string; }`,
+      ObjectFilterT: code`ObjectFilterT`,
+      ObjectIdentifierT: code`ObjectIdentifierT extends ${this.reusables.imports.BlankNode} | ${this.reusables.imports.NamedNode}`,
+    };
+  }
 
   protected methodSignatures(
     objectType: {
+      readonly discriminatedType: Maybe<AbstractType.DiscriminatedType>;
       readonly filterType: Code;
       readonly identifierTypeAlias: Code;
       readonly name: Maybe<string>;
@@ -55,38 +69,53 @@ export abstract class AbstractObjectSetType {
     Record<
       keyof ObjectType.ObjectSetMethodNames,
       {
+        readonly asyncReturnType: Code;
         readonly name: string;
         readonly parameters: Code;
-        readonly returnType: Code;
+        readonly syncReturnType: Code;
       }
     >
   > {
+    const objectDiscriminatedTypeExpression =
+      objectType.discriminatedType.unsafeCoerce().expression;
     const parameterNamePrefix = options?.parameterNamePrefix ?? "";
     const queryT =
       options?.queryT ??
       `${this.configuration.syntheticNamePrefix}ObjectSet.Query`;
 
     const methodNames = objectType.objectSetMethodNames;
+
+    const returnTypes = (syncReturnType: Code) => ({
+      asyncReturnType: code`Promise<${syncReturnType}>`,
+      syncReturnType,
+    });
+
     return {
       object: {
         name: methodNames.object,
         parameters: code`${parameterNamePrefix}identifier: ${objectType.identifierTypeAlias}, options?: { preferredLanguages?: readonly string[]; }`,
-        returnType: code`Promise<${this.reusables.imports.Either}<Error, ${objectType.name.unsafeCoerce()}>>`,
+        ...returnTypes(
+          code`${this.reusables.imports.Either}<Error, ${objectDiscriminatedTypeExpression}>`,
+        ),
       },
       objectCount: {
         name: methodNames.objectCount,
         parameters: code`${parameterNamePrefix}query?: Pick<${queryT}<${objectType.filterType}, ${objectType.identifierTypeAlias}>, "filter">`,
-        returnType: code`Promise<${this.reusables.imports.Either}<Error, number>>`,
+        ...returnTypes(code`${this.reusables.imports.Either}<Error, number>`),
       },
       objectIdentifiers: {
         name: methodNames.objectIdentifiers,
         parameters: code`${parameterNamePrefix}query?: ${queryT}<${objectType.filterType}, ${objectType.identifierTypeAlias}>`,
-        returnType: code`Promise<${this.reusables.imports.Either}<Error, readonly ${objectType.identifierTypeAlias}[]>>`,
+        ...returnTypes(
+          code`${this.reusables.imports.Either}<Error, readonly ${objectType.identifierTypeAlias}[]>`,
+        ),
       },
       objects: {
         name: methodNames.objects,
         parameters: code`${parameterNamePrefix}query?: ${queryT}<${objectType.filterType}, ${objectType.identifierTypeAlias}>`,
-        returnType: code`Promise<${this.reusables.imports.Either}<Error, readonly ${objectType.name.unsafeCoerce()}[]>>`,
+        ...returnTypes(
+          code`${this.reusables.imports.Either}<Error, readonly ${objectDiscriminatedTypeExpression}[]>`,
+        ),
       },
     };
   }
