@@ -65017,7 +65017,7 @@ export interface $ObjectSet {
   structIntersection(
     identifier: StructIntersection.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructIntersection>>;
+  ): Promise<Either<Error, StructIntersection.Discriminated>>;
 
   structIntersectionCount(
     query?: Pick<
@@ -65041,12 +65041,12 @@ export interface $ObjectSet {
       StructIntersection.Filter,
       StructIntersection.Identifier
     >,
-  ): Promise<Either<Error, readonly StructIntersection[]>>;
+  ): Promise<Either<Error, readonly StructIntersection.Discriminated[]>>;
 
   structInheritance2(
     identifier: StructInheritance2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructInheritance2>>;
+  ): Promise<Either<Error, StructInheritance2.Discriminated>>;
 
   structInheritance2Count(
     query?: Pick<
@@ -65070,12 +65070,12 @@ export interface $ObjectSet {
       StructInheritance2.Filter,
       StructInheritance2.Identifier
     >,
-  ): Promise<Either<Error, readonly StructInheritance2[]>>;
+  ): Promise<Either<Error, readonly StructInheritance2.Discriminated[]>>;
 
   structInheritance3(
     identifier: StructInheritance3.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructInheritance3>>;
+  ): Promise<Either<Error, StructInheritance3.Discriminated>>;
 
   structInheritance3Count(
     query?: Pick<
@@ -65099,12 +65099,12 @@ export interface $ObjectSet {
       StructInheritance3.Filter,
       StructInheritance3.Identifier
     >,
-  ): Promise<Either<Error, readonly StructInheritance3[]>>;
+  ): Promise<Either<Error, readonly StructInheritance3.Discriminated[]>>;
 
   anonymousTypesStruct(
     identifier: AnonymousTypesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, AnonymousTypesStruct>>;
+  ): Promise<Either<Error, AnonymousTypesStruct.Discriminated>>;
 
   anonymousTypesStructCount(
     query?: Pick<
@@ -65128,12 +65128,12 @@ export interface $ObjectSet {
       AnonymousTypesStruct.Filter,
       AnonymousTypesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly AnonymousTypesStruct[]>>;
+  ): Promise<Either<Error, readonly AnonymousTypesStruct.Discriminated[]>>;
 
   blankNodeOrIriIdentifierStruct(
     identifier: BlankNodeOrIriIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, BlankNodeOrIriIdentifierStruct>>;
+  ): Promise<Either<Error, BlankNodeOrIriIdentifierStruct.Discriminated>>;
 
   blankNodeOrIriIdentifierStructCount(
     query?: Pick<
@@ -65159,12 +65159,14 @@ export interface $ObjectSet {
       BlankNodeOrIriIdentifierStruct.Filter,
       BlankNodeOrIriIdentifierStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly BlankNodeOrIriIdentifierStruct[]>>;
+  ): Promise<
+    Either<Error, readonly BlankNodeOrIriIdentifierStruct.Discriminated[]>
+  >;
 
   classConstraintsStruct(
     identifier: ClassConstraintsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ClassConstraintsStruct>>;
+  ): Promise<Either<Error, ClassConstraintsStruct.Discriminated>>;
 
   classConstraintsStructCount(
     query?: Pick<
@@ -65188,12 +65190,12 @@ export interface $ObjectSet {
       ClassConstraintsStruct.Filter,
       ClassConstraintsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly ClassConstraintsStruct[]>>;
+  ): Promise<Either<Error, readonly ClassConstraintsStruct.Discriminated[]>>;
 
   convertibleTypesStruct(
     identifier: ConvertibleTypesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ConvertibleTypesStruct>>;
+  ): Promise<Either<Error, ConvertibleTypesStruct.Discriminated>>;
 
   convertibleTypesStructCount(
     query?: Pick<
@@ -65217,12 +65219,12 @@ export interface $ObjectSet {
       ConvertibleTypesStruct.Filter,
       ConvertibleTypesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly ConvertibleTypesStruct[]>>;
+  ): Promise<Either<Error, readonly ConvertibleTypesStruct.Discriminated[]>>;
 
   datatypeDiscriminatedUnionsStruct(
     identifier: DatatypeDiscriminatedUnionsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DatatypeDiscriminatedUnionsStruct>>;
+  ): Promise<Either<Error, DatatypeDiscriminatedUnionsStruct.Discriminated>>;
 
   datatypeDiscriminatedUnionsStructCount(
     query?: Pick<
@@ -65248,12 +65250,14 @@ export interface $ObjectSet {
       DatatypeDiscriminatedUnionsStruct.Filter,
       DatatypeDiscriminatedUnionsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly DatatypeDiscriminatedUnionsStruct[]>>;
+  ): Promise<
+    Either<Error, readonly DatatypeDiscriminatedUnionsStruct.Discriminated[]>
+  >;
 
   datesStruct(
     identifier: DatesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DatesStruct>>;
+  ): Promise<Either<Error, DatesStruct.Discriminated>>;
 
   datesStructCount(
     query?: Pick<
@@ -65268,12 +65272,12 @@ export interface $ObjectSet {
 
   datesStructs(
     query?: $ObjectSet.Query<DatesStruct.Filter, DatesStruct.Identifier>,
-  ): Promise<Either<Error, readonly DatesStruct[]>>;
+  ): Promise<Either<Error, readonly DatesStruct.Discriminated[]>>;
 
   defaultValuesStruct(
     identifier: DefaultValuesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DefaultValuesStruct>>;
+  ): Promise<Either<Error, DefaultValuesStruct.Discriminated>>;
 
   defaultValuesStructCount(
     query?: Pick<
@@ -65297,12 +65301,12 @@ export interface $ObjectSet {
       DefaultValuesStruct.Filter,
       DefaultValuesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly DefaultValuesStruct[]>>;
+  ): Promise<Either<Error, readonly DefaultValuesStruct.Discriminated[]>>;
 
   directRecursiveStruct(
     identifier: DirectRecursiveStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DirectRecursiveStruct>>;
+  ): Promise<Either<Error, DirectRecursiveStruct.Discriminated>>;
 
   directRecursiveStructCount(
     query?: Pick<
@@ -65326,12 +65330,12 @@ export interface $ObjectSet {
       DirectRecursiveStruct.Filter,
       DirectRecursiveStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly DirectRecursiveStruct[]>>;
+  ): Promise<Either<Error, readonly DirectRecursiveStruct.Discriminated[]>>;
 
   displayStruct(
     identifier: DisplayStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DisplayStruct>>;
+  ): Promise<Either<Error, DisplayStruct.Discriminated>>;
 
   displayStructCount(
     query?: Pick<
@@ -65346,12 +65350,12 @@ export interface $ObjectSet {
 
   displayStructs(
     query?: $ObjectSet.Query<DisplayStruct.Filter, DisplayStruct.Identifier>,
-  ): Promise<Either<Error, readonly DisplayStruct[]>>;
+  ): Promise<Either<Error, readonly DisplayStruct.Discriminated[]>>;
 
   explicitFromToRdfTypesStruct(
     identifier: ExplicitFromToRdfTypesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ExplicitFromToRdfTypesStruct>>;
+  ): Promise<Either<Error, ExplicitFromToRdfTypesStruct.Discriminated>>;
 
   explicitFromToRdfTypesStructCount(
     query?: Pick<
@@ -65375,12 +65379,14 @@ export interface $ObjectSet {
       ExplicitFromToRdfTypesStruct.Filter,
       ExplicitFromToRdfTypesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly ExplicitFromToRdfTypesStruct[]>>;
+  ): Promise<
+    Either<Error, readonly ExplicitFromToRdfTypesStruct.Discriminated[]>
+  >;
 
   explicitRdfTypeStruct(
     identifier: ExplicitRdfTypeStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ExplicitRdfTypeStruct>>;
+  ): Promise<Either<Error, ExplicitRdfTypeStruct.Discriminated>>;
 
   explicitRdfTypeStructCount(
     query?: Pick<
@@ -65404,12 +65410,12 @@ export interface $ObjectSet {
       ExplicitRdfTypeStruct.Filter,
       ExplicitRdfTypeStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly ExplicitRdfTypeStruct[]>>;
+  ): Promise<Either<Error, readonly ExplicitRdfTypeStruct.Discriminated[]>>;
 
   hasValuesStruct(
     identifier: HasValuesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, HasValuesStruct>>;
+  ): Promise<Either<Error, HasValuesStruct.Discriminated>>;
 
   hasValuesStructCount(
     query?: Pick<
@@ -65430,12 +65436,12 @@ export interface $ObjectSet {
       HasValuesStruct.Filter,
       HasValuesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly HasValuesStruct[]>>;
+  ): Promise<Either<Error, readonly HasValuesStruct.Discriminated[]>>;
 
   ignoredPropertiesStruct(
     identifier: IgnoredPropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IgnoredPropertiesStruct>>;
+  ): Promise<Either<Error, IgnoredPropertiesStruct.Discriminated>>;
 
   ignoredPropertiesStructCount(
     query?: Pick<
@@ -65459,12 +65465,12 @@ export interface $ObjectSet {
       IgnoredPropertiesStruct.Filter,
       IgnoredPropertiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly IgnoredPropertiesStruct[]>>;
+  ): Promise<Either<Error, readonly IgnoredPropertiesStruct.Discriminated[]>>;
 
   indirectRecursiveStruct(
     identifier: IndirectRecursiveStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IndirectRecursiveStruct>>;
+  ): Promise<Either<Error, IndirectRecursiveStruct.Discriminated>>;
 
   indirectRecursiveStructCount(
     query?: Pick<
@@ -65488,12 +65494,12 @@ export interface $ObjectSet {
       IndirectRecursiveStruct.Filter,
       IndirectRecursiveStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly IndirectRecursiveStruct[]>>;
+  ): Promise<Either<Error, readonly IndirectRecursiveStruct.Discriminated[]>>;
 
   indirectRecursiveStructHelper(
     identifier: IndirectRecursiveStructHelper.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IndirectRecursiveStructHelper>>;
+  ): Promise<Either<Error, IndirectRecursiveStructHelper.Discriminated>>;
 
   indirectRecursiveStructHelperCount(
     query?: Pick<
@@ -65519,12 +65525,14 @@ export interface $ObjectSet {
       IndirectRecursiveStructHelper.Filter,
       IndirectRecursiveStructHelper.Identifier
     >,
-  ): Promise<Either<Error, readonly IndirectRecursiveStructHelper[]>>;
+  ): Promise<
+    Either<Error, readonly IndirectRecursiveStructHelper.Discriminated[]>
+  >;
 
   inIdentifierStruct(
     identifier: InIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, InIdentifierStruct>>;
+  ): Promise<Either<Error, InIdentifierStruct.Discriminated>>;
 
   inIdentifierStructCount(
     query?: Pick<
@@ -65548,12 +65556,12 @@ export interface $ObjectSet {
       InIdentifierStruct.Filter,
       InIdentifierStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly InIdentifierStruct[]>>;
+  ): Promise<Either<Error, readonly InIdentifierStruct.Discriminated[]>>;
 
   inPropertiesStruct(
     identifier: InPropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, InPropertiesStruct>>;
+  ): Promise<Either<Error, InPropertiesStruct.Discriminated>>;
 
   inPropertiesStructCount(
     query?: Pick<
@@ -65577,12 +65585,12 @@ export interface $ObjectSet {
       InPropertiesStruct.Filter,
       InPropertiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly InPropertiesStruct[]>>;
+  ): Promise<Either<Error, readonly InPropertiesStruct.Discriminated[]>>;
 
   intersectionPropertiesStruct(
     identifier: IntersectionPropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IntersectionPropertiesStruct>>;
+  ): Promise<Either<Error, IntersectionPropertiesStruct.Discriminated>>;
 
   intersectionPropertiesStructCount(
     query?: Pick<
@@ -65606,12 +65614,14 @@ export interface $ObjectSet {
       IntersectionPropertiesStruct.Filter,
       IntersectionPropertiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly IntersectionPropertiesStruct[]>>;
+  ): Promise<
+    Either<Error, readonly IntersectionPropertiesStruct.Discriminated[]>
+  >;
 
   iriIdentifierStruct(
     identifier: IriIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IriIdentifierStruct>>;
+  ): Promise<Either<Error, IriIdentifierStruct.Discriminated>>;
 
   iriIdentifierStructCount(
     query?: Pick<
@@ -65635,12 +65645,12 @@ export interface $ObjectSet {
       IriIdentifierStruct.Filter,
       IriIdentifierStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly IriIdentifierStruct[]>>;
+  ): Promise<Either<Error, readonly IriIdentifierStruct.Discriminated[]>>;
 
   langStringStruct(
     identifier: LangStringStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LangStringStruct>>;
+  ): Promise<Either<Error, LangStringStruct.Discriminated>>;
 
   langStringStructCount(
     query?: Pick<
@@ -65661,12 +65671,12 @@ export interface $ObjectSet {
       LangStringStruct.Filter,
       LangStringStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly LangStringStruct[]>>;
+  ): Promise<Either<Error, readonly LangStringStruct.Discriminated[]>>;
 
   languageInStruct(
     identifier: LanguageInStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LanguageInStruct>>;
+  ): Promise<Either<Error, LanguageInStruct.Discriminated>>;
 
   languageInStructCount(
     query?: Pick<
@@ -65687,12 +65697,14 @@ export interface $ObjectSet {
       LanguageInStruct.Filter,
       LanguageInStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly LanguageInStruct[]>>;
+  ): Promise<Either<Error, readonly LanguageInStruct.Discriminated[]>>;
 
   lazilyResolvedBlankNodeOrIriIdentifierStruct(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct>>;
+  ): Promise<
+    Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct.Discriminated>
+  >;
 
   lazilyResolvedBlankNodeOrIriIdentifierStructCount(
     query?: Pick<
@@ -65722,13 +65734,18 @@ export interface $ObjectSet {
       LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier
     >,
   ): Promise<
-    Either<Error, readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]>
+    Either<
+      Error,
+      readonly LazilyResolvedBlankNodeOrIriIdentifierStruct.Discriminated[]
+    >
   >;
 
   lazilyResolvedDiscriminatedUnionMember1(
     identifier: LazilyResolvedDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazilyResolvedDiscriminatedUnionMember1>>;
+  ): Promise<
+    Either<Error, LazilyResolvedDiscriminatedUnionMember1.Discriminated>
+  >;
 
   lazilyResolvedDiscriminatedUnionMember1Count(
     query?: Pick<
@@ -65754,12 +65771,19 @@ export interface $ObjectSet {
       LazilyResolvedDiscriminatedUnionMember1.Filter,
       LazilyResolvedDiscriminatedUnionMember1.Identifier
     >,
-  ): Promise<Either<Error, readonly LazilyResolvedDiscriminatedUnionMember1[]>>;
+  ): Promise<
+    Either<
+      Error,
+      readonly LazilyResolvedDiscriminatedUnionMember1.Discriminated[]
+    >
+  >;
 
   lazilyResolvedDiscriminatedUnionMember2(
     identifier: LazilyResolvedDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazilyResolvedDiscriminatedUnionMember2>>;
+  ): Promise<
+    Either<Error, LazilyResolvedDiscriminatedUnionMember2.Discriminated>
+  >;
 
   lazilyResolvedDiscriminatedUnionMember2Count(
     query?: Pick<
@@ -65785,12 +65809,17 @@ export interface $ObjectSet {
       LazilyResolvedDiscriminatedUnionMember2.Filter,
       LazilyResolvedDiscriminatedUnionMember2.Identifier
     >,
-  ): Promise<Either<Error, readonly LazilyResolvedDiscriminatedUnionMember2[]>>;
+  ): Promise<
+    Either<
+      Error,
+      readonly LazilyResolvedDiscriminatedUnionMember2.Discriminated[]
+    >
+  >;
 
   lazilyResolvedIriIdentifierStruct(
     identifier: LazilyResolvedIriIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazilyResolvedIriIdentifierStruct>>;
+  ): Promise<Either<Error, LazilyResolvedIriIdentifierStruct.Discriminated>>;
 
   lazilyResolvedIriIdentifierStructCount(
     query?: Pick<
@@ -65816,12 +65845,14 @@ export interface $ObjectSet {
       LazilyResolvedIriIdentifierStruct.Filter,
       LazilyResolvedIriIdentifierStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly LazilyResolvedIriIdentifierStruct[]>>;
+  ): Promise<
+    Either<Error, readonly LazilyResolvedIriIdentifierStruct.Discriminated[]>
+  >;
 
   lazyPropertiesStruct(
     identifier: LazyPropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazyPropertiesStruct>>;
+  ): Promise<Either<Error, LazyPropertiesStruct.Discriminated>>;
 
   lazyPropertiesStructCount(
     query?: Pick<
@@ -65845,12 +65876,12 @@ export interface $ObjectSet {
       LazyPropertiesStruct.Filter,
       LazyPropertiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly LazyPropertiesStruct[]>>;
+  ): Promise<Either<Error, readonly LazyPropertiesStruct.Discriminated[]>>;
 
   listSetsStruct(
     identifier: ListSetsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ListSetsStruct>>;
+  ): Promise<Either<Error, ListSetsStruct.Discriminated>>;
 
   listSetsStructCount(
     query?: Pick<
@@ -65865,12 +65896,12 @@ export interface $ObjectSet {
 
   listSetsStructs(
     query?: $ObjectSet.Query<ListSetsStruct.Filter, ListSetsStruct.Identifier>,
-  ): Promise<Either<Error, readonly ListSetsStruct[]>>;
+  ): Promise<Either<Error, readonly ListSetsStruct.Discriminated[]>>;
 
   listsStruct(
     identifier: ListsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ListsStruct>>;
+  ): Promise<Either<Error, ListsStruct.Discriminated>>;
 
   listsStructCount(
     query?: Pick<
@@ -65885,12 +65916,12 @@ export interface $ObjectSet {
 
   listsStructs(
     query?: $ObjectSet.Query<ListsStruct.Filter, ListsStruct.Identifier>,
-  ): Promise<Either<Error, readonly ListsStruct[]>>;
+  ): Promise<Either<Error, readonly ListsStruct.Discriminated[]>>;
 
   mutablePropertiesStruct(
     identifier: MutablePropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, MutablePropertiesStruct>>;
+  ): Promise<Either<Error, MutablePropertiesStruct.Discriminated>>;
 
   mutablePropertiesStructCount(
     query?: Pick<
@@ -65914,12 +65945,12 @@ export interface $ObjectSet {
       MutablePropertiesStruct.Filter,
       MutablePropertiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly MutablePropertiesStruct[]>>;
+  ): Promise<Either<Error, readonly MutablePropertiesStruct.Discriminated[]>>;
 
   namedTypesStruct(
     identifier: NamedTypesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NamedTypesStruct>>;
+  ): Promise<Either<Error, NamedTypesStruct.Discriminated>>;
 
   namedTypesStructCount(
     query?: Pick<
@@ -65940,12 +65971,12 @@ export interface $ObjectSet {
       NamedTypesStruct.Filter,
       NamedTypesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly NamedTypesStruct[]>>;
+  ): Promise<Either<Error, readonly NamedTypesStruct.Discriminated[]>>;
 
   newName(
     identifier: NewName.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NewName>>;
+  ): Promise<Either<Error, NewName.Discriminated>>;
 
   newNameCount(
     query?: Pick<
@@ -65960,12 +65991,12 @@ export interface $ObjectSet {
 
   newNames(
     query?: $ObjectSet.Query<NewName.Filter, NewName.Identifier>,
-  ): Promise<Either<Error, readonly NewName[]>>;
+  ): Promise<Either<Error, readonly NewName.Discriminated[]>>;
 
   nodeKindsStruct(
     identifier: NodeKindsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NodeKindsStruct>>;
+  ): Promise<Either<Error, NodeKindsStruct.Discriminated>>;
 
   nodeKindsStructCount(
     query?: Pick<
@@ -65986,12 +66017,12 @@ export interface $ObjectSet {
       NodeKindsStruct.Filter,
       NodeKindsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly NodeKindsStruct[]>>;
+  ): Promise<Either<Error, readonly NodeKindsStruct.Discriminated[]>>;
 
   nonClassStruct(
     identifier: NonClassStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NonClassStruct>>;
+  ): Promise<Either<Error, NonClassStruct.Discriminated>>;
 
   nonClassStructCount(
     query?: Pick<
@@ -66006,12 +66037,12 @@ export interface $ObjectSet {
 
   nonClassStructs(
     query?: $ObjectSet.Query<NonClassStruct.Filter, NonClassStruct.Identifier>,
-  ): Promise<Either<Error, readonly NonClassStruct[]>>;
+  ): Promise<Either<Error, readonly NonClassStruct.Discriminated[]>>;
 
   noRdfTypeDiscriminatedUnionMember1(
     identifier: NoRdfTypeDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnionMember1>>;
+  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnionMember1.Discriminated>>;
 
   noRdfTypeDiscriminatedUnionMember1Count(
     query?: Pick<
@@ -66037,12 +66068,14 @@ export interface $ObjectSet {
       NoRdfTypeDiscriminatedUnionMember1.Filter,
       NoRdfTypeDiscriminatedUnionMember1.Identifier
     >,
-  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnionMember1[]>>;
+  ): Promise<
+    Either<Error, readonly NoRdfTypeDiscriminatedUnionMember1.Discriminated[]>
+  >;
 
   noRdfTypeDiscriminatedUnionMember2(
     identifier: NoRdfTypeDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnionMember2>>;
+  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnionMember2.Discriminated>>;
 
   noRdfTypeDiscriminatedUnionMember2Count(
     query?: Pick<
@@ -66068,12 +66101,14 @@ export interface $ObjectSet {
       NoRdfTypeDiscriminatedUnionMember2.Filter,
       NoRdfTypeDiscriminatedUnionMember2.Identifier
     >,
-  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnionMember2[]>>;
+  ): Promise<
+    Either<Error, readonly NoRdfTypeDiscriminatedUnionMember2.Discriminated[]>
+  >;
 
   numericsStruct(
     identifier: NumericsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NumericsStruct>>;
+  ): Promise<Either<Error, NumericsStruct.Discriminated>>;
 
   numericsStructCount(
     query?: Pick<
@@ -66088,12 +66123,12 @@ export interface $ObjectSet {
 
   numericsStructs(
     query?: $ObjectSet.Query<NumericsStruct.Filter, NumericsStruct.Identifier>,
-  ): Promise<Either<Error, readonly NumericsStruct[]>>;
+  ): Promise<Either<Error, readonly NumericsStruct.Discriminated[]>>;
 
   orderedStruct(
     identifier: OrderedStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, OrderedStruct>>;
+  ): Promise<Either<Error, OrderedStruct.Discriminated>>;
 
   orderedStructCount(
     query?: Pick<
@@ -66108,12 +66143,12 @@ export interface $ObjectSet {
 
   orderedStructs(
     query?: $ObjectSet.Query<OrderedStruct.Filter, OrderedStruct.Identifier>,
-  ): Promise<Either<Error, readonly OrderedStruct[]>>;
+  ): Promise<Either<Error, readonly OrderedStruct.Discriminated[]>>;
 
   partialDiscriminatedUnionMember1(
     identifier: PartialDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PartialDiscriminatedUnionMember1>>;
+  ): Promise<Either<Error, PartialDiscriminatedUnionMember1.Discriminated>>;
 
   partialDiscriminatedUnionMember1Count(
     query?: Pick<
@@ -66139,12 +66174,14 @@ export interface $ObjectSet {
       PartialDiscriminatedUnionMember1.Filter,
       PartialDiscriminatedUnionMember1.Identifier
     >,
-  ): Promise<Either<Error, readonly PartialDiscriminatedUnionMember1[]>>;
+  ): Promise<
+    Either<Error, readonly PartialDiscriminatedUnionMember1.Discriminated[]>
+  >;
 
   partialDiscriminatedUnionMember2(
     identifier: PartialDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PartialDiscriminatedUnionMember2>>;
+  ): Promise<Either<Error, PartialDiscriminatedUnionMember2.Discriminated>>;
 
   partialDiscriminatedUnionMember2Count(
     query?: Pick<
@@ -66170,12 +66207,14 @@ export interface $ObjectSet {
       PartialDiscriminatedUnionMember2.Filter,
       PartialDiscriminatedUnionMember2.Identifier
     >,
-  ): Promise<Either<Error, readonly PartialDiscriminatedUnionMember2[]>>;
+  ): Promise<
+    Either<Error, readonly PartialDiscriminatedUnionMember2.Discriminated[]>
+  >;
 
   partialStruct(
     identifier: PartialStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PartialStruct>>;
+  ): Promise<Either<Error, PartialStruct.Discriminated>>;
 
   partialStructCount(
     query?: Pick<
@@ -66190,12 +66229,12 @@ export interface $ObjectSet {
 
   partialStructs(
     query?: $ObjectSet.Query<PartialStruct.Filter, PartialStruct.Identifier>,
-  ): Promise<Either<Error, readonly PartialStruct[]>>;
+  ): Promise<Either<Error, readonly PartialStruct.Discriminated[]>>;
 
   propertyCardinalitiesStruct(
     identifier: PropertyCardinalitiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PropertyCardinalitiesStruct>>;
+  ): Promise<Either<Error, PropertyCardinalitiesStruct.Discriminated>>;
 
   propertyCardinalitiesStructCount(
     query?: Pick<
@@ -66219,12 +66258,14 @@ export interface $ObjectSet {
       PropertyCardinalitiesStruct.Filter,
       PropertyCardinalitiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly PropertyCardinalitiesStruct[]>>;
+  ): Promise<
+    Either<Error, readonly PropertyCardinalitiesStruct.Discriminated[]>
+  >;
 
   propertyNamesStruct(
     identifier: PropertyNamesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PropertyNamesStruct>>;
+  ): Promise<Either<Error, PropertyNamesStruct.Discriminated>>;
 
   propertyNamesStructCount(
     query?: Pick<
@@ -66248,12 +66289,12 @@ export interface $ObjectSet {
       PropertyNamesStruct.Filter,
       PropertyNamesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly PropertyNamesStruct[]>>;
+  ): Promise<Either<Error, readonly PropertyNamesStruct.Discriminated[]>>;
 
   propertyPathsStruct(
     identifier: PropertyPathsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PropertyPathsStruct>>;
+  ): Promise<Either<Error, PropertyPathsStruct.Discriminated>>;
 
   propertyPathsStructCount(
     query?: Pick<
@@ -66277,12 +66318,12 @@ export interface $ObjectSet {
       PropertyPathsStruct.Filter,
       PropertyPathsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly PropertyPathsStruct[]>>;
+  ): Promise<Either<Error, readonly PropertyPathsStruct.Discriminated[]>>;
 
   recursiveDiscriminatedUnionMember1(
     identifier: RecursiveDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, RecursiveDiscriminatedUnionMember1>>;
+  ): Promise<Either<Error, RecursiveDiscriminatedUnionMember1.Discriminated>>;
 
   recursiveDiscriminatedUnionMember1Count(
     query?: Pick<
@@ -66308,12 +66349,14 @@ export interface $ObjectSet {
       RecursiveDiscriminatedUnionMember1.Filter,
       RecursiveDiscriminatedUnionMember1.Identifier
     >,
-  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnionMember1[]>>;
+  ): Promise<
+    Either<Error, readonly RecursiveDiscriminatedUnionMember1.Discriminated[]>
+  >;
 
   recursiveDiscriminatedUnionMember2(
     identifier: RecursiveDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, RecursiveDiscriminatedUnionMember2>>;
+  ): Promise<Either<Error, RecursiveDiscriminatedUnionMember2.Discriminated>>;
 
   recursiveDiscriminatedUnionMember2Count(
     query?: Pick<
@@ -66339,12 +66382,14 @@ export interface $ObjectSet {
       RecursiveDiscriminatedUnionMember2.Filter,
       RecursiveDiscriminatedUnionMember2.Identifier
     >,
-  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnionMember2[]>>;
+  ): Promise<
+    Either<Error, readonly RecursiveDiscriminatedUnionMember2.Discriminated[]>
+  >;
 
   structDiscriminatedUnionMember1(
     identifier: StructDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructDiscriminatedUnionMember1>>;
+  ): Promise<Either<Error, StructDiscriminatedUnionMember1.Discriminated>>;
 
   structDiscriminatedUnionMember1Count(
     query?: Pick<
@@ -66370,12 +66415,14 @@ export interface $ObjectSet {
       StructDiscriminatedUnionMember1.Filter,
       StructDiscriminatedUnionMember1.Identifier
     >,
-  ): Promise<Either<Error, readonly StructDiscriminatedUnionMember1[]>>;
+  ): Promise<
+    Either<Error, readonly StructDiscriminatedUnionMember1.Discriminated[]>
+  >;
 
   structDiscriminatedUnionMember2(
     identifier: StructDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructDiscriminatedUnionMember2>>;
+  ): Promise<Either<Error, StructDiscriminatedUnionMember2.Discriminated>>;
 
   structDiscriminatedUnionMember2Count(
     query?: Pick<
@@ -66401,12 +66448,14 @@ export interface $ObjectSet {
       StructDiscriminatedUnionMember2.Filter,
       StructDiscriminatedUnionMember2.Identifier
     >,
-  ): Promise<Either<Error, readonly StructDiscriminatedUnionMember2[]>>;
+  ): Promise<
+    Either<Error, readonly StructDiscriminatedUnionMember2.Discriminated[]>
+  >;
 
   structInheritance1(
     identifier: StructInheritance1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructInheritance1>>;
+  ): Promise<Either<Error, StructInheritance1.Discriminated>>;
 
   structInheritance1Count(
     query?: Pick<
@@ -66430,12 +66479,12 @@ export interface $ObjectSet {
       StructInheritance1.Filter,
       StructInheritance1.Identifier
     >,
-  ): Promise<Either<Error, readonly StructInheritance1[]>>;
+  ): Promise<Either<Error, readonly StructInheritance1.Discriminated[]>>;
 
   structIntersectionMember1(
     identifier: StructIntersectionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructIntersectionMember1>>;
+  ): Promise<Either<Error, StructIntersectionMember1.Discriminated>>;
 
   structIntersectionMember1Count(
     query?: Pick<
@@ -66459,12 +66508,12 @@ export interface $ObjectSet {
       StructIntersectionMember1.Filter,
       StructIntersectionMember1.Identifier
     >,
-  ): Promise<Either<Error, readonly StructIntersectionMember1[]>>;
+  ): Promise<Either<Error, readonly StructIntersectionMember1.Discriminated[]>>;
 
   structIntersectionMember2(
     identifier: StructIntersectionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructIntersectionMember2>>;
+  ): Promise<Either<Error, StructIntersectionMember2.Discriminated>>;
 
   structIntersectionMember2Count(
     query?: Pick<
@@ -66488,12 +66537,12 @@ export interface $ObjectSet {
       StructIntersectionMember2.Filter,
       StructIntersectionMember2.Identifier
     >,
-  ): Promise<Either<Error, readonly StructIntersectionMember2[]>>;
+  ): Promise<Either<Error, readonly StructIntersectionMember2.Discriminated[]>>;
 
   targetClassStruct(
     identifier: TargetClassStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, TargetClassStruct>>;
+  ): Promise<Either<Error, TargetClassStruct.Discriminated>>;
 
   targetClassStructCount(
     query?: Pick<
@@ -66514,12 +66563,12 @@ export interface $ObjectSet {
       TargetClassStruct.Filter,
       TargetClassStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly TargetClassStruct[]>>;
+  ): Promise<Either<Error, readonly TargetClassStruct.Discriminated[]>>;
 
   termsStruct(
     identifier: TermsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, TermsStruct>>;
+  ): Promise<Either<Error, TermsStruct.Discriminated>>;
 
   termsStructCount(
     query?: Pick<
@@ -66534,12 +66583,12 @@ export interface $ObjectSet {
 
   termsStructs(
     query?: $ObjectSet.Query<TermsStruct.Filter, TermsStruct.Identifier>,
-  ): Promise<Either<Error, readonly TermsStruct[]>>;
+  ): Promise<Either<Error, readonly TermsStruct.Discriminated[]>>;
 
   unionDiscriminantsStruct(
     identifier: UnionDiscriminantsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, UnionDiscriminantsStruct>>;
+  ): Promise<Either<Error, UnionDiscriminantsStruct.Discriminated>>;
 
   unionDiscriminantsStructCount(
     query?: Pick<
@@ -66563,7 +66612,7 @@ export interface $ObjectSet {
       UnionDiscriminantsStruct.Filter,
       UnionDiscriminantsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly UnionDiscriminantsStruct[]>>;
+  ): Promise<Either<Error, readonly UnionDiscriminantsStruct.Discriminated[]>>;
 }
 
 export namespace $ObjectSet {
@@ -67244,14 +67293,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async structIntersection(
     identifier: StructIntersection.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructIntersection>> {
+  ): Promise<Either<Error, StructIntersection.Discriminated>> {
     return this.structIntersectionSync(identifier, options);
   }
 
   structIntersectionSync(
     identifier: StructIntersection.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, StructIntersection> {
+  ): Either<Error, StructIntersection.Discriminated> {
     return this.structIntersectionsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -67307,7 +67356,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       StructIntersection.Filter,
       StructIntersection.Identifier
     >,
-  ): Promise<Either<Error, readonly StructIntersection[]>> {
+  ): Promise<Either<Error, readonly StructIntersection.Discriminated[]>> {
     return this.structIntersectionsSync(query);
   }
 
@@ -67316,9 +67365,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       StructIntersection.Filter,
       StructIntersection.Identifier
     >,
-  ): Either<Error, readonly StructIntersection[]> {
+  ): Either<Error, readonly StructIntersection.Discriminated[]> {
     return this.#objectsSync<
-      StructIntersection,
+      StructIntersection.Discriminated,
       StructIntersection.Filter,
       StructIntersection.Identifier
     >(
@@ -67334,14 +67383,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async structInheritance2(
     identifier: StructInheritance2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructInheritance2>> {
+  ): Promise<Either<Error, StructInheritance2.Discriminated>> {
     return this.structInheritance2Sync(identifier, options);
   }
 
   structInheritance2Sync(
     identifier: StructInheritance2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, StructInheritance2> {
+  ): Either<Error, StructInheritance2.Discriminated> {
     return this.structInheritance2sSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -67397,7 +67446,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       StructInheritance2.Filter,
       StructInheritance2.Identifier
     >,
-  ): Promise<Either<Error, readonly StructInheritance2[]>> {
+  ): Promise<Either<Error, readonly StructInheritance2.Discriminated[]>> {
     return this.structInheritance2sSync(query);
   }
 
@@ -67406,9 +67455,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       StructInheritance2.Filter,
       StructInheritance2.Identifier
     >,
-  ): Either<Error, readonly StructInheritance2[]> {
+  ): Either<Error, readonly StructInheritance2.Discriminated[]> {
     return this.#objectsSync<
-      StructInheritance2,
+      StructInheritance2.Discriminated,
       StructInheritance2.Filter,
       StructInheritance2.Identifier
     >(
@@ -67424,14 +67473,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async structInheritance3(
     identifier: StructInheritance3.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructInheritance3>> {
+  ): Promise<Either<Error, StructInheritance3.Discriminated>> {
     return this.structInheritance3Sync(identifier, options);
   }
 
   structInheritance3Sync(
     identifier: StructInheritance3.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, StructInheritance3> {
+  ): Either<Error, StructInheritance3.Discriminated> {
     return this.structInheritance3sSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -67487,7 +67536,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       StructInheritance3.Filter,
       StructInheritance3.Identifier
     >,
-  ): Promise<Either<Error, readonly StructInheritance3[]>> {
+  ): Promise<Either<Error, readonly StructInheritance3.Discriminated[]>> {
     return this.structInheritance3sSync(query);
   }
 
@@ -67496,9 +67545,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       StructInheritance3.Filter,
       StructInheritance3.Identifier
     >,
-  ): Either<Error, readonly StructInheritance3[]> {
+  ): Either<Error, readonly StructInheritance3.Discriminated[]> {
     return this.#objectsSync<
-      StructInheritance3,
+      StructInheritance3.Discriminated,
       StructInheritance3.Filter,
       StructInheritance3.Identifier
     >(
@@ -67514,14 +67563,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async anonymousTypesStruct(
     identifier: AnonymousTypesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, AnonymousTypesStruct>> {
+  ): Promise<Either<Error, AnonymousTypesStruct.Discriminated>> {
     return this.anonymousTypesStructSync(identifier, options);
   }
 
   anonymousTypesStructSync(
     identifier: AnonymousTypesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, AnonymousTypesStruct> {
+  ): Either<Error, AnonymousTypesStruct.Discriminated> {
     return this.anonymousTypesStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -67579,7 +67628,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       AnonymousTypesStruct.Filter,
       AnonymousTypesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly AnonymousTypesStruct[]>> {
+  ): Promise<Either<Error, readonly AnonymousTypesStruct.Discriminated[]>> {
     return this.anonymousTypesStructsSync(query);
   }
 
@@ -67588,9 +67637,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       AnonymousTypesStruct.Filter,
       AnonymousTypesStruct.Identifier
     >,
-  ): Either<Error, readonly AnonymousTypesStruct[]> {
+  ): Either<Error, readonly AnonymousTypesStruct.Discriminated[]> {
     return this.#objectsSync<
-      AnonymousTypesStruct,
+      AnonymousTypesStruct.Discriminated,
       AnonymousTypesStruct.Filter,
       AnonymousTypesStruct.Identifier
     >(
@@ -67608,14 +67657,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async blankNodeOrIriIdentifierStruct(
     identifier: BlankNodeOrIriIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, BlankNodeOrIriIdentifierStruct>> {
+  ): Promise<Either<Error, BlankNodeOrIriIdentifierStruct.Discriminated>> {
     return this.blankNodeOrIriIdentifierStructSync(identifier, options);
   }
 
   blankNodeOrIriIdentifierStructSync(
     identifier: BlankNodeOrIriIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, BlankNodeOrIriIdentifierStruct> {
+  ): Either<Error, BlankNodeOrIriIdentifierStruct.Discriminated> {
     return this.blankNodeOrIriIdentifierStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -67675,7 +67724,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       BlankNodeOrIriIdentifierStruct.Filter,
       BlankNodeOrIriIdentifierStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly BlankNodeOrIriIdentifierStruct[]>> {
+  ): Promise<
+    Either<Error, readonly BlankNodeOrIriIdentifierStruct.Discriminated[]>
+  > {
     return this.blankNodeOrIriIdentifierStructsSync(query);
   }
 
@@ -67684,9 +67735,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       BlankNodeOrIriIdentifierStruct.Filter,
       BlankNodeOrIriIdentifierStruct.Identifier
     >,
-  ): Either<Error, readonly BlankNodeOrIriIdentifierStruct[]> {
+  ): Either<Error, readonly BlankNodeOrIriIdentifierStruct.Discriminated[]> {
     return this.#objectsSync<
-      BlankNodeOrIriIdentifierStruct,
+      BlankNodeOrIriIdentifierStruct.Discriminated,
       BlankNodeOrIriIdentifierStruct.Filter,
       BlankNodeOrIriIdentifierStruct.Identifier
     >(
@@ -67704,14 +67755,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async classConstraintsStruct(
     identifier: ClassConstraintsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ClassConstraintsStruct>> {
+  ): Promise<Either<Error, ClassConstraintsStruct.Discriminated>> {
     return this.classConstraintsStructSync(identifier, options);
   }
 
   classConstraintsStructSync(
     identifier: ClassConstraintsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, ClassConstraintsStruct> {
+  ): Either<Error, ClassConstraintsStruct.Discriminated> {
     return this.classConstraintsStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -67769,7 +67820,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ClassConstraintsStruct.Filter,
       ClassConstraintsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly ClassConstraintsStruct[]>> {
+  ): Promise<Either<Error, readonly ClassConstraintsStruct.Discriminated[]>> {
     return this.classConstraintsStructsSync(query);
   }
 
@@ -67778,9 +67829,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ClassConstraintsStruct.Filter,
       ClassConstraintsStruct.Identifier
     >,
-  ): Either<Error, readonly ClassConstraintsStruct[]> {
+  ): Either<Error, readonly ClassConstraintsStruct.Discriminated[]> {
     return this.#objectsSync<
-      ClassConstraintsStruct,
+      ClassConstraintsStruct.Discriminated,
       ClassConstraintsStruct.Filter,
       ClassConstraintsStruct.Identifier
     >(
@@ -67798,14 +67849,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async convertibleTypesStruct(
     identifier: ConvertibleTypesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ConvertibleTypesStruct>> {
+  ): Promise<Either<Error, ConvertibleTypesStruct.Discriminated>> {
     return this.convertibleTypesStructSync(identifier, options);
   }
 
   convertibleTypesStructSync(
     identifier: ConvertibleTypesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, ConvertibleTypesStruct> {
+  ): Either<Error, ConvertibleTypesStruct.Discriminated> {
     return this.convertibleTypesStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -67863,7 +67914,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ConvertibleTypesStruct.Filter,
       ConvertibleTypesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly ConvertibleTypesStruct[]>> {
+  ): Promise<Either<Error, readonly ConvertibleTypesStruct.Discriminated[]>> {
     return this.convertibleTypesStructsSync(query);
   }
 
@@ -67872,9 +67923,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ConvertibleTypesStruct.Filter,
       ConvertibleTypesStruct.Identifier
     >,
-  ): Either<Error, readonly ConvertibleTypesStruct[]> {
+  ): Either<Error, readonly ConvertibleTypesStruct.Discriminated[]> {
     return this.#objectsSync<
-      ConvertibleTypesStruct,
+      ConvertibleTypesStruct.Discriminated,
       ConvertibleTypesStruct.Filter,
       ConvertibleTypesStruct.Identifier
     >(
@@ -67892,14 +67943,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async datatypeDiscriminatedUnionsStruct(
     identifier: DatatypeDiscriminatedUnionsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DatatypeDiscriminatedUnionsStruct>> {
+  ): Promise<Either<Error, DatatypeDiscriminatedUnionsStruct.Discriminated>> {
     return this.datatypeDiscriminatedUnionsStructSync(identifier, options);
   }
 
   datatypeDiscriminatedUnionsStructSync(
     identifier: DatatypeDiscriminatedUnionsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, DatatypeDiscriminatedUnionsStruct> {
+  ): Either<Error, DatatypeDiscriminatedUnionsStruct.Discriminated> {
     return this.datatypeDiscriminatedUnionsStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -67959,7 +68010,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       DatatypeDiscriminatedUnionsStruct.Filter,
       DatatypeDiscriminatedUnionsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly DatatypeDiscriminatedUnionsStruct[]>> {
+  ): Promise<
+    Either<Error, readonly DatatypeDiscriminatedUnionsStruct.Discriminated[]>
+  > {
     return this.datatypeDiscriminatedUnionsStructsSync(query);
   }
 
@@ -67968,9 +68021,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       DatatypeDiscriminatedUnionsStruct.Filter,
       DatatypeDiscriminatedUnionsStruct.Identifier
     >,
-  ): Either<Error, readonly DatatypeDiscriminatedUnionsStruct[]> {
+  ): Either<Error, readonly DatatypeDiscriminatedUnionsStruct.Discriminated[]> {
     return this.#objectsSync<
-      DatatypeDiscriminatedUnionsStruct,
+      DatatypeDiscriminatedUnionsStruct.Discriminated,
       DatatypeDiscriminatedUnionsStruct.Filter,
       DatatypeDiscriminatedUnionsStruct.Identifier
     >(
@@ -67989,14 +68042,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async datesStruct(
     identifier: DatesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DatesStruct>> {
+  ): Promise<Either<Error, DatesStruct.Discriminated>> {
     return this.datesStructSync(identifier, options);
   }
 
   datesStructSync(
     identifier: DatesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, DatesStruct> {
+  ): Either<Error, DatesStruct.Discriminated> {
     return this.datesStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -68037,15 +68090,15 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async datesStructs(
     query?: $ObjectSet.Query<DatesStruct.Filter, DatesStruct.Identifier>,
-  ): Promise<Either<Error, readonly DatesStruct[]>> {
+  ): Promise<Either<Error, readonly DatesStruct.Discriminated[]>> {
     return this.datesStructsSync(query);
   }
 
   datesStructsSync(
     query?: $ObjectSet.Query<DatesStruct.Filter, DatesStruct.Identifier>,
-  ): Either<Error, readonly DatesStruct[]> {
+  ): Either<Error, readonly DatesStruct.Discriminated[]> {
     return this.#objectsSync<
-      DatesStruct,
+      DatesStruct.Discriminated,
       DatesStruct.Filter,
       DatesStruct.Identifier
     >(
@@ -68061,14 +68114,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async defaultValuesStruct(
     identifier: DefaultValuesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DefaultValuesStruct>> {
+  ): Promise<Either<Error, DefaultValuesStruct.Discriminated>> {
     return this.defaultValuesStructSync(identifier, options);
   }
 
   defaultValuesStructSync(
     identifier: DefaultValuesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, DefaultValuesStruct> {
+  ): Either<Error, DefaultValuesStruct.Discriminated> {
     return this.defaultValuesStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -68126,7 +68179,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       DefaultValuesStruct.Filter,
       DefaultValuesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly DefaultValuesStruct[]>> {
+  ): Promise<Either<Error, readonly DefaultValuesStruct.Discriminated[]>> {
     return this.defaultValuesStructsSync(query);
   }
 
@@ -68135,9 +68188,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       DefaultValuesStruct.Filter,
       DefaultValuesStruct.Identifier
     >,
-  ): Either<Error, readonly DefaultValuesStruct[]> {
+  ): Either<Error, readonly DefaultValuesStruct.Discriminated[]> {
     return this.#objectsSync<
-      DefaultValuesStruct,
+      DefaultValuesStruct.Discriminated,
       DefaultValuesStruct.Filter,
       DefaultValuesStruct.Identifier
     >(
@@ -68155,14 +68208,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async directRecursiveStruct(
     identifier: DirectRecursiveStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DirectRecursiveStruct>> {
+  ): Promise<Either<Error, DirectRecursiveStruct.Discriminated>> {
     return this.directRecursiveStructSync(identifier, options);
   }
 
   directRecursiveStructSync(
     identifier: DirectRecursiveStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, DirectRecursiveStruct> {
+  ): Either<Error, DirectRecursiveStruct.Discriminated> {
     return this.directRecursiveStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -68220,7 +68273,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       DirectRecursiveStruct.Filter,
       DirectRecursiveStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly DirectRecursiveStruct[]>> {
+  ): Promise<Either<Error, readonly DirectRecursiveStruct.Discriminated[]>> {
     return this.directRecursiveStructsSync(query);
   }
 
@@ -68229,9 +68282,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       DirectRecursiveStruct.Filter,
       DirectRecursiveStruct.Identifier
     >,
-  ): Either<Error, readonly DirectRecursiveStruct[]> {
+  ): Either<Error, readonly DirectRecursiveStruct.Discriminated[]> {
     return this.#objectsSync<
-      DirectRecursiveStruct,
+      DirectRecursiveStruct.Discriminated,
       DirectRecursiveStruct.Filter,
       DirectRecursiveStruct.Identifier
     >(
@@ -68249,14 +68302,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async displayStruct(
     identifier: DisplayStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DisplayStruct>> {
+  ): Promise<Either<Error, DisplayStruct.Discriminated>> {
     return this.displayStructSync(identifier, options);
   }
 
   displayStructSync(
     identifier: DisplayStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, DisplayStruct> {
+  ): Either<Error, DisplayStruct.Discriminated> {
     return this.displayStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -68297,15 +68350,15 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async displayStructs(
     query?: $ObjectSet.Query<DisplayStruct.Filter, DisplayStruct.Identifier>,
-  ): Promise<Either<Error, readonly DisplayStruct[]>> {
+  ): Promise<Either<Error, readonly DisplayStruct.Discriminated[]>> {
     return this.displayStructsSync(query);
   }
 
   displayStructsSync(
     query?: $ObjectSet.Query<DisplayStruct.Filter, DisplayStruct.Identifier>,
-  ): Either<Error, readonly DisplayStruct[]> {
+  ): Either<Error, readonly DisplayStruct.Discriminated[]> {
     return this.#objectsSync<
-      DisplayStruct,
+      DisplayStruct.Discriminated,
       DisplayStruct.Filter,
       DisplayStruct.Identifier
     >(
@@ -68321,14 +68374,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async explicitFromToRdfTypesStruct(
     identifier: ExplicitFromToRdfTypesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ExplicitFromToRdfTypesStruct>> {
+  ): Promise<Either<Error, ExplicitFromToRdfTypesStruct.Discriminated>> {
     return this.explicitFromToRdfTypesStructSync(identifier, options);
   }
 
   explicitFromToRdfTypesStructSync(
     identifier: ExplicitFromToRdfTypesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, ExplicitFromToRdfTypesStruct> {
+  ): Either<Error, ExplicitFromToRdfTypesStruct.Discriminated> {
     return this.explicitFromToRdfTypesStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -68388,7 +68441,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ExplicitFromToRdfTypesStruct.Filter,
       ExplicitFromToRdfTypesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly ExplicitFromToRdfTypesStruct[]>> {
+  ): Promise<
+    Either<Error, readonly ExplicitFromToRdfTypesStruct.Discriminated[]>
+  > {
     return this.explicitFromToRdfTypesStructsSync(query);
   }
 
@@ -68397,9 +68452,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ExplicitFromToRdfTypesStruct.Filter,
       ExplicitFromToRdfTypesStruct.Identifier
     >,
-  ): Either<Error, readonly ExplicitFromToRdfTypesStruct[]> {
+  ): Either<Error, readonly ExplicitFromToRdfTypesStruct.Discriminated[]> {
     return this.#objectsSync<
-      ExplicitFromToRdfTypesStruct,
+      ExplicitFromToRdfTypesStruct.Discriminated,
       ExplicitFromToRdfTypesStruct.Filter,
       ExplicitFromToRdfTypesStruct.Identifier
     >(
@@ -68417,14 +68472,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async explicitRdfTypeStruct(
     identifier: ExplicitRdfTypeStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ExplicitRdfTypeStruct>> {
+  ): Promise<Either<Error, ExplicitRdfTypeStruct.Discriminated>> {
     return this.explicitRdfTypeStructSync(identifier, options);
   }
 
   explicitRdfTypeStructSync(
     identifier: ExplicitRdfTypeStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, ExplicitRdfTypeStruct> {
+  ): Either<Error, ExplicitRdfTypeStruct.Discriminated> {
     return this.explicitRdfTypeStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -68482,7 +68537,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ExplicitRdfTypeStruct.Filter,
       ExplicitRdfTypeStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly ExplicitRdfTypeStruct[]>> {
+  ): Promise<Either<Error, readonly ExplicitRdfTypeStruct.Discriminated[]>> {
     return this.explicitRdfTypeStructsSync(query);
   }
 
@@ -68491,9 +68546,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ExplicitRdfTypeStruct.Filter,
       ExplicitRdfTypeStruct.Identifier
     >,
-  ): Either<Error, readonly ExplicitRdfTypeStruct[]> {
+  ): Either<Error, readonly ExplicitRdfTypeStruct.Discriminated[]> {
     return this.#objectsSync<
-      ExplicitRdfTypeStruct,
+      ExplicitRdfTypeStruct.Discriminated,
       ExplicitRdfTypeStruct.Filter,
       ExplicitRdfTypeStruct.Identifier
     >(
@@ -68511,14 +68566,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async hasValuesStruct(
     identifier: HasValuesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, HasValuesStruct>> {
+  ): Promise<Either<Error, HasValuesStruct.Discriminated>> {
     return this.hasValuesStructSync(identifier, options);
   }
 
   hasValuesStructSync(
     identifier: HasValuesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, HasValuesStruct> {
+  ): Either<Error, HasValuesStruct.Discriminated> {
     return this.hasValuesStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -68568,7 +68623,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       HasValuesStruct.Filter,
       HasValuesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly HasValuesStruct[]>> {
+  ): Promise<Either<Error, readonly HasValuesStruct.Discriminated[]>> {
     return this.hasValuesStructsSync(query);
   }
 
@@ -68577,9 +68632,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       HasValuesStruct.Filter,
       HasValuesStruct.Identifier
     >,
-  ): Either<Error, readonly HasValuesStruct[]> {
+  ): Either<Error, readonly HasValuesStruct.Discriminated[]> {
     return this.#objectsSync<
-      HasValuesStruct,
+      HasValuesStruct.Discriminated,
       HasValuesStruct.Filter,
       HasValuesStruct.Identifier
     >(
@@ -68595,14 +68650,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async ignoredPropertiesStruct(
     identifier: IgnoredPropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IgnoredPropertiesStruct>> {
+  ): Promise<Either<Error, IgnoredPropertiesStruct.Discriminated>> {
     return this.ignoredPropertiesStructSync(identifier, options);
   }
 
   ignoredPropertiesStructSync(
     identifier: IgnoredPropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, IgnoredPropertiesStruct> {
+  ): Either<Error, IgnoredPropertiesStruct.Discriminated> {
     return this.ignoredPropertiesStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -68660,7 +68715,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IgnoredPropertiesStruct.Filter,
       IgnoredPropertiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly IgnoredPropertiesStruct[]>> {
+  ): Promise<Either<Error, readonly IgnoredPropertiesStruct.Discriminated[]>> {
     return this.ignoredPropertiesStructsSync(query);
   }
 
@@ -68669,9 +68724,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IgnoredPropertiesStruct.Filter,
       IgnoredPropertiesStruct.Identifier
     >,
-  ): Either<Error, readonly IgnoredPropertiesStruct[]> {
+  ): Either<Error, readonly IgnoredPropertiesStruct.Discriminated[]> {
     return this.#objectsSync<
-      IgnoredPropertiesStruct,
+      IgnoredPropertiesStruct.Discriminated,
       IgnoredPropertiesStruct.Filter,
       IgnoredPropertiesStruct.Identifier
     >(
@@ -68687,14 +68742,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async indirectRecursiveStruct(
     identifier: IndirectRecursiveStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IndirectRecursiveStruct>> {
+  ): Promise<Either<Error, IndirectRecursiveStruct.Discriminated>> {
     return this.indirectRecursiveStructSync(identifier, options);
   }
 
   indirectRecursiveStructSync(
     identifier: IndirectRecursiveStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, IndirectRecursiveStruct> {
+  ): Either<Error, IndirectRecursiveStruct.Discriminated> {
     return this.indirectRecursiveStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -68752,7 +68807,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IndirectRecursiveStruct.Filter,
       IndirectRecursiveStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly IndirectRecursiveStruct[]>> {
+  ): Promise<Either<Error, readonly IndirectRecursiveStruct.Discriminated[]>> {
     return this.indirectRecursiveStructsSync(query);
   }
 
@@ -68761,9 +68816,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IndirectRecursiveStruct.Filter,
       IndirectRecursiveStruct.Identifier
     >,
-  ): Either<Error, readonly IndirectRecursiveStruct[]> {
+  ): Either<Error, readonly IndirectRecursiveStruct.Discriminated[]> {
     return this.#objectsSync<
-      IndirectRecursiveStruct,
+      IndirectRecursiveStruct.Discriminated,
       IndirectRecursiveStruct.Filter,
       IndirectRecursiveStruct.Identifier
     >(
@@ -68781,14 +68836,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async indirectRecursiveStructHelper(
     identifier: IndirectRecursiveStructHelper.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IndirectRecursiveStructHelper>> {
+  ): Promise<Either<Error, IndirectRecursiveStructHelper.Discriminated>> {
     return this.indirectRecursiveStructHelperSync(identifier, options);
   }
 
   indirectRecursiveStructHelperSync(
     identifier: IndirectRecursiveStructHelper.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, IndirectRecursiveStructHelper> {
+  ): Either<Error, IndirectRecursiveStructHelper.Discriminated> {
     return this.indirectRecursiveStructHelpersSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -68848,7 +68903,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IndirectRecursiveStructHelper.Filter,
       IndirectRecursiveStructHelper.Identifier
     >,
-  ): Promise<Either<Error, readonly IndirectRecursiveStructHelper[]>> {
+  ): Promise<
+    Either<Error, readonly IndirectRecursiveStructHelper.Discriminated[]>
+  > {
     return this.indirectRecursiveStructHelpersSync(query);
   }
 
@@ -68857,9 +68914,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IndirectRecursiveStructHelper.Filter,
       IndirectRecursiveStructHelper.Identifier
     >,
-  ): Either<Error, readonly IndirectRecursiveStructHelper[]> {
+  ): Either<Error, readonly IndirectRecursiveStructHelper.Discriminated[]> {
     return this.#objectsSync<
-      IndirectRecursiveStructHelper,
+      IndirectRecursiveStructHelper.Discriminated,
       IndirectRecursiveStructHelper.Filter,
       IndirectRecursiveStructHelper.Identifier
     >(
@@ -68877,14 +68934,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async inIdentifierStruct(
     identifier: InIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, InIdentifierStruct>> {
+  ): Promise<Either<Error, InIdentifierStruct.Discriminated>> {
     return this.inIdentifierStructSync(identifier, options);
   }
 
   inIdentifierStructSync(
     identifier: InIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, InIdentifierStruct> {
+  ): Either<Error, InIdentifierStruct.Discriminated> {
     return this.inIdentifierStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -68940,7 +68997,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       InIdentifierStruct.Filter,
       InIdentifierStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly InIdentifierStruct[]>> {
+  ): Promise<Either<Error, readonly InIdentifierStruct.Discriminated[]>> {
     return this.inIdentifierStructsSync(query);
   }
 
@@ -68949,9 +69006,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       InIdentifierStruct.Filter,
       InIdentifierStruct.Identifier
     >,
-  ): Either<Error, readonly InIdentifierStruct[]> {
+  ): Either<Error, readonly InIdentifierStruct.Discriminated[]> {
     return this.#objectsSync<
-      InIdentifierStruct,
+      InIdentifierStruct.Discriminated,
       InIdentifierStruct.Filter,
       InIdentifierStruct.Identifier
     >(
@@ -68969,14 +69026,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async inPropertiesStruct(
     identifier: InPropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, InPropertiesStruct>> {
+  ): Promise<Either<Error, InPropertiesStruct.Discriminated>> {
     return this.inPropertiesStructSync(identifier, options);
   }
 
   inPropertiesStructSync(
     identifier: InPropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, InPropertiesStruct> {
+  ): Either<Error, InPropertiesStruct.Discriminated> {
     return this.inPropertiesStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -69032,7 +69089,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       InPropertiesStruct.Filter,
       InPropertiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly InPropertiesStruct[]>> {
+  ): Promise<Either<Error, readonly InPropertiesStruct.Discriminated[]>> {
     return this.inPropertiesStructsSync(query);
   }
 
@@ -69041,9 +69098,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       InPropertiesStruct.Filter,
       InPropertiesStruct.Identifier
     >,
-  ): Either<Error, readonly InPropertiesStruct[]> {
+  ): Either<Error, readonly InPropertiesStruct.Discriminated[]> {
     return this.#objectsSync<
-      InPropertiesStruct,
+      InPropertiesStruct.Discriminated,
       InPropertiesStruct.Filter,
       InPropertiesStruct.Identifier
     >(
@@ -69061,14 +69118,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async intersectionPropertiesStruct(
     identifier: IntersectionPropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IntersectionPropertiesStruct>> {
+  ): Promise<Either<Error, IntersectionPropertiesStruct.Discriminated>> {
     return this.intersectionPropertiesStructSync(identifier, options);
   }
 
   intersectionPropertiesStructSync(
     identifier: IntersectionPropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, IntersectionPropertiesStruct> {
+  ): Either<Error, IntersectionPropertiesStruct.Discriminated> {
     return this.intersectionPropertiesStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -69128,7 +69185,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IntersectionPropertiesStruct.Filter,
       IntersectionPropertiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly IntersectionPropertiesStruct[]>> {
+  ): Promise<
+    Either<Error, readonly IntersectionPropertiesStruct.Discriminated[]>
+  > {
     return this.intersectionPropertiesStructsSync(query);
   }
 
@@ -69137,9 +69196,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IntersectionPropertiesStruct.Filter,
       IntersectionPropertiesStruct.Identifier
     >,
-  ): Either<Error, readonly IntersectionPropertiesStruct[]> {
+  ): Either<Error, readonly IntersectionPropertiesStruct.Discriminated[]> {
     return this.#objectsSync<
-      IntersectionPropertiesStruct,
+      IntersectionPropertiesStruct.Discriminated,
       IntersectionPropertiesStruct.Filter,
       IntersectionPropertiesStruct.Identifier
     >(
@@ -69155,14 +69214,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async iriIdentifierStruct(
     identifier: IriIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IriIdentifierStruct>> {
+  ): Promise<Either<Error, IriIdentifierStruct.Discriminated>> {
     return this.iriIdentifierStructSync(identifier, options);
   }
 
   iriIdentifierStructSync(
     identifier: IriIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, IriIdentifierStruct> {
+  ): Either<Error, IriIdentifierStruct.Discriminated> {
     return this.iriIdentifierStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -69220,7 +69279,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IriIdentifierStruct.Filter,
       IriIdentifierStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly IriIdentifierStruct[]>> {
+  ): Promise<Either<Error, readonly IriIdentifierStruct.Discriminated[]>> {
     return this.iriIdentifierStructsSync(query);
   }
 
@@ -69229,9 +69288,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IriIdentifierStruct.Filter,
       IriIdentifierStruct.Identifier
     >,
-  ): Either<Error, readonly IriIdentifierStruct[]> {
+  ): Either<Error, readonly IriIdentifierStruct.Discriminated[]> {
     return this.#objectsSync<
-      IriIdentifierStruct,
+      IriIdentifierStruct.Discriminated,
       IriIdentifierStruct.Filter,
       IriIdentifierStruct.Identifier
     >(
@@ -69249,14 +69308,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async langStringStruct(
     identifier: LangStringStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LangStringStruct>> {
+  ): Promise<Either<Error, LangStringStruct.Discriminated>> {
     return this.langStringStructSync(identifier, options);
   }
 
   langStringStructSync(
     identifier: LangStringStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, LangStringStruct> {
+  ): Either<Error, LangStringStruct.Discriminated> {
     return this.langStringStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -69306,7 +69365,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LangStringStruct.Filter,
       LangStringStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly LangStringStruct[]>> {
+  ): Promise<Either<Error, readonly LangStringStruct.Discriminated[]>> {
     return this.langStringStructsSync(query);
   }
 
@@ -69315,9 +69374,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LangStringStruct.Filter,
       LangStringStruct.Identifier
     >,
-  ): Either<Error, readonly LangStringStruct[]> {
+  ): Either<Error, readonly LangStringStruct.Discriminated[]> {
     return this.#objectsSync<
-      LangStringStruct,
+      LangStringStruct.Discriminated,
       LangStringStruct.Filter,
       LangStringStruct.Identifier
     >(
@@ -69333,14 +69392,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async languageInStruct(
     identifier: LanguageInStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LanguageInStruct>> {
+  ): Promise<Either<Error, LanguageInStruct.Discriminated>> {
     return this.languageInStructSync(identifier, options);
   }
 
   languageInStructSync(
     identifier: LanguageInStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, LanguageInStruct> {
+  ): Either<Error, LanguageInStruct.Discriminated> {
     return this.languageInStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -69390,7 +69449,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LanguageInStruct.Filter,
       LanguageInStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly LanguageInStruct[]>> {
+  ): Promise<Either<Error, readonly LanguageInStruct.Discriminated[]>> {
     return this.languageInStructsSync(query);
   }
 
@@ -69399,9 +69458,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LanguageInStruct.Filter,
       LanguageInStruct.Identifier
     >,
-  ): Either<Error, readonly LanguageInStruct[]> {
+  ): Either<Error, readonly LanguageInStruct.Discriminated[]> {
     return this.#objectsSync<
-      LanguageInStruct,
+      LanguageInStruct.Discriminated,
       LanguageInStruct.Filter,
       LanguageInStruct.Identifier
     >(
@@ -69417,7 +69476,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async lazilyResolvedBlankNodeOrIriIdentifierStruct(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct>> {
+  ): Promise<
+    Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct.Discriminated>
+  > {
     return this.lazilyResolvedBlankNodeOrIriIdentifierStructSync(
       identifier,
       options,
@@ -69427,7 +69488,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   lazilyResolvedBlankNodeOrIriIdentifierStructSync(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct> {
+  ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct.Discriminated> {
     return this.lazilyResolvedBlankNodeOrIriIdentifierStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -69496,7 +69557,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier
     >,
   ): Promise<
-    Either<Error, readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]>
+    Either<
+      Error,
+      readonly LazilyResolvedBlankNodeOrIriIdentifierStruct.Discriminated[]
+    >
   > {
     return this.lazilyResolvedBlankNodeOrIriIdentifierStructsSync(query);
   }
@@ -69506,9 +69570,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedBlankNodeOrIriIdentifierStruct.Filter,
       LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier
     >,
-  ): Either<Error, readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]> {
+  ): Either<
+    Error,
+    readonly LazilyResolvedBlankNodeOrIriIdentifierStruct.Discriminated[]
+  > {
     return this.#objectsSync<
-      LazilyResolvedBlankNodeOrIriIdentifierStruct,
+      LazilyResolvedBlankNodeOrIriIdentifierStruct.Discriminated,
       LazilyResolvedBlankNodeOrIriIdentifierStruct.Filter,
       LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier
     >(
@@ -69528,7 +69595,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async lazilyResolvedDiscriminatedUnionMember1(
     identifier: LazilyResolvedDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazilyResolvedDiscriminatedUnionMember1>> {
+  ): Promise<
+    Either<Error, LazilyResolvedDiscriminatedUnionMember1.Discriminated>
+  > {
     return this.lazilyResolvedDiscriminatedUnionMember1Sync(
       identifier,
       options,
@@ -69538,7 +69607,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   lazilyResolvedDiscriminatedUnionMember1Sync(
     identifier: LazilyResolvedDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, LazilyResolvedDiscriminatedUnionMember1> {
+  ): Either<Error, LazilyResolvedDiscriminatedUnionMember1.Discriminated> {
     return this.lazilyResolvedDiscriminatedUnionMember1sSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -69602,7 +69671,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedDiscriminatedUnionMember1.Identifier
     >,
   ): Promise<
-    Either<Error, readonly LazilyResolvedDiscriminatedUnionMember1[]>
+    Either<
+      Error,
+      readonly LazilyResolvedDiscriminatedUnionMember1.Discriminated[]
+    >
   > {
     return this.lazilyResolvedDiscriminatedUnionMember1sSync(query);
   }
@@ -69612,9 +69684,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedDiscriminatedUnionMember1.Filter,
       LazilyResolvedDiscriminatedUnionMember1.Identifier
     >,
-  ): Either<Error, readonly LazilyResolvedDiscriminatedUnionMember1[]> {
+  ): Either<
+    Error,
+    readonly LazilyResolvedDiscriminatedUnionMember1.Discriminated[]
+  > {
     return this.#objectsSync<
-      LazilyResolvedDiscriminatedUnionMember1,
+      LazilyResolvedDiscriminatedUnionMember1.Discriminated,
       LazilyResolvedDiscriminatedUnionMember1.Filter,
       LazilyResolvedDiscriminatedUnionMember1.Identifier
     >(
@@ -69634,7 +69709,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async lazilyResolvedDiscriminatedUnionMember2(
     identifier: LazilyResolvedDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazilyResolvedDiscriminatedUnionMember2>> {
+  ): Promise<
+    Either<Error, LazilyResolvedDiscriminatedUnionMember2.Discriminated>
+  > {
     return this.lazilyResolvedDiscriminatedUnionMember2Sync(
       identifier,
       options,
@@ -69644,7 +69721,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   lazilyResolvedDiscriminatedUnionMember2Sync(
     identifier: LazilyResolvedDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, LazilyResolvedDiscriminatedUnionMember2> {
+  ): Either<Error, LazilyResolvedDiscriminatedUnionMember2.Discriminated> {
     return this.lazilyResolvedDiscriminatedUnionMember2sSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -69708,7 +69785,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedDiscriminatedUnionMember2.Identifier
     >,
   ): Promise<
-    Either<Error, readonly LazilyResolvedDiscriminatedUnionMember2[]>
+    Either<
+      Error,
+      readonly LazilyResolvedDiscriminatedUnionMember2.Discriminated[]
+    >
   > {
     return this.lazilyResolvedDiscriminatedUnionMember2sSync(query);
   }
@@ -69718,9 +69798,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedDiscriminatedUnionMember2.Filter,
       LazilyResolvedDiscriminatedUnionMember2.Identifier
     >,
-  ): Either<Error, readonly LazilyResolvedDiscriminatedUnionMember2[]> {
+  ): Either<
+    Error,
+    readonly LazilyResolvedDiscriminatedUnionMember2.Discriminated[]
+  > {
     return this.#objectsSync<
-      LazilyResolvedDiscriminatedUnionMember2,
+      LazilyResolvedDiscriminatedUnionMember2.Discriminated,
       LazilyResolvedDiscriminatedUnionMember2.Filter,
       LazilyResolvedDiscriminatedUnionMember2.Identifier
     >(
@@ -69740,14 +69823,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async lazilyResolvedIriIdentifierStruct(
     identifier: LazilyResolvedIriIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazilyResolvedIriIdentifierStruct>> {
+  ): Promise<Either<Error, LazilyResolvedIriIdentifierStruct.Discriminated>> {
     return this.lazilyResolvedIriIdentifierStructSync(identifier, options);
   }
 
   lazilyResolvedIriIdentifierStructSync(
     identifier: LazilyResolvedIriIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, LazilyResolvedIriIdentifierStruct> {
+  ): Either<Error, LazilyResolvedIriIdentifierStruct.Discriminated> {
     return this.lazilyResolvedIriIdentifierStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -69807,7 +69890,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedIriIdentifierStruct.Filter,
       LazilyResolvedIriIdentifierStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly LazilyResolvedIriIdentifierStruct[]>> {
+  ): Promise<
+    Either<Error, readonly LazilyResolvedIriIdentifierStruct.Discriminated[]>
+  > {
     return this.lazilyResolvedIriIdentifierStructsSync(query);
   }
 
@@ -69816,9 +69901,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedIriIdentifierStruct.Filter,
       LazilyResolvedIriIdentifierStruct.Identifier
     >,
-  ): Either<Error, readonly LazilyResolvedIriIdentifierStruct[]> {
+  ): Either<Error, readonly LazilyResolvedIriIdentifierStruct.Discriminated[]> {
     return this.#objectsSync<
-      LazilyResolvedIriIdentifierStruct,
+      LazilyResolvedIriIdentifierStruct.Discriminated,
       LazilyResolvedIriIdentifierStruct.Filter,
       LazilyResolvedIriIdentifierStruct.Identifier
     >(
@@ -69834,14 +69919,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async lazyPropertiesStruct(
     identifier: LazyPropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazyPropertiesStruct>> {
+  ): Promise<Either<Error, LazyPropertiesStruct.Discriminated>> {
     return this.lazyPropertiesStructSync(identifier, options);
   }
 
   lazyPropertiesStructSync(
     identifier: LazyPropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, LazyPropertiesStruct> {
+  ): Either<Error, LazyPropertiesStruct.Discriminated> {
     return this.lazyPropertiesStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -69899,7 +69984,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazyPropertiesStruct.Filter,
       LazyPropertiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly LazyPropertiesStruct[]>> {
+  ): Promise<Either<Error, readonly LazyPropertiesStruct.Discriminated[]>> {
     return this.lazyPropertiesStructsSync(query);
   }
 
@@ -69908,9 +69993,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazyPropertiesStruct.Filter,
       LazyPropertiesStruct.Identifier
     >,
-  ): Either<Error, readonly LazyPropertiesStruct[]> {
+  ): Either<Error, readonly LazyPropertiesStruct.Discriminated[]> {
     return this.#objectsSync<
-      LazyPropertiesStruct,
+      LazyPropertiesStruct.Discriminated,
       LazyPropertiesStruct.Filter,
       LazyPropertiesStruct.Identifier
     >(
@@ -69926,14 +70011,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async listSetsStruct(
     identifier: ListSetsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ListSetsStruct>> {
+  ): Promise<Either<Error, ListSetsStruct.Discriminated>> {
     return this.listSetsStructSync(identifier, options);
   }
 
   listSetsStructSync(
     identifier: ListSetsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, ListSetsStruct> {
+  ): Either<Error, ListSetsStruct.Discriminated> {
     return this.listSetsStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -69974,15 +70059,15 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async listSetsStructs(
     query?: $ObjectSet.Query<ListSetsStruct.Filter, ListSetsStruct.Identifier>,
-  ): Promise<Either<Error, readonly ListSetsStruct[]>> {
+  ): Promise<Either<Error, readonly ListSetsStruct.Discriminated[]>> {
     return this.listSetsStructsSync(query);
   }
 
   listSetsStructsSync(
     query?: $ObjectSet.Query<ListSetsStruct.Filter, ListSetsStruct.Identifier>,
-  ): Either<Error, readonly ListSetsStruct[]> {
+  ): Either<Error, readonly ListSetsStruct.Discriminated[]> {
     return this.#objectsSync<
-      ListSetsStruct,
+      ListSetsStruct.Discriminated,
       ListSetsStruct.Filter,
       ListSetsStruct.Identifier
     >(
@@ -69998,14 +70083,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async listsStruct(
     identifier: ListsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ListsStruct>> {
+  ): Promise<Either<Error, ListsStruct.Discriminated>> {
     return this.listsStructSync(identifier, options);
   }
 
   listsStructSync(
     identifier: ListsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, ListsStruct> {
+  ): Either<Error, ListsStruct.Discriminated> {
     return this.listsStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -70046,15 +70131,15 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async listsStructs(
     query?: $ObjectSet.Query<ListsStruct.Filter, ListsStruct.Identifier>,
-  ): Promise<Either<Error, readonly ListsStruct[]>> {
+  ): Promise<Either<Error, readonly ListsStruct.Discriminated[]>> {
     return this.listsStructsSync(query);
   }
 
   listsStructsSync(
     query?: $ObjectSet.Query<ListsStruct.Filter, ListsStruct.Identifier>,
-  ): Either<Error, readonly ListsStruct[]> {
+  ): Either<Error, readonly ListsStruct.Discriminated[]> {
     return this.#objectsSync<
-      ListsStruct,
+      ListsStruct.Discriminated,
       ListsStruct.Filter,
       ListsStruct.Identifier
     >(
@@ -70070,14 +70155,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async mutablePropertiesStruct(
     identifier: MutablePropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, MutablePropertiesStruct>> {
+  ): Promise<Either<Error, MutablePropertiesStruct.Discriminated>> {
     return this.mutablePropertiesStructSync(identifier, options);
   }
 
   mutablePropertiesStructSync(
     identifier: MutablePropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, MutablePropertiesStruct> {
+  ): Either<Error, MutablePropertiesStruct.Discriminated> {
     return this.mutablePropertiesStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -70135,7 +70220,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       MutablePropertiesStruct.Filter,
       MutablePropertiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly MutablePropertiesStruct[]>> {
+  ): Promise<Either<Error, readonly MutablePropertiesStruct.Discriminated[]>> {
     return this.mutablePropertiesStructsSync(query);
   }
 
@@ -70144,9 +70229,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       MutablePropertiesStruct.Filter,
       MutablePropertiesStruct.Identifier
     >,
-  ): Either<Error, readonly MutablePropertiesStruct[]> {
+  ): Either<Error, readonly MutablePropertiesStruct.Discriminated[]> {
     return this.#objectsSync<
-      MutablePropertiesStruct,
+      MutablePropertiesStruct.Discriminated,
       MutablePropertiesStruct.Filter,
       MutablePropertiesStruct.Identifier
     >(
@@ -70164,14 +70249,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async namedTypesStruct(
     identifier: NamedTypesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NamedTypesStruct>> {
+  ): Promise<Either<Error, NamedTypesStruct.Discriminated>> {
     return this.namedTypesStructSync(identifier, options);
   }
 
   namedTypesStructSync(
     identifier: NamedTypesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, NamedTypesStruct> {
+  ): Either<Error, NamedTypesStruct.Discriminated> {
     return this.namedTypesStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -70221,7 +70306,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       NamedTypesStruct.Filter,
       NamedTypesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly NamedTypesStruct[]>> {
+  ): Promise<Either<Error, readonly NamedTypesStruct.Discriminated[]>> {
     return this.namedTypesStructsSync(query);
   }
 
@@ -70230,9 +70315,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       NamedTypesStruct.Filter,
       NamedTypesStruct.Identifier
     >,
-  ): Either<Error, readonly NamedTypesStruct[]> {
+  ): Either<Error, readonly NamedTypesStruct.Discriminated[]> {
     return this.#objectsSync<
-      NamedTypesStruct,
+      NamedTypesStruct.Discriminated,
       NamedTypesStruct.Filter,
       NamedTypesStruct.Identifier
     >(
@@ -70248,14 +70333,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async newName(
     identifier: NewName.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NewName>> {
+  ): Promise<Either<Error, NewName.Discriminated>> {
     return this.newNameSync(identifier, options);
   }
 
   newNameSync(
     identifier: NewName.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, NewName> {
+  ): Either<Error, NewName.Discriminated> {
     return this.newNamesSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -70296,14 +70381,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async newNames(
     query?: $ObjectSet.Query<NewName.Filter, NewName.Identifier>,
-  ): Promise<Either<Error, readonly NewName[]>> {
+  ): Promise<Either<Error, readonly NewName.Discriminated[]>> {
     return this.newNamesSync(query);
   }
 
   newNamesSync(
     query?: $ObjectSet.Query<NewName.Filter, NewName.Identifier>,
-  ): Either<Error, readonly NewName[]> {
-    return this.#objectsSync<NewName, NewName.Filter, NewName.Identifier>(
+  ): Either<Error, readonly NewName.Discriminated[]> {
+    return this.#objectsSync<
+      NewName.Discriminated,
+      NewName.Filter,
+      NewName.Identifier
+    >(
       {
         filter: NewName.filter,
         fromRdfResource: NewName.fromRdfResource,
@@ -70316,14 +70405,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async nodeKindsStruct(
     identifier: NodeKindsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NodeKindsStruct>> {
+  ): Promise<Either<Error, NodeKindsStruct.Discriminated>> {
     return this.nodeKindsStructSync(identifier, options);
   }
 
   nodeKindsStructSync(
     identifier: NodeKindsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, NodeKindsStruct> {
+  ): Either<Error, NodeKindsStruct.Discriminated> {
     return this.nodeKindsStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -70373,7 +70462,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       NodeKindsStruct.Filter,
       NodeKindsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly NodeKindsStruct[]>> {
+  ): Promise<Either<Error, readonly NodeKindsStruct.Discriminated[]>> {
     return this.nodeKindsStructsSync(query);
   }
 
@@ -70382,9 +70471,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       NodeKindsStruct.Filter,
       NodeKindsStruct.Identifier
     >,
-  ): Either<Error, readonly NodeKindsStruct[]> {
+  ): Either<Error, readonly NodeKindsStruct.Discriminated[]> {
     return this.#objectsSync<
-      NodeKindsStruct,
+      NodeKindsStruct.Discriminated,
       NodeKindsStruct.Filter,
       NodeKindsStruct.Identifier
     >(
@@ -70400,14 +70489,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async nonClassStruct(
     identifier: NonClassStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NonClassStruct>> {
+  ): Promise<Either<Error, NonClassStruct.Discriminated>> {
     return this.nonClassStructSync(identifier, options);
   }
 
   nonClassStructSync(
     identifier: NonClassStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, NonClassStruct> {
+  ): Either<Error, NonClassStruct.Discriminated> {
     return this.nonClassStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -70448,15 +70537,15 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async nonClassStructs(
     query?: $ObjectSet.Query<NonClassStruct.Filter, NonClassStruct.Identifier>,
-  ): Promise<Either<Error, readonly NonClassStruct[]>> {
+  ): Promise<Either<Error, readonly NonClassStruct.Discriminated[]>> {
     return this.nonClassStructsSync(query);
   }
 
   nonClassStructsSync(
     query?: $ObjectSet.Query<NonClassStruct.Filter, NonClassStruct.Identifier>,
-  ): Either<Error, readonly NonClassStruct[]> {
+  ): Either<Error, readonly NonClassStruct.Discriminated[]> {
     return this.#objectsSync<
-      NonClassStruct,
+      NonClassStruct.Discriminated,
       NonClassStruct.Filter,
       NonClassStruct.Identifier
     >(
@@ -70472,14 +70561,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async noRdfTypeDiscriminatedUnionMember1(
     identifier: NoRdfTypeDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnionMember1>> {
+  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnionMember1.Discriminated>> {
     return this.noRdfTypeDiscriminatedUnionMember1Sync(identifier, options);
   }
 
   noRdfTypeDiscriminatedUnionMember1Sync(
     identifier: NoRdfTypeDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, NoRdfTypeDiscriminatedUnionMember1> {
+  ): Either<Error, NoRdfTypeDiscriminatedUnionMember1.Discriminated> {
     return this.noRdfTypeDiscriminatedUnionMember1sSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -70539,7 +70628,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       NoRdfTypeDiscriminatedUnionMember1.Filter,
       NoRdfTypeDiscriminatedUnionMember1.Identifier
     >,
-  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnionMember1[]>> {
+  ): Promise<
+    Either<Error, readonly NoRdfTypeDiscriminatedUnionMember1.Discriminated[]>
+  > {
     return this.noRdfTypeDiscriminatedUnionMember1sSync(query);
   }
 
@@ -70548,9 +70639,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       NoRdfTypeDiscriminatedUnionMember1.Filter,
       NoRdfTypeDiscriminatedUnionMember1.Identifier
     >,
-  ): Either<Error, readonly NoRdfTypeDiscriminatedUnionMember1[]> {
+  ): Either<
+    Error,
+    readonly NoRdfTypeDiscriminatedUnionMember1.Discriminated[]
+  > {
     return this.#objectsSync<
-      NoRdfTypeDiscriminatedUnionMember1,
+      NoRdfTypeDiscriminatedUnionMember1.Discriminated,
       NoRdfTypeDiscriminatedUnionMember1.Filter,
       NoRdfTypeDiscriminatedUnionMember1.Identifier
     >(
@@ -70566,14 +70660,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async noRdfTypeDiscriminatedUnionMember2(
     identifier: NoRdfTypeDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnionMember2>> {
+  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnionMember2.Discriminated>> {
     return this.noRdfTypeDiscriminatedUnionMember2Sync(identifier, options);
   }
 
   noRdfTypeDiscriminatedUnionMember2Sync(
     identifier: NoRdfTypeDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, NoRdfTypeDiscriminatedUnionMember2> {
+  ): Either<Error, NoRdfTypeDiscriminatedUnionMember2.Discriminated> {
     return this.noRdfTypeDiscriminatedUnionMember2sSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -70633,7 +70727,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       NoRdfTypeDiscriminatedUnionMember2.Filter,
       NoRdfTypeDiscriminatedUnionMember2.Identifier
     >,
-  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnionMember2[]>> {
+  ): Promise<
+    Either<Error, readonly NoRdfTypeDiscriminatedUnionMember2.Discriminated[]>
+  > {
     return this.noRdfTypeDiscriminatedUnionMember2sSync(query);
   }
 
@@ -70642,9 +70738,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       NoRdfTypeDiscriminatedUnionMember2.Filter,
       NoRdfTypeDiscriminatedUnionMember2.Identifier
     >,
-  ): Either<Error, readonly NoRdfTypeDiscriminatedUnionMember2[]> {
+  ): Either<
+    Error,
+    readonly NoRdfTypeDiscriminatedUnionMember2.Discriminated[]
+  > {
     return this.#objectsSync<
-      NoRdfTypeDiscriminatedUnionMember2,
+      NoRdfTypeDiscriminatedUnionMember2.Discriminated,
       NoRdfTypeDiscriminatedUnionMember2.Filter,
       NoRdfTypeDiscriminatedUnionMember2.Identifier
     >(
@@ -70660,14 +70759,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async numericsStruct(
     identifier: NumericsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NumericsStruct>> {
+  ): Promise<Either<Error, NumericsStruct.Discriminated>> {
     return this.numericsStructSync(identifier, options);
   }
 
   numericsStructSync(
     identifier: NumericsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, NumericsStruct> {
+  ): Either<Error, NumericsStruct.Discriminated> {
     return this.numericsStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -70708,15 +70807,15 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async numericsStructs(
     query?: $ObjectSet.Query<NumericsStruct.Filter, NumericsStruct.Identifier>,
-  ): Promise<Either<Error, readonly NumericsStruct[]>> {
+  ): Promise<Either<Error, readonly NumericsStruct.Discriminated[]>> {
     return this.numericsStructsSync(query);
   }
 
   numericsStructsSync(
     query?: $ObjectSet.Query<NumericsStruct.Filter, NumericsStruct.Identifier>,
-  ): Either<Error, readonly NumericsStruct[]> {
+  ): Either<Error, readonly NumericsStruct.Discriminated[]> {
     return this.#objectsSync<
-      NumericsStruct,
+      NumericsStruct.Discriminated,
       NumericsStruct.Filter,
       NumericsStruct.Identifier
     >(
@@ -70732,14 +70831,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async orderedStruct(
     identifier: OrderedStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, OrderedStruct>> {
+  ): Promise<Either<Error, OrderedStruct.Discriminated>> {
     return this.orderedStructSync(identifier, options);
   }
 
   orderedStructSync(
     identifier: OrderedStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, OrderedStruct> {
+  ): Either<Error, OrderedStruct.Discriminated> {
     return this.orderedStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -70780,15 +70879,15 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async orderedStructs(
     query?: $ObjectSet.Query<OrderedStruct.Filter, OrderedStruct.Identifier>,
-  ): Promise<Either<Error, readonly OrderedStruct[]>> {
+  ): Promise<Either<Error, readonly OrderedStruct.Discriminated[]>> {
     return this.orderedStructsSync(query);
   }
 
   orderedStructsSync(
     query?: $ObjectSet.Query<OrderedStruct.Filter, OrderedStruct.Identifier>,
-  ): Either<Error, readonly OrderedStruct[]> {
+  ): Either<Error, readonly OrderedStruct.Discriminated[]> {
     return this.#objectsSync<
-      OrderedStruct,
+      OrderedStruct.Discriminated,
       OrderedStruct.Filter,
       OrderedStruct.Identifier
     >(
@@ -70804,14 +70903,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async partialDiscriminatedUnionMember1(
     identifier: PartialDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PartialDiscriminatedUnionMember1>> {
+  ): Promise<Either<Error, PartialDiscriminatedUnionMember1.Discriminated>> {
     return this.partialDiscriminatedUnionMember1Sync(identifier, options);
   }
 
   partialDiscriminatedUnionMember1Sync(
     identifier: PartialDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, PartialDiscriminatedUnionMember1> {
+  ): Either<Error, PartialDiscriminatedUnionMember1.Discriminated> {
     return this.partialDiscriminatedUnionMember1sSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -70871,7 +70970,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PartialDiscriminatedUnionMember1.Filter,
       PartialDiscriminatedUnionMember1.Identifier
     >,
-  ): Promise<Either<Error, readonly PartialDiscriminatedUnionMember1[]>> {
+  ): Promise<
+    Either<Error, readonly PartialDiscriminatedUnionMember1.Discriminated[]>
+  > {
     return this.partialDiscriminatedUnionMember1sSync(query);
   }
 
@@ -70880,9 +70981,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PartialDiscriminatedUnionMember1.Filter,
       PartialDiscriminatedUnionMember1.Identifier
     >,
-  ): Either<Error, readonly PartialDiscriminatedUnionMember1[]> {
+  ): Either<Error, readonly PartialDiscriminatedUnionMember1.Discriminated[]> {
     return this.#objectsSync<
-      PartialDiscriminatedUnionMember1,
+      PartialDiscriminatedUnionMember1.Discriminated,
       PartialDiscriminatedUnionMember1.Filter,
       PartialDiscriminatedUnionMember1.Identifier
     >(
@@ -70901,14 +71002,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async partialDiscriminatedUnionMember2(
     identifier: PartialDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PartialDiscriminatedUnionMember2>> {
+  ): Promise<Either<Error, PartialDiscriminatedUnionMember2.Discriminated>> {
     return this.partialDiscriminatedUnionMember2Sync(identifier, options);
   }
 
   partialDiscriminatedUnionMember2Sync(
     identifier: PartialDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, PartialDiscriminatedUnionMember2> {
+  ): Either<Error, PartialDiscriminatedUnionMember2.Discriminated> {
     return this.partialDiscriminatedUnionMember2sSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -70968,7 +71069,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PartialDiscriminatedUnionMember2.Filter,
       PartialDiscriminatedUnionMember2.Identifier
     >,
-  ): Promise<Either<Error, readonly PartialDiscriminatedUnionMember2[]>> {
+  ): Promise<
+    Either<Error, readonly PartialDiscriminatedUnionMember2.Discriminated[]>
+  > {
     return this.partialDiscriminatedUnionMember2sSync(query);
   }
 
@@ -70977,9 +71080,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PartialDiscriminatedUnionMember2.Filter,
       PartialDiscriminatedUnionMember2.Identifier
     >,
-  ): Either<Error, readonly PartialDiscriminatedUnionMember2[]> {
+  ): Either<Error, readonly PartialDiscriminatedUnionMember2.Discriminated[]> {
     return this.#objectsSync<
-      PartialDiscriminatedUnionMember2,
+      PartialDiscriminatedUnionMember2.Discriminated,
       PartialDiscriminatedUnionMember2.Filter,
       PartialDiscriminatedUnionMember2.Identifier
     >(
@@ -70998,14 +71101,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async partialStruct(
     identifier: PartialStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PartialStruct>> {
+  ): Promise<Either<Error, PartialStruct.Discriminated>> {
     return this.partialStructSync(identifier, options);
   }
 
   partialStructSync(
     identifier: PartialStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, PartialStruct> {
+  ): Either<Error, PartialStruct.Discriminated> {
     return this.partialStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -71046,15 +71149,15 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async partialStructs(
     query?: $ObjectSet.Query<PartialStruct.Filter, PartialStruct.Identifier>,
-  ): Promise<Either<Error, readonly PartialStruct[]>> {
+  ): Promise<Either<Error, readonly PartialStruct.Discriminated[]>> {
     return this.partialStructsSync(query);
   }
 
   partialStructsSync(
     query?: $ObjectSet.Query<PartialStruct.Filter, PartialStruct.Identifier>,
-  ): Either<Error, readonly PartialStruct[]> {
+  ): Either<Error, readonly PartialStruct.Discriminated[]> {
     return this.#objectsSync<
-      PartialStruct,
+      PartialStruct.Discriminated,
       PartialStruct.Filter,
       PartialStruct.Identifier
     >(
@@ -71070,14 +71173,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async propertyCardinalitiesStruct(
     identifier: PropertyCardinalitiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PropertyCardinalitiesStruct>> {
+  ): Promise<Either<Error, PropertyCardinalitiesStruct.Discriminated>> {
     return this.propertyCardinalitiesStructSync(identifier, options);
   }
 
   propertyCardinalitiesStructSync(
     identifier: PropertyCardinalitiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, PropertyCardinalitiesStruct> {
+  ): Either<Error, PropertyCardinalitiesStruct.Discriminated> {
     return this.propertyCardinalitiesStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -71135,7 +71238,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PropertyCardinalitiesStruct.Filter,
       PropertyCardinalitiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly PropertyCardinalitiesStruct[]>> {
+  ): Promise<
+    Either<Error, readonly PropertyCardinalitiesStruct.Discriminated[]>
+  > {
     return this.propertyCardinalitiesStructsSync(query);
   }
 
@@ -71144,9 +71249,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PropertyCardinalitiesStruct.Filter,
       PropertyCardinalitiesStruct.Identifier
     >,
-  ): Either<Error, readonly PropertyCardinalitiesStruct[]> {
+  ): Either<Error, readonly PropertyCardinalitiesStruct.Discriminated[]> {
     return this.#objectsSync<
-      PropertyCardinalitiesStruct,
+      PropertyCardinalitiesStruct.Discriminated,
       PropertyCardinalitiesStruct.Filter,
       PropertyCardinalitiesStruct.Identifier
     >(
@@ -71162,14 +71267,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async propertyNamesStruct(
     identifier: PropertyNamesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PropertyNamesStruct>> {
+  ): Promise<Either<Error, PropertyNamesStruct.Discriminated>> {
     return this.propertyNamesStructSync(identifier, options);
   }
 
   propertyNamesStructSync(
     identifier: PropertyNamesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, PropertyNamesStruct> {
+  ): Either<Error, PropertyNamesStruct.Discriminated> {
     return this.propertyNamesStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -71227,7 +71332,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PropertyNamesStruct.Filter,
       PropertyNamesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly PropertyNamesStruct[]>> {
+  ): Promise<Either<Error, readonly PropertyNamesStruct.Discriminated[]>> {
     return this.propertyNamesStructsSync(query);
   }
 
@@ -71236,9 +71341,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PropertyNamesStruct.Filter,
       PropertyNamesStruct.Identifier
     >,
-  ): Either<Error, readonly PropertyNamesStruct[]> {
+  ): Either<Error, readonly PropertyNamesStruct.Discriminated[]> {
     return this.#objectsSync<
-      PropertyNamesStruct,
+      PropertyNamesStruct.Discriminated,
       PropertyNamesStruct.Filter,
       PropertyNamesStruct.Identifier
     >(
@@ -71256,14 +71361,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async propertyPathsStruct(
     identifier: PropertyPathsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PropertyPathsStruct>> {
+  ): Promise<Either<Error, PropertyPathsStruct.Discriminated>> {
     return this.propertyPathsStructSync(identifier, options);
   }
 
   propertyPathsStructSync(
     identifier: PropertyPathsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, PropertyPathsStruct> {
+  ): Either<Error, PropertyPathsStruct.Discriminated> {
     return this.propertyPathsStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -71321,7 +71426,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PropertyPathsStruct.Filter,
       PropertyPathsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly PropertyPathsStruct[]>> {
+  ): Promise<Either<Error, readonly PropertyPathsStruct.Discriminated[]>> {
     return this.propertyPathsStructsSync(query);
   }
 
@@ -71330,9 +71435,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PropertyPathsStruct.Filter,
       PropertyPathsStruct.Identifier
     >,
-  ): Either<Error, readonly PropertyPathsStruct[]> {
+  ): Either<Error, readonly PropertyPathsStruct.Discriminated[]> {
     return this.#objectsSync<
-      PropertyPathsStruct,
+      PropertyPathsStruct.Discriminated,
       PropertyPathsStruct.Filter,
       PropertyPathsStruct.Identifier
     >(
@@ -71350,14 +71455,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async recursiveDiscriminatedUnionMember1(
     identifier: RecursiveDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, RecursiveDiscriminatedUnionMember1>> {
+  ): Promise<Either<Error, RecursiveDiscriminatedUnionMember1.Discriminated>> {
     return this.recursiveDiscriminatedUnionMember1Sync(identifier, options);
   }
 
   recursiveDiscriminatedUnionMember1Sync(
     identifier: RecursiveDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, RecursiveDiscriminatedUnionMember1> {
+  ): Either<Error, RecursiveDiscriminatedUnionMember1.Discriminated> {
     return this.recursiveDiscriminatedUnionMember1sSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -71417,7 +71522,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       RecursiveDiscriminatedUnionMember1.Filter,
       RecursiveDiscriminatedUnionMember1.Identifier
     >,
-  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnionMember1[]>> {
+  ): Promise<
+    Either<Error, readonly RecursiveDiscriminatedUnionMember1.Discriminated[]>
+  > {
     return this.recursiveDiscriminatedUnionMember1sSync(query);
   }
 
@@ -71426,9 +71533,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       RecursiveDiscriminatedUnionMember1.Filter,
       RecursiveDiscriminatedUnionMember1.Identifier
     >,
-  ): Either<Error, readonly RecursiveDiscriminatedUnionMember1[]> {
+  ): Either<
+    Error,
+    readonly RecursiveDiscriminatedUnionMember1.Discriminated[]
+  > {
     return this.#objectsSync<
-      RecursiveDiscriminatedUnionMember1,
+      RecursiveDiscriminatedUnionMember1.Discriminated,
       RecursiveDiscriminatedUnionMember1.Filter,
       RecursiveDiscriminatedUnionMember1.Identifier
     >(
@@ -71447,14 +71557,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async recursiveDiscriminatedUnionMember2(
     identifier: RecursiveDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, RecursiveDiscriminatedUnionMember2>> {
+  ): Promise<Either<Error, RecursiveDiscriminatedUnionMember2.Discriminated>> {
     return this.recursiveDiscriminatedUnionMember2Sync(identifier, options);
   }
 
   recursiveDiscriminatedUnionMember2Sync(
     identifier: RecursiveDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, RecursiveDiscriminatedUnionMember2> {
+  ): Either<Error, RecursiveDiscriminatedUnionMember2.Discriminated> {
     return this.recursiveDiscriminatedUnionMember2sSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -71514,7 +71624,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       RecursiveDiscriminatedUnionMember2.Filter,
       RecursiveDiscriminatedUnionMember2.Identifier
     >,
-  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnionMember2[]>> {
+  ): Promise<
+    Either<Error, readonly RecursiveDiscriminatedUnionMember2.Discriminated[]>
+  > {
     return this.recursiveDiscriminatedUnionMember2sSync(query);
   }
 
@@ -71523,9 +71635,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       RecursiveDiscriminatedUnionMember2.Filter,
       RecursiveDiscriminatedUnionMember2.Identifier
     >,
-  ): Either<Error, readonly RecursiveDiscriminatedUnionMember2[]> {
+  ): Either<
+    Error,
+    readonly RecursiveDiscriminatedUnionMember2.Discriminated[]
+  > {
     return this.#objectsSync<
-      RecursiveDiscriminatedUnionMember2,
+      RecursiveDiscriminatedUnionMember2.Discriminated,
       RecursiveDiscriminatedUnionMember2.Filter,
       RecursiveDiscriminatedUnionMember2.Identifier
     >(
@@ -71544,14 +71659,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async structDiscriminatedUnionMember1(
     identifier: StructDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructDiscriminatedUnionMember1>> {
+  ): Promise<Either<Error, StructDiscriminatedUnionMember1.Discriminated>> {
     return this.structDiscriminatedUnionMember1Sync(identifier, options);
   }
 
   structDiscriminatedUnionMember1Sync(
     identifier: StructDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, StructDiscriminatedUnionMember1> {
+  ): Either<Error, StructDiscriminatedUnionMember1.Discriminated> {
     return this.structDiscriminatedUnionMember1sSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -71611,7 +71726,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       StructDiscriminatedUnionMember1.Filter,
       StructDiscriminatedUnionMember1.Identifier
     >,
-  ): Promise<Either<Error, readonly StructDiscriminatedUnionMember1[]>> {
+  ): Promise<
+    Either<Error, readonly StructDiscriminatedUnionMember1.Discriminated[]>
+  > {
     return this.structDiscriminatedUnionMember1sSync(query);
   }
 
@@ -71620,9 +71737,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       StructDiscriminatedUnionMember1.Filter,
       StructDiscriminatedUnionMember1.Identifier
     >,
-  ): Either<Error, readonly StructDiscriminatedUnionMember1[]> {
+  ): Either<Error, readonly StructDiscriminatedUnionMember1.Discriminated[]> {
     return this.#objectsSync<
-      StructDiscriminatedUnionMember1,
+      StructDiscriminatedUnionMember1.Discriminated,
       StructDiscriminatedUnionMember1.Filter,
       StructDiscriminatedUnionMember1.Identifier
     >(
@@ -71641,14 +71758,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async structDiscriminatedUnionMember2(
     identifier: StructDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructDiscriminatedUnionMember2>> {
+  ): Promise<Either<Error, StructDiscriminatedUnionMember2.Discriminated>> {
     return this.structDiscriminatedUnionMember2Sync(identifier, options);
   }
 
   structDiscriminatedUnionMember2Sync(
     identifier: StructDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, StructDiscriminatedUnionMember2> {
+  ): Either<Error, StructDiscriminatedUnionMember2.Discriminated> {
     return this.structDiscriminatedUnionMember2sSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -71708,7 +71825,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       StructDiscriminatedUnionMember2.Filter,
       StructDiscriminatedUnionMember2.Identifier
     >,
-  ): Promise<Either<Error, readonly StructDiscriminatedUnionMember2[]>> {
+  ): Promise<
+    Either<Error, readonly StructDiscriminatedUnionMember2.Discriminated[]>
+  > {
     return this.structDiscriminatedUnionMember2sSync(query);
   }
 
@@ -71717,9 +71836,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       StructDiscriminatedUnionMember2.Filter,
       StructDiscriminatedUnionMember2.Identifier
     >,
-  ): Either<Error, readonly StructDiscriminatedUnionMember2[]> {
+  ): Either<Error, readonly StructDiscriminatedUnionMember2.Discriminated[]> {
     return this.#objectsSync<
-      StructDiscriminatedUnionMember2,
+      StructDiscriminatedUnionMember2.Discriminated,
       StructDiscriminatedUnionMember2.Filter,
       StructDiscriminatedUnionMember2.Identifier
     >(
@@ -71738,14 +71857,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async structInheritance1(
     identifier: StructInheritance1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructInheritance1>> {
+  ): Promise<Either<Error, StructInheritance1.Discriminated>> {
     return this.structInheritance1Sync(identifier, options);
   }
 
   structInheritance1Sync(
     identifier: StructInheritance1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, StructInheritance1> {
+  ): Either<Error, StructInheritance1.Discriminated> {
     return this.structInheritance1sSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -71801,7 +71920,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       StructInheritance1.Filter,
       StructInheritance1.Identifier
     >,
-  ): Promise<Either<Error, readonly StructInheritance1[]>> {
+  ): Promise<Either<Error, readonly StructInheritance1.Discriminated[]>> {
     return this.structInheritance1sSync(query);
   }
 
@@ -71810,9 +71929,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       StructInheritance1.Filter,
       StructInheritance1.Identifier
     >,
-  ): Either<Error, readonly StructInheritance1[]> {
+  ): Either<Error, readonly StructInheritance1.Discriminated[]> {
     return this.#objectsSync<
-      StructInheritance1,
+      StructInheritance1.Discriminated,
       StructInheritance1.Filter,
       StructInheritance1.Identifier
     >(
@@ -71828,14 +71947,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async structIntersectionMember1(
     identifier: StructIntersectionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructIntersectionMember1>> {
+  ): Promise<Either<Error, StructIntersectionMember1.Discriminated>> {
     return this.structIntersectionMember1Sync(identifier, options);
   }
 
   structIntersectionMember1Sync(
     identifier: StructIntersectionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, StructIntersectionMember1> {
+  ): Either<Error, StructIntersectionMember1.Discriminated> {
     return this.structIntersectionMember1sSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -71893,7 +72012,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       StructIntersectionMember1.Filter,
       StructIntersectionMember1.Identifier
     >,
-  ): Promise<Either<Error, readonly StructIntersectionMember1[]>> {
+  ): Promise<
+    Either<Error, readonly StructIntersectionMember1.Discriminated[]>
+  > {
     return this.structIntersectionMember1sSync(query);
   }
 
@@ -71902,9 +72023,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       StructIntersectionMember1.Filter,
       StructIntersectionMember1.Identifier
     >,
-  ): Either<Error, readonly StructIntersectionMember1[]> {
+  ): Either<Error, readonly StructIntersectionMember1.Discriminated[]> {
     return this.#objectsSync<
-      StructIntersectionMember1,
+      StructIntersectionMember1.Discriminated,
       StructIntersectionMember1.Filter,
       StructIntersectionMember1.Identifier
     >(
@@ -71922,14 +72043,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async structIntersectionMember2(
     identifier: StructIntersectionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructIntersectionMember2>> {
+  ): Promise<Either<Error, StructIntersectionMember2.Discriminated>> {
     return this.structIntersectionMember2Sync(identifier, options);
   }
 
   structIntersectionMember2Sync(
     identifier: StructIntersectionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, StructIntersectionMember2> {
+  ): Either<Error, StructIntersectionMember2.Discriminated> {
     return this.structIntersectionMember2sSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -71987,7 +72108,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       StructIntersectionMember2.Filter,
       StructIntersectionMember2.Identifier
     >,
-  ): Promise<Either<Error, readonly StructIntersectionMember2[]>> {
+  ): Promise<
+    Either<Error, readonly StructIntersectionMember2.Discriminated[]>
+  > {
     return this.structIntersectionMember2sSync(query);
   }
 
@@ -71996,9 +72119,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       StructIntersectionMember2.Filter,
       StructIntersectionMember2.Identifier
     >,
-  ): Either<Error, readonly StructIntersectionMember2[]> {
+  ): Either<Error, readonly StructIntersectionMember2.Discriminated[]> {
     return this.#objectsSync<
-      StructIntersectionMember2,
+      StructIntersectionMember2.Discriminated,
       StructIntersectionMember2.Filter,
       StructIntersectionMember2.Identifier
     >(
@@ -72016,14 +72139,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async targetClassStruct(
     identifier: TargetClassStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, TargetClassStruct>> {
+  ): Promise<Either<Error, TargetClassStruct.Discriminated>> {
     return this.targetClassStructSync(identifier, options);
   }
 
   targetClassStructSync(
     identifier: TargetClassStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, TargetClassStruct> {
+  ): Either<Error, TargetClassStruct.Discriminated> {
     return this.targetClassStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -72073,7 +72196,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       TargetClassStruct.Filter,
       TargetClassStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly TargetClassStruct[]>> {
+  ): Promise<Either<Error, readonly TargetClassStruct.Discriminated[]>> {
     return this.targetClassStructsSync(query);
   }
 
@@ -72082,9 +72205,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       TargetClassStruct.Filter,
       TargetClassStruct.Identifier
     >,
-  ): Either<Error, readonly TargetClassStruct[]> {
+  ): Either<Error, readonly TargetClassStruct.Discriminated[]> {
     return this.#objectsSync<
-      TargetClassStruct,
+      TargetClassStruct.Discriminated,
       TargetClassStruct.Filter,
       TargetClassStruct.Identifier
     >(
@@ -72102,14 +72225,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async termsStruct(
     identifier: TermsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, TermsStruct>> {
+  ): Promise<Either<Error, TermsStruct.Discriminated>> {
     return this.termsStructSync(identifier, options);
   }
 
   termsStructSync(
     identifier: TermsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, TermsStruct> {
+  ): Either<Error, TermsStruct.Discriminated> {
     return this.termsStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -72150,15 +72273,15 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async termsStructs(
     query?: $ObjectSet.Query<TermsStruct.Filter, TermsStruct.Identifier>,
-  ): Promise<Either<Error, readonly TermsStruct[]>> {
+  ): Promise<Either<Error, readonly TermsStruct.Discriminated[]>> {
     return this.termsStructsSync(query);
   }
 
   termsStructsSync(
     query?: $ObjectSet.Query<TermsStruct.Filter, TermsStruct.Identifier>,
-  ): Either<Error, readonly TermsStruct[]> {
+  ): Either<Error, readonly TermsStruct.Discriminated[]> {
     return this.#objectsSync<
-      TermsStruct,
+      TermsStruct.Discriminated,
       TermsStruct.Filter,
       TermsStruct.Identifier
     >(
@@ -72174,14 +72297,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async unionDiscriminantsStruct(
     identifier: UnionDiscriminantsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, UnionDiscriminantsStruct>> {
+  ): Promise<Either<Error, UnionDiscriminantsStruct.Discriminated>> {
     return this.unionDiscriminantsStructSync(identifier, options);
   }
 
   unionDiscriminantsStructSync(
     identifier: UnionDiscriminantsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, UnionDiscriminantsStruct> {
+  ): Either<Error, UnionDiscriminantsStruct.Discriminated> {
     return this.unionDiscriminantsStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
@@ -72239,7 +72362,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       UnionDiscriminantsStruct.Filter,
       UnionDiscriminantsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly UnionDiscriminantsStruct[]>> {
+  ): Promise<Either<Error, readonly UnionDiscriminantsStruct.Discriminated[]>> {
     return this.unionDiscriminantsStructsSync(query);
   }
 
@@ -72248,9 +72371,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       UnionDiscriminantsStruct.Filter,
       UnionDiscriminantsStruct.Identifier
     >,
-  ): Either<Error, readonly UnionDiscriminantsStruct[]> {
+  ): Either<Error, readonly UnionDiscriminantsStruct.Discriminated[]> {
     return this.#objectsSync<
-      UnionDiscriminantsStruct,
+      UnionDiscriminantsStruct.Discriminated,
       UnionDiscriminantsStruct.Filter,
       UnionDiscriminantsStruct.Identifier
     >(
@@ -72264,7 +72387,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   #objectsSync<
-    ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
+    ObjectT extends {
+      readonly $identifier: () => ObjectIdentifierT;
+      $type: string;
+    },
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
@@ -72386,7 +72512,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   #objectDiscriminatedUnionsSync<
-    ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
+    ObjectT extends {
+      readonly $identifier: () => ObjectIdentifierT;
+      $type: string;
+    },
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
@@ -72891,7 +73020,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async structIntersection(
     identifier: StructIntersection.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructIntersection>> {
+  ): Promise<Either<Error, StructIntersection.Discriminated>> {
     return (
       await this.structIntersections({
         identifiers: [identifier],
@@ -72932,9 +73061,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       StructIntersection.Filter,
       StructIntersection.Identifier
     >,
-  ): Promise<Either<Error, readonly StructIntersection[]>> {
+  ): Promise<Either<Error, readonly StructIntersection.Discriminated[]>> {
     return this.#objects<
-      StructIntersection,
+      StructIntersection.Discriminated,
       StructIntersection.Filter,
       StructIntersection.Identifier
     >(StructIntersection, query);
@@ -72943,7 +73072,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async structInheritance2(
     identifier: StructInheritance2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructInheritance2>> {
+  ): Promise<Either<Error, StructInheritance2.Discriminated>> {
     return (
       await this.structInheritance2s({
         identifiers: [identifier],
@@ -72984,9 +73113,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       StructInheritance2.Filter,
       StructInheritance2.Identifier
     >,
-  ): Promise<Either<Error, readonly StructInheritance2[]>> {
+  ): Promise<Either<Error, readonly StructInheritance2.Discriminated[]>> {
     return this.#objects<
-      StructInheritance2,
+      StructInheritance2.Discriminated,
       StructInheritance2.Filter,
       StructInheritance2.Identifier
     >(StructInheritance2, query);
@@ -72995,7 +73124,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async structInheritance3(
     identifier: StructInheritance3.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructInheritance3>> {
+  ): Promise<Either<Error, StructInheritance3.Discriminated>> {
     return (
       await this.structInheritance3s({
         identifiers: [identifier],
@@ -73036,9 +73165,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       StructInheritance3.Filter,
       StructInheritance3.Identifier
     >,
-  ): Promise<Either<Error, readonly StructInheritance3[]>> {
+  ): Promise<Either<Error, readonly StructInheritance3.Discriminated[]>> {
     return this.#objects<
-      StructInheritance3,
+      StructInheritance3.Discriminated,
       StructInheritance3.Filter,
       StructInheritance3.Identifier
     >(StructInheritance3, query);
@@ -73047,7 +73176,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async anonymousTypesStruct(
     identifier: AnonymousTypesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, AnonymousTypesStruct>> {
+  ): Promise<Either<Error, AnonymousTypesStruct.Discriminated>> {
     return (
       await this.anonymousTypesStructs({
         identifiers: [identifier],
@@ -73088,9 +73217,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       AnonymousTypesStruct.Filter,
       AnonymousTypesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly AnonymousTypesStruct[]>> {
+  ): Promise<Either<Error, readonly AnonymousTypesStruct.Discriminated[]>> {
     return this.#objects<
-      AnonymousTypesStruct,
+      AnonymousTypesStruct.Discriminated,
       AnonymousTypesStruct.Filter,
       AnonymousTypesStruct.Identifier
     >(AnonymousTypesStruct, query);
@@ -73099,7 +73228,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async blankNodeOrIriIdentifierStruct(
     identifier: BlankNodeOrIriIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, BlankNodeOrIriIdentifierStruct>> {
+  ): Promise<Either<Error, BlankNodeOrIriIdentifierStruct.Discriminated>> {
     return (
       await this.blankNodeOrIriIdentifierStructs({
         identifiers: [identifier],
@@ -73142,9 +73271,11 @@ export class $SparqlObjectSet implements $ObjectSet {
       BlankNodeOrIriIdentifierStruct.Filter,
       BlankNodeOrIriIdentifierStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly BlankNodeOrIriIdentifierStruct[]>> {
+  ): Promise<
+    Either<Error, readonly BlankNodeOrIriIdentifierStruct.Discriminated[]>
+  > {
     return this.#objects<
-      BlankNodeOrIriIdentifierStruct,
+      BlankNodeOrIriIdentifierStruct.Discriminated,
       BlankNodeOrIriIdentifierStruct.Filter,
       BlankNodeOrIriIdentifierStruct.Identifier
     >(BlankNodeOrIriIdentifierStruct, query);
@@ -73153,7 +73284,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async classConstraintsStruct(
     identifier: ClassConstraintsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ClassConstraintsStruct>> {
+  ): Promise<Either<Error, ClassConstraintsStruct.Discriminated>> {
     return (
       await this.classConstraintsStructs({
         identifiers: [identifier],
@@ -73194,9 +73325,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       ClassConstraintsStruct.Filter,
       ClassConstraintsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly ClassConstraintsStruct[]>> {
+  ): Promise<Either<Error, readonly ClassConstraintsStruct.Discriminated[]>> {
     return this.#objects<
-      ClassConstraintsStruct,
+      ClassConstraintsStruct.Discriminated,
       ClassConstraintsStruct.Filter,
       ClassConstraintsStruct.Identifier
     >(ClassConstraintsStruct, query);
@@ -73205,7 +73336,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async convertibleTypesStruct(
     identifier: ConvertibleTypesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ConvertibleTypesStruct>> {
+  ): Promise<Either<Error, ConvertibleTypesStruct.Discriminated>> {
     return (
       await this.convertibleTypesStructs({
         identifiers: [identifier],
@@ -73246,9 +73377,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       ConvertibleTypesStruct.Filter,
       ConvertibleTypesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly ConvertibleTypesStruct[]>> {
+  ): Promise<Either<Error, readonly ConvertibleTypesStruct.Discriminated[]>> {
     return this.#objects<
-      ConvertibleTypesStruct,
+      ConvertibleTypesStruct.Discriminated,
       ConvertibleTypesStruct.Filter,
       ConvertibleTypesStruct.Identifier
     >(ConvertibleTypesStruct, query);
@@ -73257,7 +73388,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async datatypeDiscriminatedUnionsStruct(
     identifier: DatatypeDiscriminatedUnionsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DatatypeDiscriminatedUnionsStruct>> {
+  ): Promise<Either<Error, DatatypeDiscriminatedUnionsStruct.Discriminated>> {
     return (
       await this.datatypeDiscriminatedUnionsStructs({
         identifiers: [identifier],
@@ -73300,9 +73431,11 @@ export class $SparqlObjectSet implements $ObjectSet {
       DatatypeDiscriminatedUnionsStruct.Filter,
       DatatypeDiscriminatedUnionsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly DatatypeDiscriminatedUnionsStruct[]>> {
+  ): Promise<
+    Either<Error, readonly DatatypeDiscriminatedUnionsStruct.Discriminated[]>
+  > {
     return this.#objects<
-      DatatypeDiscriminatedUnionsStruct,
+      DatatypeDiscriminatedUnionsStruct.Discriminated,
       DatatypeDiscriminatedUnionsStruct.Filter,
       DatatypeDiscriminatedUnionsStruct.Identifier
     >(DatatypeDiscriminatedUnionsStruct, query);
@@ -73311,7 +73444,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async datesStruct(
     identifier: DatesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DatesStruct>> {
+  ): Promise<Either<Error, DatesStruct.Discriminated>> {
     return (
       await this.datesStructs({
         identifiers: [identifier],
@@ -73343,9 +73476,9 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async datesStructs(
     query?: $SparqlObjectSet.Query<DatesStruct.Filter, DatesStruct.Identifier>,
-  ): Promise<Either<Error, readonly DatesStruct[]>> {
+  ): Promise<Either<Error, readonly DatesStruct.Discriminated[]>> {
     return this.#objects<
-      DatesStruct,
+      DatesStruct.Discriminated,
       DatesStruct.Filter,
       DatesStruct.Identifier
     >(DatesStruct, query);
@@ -73354,7 +73487,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async defaultValuesStruct(
     identifier: DefaultValuesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DefaultValuesStruct>> {
+  ): Promise<Either<Error, DefaultValuesStruct.Discriminated>> {
     return (
       await this.defaultValuesStructs({
         identifiers: [identifier],
@@ -73395,9 +73528,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       DefaultValuesStruct.Filter,
       DefaultValuesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly DefaultValuesStruct[]>> {
+  ): Promise<Either<Error, readonly DefaultValuesStruct.Discriminated[]>> {
     return this.#objects<
-      DefaultValuesStruct,
+      DefaultValuesStruct.Discriminated,
       DefaultValuesStruct.Filter,
       DefaultValuesStruct.Identifier
     >(DefaultValuesStruct, query);
@@ -73406,7 +73539,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async directRecursiveStruct(
     identifier: DirectRecursiveStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DirectRecursiveStruct>> {
+  ): Promise<Either<Error, DirectRecursiveStruct.Discriminated>> {
     return (
       await this.directRecursiveStructs({
         identifiers: [identifier],
@@ -73447,9 +73580,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       DirectRecursiveStruct.Filter,
       DirectRecursiveStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly DirectRecursiveStruct[]>> {
+  ): Promise<Either<Error, readonly DirectRecursiveStruct.Discriminated[]>> {
     return this.#objects<
-      DirectRecursiveStruct,
+      DirectRecursiveStruct.Discriminated,
       DirectRecursiveStruct.Filter,
       DirectRecursiveStruct.Identifier
     >(DirectRecursiveStruct, query);
@@ -73458,7 +73591,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async displayStruct(
     identifier: DisplayStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DisplayStruct>> {
+  ): Promise<Either<Error, DisplayStruct.Discriminated>> {
     return (
       await this.displayStructs({
         identifiers: [identifier],
@@ -73496,9 +73629,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       DisplayStruct.Filter,
       DisplayStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly DisplayStruct[]>> {
+  ): Promise<Either<Error, readonly DisplayStruct.Discriminated[]>> {
     return this.#objects<
-      DisplayStruct,
+      DisplayStruct.Discriminated,
       DisplayStruct.Filter,
       DisplayStruct.Identifier
     >(DisplayStruct, query);
@@ -73507,7 +73640,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async explicitFromToRdfTypesStruct(
     identifier: ExplicitFromToRdfTypesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ExplicitFromToRdfTypesStruct>> {
+  ): Promise<Either<Error, ExplicitFromToRdfTypesStruct.Discriminated>> {
     return (
       await this.explicitFromToRdfTypesStructs({
         identifiers: [identifier],
@@ -73550,9 +73683,11 @@ export class $SparqlObjectSet implements $ObjectSet {
       ExplicitFromToRdfTypesStruct.Filter,
       ExplicitFromToRdfTypesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly ExplicitFromToRdfTypesStruct[]>> {
+  ): Promise<
+    Either<Error, readonly ExplicitFromToRdfTypesStruct.Discriminated[]>
+  > {
     return this.#objects<
-      ExplicitFromToRdfTypesStruct,
+      ExplicitFromToRdfTypesStruct.Discriminated,
       ExplicitFromToRdfTypesStruct.Filter,
       ExplicitFromToRdfTypesStruct.Identifier
     >(ExplicitFromToRdfTypesStruct, query);
@@ -73561,7 +73696,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async explicitRdfTypeStruct(
     identifier: ExplicitRdfTypeStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ExplicitRdfTypeStruct>> {
+  ): Promise<Either<Error, ExplicitRdfTypeStruct.Discriminated>> {
     return (
       await this.explicitRdfTypeStructs({
         identifiers: [identifier],
@@ -73602,9 +73737,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       ExplicitRdfTypeStruct.Filter,
       ExplicitRdfTypeStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly ExplicitRdfTypeStruct[]>> {
+  ): Promise<Either<Error, readonly ExplicitRdfTypeStruct.Discriminated[]>> {
     return this.#objects<
-      ExplicitRdfTypeStruct,
+      ExplicitRdfTypeStruct.Discriminated,
       ExplicitRdfTypeStruct.Filter,
       ExplicitRdfTypeStruct.Identifier
     >(ExplicitRdfTypeStruct, query);
@@ -73613,7 +73748,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async hasValuesStruct(
     identifier: HasValuesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, HasValuesStruct>> {
+  ): Promise<Either<Error, HasValuesStruct.Discriminated>> {
     return (
       await this.hasValuesStructs({
         identifiers: [identifier],
@@ -73654,9 +73789,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       HasValuesStruct.Filter,
       HasValuesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly HasValuesStruct[]>> {
+  ): Promise<Either<Error, readonly HasValuesStruct.Discriminated[]>> {
     return this.#objects<
-      HasValuesStruct,
+      HasValuesStruct.Discriminated,
       HasValuesStruct.Filter,
       HasValuesStruct.Identifier
     >(HasValuesStruct, query);
@@ -73665,7 +73800,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async ignoredPropertiesStruct(
     identifier: IgnoredPropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IgnoredPropertiesStruct>> {
+  ): Promise<Either<Error, IgnoredPropertiesStruct.Discriminated>> {
     return (
       await this.ignoredPropertiesStructs({
         identifiers: [identifier],
@@ -73706,9 +73841,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       IgnoredPropertiesStruct.Filter,
       IgnoredPropertiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly IgnoredPropertiesStruct[]>> {
+  ): Promise<Either<Error, readonly IgnoredPropertiesStruct.Discriminated[]>> {
     return this.#objects<
-      IgnoredPropertiesStruct,
+      IgnoredPropertiesStruct.Discriminated,
       IgnoredPropertiesStruct.Filter,
       IgnoredPropertiesStruct.Identifier
     >(IgnoredPropertiesStruct, query);
@@ -73717,7 +73852,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async indirectRecursiveStruct(
     identifier: IndirectRecursiveStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IndirectRecursiveStruct>> {
+  ): Promise<Either<Error, IndirectRecursiveStruct.Discriminated>> {
     return (
       await this.indirectRecursiveStructs({
         identifiers: [identifier],
@@ -73758,9 +73893,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       IndirectRecursiveStruct.Filter,
       IndirectRecursiveStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly IndirectRecursiveStruct[]>> {
+  ): Promise<Either<Error, readonly IndirectRecursiveStruct.Discriminated[]>> {
     return this.#objects<
-      IndirectRecursiveStruct,
+      IndirectRecursiveStruct.Discriminated,
       IndirectRecursiveStruct.Filter,
       IndirectRecursiveStruct.Identifier
     >(IndirectRecursiveStruct, query);
@@ -73769,7 +73904,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async indirectRecursiveStructHelper(
     identifier: IndirectRecursiveStructHelper.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IndirectRecursiveStructHelper>> {
+  ): Promise<Either<Error, IndirectRecursiveStructHelper.Discriminated>> {
     return (
       await this.indirectRecursiveStructHelpers({
         identifiers: [identifier],
@@ -73812,9 +73947,11 @@ export class $SparqlObjectSet implements $ObjectSet {
       IndirectRecursiveStructHelper.Filter,
       IndirectRecursiveStructHelper.Identifier
     >,
-  ): Promise<Either<Error, readonly IndirectRecursiveStructHelper[]>> {
+  ): Promise<
+    Either<Error, readonly IndirectRecursiveStructHelper.Discriminated[]>
+  > {
     return this.#objects<
-      IndirectRecursiveStructHelper,
+      IndirectRecursiveStructHelper.Discriminated,
       IndirectRecursiveStructHelper.Filter,
       IndirectRecursiveStructHelper.Identifier
     >(IndirectRecursiveStructHelper, query);
@@ -73823,7 +73960,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async inIdentifierStruct(
     identifier: InIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, InIdentifierStruct>> {
+  ): Promise<Either<Error, InIdentifierStruct.Discriminated>> {
     return (
       await this.inIdentifierStructs({
         identifiers: [identifier],
@@ -73864,9 +74001,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       InIdentifierStruct.Filter,
       InIdentifierStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly InIdentifierStruct[]>> {
+  ): Promise<Either<Error, readonly InIdentifierStruct.Discriminated[]>> {
     return this.#objects<
-      InIdentifierStruct,
+      InIdentifierStruct.Discriminated,
       InIdentifierStruct.Filter,
       InIdentifierStruct.Identifier
     >(InIdentifierStruct, query);
@@ -73875,7 +74012,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async inPropertiesStruct(
     identifier: InPropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, InPropertiesStruct>> {
+  ): Promise<Either<Error, InPropertiesStruct.Discriminated>> {
     return (
       await this.inPropertiesStructs({
         identifiers: [identifier],
@@ -73916,9 +74053,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       InPropertiesStruct.Filter,
       InPropertiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly InPropertiesStruct[]>> {
+  ): Promise<Either<Error, readonly InPropertiesStruct.Discriminated[]>> {
     return this.#objects<
-      InPropertiesStruct,
+      InPropertiesStruct.Discriminated,
       InPropertiesStruct.Filter,
       InPropertiesStruct.Identifier
     >(InPropertiesStruct, query);
@@ -73927,7 +74064,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async intersectionPropertiesStruct(
     identifier: IntersectionPropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IntersectionPropertiesStruct>> {
+  ): Promise<Either<Error, IntersectionPropertiesStruct.Discriminated>> {
     return (
       await this.intersectionPropertiesStructs({
         identifiers: [identifier],
@@ -73970,9 +74107,11 @@ export class $SparqlObjectSet implements $ObjectSet {
       IntersectionPropertiesStruct.Filter,
       IntersectionPropertiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly IntersectionPropertiesStruct[]>> {
+  ): Promise<
+    Either<Error, readonly IntersectionPropertiesStruct.Discriminated[]>
+  > {
     return this.#objects<
-      IntersectionPropertiesStruct,
+      IntersectionPropertiesStruct.Discriminated,
       IntersectionPropertiesStruct.Filter,
       IntersectionPropertiesStruct.Identifier
     >(IntersectionPropertiesStruct, query);
@@ -73981,7 +74120,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async iriIdentifierStruct(
     identifier: IriIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IriIdentifierStruct>> {
+  ): Promise<Either<Error, IriIdentifierStruct.Discriminated>> {
     return (
       await this.iriIdentifierStructs({
         identifiers: [identifier],
@@ -74022,9 +74161,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       IriIdentifierStruct.Filter,
       IriIdentifierStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly IriIdentifierStruct[]>> {
+  ): Promise<Either<Error, readonly IriIdentifierStruct.Discriminated[]>> {
     return this.#objects<
-      IriIdentifierStruct,
+      IriIdentifierStruct.Discriminated,
       IriIdentifierStruct.Filter,
       IriIdentifierStruct.Identifier
     >(IriIdentifierStruct, query);
@@ -74033,7 +74172,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async langStringStruct(
     identifier: LangStringStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LangStringStruct>> {
+  ): Promise<Either<Error, LangStringStruct.Discriminated>> {
     return (
       await this.langStringStructs({
         identifiers: [identifier],
@@ -74074,9 +74213,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       LangStringStruct.Filter,
       LangStringStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly LangStringStruct[]>> {
+  ): Promise<Either<Error, readonly LangStringStruct.Discriminated[]>> {
     return this.#objects<
-      LangStringStruct,
+      LangStringStruct.Discriminated,
       LangStringStruct.Filter,
       LangStringStruct.Identifier
     >(LangStringStruct, query);
@@ -74085,7 +74224,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async languageInStruct(
     identifier: LanguageInStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LanguageInStruct>> {
+  ): Promise<Either<Error, LanguageInStruct.Discriminated>> {
     return (
       await this.languageInStructs({
         identifiers: [identifier],
@@ -74126,9 +74265,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       LanguageInStruct.Filter,
       LanguageInStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly LanguageInStruct[]>> {
+  ): Promise<Either<Error, readonly LanguageInStruct.Discriminated[]>> {
     return this.#objects<
-      LanguageInStruct,
+      LanguageInStruct.Discriminated,
       LanguageInStruct.Filter,
       LanguageInStruct.Identifier
     >(LanguageInStruct, query);
@@ -74137,7 +74276,9 @@ export class $SparqlObjectSet implements $ObjectSet {
   async lazilyResolvedBlankNodeOrIriIdentifierStruct(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct>> {
+  ): Promise<
+    Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct.Discriminated>
+  > {
     return (
       await this.lazilyResolvedBlankNodeOrIriIdentifierStructs({
         identifiers: [identifier],
@@ -74184,10 +74325,13 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier
     >,
   ): Promise<
-    Either<Error, readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]>
+    Either<
+      Error,
+      readonly LazilyResolvedBlankNodeOrIriIdentifierStruct.Discriminated[]
+    >
   > {
     return this.#objects<
-      LazilyResolvedBlankNodeOrIriIdentifierStruct,
+      LazilyResolvedBlankNodeOrIriIdentifierStruct.Discriminated,
       LazilyResolvedBlankNodeOrIriIdentifierStruct.Filter,
       LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier
     >(LazilyResolvedBlankNodeOrIriIdentifierStruct, query);
@@ -74196,7 +74340,9 @@ export class $SparqlObjectSet implements $ObjectSet {
   async lazilyResolvedDiscriminatedUnionMember1(
     identifier: LazilyResolvedDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazilyResolvedDiscriminatedUnionMember1>> {
+  ): Promise<
+    Either<Error, LazilyResolvedDiscriminatedUnionMember1.Discriminated>
+  > {
     return (
       await this.lazilyResolvedDiscriminatedUnionMember1s({
         identifiers: [identifier],
@@ -74240,10 +74386,13 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedDiscriminatedUnionMember1.Identifier
     >,
   ): Promise<
-    Either<Error, readonly LazilyResolvedDiscriminatedUnionMember1[]>
+    Either<
+      Error,
+      readonly LazilyResolvedDiscriminatedUnionMember1.Discriminated[]
+    >
   > {
     return this.#objects<
-      LazilyResolvedDiscriminatedUnionMember1,
+      LazilyResolvedDiscriminatedUnionMember1.Discriminated,
       LazilyResolvedDiscriminatedUnionMember1.Filter,
       LazilyResolvedDiscriminatedUnionMember1.Identifier
     >(LazilyResolvedDiscriminatedUnionMember1, query);
@@ -74252,7 +74401,9 @@ export class $SparqlObjectSet implements $ObjectSet {
   async lazilyResolvedDiscriminatedUnionMember2(
     identifier: LazilyResolvedDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazilyResolvedDiscriminatedUnionMember2>> {
+  ): Promise<
+    Either<Error, LazilyResolvedDiscriminatedUnionMember2.Discriminated>
+  > {
     return (
       await this.lazilyResolvedDiscriminatedUnionMember2s({
         identifiers: [identifier],
@@ -74296,10 +74447,13 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedDiscriminatedUnionMember2.Identifier
     >,
   ): Promise<
-    Either<Error, readonly LazilyResolvedDiscriminatedUnionMember2[]>
+    Either<
+      Error,
+      readonly LazilyResolvedDiscriminatedUnionMember2.Discriminated[]
+    >
   > {
     return this.#objects<
-      LazilyResolvedDiscriminatedUnionMember2,
+      LazilyResolvedDiscriminatedUnionMember2.Discriminated,
       LazilyResolvedDiscriminatedUnionMember2.Filter,
       LazilyResolvedDiscriminatedUnionMember2.Identifier
     >(LazilyResolvedDiscriminatedUnionMember2, query);
@@ -74308,7 +74462,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async lazilyResolvedIriIdentifierStruct(
     identifier: LazilyResolvedIriIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazilyResolvedIriIdentifierStruct>> {
+  ): Promise<Either<Error, LazilyResolvedIriIdentifierStruct.Discriminated>> {
     return (
       await this.lazilyResolvedIriIdentifierStructs({
         identifiers: [identifier],
@@ -74351,9 +74505,11 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedIriIdentifierStruct.Filter,
       LazilyResolvedIriIdentifierStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly LazilyResolvedIriIdentifierStruct[]>> {
+  ): Promise<
+    Either<Error, readonly LazilyResolvedIriIdentifierStruct.Discriminated[]>
+  > {
     return this.#objects<
-      LazilyResolvedIriIdentifierStruct,
+      LazilyResolvedIriIdentifierStruct.Discriminated,
       LazilyResolvedIriIdentifierStruct.Filter,
       LazilyResolvedIriIdentifierStruct.Identifier
     >(LazilyResolvedIriIdentifierStruct, query);
@@ -74362,7 +74518,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async lazyPropertiesStruct(
     identifier: LazyPropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, LazyPropertiesStruct>> {
+  ): Promise<Either<Error, LazyPropertiesStruct.Discriminated>> {
     return (
       await this.lazyPropertiesStructs({
         identifiers: [identifier],
@@ -74403,9 +74559,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazyPropertiesStruct.Filter,
       LazyPropertiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly LazyPropertiesStruct[]>> {
+  ): Promise<Either<Error, readonly LazyPropertiesStruct.Discriminated[]>> {
     return this.#objects<
-      LazyPropertiesStruct,
+      LazyPropertiesStruct.Discriminated,
       LazyPropertiesStruct.Filter,
       LazyPropertiesStruct.Identifier
     >(LazyPropertiesStruct, query);
@@ -74414,7 +74570,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async listSetsStruct(
     identifier: ListSetsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ListSetsStruct>> {
+  ): Promise<Either<Error, ListSetsStruct.Discriminated>> {
     return (
       await this.listSetsStructs({
         identifiers: [identifier],
@@ -74452,9 +74608,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       ListSetsStruct.Filter,
       ListSetsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly ListSetsStruct[]>> {
+  ): Promise<Either<Error, readonly ListSetsStruct.Discriminated[]>> {
     return this.#objects<
-      ListSetsStruct,
+      ListSetsStruct.Discriminated,
       ListSetsStruct.Filter,
       ListSetsStruct.Identifier
     >(ListSetsStruct, query);
@@ -74463,7 +74619,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async listsStruct(
     identifier: ListsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ListsStruct>> {
+  ): Promise<Either<Error, ListsStruct.Discriminated>> {
     return (
       await this.listsStructs({
         identifiers: [identifier],
@@ -74495,9 +74651,9 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async listsStructs(
     query?: $SparqlObjectSet.Query<ListsStruct.Filter, ListsStruct.Identifier>,
-  ): Promise<Either<Error, readonly ListsStruct[]>> {
+  ): Promise<Either<Error, readonly ListsStruct.Discriminated[]>> {
     return this.#objects<
-      ListsStruct,
+      ListsStruct.Discriminated,
       ListsStruct.Filter,
       ListsStruct.Identifier
     >(ListsStruct, query);
@@ -74506,7 +74662,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async mutablePropertiesStruct(
     identifier: MutablePropertiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, MutablePropertiesStruct>> {
+  ): Promise<Either<Error, MutablePropertiesStruct.Discriminated>> {
     return (
       await this.mutablePropertiesStructs({
         identifiers: [identifier],
@@ -74547,9 +74703,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       MutablePropertiesStruct.Filter,
       MutablePropertiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly MutablePropertiesStruct[]>> {
+  ): Promise<Either<Error, readonly MutablePropertiesStruct.Discriminated[]>> {
     return this.#objects<
-      MutablePropertiesStruct,
+      MutablePropertiesStruct.Discriminated,
       MutablePropertiesStruct.Filter,
       MutablePropertiesStruct.Identifier
     >(MutablePropertiesStruct, query);
@@ -74558,7 +74714,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async namedTypesStruct(
     identifier: NamedTypesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NamedTypesStruct>> {
+  ): Promise<Either<Error, NamedTypesStruct.Discriminated>> {
     return (
       await this.namedTypesStructs({
         identifiers: [identifier],
@@ -74599,9 +74755,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       NamedTypesStruct.Filter,
       NamedTypesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly NamedTypesStruct[]>> {
+  ): Promise<Either<Error, readonly NamedTypesStruct.Discriminated[]>> {
     return this.#objects<
-      NamedTypesStruct,
+      NamedTypesStruct.Discriminated,
       NamedTypesStruct.Filter,
       NamedTypesStruct.Identifier
     >(NamedTypesStruct, query);
@@ -74610,7 +74766,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async newName(
     identifier: NewName.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NewName>> {
+  ): Promise<Either<Error, NewName.Discriminated>> {
     return (
       await this.newNames({
         identifiers: [identifier],
@@ -74642,17 +74798,18 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async newNames(
     query?: $SparqlObjectSet.Query<NewName.Filter, NewName.Identifier>,
-  ): Promise<Either<Error, readonly NewName[]>> {
-    return this.#objects<NewName, NewName.Filter, NewName.Identifier>(
-      NewName,
-      query,
-    );
+  ): Promise<Either<Error, readonly NewName.Discriminated[]>> {
+    return this.#objects<
+      NewName.Discriminated,
+      NewName.Filter,
+      NewName.Identifier
+    >(NewName, query);
   }
 
   async nodeKindsStruct(
     identifier: NodeKindsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NodeKindsStruct>> {
+  ): Promise<Either<Error, NodeKindsStruct.Discriminated>> {
     return (
       await this.nodeKindsStructs({
         identifiers: [identifier],
@@ -74693,9 +74850,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       NodeKindsStruct.Filter,
       NodeKindsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly NodeKindsStruct[]>> {
+  ): Promise<Either<Error, readonly NodeKindsStruct.Discriminated[]>> {
     return this.#objects<
-      NodeKindsStruct,
+      NodeKindsStruct.Discriminated,
       NodeKindsStruct.Filter,
       NodeKindsStruct.Identifier
     >(NodeKindsStruct, query);
@@ -74704,7 +74861,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async nonClassStruct(
     identifier: NonClassStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NonClassStruct>> {
+  ): Promise<Either<Error, NonClassStruct.Discriminated>> {
     return (
       await this.nonClassStructs({
         identifiers: [identifier],
@@ -74742,9 +74899,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       NonClassStruct.Filter,
       NonClassStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly NonClassStruct[]>> {
+  ): Promise<Either<Error, readonly NonClassStruct.Discriminated[]>> {
     return this.#objects<
-      NonClassStruct,
+      NonClassStruct.Discriminated,
       NonClassStruct.Filter,
       NonClassStruct.Identifier
     >(NonClassStruct, query);
@@ -74753,7 +74910,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async noRdfTypeDiscriminatedUnionMember1(
     identifier: NoRdfTypeDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnionMember1>> {
+  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnionMember1.Discriminated>> {
     return (
       await this.noRdfTypeDiscriminatedUnionMember1s({
         identifiers: [identifier],
@@ -74796,9 +74953,11 @@ export class $SparqlObjectSet implements $ObjectSet {
       NoRdfTypeDiscriminatedUnionMember1.Filter,
       NoRdfTypeDiscriminatedUnionMember1.Identifier
     >,
-  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnionMember1[]>> {
+  ): Promise<
+    Either<Error, readonly NoRdfTypeDiscriminatedUnionMember1.Discriminated[]>
+  > {
     return this.#objects<
-      NoRdfTypeDiscriminatedUnionMember1,
+      NoRdfTypeDiscriminatedUnionMember1.Discriminated,
       NoRdfTypeDiscriminatedUnionMember1.Filter,
       NoRdfTypeDiscriminatedUnionMember1.Identifier
     >(NoRdfTypeDiscriminatedUnionMember1, query);
@@ -74807,7 +74966,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async noRdfTypeDiscriminatedUnionMember2(
     identifier: NoRdfTypeDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnionMember2>> {
+  ): Promise<Either<Error, NoRdfTypeDiscriminatedUnionMember2.Discriminated>> {
     return (
       await this.noRdfTypeDiscriminatedUnionMember2s({
         identifiers: [identifier],
@@ -74850,9 +75009,11 @@ export class $SparqlObjectSet implements $ObjectSet {
       NoRdfTypeDiscriminatedUnionMember2.Filter,
       NoRdfTypeDiscriminatedUnionMember2.Identifier
     >,
-  ): Promise<Either<Error, readonly NoRdfTypeDiscriminatedUnionMember2[]>> {
+  ): Promise<
+    Either<Error, readonly NoRdfTypeDiscriminatedUnionMember2.Discriminated[]>
+  > {
     return this.#objects<
-      NoRdfTypeDiscriminatedUnionMember2,
+      NoRdfTypeDiscriminatedUnionMember2.Discriminated,
       NoRdfTypeDiscriminatedUnionMember2.Filter,
       NoRdfTypeDiscriminatedUnionMember2.Identifier
     >(NoRdfTypeDiscriminatedUnionMember2, query);
@@ -74861,7 +75022,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async numericsStruct(
     identifier: NumericsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NumericsStruct>> {
+  ): Promise<Either<Error, NumericsStruct.Discriminated>> {
     return (
       await this.numericsStructs({
         identifiers: [identifier],
@@ -74899,9 +75060,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       NumericsStruct.Filter,
       NumericsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly NumericsStruct[]>> {
+  ): Promise<Either<Error, readonly NumericsStruct.Discriminated[]>> {
     return this.#objects<
-      NumericsStruct,
+      NumericsStruct.Discriminated,
       NumericsStruct.Filter,
       NumericsStruct.Identifier
     >(NumericsStruct, query);
@@ -74910,7 +75071,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async orderedStruct(
     identifier: OrderedStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, OrderedStruct>> {
+  ): Promise<Either<Error, OrderedStruct.Discriminated>> {
     return (
       await this.orderedStructs({
         identifiers: [identifier],
@@ -74948,9 +75109,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       OrderedStruct.Filter,
       OrderedStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly OrderedStruct[]>> {
+  ): Promise<Either<Error, readonly OrderedStruct.Discriminated[]>> {
     return this.#objects<
-      OrderedStruct,
+      OrderedStruct.Discriminated,
       OrderedStruct.Filter,
       OrderedStruct.Identifier
     >(OrderedStruct, query);
@@ -74959,7 +75120,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async partialDiscriminatedUnionMember1(
     identifier: PartialDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PartialDiscriminatedUnionMember1>> {
+  ): Promise<Either<Error, PartialDiscriminatedUnionMember1.Discriminated>> {
     return (
       await this.partialDiscriminatedUnionMember1s({
         identifiers: [identifier],
@@ -75002,9 +75163,11 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialDiscriminatedUnionMember1.Filter,
       PartialDiscriminatedUnionMember1.Identifier
     >,
-  ): Promise<Either<Error, readonly PartialDiscriminatedUnionMember1[]>> {
+  ): Promise<
+    Either<Error, readonly PartialDiscriminatedUnionMember1.Discriminated[]>
+  > {
     return this.#objects<
-      PartialDiscriminatedUnionMember1,
+      PartialDiscriminatedUnionMember1.Discriminated,
       PartialDiscriminatedUnionMember1.Filter,
       PartialDiscriminatedUnionMember1.Identifier
     >(PartialDiscriminatedUnionMember1, query);
@@ -75013,7 +75176,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async partialDiscriminatedUnionMember2(
     identifier: PartialDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PartialDiscriminatedUnionMember2>> {
+  ): Promise<Either<Error, PartialDiscriminatedUnionMember2.Discriminated>> {
     return (
       await this.partialDiscriminatedUnionMember2s({
         identifiers: [identifier],
@@ -75056,9 +75219,11 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialDiscriminatedUnionMember2.Filter,
       PartialDiscriminatedUnionMember2.Identifier
     >,
-  ): Promise<Either<Error, readonly PartialDiscriminatedUnionMember2[]>> {
+  ): Promise<
+    Either<Error, readonly PartialDiscriminatedUnionMember2.Discriminated[]>
+  > {
     return this.#objects<
-      PartialDiscriminatedUnionMember2,
+      PartialDiscriminatedUnionMember2.Discriminated,
       PartialDiscriminatedUnionMember2.Filter,
       PartialDiscriminatedUnionMember2.Identifier
     >(PartialDiscriminatedUnionMember2, query);
@@ -75067,7 +75232,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async partialStruct(
     identifier: PartialStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PartialStruct>> {
+  ): Promise<Either<Error, PartialStruct.Discriminated>> {
     return (
       await this.partialStructs({
         identifiers: [identifier],
@@ -75105,9 +75270,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialStruct.Filter,
       PartialStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly PartialStruct[]>> {
+  ): Promise<Either<Error, readonly PartialStruct.Discriminated[]>> {
     return this.#objects<
-      PartialStruct,
+      PartialStruct.Discriminated,
       PartialStruct.Filter,
       PartialStruct.Identifier
     >(PartialStruct, query);
@@ -75116,7 +75281,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async propertyCardinalitiesStruct(
     identifier: PropertyCardinalitiesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PropertyCardinalitiesStruct>> {
+  ): Promise<Either<Error, PropertyCardinalitiesStruct.Discriminated>> {
     return (
       await this.propertyCardinalitiesStructs({
         identifiers: [identifier],
@@ -75157,9 +75322,11 @@ export class $SparqlObjectSet implements $ObjectSet {
       PropertyCardinalitiesStruct.Filter,
       PropertyCardinalitiesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly PropertyCardinalitiesStruct[]>> {
+  ): Promise<
+    Either<Error, readonly PropertyCardinalitiesStruct.Discriminated[]>
+  > {
     return this.#objects<
-      PropertyCardinalitiesStruct,
+      PropertyCardinalitiesStruct.Discriminated,
       PropertyCardinalitiesStruct.Filter,
       PropertyCardinalitiesStruct.Identifier
     >(PropertyCardinalitiesStruct, query);
@@ -75168,7 +75335,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async propertyNamesStruct(
     identifier: PropertyNamesStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PropertyNamesStruct>> {
+  ): Promise<Either<Error, PropertyNamesStruct.Discriminated>> {
     return (
       await this.propertyNamesStructs({
         identifiers: [identifier],
@@ -75209,9 +75376,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       PropertyNamesStruct.Filter,
       PropertyNamesStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly PropertyNamesStruct[]>> {
+  ): Promise<Either<Error, readonly PropertyNamesStruct.Discriminated[]>> {
     return this.#objects<
-      PropertyNamesStruct,
+      PropertyNamesStruct.Discriminated,
       PropertyNamesStruct.Filter,
       PropertyNamesStruct.Identifier
     >(PropertyNamesStruct, query);
@@ -75220,7 +75387,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async propertyPathsStruct(
     identifier: PropertyPathsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PropertyPathsStruct>> {
+  ): Promise<Either<Error, PropertyPathsStruct.Discriminated>> {
     return (
       await this.propertyPathsStructs({
         identifiers: [identifier],
@@ -75261,9 +75428,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       PropertyPathsStruct.Filter,
       PropertyPathsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly PropertyPathsStruct[]>> {
+  ): Promise<Either<Error, readonly PropertyPathsStruct.Discriminated[]>> {
     return this.#objects<
-      PropertyPathsStruct,
+      PropertyPathsStruct.Discriminated,
       PropertyPathsStruct.Filter,
       PropertyPathsStruct.Identifier
     >(PropertyPathsStruct, query);
@@ -75272,7 +75439,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async recursiveDiscriminatedUnionMember1(
     identifier: RecursiveDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, RecursiveDiscriminatedUnionMember1>> {
+  ): Promise<Either<Error, RecursiveDiscriminatedUnionMember1.Discriminated>> {
     return (
       await this.recursiveDiscriminatedUnionMember1s({
         identifiers: [identifier],
@@ -75315,9 +75482,11 @@ export class $SparqlObjectSet implements $ObjectSet {
       RecursiveDiscriminatedUnionMember1.Filter,
       RecursiveDiscriminatedUnionMember1.Identifier
     >,
-  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnionMember1[]>> {
+  ): Promise<
+    Either<Error, readonly RecursiveDiscriminatedUnionMember1.Discriminated[]>
+  > {
     return this.#objects<
-      RecursiveDiscriminatedUnionMember1,
+      RecursiveDiscriminatedUnionMember1.Discriminated,
       RecursiveDiscriminatedUnionMember1.Filter,
       RecursiveDiscriminatedUnionMember1.Identifier
     >(RecursiveDiscriminatedUnionMember1, query);
@@ -75326,7 +75495,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async recursiveDiscriminatedUnionMember2(
     identifier: RecursiveDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, RecursiveDiscriminatedUnionMember2>> {
+  ): Promise<Either<Error, RecursiveDiscriminatedUnionMember2.Discriminated>> {
     return (
       await this.recursiveDiscriminatedUnionMember2s({
         identifiers: [identifier],
@@ -75369,9 +75538,11 @@ export class $SparqlObjectSet implements $ObjectSet {
       RecursiveDiscriminatedUnionMember2.Filter,
       RecursiveDiscriminatedUnionMember2.Identifier
     >,
-  ): Promise<Either<Error, readonly RecursiveDiscriminatedUnionMember2[]>> {
+  ): Promise<
+    Either<Error, readonly RecursiveDiscriminatedUnionMember2.Discriminated[]>
+  > {
     return this.#objects<
-      RecursiveDiscriminatedUnionMember2,
+      RecursiveDiscriminatedUnionMember2.Discriminated,
       RecursiveDiscriminatedUnionMember2.Filter,
       RecursiveDiscriminatedUnionMember2.Identifier
     >(RecursiveDiscriminatedUnionMember2, query);
@@ -75380,7 +75551,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async structDiscriminatedUnionMember1(
     identifier: StructDiscriminatedUnionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructDiscriminatedUnionMember1>> {
+  ): Promise<Either<Error, StructDiscriminatedUnionMember1.Discriminated>> {
     return (
       await this.structDiscriminatedUnionMember1s({
         identifiers: [identifier],
@@ -75423,9 +75594,11 @@ export class $SparqlObjectSet implements $ObjectSet {
       StructDiscriminatedUnionMember1.Filter,
       StructDiscriminatedUnionMember1.Identifier
     >,
-  ): Promise<Either<Error, readonly StructDiscriminatedUnionMember1[]>> {
+  ): Promise<
+    Either<Error, readonly StructDiscriminatedUnionMember1.Discriminated[]>
+  > {
     return this.#objects<
-      StructDiscriminatedUnionMember1,
+      StructDiscriminatedUnionMember1.Discriminated,
       StructDiscriminatedUnionMember1.Filter,
       StructDiscriminatedUnionMember1.Identifier
     >(StructDiscriminatedUnionMember1, query);
@@ -75434,7 +75607,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async structDiscriminatedUnionMember2(
     identifier: StructDiscriminatedUnionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructDiscriminatedUnionMember2>> {
+  ): Promise<Either<Error, StructDiscriminatedUnionMember2.Discriminated>> {
     return (
       await this.structDiscriminatedUnionMember2s({
         identifiers: [identifier],
@@ -75477,9 +75650,11 @@ export class $SparqlObjectSet implements $ObjectSet {
       StructDiscriminatedUnionMember2.Filter,
       StructDiscriminatedUnionMember2.Identifier
     >,
-  ): Promise<Either<Error, readonly StructDiscriminatedUnionMember2[]>> {
+  ): Promise<
+    Either<Error, readonly StructDiscriminatedUnionMember2.Discriminated[]>
+  > {
     return this.#objects<
-      StructDiscriminatedUnionMember2,
+      StructDiscriminatedUnionMember2.Discriminated,
       StructDiscriminatedUnionMember2.Filter,
       StructDiscriminatedUnionMember2.Identifier
     >(StructDiscriminatedUnionMember2, query);
@@ -75488,7 +75663,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async structInheritance1(
     identifier: StructInheritance1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructInheritance1>> {
+  ): Promise<Either<Error, StructInheritance1.Discriminated>> {
     return (
       await this.structInheritance1s({
         identifiers: [identifier],
@@ -75529,9 +75704,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       StructInheritance1.Filter,
       StructInheritance1.Identifier
     >,
-  ): Promise<Either<Error, readonly StructInheritance1[]>> {
+  ): Promise<Either<Error, readonly StructInheritance1.Discriminated[]>> {
     return this.#objects<
-      StructInheritance1,
+      StructInheritance1.Discriminated,
       StructInheritance1.Filter,
       StructInheritance1.Identifier
     >(StructInheritance1, query);
@@ -75540,7 +75715,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async structIntersectionMember1(
     identifier: StructIntersectionMember1.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructIntersectionMember1>> {
+  ): Promise<Either<Error, StructIntersectionMember1.Discriminated>> {
     return (
       await this.structIntersectionMember1s({
         identifiers: [identifier],
@@ -75581,9 +75756,11 @@ export class $SparqlObjectSet implements $ObjectSet {
       StructIntersectionMember1.Filter,
       StructIntersectionMember1.Identifier
     >,
-  ): Promise<Either<Error, readonly StructIntersectionMember1[]>> {
+  ): Promise<
+    Either<Error, readonly StructIntersectionMember1.Discriminated[]>
+  > {
     return this.#objects<
-      StructIntersectionMember1,
+      StructIntersectionMember1.Discriminated,
       StructIntersectionMember1.Filter,
       StructIntersectionMember1.Identifier
     >(StructIntersectionMember1, query);
@@ -75592,7 +75769,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async structIntersectionMember2(
     identifier: StructIntersectionMember2.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, StructIntersectionMember2>> {
+  ): Promise<Either<Error, StructIntersectionMember2.Discriminated>> {
     return (
       await this.structIntersectionMember2s({
         identifiers: [identifier],
@@ -75633,9 +75810,11 @@ export class $SparqlObjectSet implements $ObjectSet {
       StructIntersectionMember2.Filter,
       StructIntersectionMember2.Identifier
     >,
-  ): Promise<Either<Error, readonly StructIntersectionMember2[]>> {
+  ): Promise<
+    Either<Error, readonly StructIntersectionMember2.Discriminated[]>
+  > {
     return this.#objects<
-      StructIntersectionMember2,
+      StructIntersectionMember2.Discriminated,
       StructIntersectionMember2.Filter,
       StructIntersectionMember2.Identifier
     >(StructIntersectionMember2, query);
@@ -75644,7 +75823,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async targetClassStruct(
     identifier: TargetClassStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, TargetClassStruct>> {
+  ): Promise<Either<Error, TargetClassStruct.Discriminated>> {
     return (
       await this.targetClassStructs({
         identifiers: [identifier],
@@ -75685,9 +75864,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       TargetClassStruct.Filter,
       TargetClassStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly TargetClassStruct[]>> {
+  ): Promise<Either<Error, readonly TargetClassStruct.Discriminated[]>> {
     return this.#objects<
-      TargetClassStruct,
+      TargetClassStruct.Discriminated,
       TargetClassStruct.Filter,
       TargetClassStruct.Identifier
     >(TargetClassStruct, query);
@@ -75696,7 +75875,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async termsStruct(
     identifier: TermsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, TermsStruct>> {
+  ): Promise<Either<Error, TermsStruct.Discriminated>> {
     return (
       await this.termsStructs({
         identifiers: [identifier],
@@ -75728,9 +75907,9 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async termsStructs(
     query?: $SparqlObjectSet.Query<TermsStruct.Filter, TermsStruct.Identifier>,
-  ): Promise<Either<Error, readonly TermsStruct[]>> {
+  ): Promise<Either<Error, readonly TermsStruct.Discriminated[]>> {
     return this.#objects<
-      TermsStruct,
+      TermsStruct.Discriminated,
       TermsStruct.Filter,
       TermsStruct.Identifier
     >(TermsStruct, query);
@@ -75739,7 +75918,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   async unionDiscriminantsStruct(
     identifier: UnionDiscriminantsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, UnionDiscriminantsStruct>> {
+  ): Promise<Either<Error, UnionDiscriminantsStruct.Discriminated>> {
     return (
       await this.unionDiscriminantsStructs({
         identifiers: [identifier],
@@ -75780,9 +75959,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       UnionDiscriminantsStruct.Filter,
       UnionDiscriminantsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly UnionDiscriminantsStruct[]>> {
+  ): Promise<Either<Error, readonly UnionDiscriminantsStruct.Discriminated[]>> {
     return this.#objects<
-      UnionDiscriminantsStruct,
+      UnionDiscriminantsStruct.Discriminated,
       UnionDiscriminantsStruct.Filter,
       UnionDiscriminantsStruct.Identifier
     >(UnionDiscriminantsStruct, query);
@@ -75878,7 +76057,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async #objects<
-    ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
+    ObjectT extends {
+      readonly $identifier: () => ObjectIdentifierT;
+      $type: string;
+    },
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(

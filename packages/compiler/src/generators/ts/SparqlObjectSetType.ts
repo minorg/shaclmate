@@ -54,7 +54,7 @@ async ${methodSignatures.objectIdentifiers.name}(${methodSignatures.objectIdenti
 }`,
       code`\
 async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): ${methodSignatures.objects.asyncReturnType} {
-  return this.#objects<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType}, query);
+  return this.#objects<${namedObjectType.discriminatedType.unsafeCoerce().expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType}, query);
 }`,
     ];
   }),
