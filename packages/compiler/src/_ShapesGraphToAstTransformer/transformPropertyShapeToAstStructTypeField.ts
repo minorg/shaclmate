@@ -1,4 +1,4 @@
-import { Curie } from "@rdfx/curie";
+import { Curie } from "@rdfx/iri";
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import { sh } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";

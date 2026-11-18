@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { Readable } from "node:stream";
 import type { DatasetCore } from "@rdfjs/types";
-import { datasetFactory, type PrefixMap } from "@rdfx/collection";
+import { datasetFactory } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { type Logger, nopLogger } from "@rdfx/logger";
 import parsers from "@rdfx/parser";

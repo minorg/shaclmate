@@ -43,7 +43,6 @@ import { snippets_LiteralJsonObject } from "./_snippets/snippets_LiteralJsonObje
 import { snippets_LiteralSchema } from "./_snippets/snippets_LiteralSchema.js";
 import { snippets_MaybeFilter } from "./_snippets/snippets_MaybeFilter.js";
 import { snippets_MaybeSchema } from "./_snippets/snippets_MaybeSchema.js";
-import { snippets_NamespaceBuilder } from "./_snippets/snippets_NamespaceBuilder.js";
 import { snippets_NumericFilter } from "./_snippets/snippets_NumericFilter.js";
 import { snippets_NumericSchema } from "./_snippets/snippets_NumericSchema.js";
 import { snippets_ObjectTypeGuardFunction } from "./_snippets/snippets_ObjectTypeGuardFunction.js";
@@ -476,11 +475,6 @@ export class Snippets {
   @Memoize()
   get MaybeSchema(): Snippet {
     return this.snippet(snippets_MaybeSchema);
-  }
-
-  @Memoize()
-  get NamespaceBuilder(): Snippet {
-    return this.snippet(snippets_NamespaceBuilder);
   }
 
   @Memoize()

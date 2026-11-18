@@ -514,8 +514,6 @@
     "dist/generators/ts/_snippets/snippets_MaybeFilter.js",
     "dist/generators/ts/_snippets/snippets_MaybeSchema.d.ts",
     "dist/generators/ts/_snippets/snippets_MaybeSchema.js",
-    "dist/generators/ts/_snippets/snippets_NamespaceBuilder.d.ts",
-    "dist/generators/ts/_snippets/snippets_NamespaceBuilder.js",
     "dist/generators/ts/_snippets/snippets_NumericFilter.d.ts",
     "dist/generators/ts/_snippets/snippets_NumericFilter.js",
     "dist/generators/ts/_snippets/snippets_NumericSchema.d.ts",

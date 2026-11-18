@@ -7,8 +7,8 @@ import type {
   Variable,
 } from "@rdfjs/types";
 import { datasetFactory } from "@rdfx/collection";
-import { expandIri } from "@rdfx/curie";
 import dataFactory from "@rdfx/data-factory";
+import { expandIri } from "@rdfx/iri";
 import { LiteralFactory } from "@rdfx/literal";
 import {
   PropertyPath as RdfxResourcePropertyPath,

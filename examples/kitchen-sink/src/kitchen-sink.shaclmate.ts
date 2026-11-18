@@ -8,8 +8,8 @@ import type {
   Variable,
 } from "@rdfjs/types";
 import { datasetFactory, type PrefixMap } from "@rdfx/collection";
-import { expandIri } from "@rdfx/curie";
 import dataFactory from "@rdfx/data-factory";
+import { expandIri } from "@rdfx/iri";
 import { LiteralDecoder, LiteralFactory } from "@rdfx/literal";
 import {
   PropertyPath as RdfxResourcePropertyPath,

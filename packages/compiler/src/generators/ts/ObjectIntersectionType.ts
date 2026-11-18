@@ -192,7 +192,7 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectInter
 
     if (this.configuration.features.has("Object.create")) {
       staticModuleDeclarations["CreateParameters"] =
-        code`export type CreateParameters<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}> = ${this.createFunctionParameters.type.inlineExpression};`;
+        code`export type CreateParameters<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.imports.NamespaceBuilder} = ${this.reusables.imports.NamespaceBuilder}> = ${this.createFunctionParameters.type.inlineExpression};`;
       addFunctionDeclaration(this.createFunction);
       addFunctionDeclaration(this.createUnsafeFunction);
     }

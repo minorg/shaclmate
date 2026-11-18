@@ -5,8 +5,8 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
-import { expandIri } from "@rdfx/curie";
 import dataFactory from "@rdfx/data-factory";
+import { expandIri } from "@rdfx/iri";
 import { LiteralFactory } from "@rdfx/literal";
 import {
   PropertyPath as RdfxResourcePropertyPath,

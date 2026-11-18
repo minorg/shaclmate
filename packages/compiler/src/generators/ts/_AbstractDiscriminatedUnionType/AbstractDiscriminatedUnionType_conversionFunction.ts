@@ -117,7 +117,7 @@ export function AbstractDiscriminatedUnionType_conversionFunctionExpression<
     const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
     return Maybe.of({
       code: code`\
-(<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(value: ${joinCode(
+(<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.imports.NamespaceBuilder} = ${this.reusables.imports.NamespaceBuilder}>(value: ${joinCode(
         sourceTypes.map((sourceType) => sourceType.expression),
         { on: " | " },
       )}, defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT): ${this.reusables.imports.Either}<Error, ${this.expression}> => {

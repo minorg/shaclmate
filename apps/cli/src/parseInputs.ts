@@ -1,7 +1,8 @@
 import type { DatasetCore } from "@rdfjs/types";
-import { datasetFactory, PrefixMap } from "@rdfx/collection";
+import { datasetFactory } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { RdfFileSystemEntry } from "@rdfx/fs";
+import { PrefixMap } from "@rdfx/iri";
 import { type Either, EitherAsync } from "purify-ts";
 import { logger } from "./logger.js";
 

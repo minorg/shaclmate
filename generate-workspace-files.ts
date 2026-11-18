@@ -164,6 +164,7 @@ const workspaces = {
           "@rdfjs/types",
           "@rdfx/collection",
           "@rdfx/data-factory",
+          "@rdfx/iri",
           "@rdfx/fs",
           "@rdfx/logger",
           "@rdfx/serializer",
@@ -393,6 +394,7 @@ const workspaces = {
       dependencies: {
         external: [
           "@rdfx/collection",
+          "@rdfx/iri",
           "@rdfjs/types",
           "@rdfx/data-factory",
           "@rdfx/logger",

@@ -9,7 +9,7 @@ export const snippets_convertToMutableScalarSet: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToMutableScalarSet`,
     code`\
-function ${syntheticNamePrefix}convertToMutableScalarSet<DefaultNamespaceT extends ${snippets.NamespaceBuilder}, ItemSourceT, ItemTargetT>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT, DefaultNamespaceT>): ${snippets.ConversionFunction}<ItemSourceT | readonly ItemSourceT[] | undefined, ItemTargetT[], DefaultNamespaceT> {
+function ${syntheticNamePrefix}convertToMutableScalarSet<DefaultNamespaceT extends ${imports.NamespaceBuilder}, ItemSourceT, ItemTargetT>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT, DefaultNamespaceT>): ${snippets.ConversionFunction}<ItemSourceT | readonly ItemSourceT[] | undefined, ItemTargetT[], DefaultNamespaceT> {
   return (value, defaultNamespace) => {
     if (typeof value === "undefined") {
       return ${imports.Either}.of<Error, ItemTargetT[]>([] as unknown as ItemTargetT[]);

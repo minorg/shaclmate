@@ -8,7 +8,7 @@ export class Imports {
   readonly datasetFactory = imp("datasetFactory@@rdfx/collection");
   readonly Either = imp("Either@purify-ts");
   readonly EitherAsync = imp("EitherAsync@purify-ts");
-  readonly expandIri = imp("expandIri@@rdfx/curie");
+  readonly expandIri = imp("expandIri@@rdfx/iri");
   readonly GraphQLBigInt = imp("BigInt:GraphQLBigInt@graphql-scalars");
   readonly GraphQLBoolean = imp("GraphQLBoolean@graphql");
   readonly GraphQLDate = imp("Date:GraphQLDate@graphql-scalars");
@@ -37,13 +37,14 @@ export class Imports {
   readonly Logger = imp("t:Logger@@rdfx/logger");
   readonly Maybe = imp("Maybe@purify-ts");
   readonly NamedNode = imp("t:NamedNode@@rdfjs/types");
+  readonly NamespaceBuilder = imp("t:NamespaceBuilder@@rdfx/iri");
   readonly NonEmptyList = imp("NonEmptyList@purify-ts");
   readonly nopLogger = imp("nopLogger@@rdfx/logger");
   readonly NTriplesIdentifier = imp("NTriplesIdentifier@@rdfx/string");
   readonly NTriplesTerm = imp("NTriplesTerm@@rdfx/string");
   readonly Quad = imp("t:Quad@@rdfjs/types");
   readonly Quad_Graph = imp("t:Quad_Graph@@rdfjs/types");
-  readonly PrefixMap = imp("t:PrefixMap@@rdfx/collection");
+  readonly PrefixMap = imp("t:PrefixMap@@rdfx/iri");
   readonly RdfxResourcePropertyPath = imp(
     "PropertyPath:RdfxResourcePropertyPath@@rdfx/resource",
   );

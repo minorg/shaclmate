@@ -3,13 +3,12 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_convertToIriLiteralIdentifierProperty: SnippetFactory = ({
   imports,
-  snippets,
   syntheticNamePrefix,
 }) =>
   conditionalOutput(
     `${syntheticNamePrefix}convertToIriLiteralIdentifierProperty`,
     code`\
-function ${syntheticNamePrefix}convertToIriLiteralIdentifierProperty<InIriT extends string>(identifier: (() => ${imports.NamedNode}<InIriT>) | ${imports.NamedNode}<InIriT> | InIriT, _defaultNamespace?: ${snippets.NamespaceBuilder}): ${imports.Either}<Error, (() => ${imports.NamedNode}<InIriT>)> {
+function ${syntheticNamePrefix}convertToIriLiteralIdentifierProperty<InIriT extends string>(identifier: (() => ${imports.NamedNode}<InIriT>) | ${imports.NamedNode}<InIriT> | InIriT, _defaultNamespace?: ${imports.NamespaceBuilder}): ${imports.Either}<Error, (() => ${imports.NamedNode}<InIriT>)> {
   switch (typeof identifier) {
     case "function":
       return ${imports.Either}.of(identifier);

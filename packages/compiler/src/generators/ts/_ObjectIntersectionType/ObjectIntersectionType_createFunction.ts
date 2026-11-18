@@ -46,7 +46,7 @@ export function ObjectIntersectionType_createFunction(
   this: ObjectIntersectionType,
 ): Callable {
   return this._function({
-    type: code`<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.createFunctionParameters.signature}) => ${this.reusables.imports.Either}<Error, ${this.discriminatedType.map((discriminatedType) => discriminatedType.expression).orDefault(this.expression)}>`,
+    type: code`<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.imports.NamespaceBuilder} = ${this.reusables.imports.NamespaceBuilder}>(${this.createFunctionParameters.signature}) => ${this.reusables.imports.Either}<Error, ${this.discriminatedType.map((discriminatedType) => discriminatedType.expression).orDefault(this.expression)}>`,
     unannotatedExpression: () =>
       ObjectIntersectionType_createFunctionExpression.call(this),
     unqualifiedName: "create",
