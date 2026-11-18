@@ -1,12 +1,12 @@
 {
   "dependencies": {
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/collection": "0.0.64",
-    "@rdfx/curie": "0.0.64",
-    "@rdfx/data-factory": "0.0.64",
-    "@rdfx/literal": "0.0.64",
-    "@rdfx/resource": "0.0.64",
-    "@rdfx/string": "0.0.64",
+    "@rdfx/collection": "0.0.67",
+    "@rdfx/data-factory": "0.0.67",
+    "@rdfx/iri": "0.0.67",
+    "@rdfx/literal": "0.0.67",
+    "@rdfx/resource": "0.0.67",
+    "@rdfx/string": "0.0.67",
     "graphql": "16.11.0",
     "graphql-yoga": "5.14.0",
     "purify-ts": "~2.1.4"
@@ -41,5 +41,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.106"
+  "version": "4.0.107"
 }

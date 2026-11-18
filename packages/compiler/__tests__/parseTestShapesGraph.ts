@@ -1,6 +1,7 @@
-import { datasetFactory, PrefixMap } from "@rdfx/collection";
+import { datasetFactory } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { RdfFile } from "@rdfx/fs";
+import { PrefixMap } from "@rdfx/iri";
 import { ShapesGraph } from "@shaclmate/compiler";
 import { type Either, EitherAsync } from "purify-ts";
 

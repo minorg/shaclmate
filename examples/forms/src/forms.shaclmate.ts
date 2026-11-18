@@ -5,9 +5,9 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
-import { datasetFactory, type PrefixMap } from "@rdfx/collection";
-import { expandIri } from "@rdfx/curie";
+import { datasetFactory } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
+import { expandIri, type NamespaceBuilder, type PrefixMap } from "@rdfx/iri";
 import { LiteralFactory } from "@rdfx/literal";
 import {
   PropertyPath as RdfxResourcePropertyPath,
@@ -91,14 +91,14 @@ function $compactRecord<KeyT extends string, ValueT extends {}>(
 type $ConversionFunction<
   SourceT,
   TargetT,
-  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
 > = (
   source: SourceT,
   defaultNamespace?: DefaultNamespaceT,
 ) => Either<Error, TargetT>;
 
 function $convertToIdentifierProperty<
-  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
 >(
   identifier:
     | (() => BlankNode | NamedNode)
@@ -128,7 +128,7 @@ function $convertToIdentifierProperty<
 }
 
 function $convertToMaybe<
-  DefaultNamespaceT extends $NamespaceBuilder,
+  DefaultNamespaceT extends NamespaceBuilder,
   ItemSourceT,
   ItemTargetT,
 >(
@@ -159,7 +159,7 @@ function $convertToMaybe<
 }
 
 function $convertToScalarSet<
-  DefaultNamespaceT extends $NamespaceBuilder,
+  DefaultNamespaceT extends NamespaceBuilder,
   ItemSourceT,
   ItemTargetT,
 >(
@@ -197,7 +197,7 @@ export type $FromJsonFunction<JsonValueT, ValueT, ValueSchemaT> = [
       jsonValue: JsonValueT,
       options?: {
         context?: unknown;
-        defaultNamespace?: $NamespaceBuilder;
+        defaultNamespace?: NamespaceBuilder;
         prefixMap?: PrefixMap;
         schema?: unknown;
       },
@@ -206,7 +206,7 @@ export type $FromJsonFunction<JsonValueT, ValueT, ValueSchemaT> = [
       jsonValue: JsonValueT,
       options: {
         context?: unknown;
-        defaultNamespace?: $NamespaceBuilder;
+        defaultNamespace?: NamespaceBuilder;
         prefixMap?: PrefixMap;
         schema: ValueSchemaT;
       },
@@ -234,7 +234,7 @@ interface $IdentifierSchema {
 
 function $identityConversionFunction<T>(
   value: T,
-  _defaultNamespace?: $NamespaceBuilder,
+  _defaultNamespace?: NamespaceBuilder,
 ): Either<Error, T> {
   return Either.of(value);
 }
@@ -320,15 +320,6 @@ function $monkeyPatchObject<T extends object>(
 
   return obj;
 }
-
-/**
- * NamespaceBuilder type excerpted from @rdfjs/namespace (MIT license) in lieu of a type import.
- */
-export type $NamespaceBuilder<TermNames extends string = any> = Record<
-  TermNames,
-  NamedNode
-> &
-  ((property?: TemplateStringsArray | TermNames) => NamedNode);
 
 interface $NumericSchema<T> {
   readonly datatype: NamedNode;
@@ -653,7 +644,7 @@ export namespace FormStruct {
   ) => `FormStruct(${JSON.stringify(FormStruct.toStringRecord(_formStruct))})`;
 
   export const create: <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   >(
     parameters: FormStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, FormStruct.Discriminated> = (parameters) =>
@@ -673,7 +664,7 @@ export namespace FormStruct {
         ),
       ),
       nestedStructProperty: (<
-        $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+        $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
       >(
         value: {
           readonly $identifier?:
@@ -762,7 +753,7 @@ export namespace FormStruct {
     );
 
   export type CreateParameters<
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   > = {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
@@ -786,7 +777,7 @@ export namespace FormStruct {
   };
 
   export const createUnsafe: <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   >(
     parameters: FormStruct.CreateParameters<$DefaultNamespaceT>,
   ) => FormStruct.Discriminated = (parameters) =>
@@ -883,7 +874,7 @@ export namespace FormStruct {
               }>,
             }),
           )) satisfies <
-          $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+          $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
         >(parameters: {
           readonly $defaultNamespace?: $DefaultNamespaceT;
           readonly $identifier?:
@@ -965,14 +956,20 @@ export namespace FormStruct {
 
     export function schema() {
       return z.object({
-        "@id": z.string().min(1),
+        "@id": z
+          .string()
+          .min(1)
+          .default(() => `_:${dataFactory.blankNode().value}`),
         emptyStringSetProperty: z
           .array(z.string())
           .optional()
           .meta({ title: "Empty string set" }),
         nestedStructProperty: z
           .object({
-            "@id": z.string().min(1),
+            "@id": z
+              .string()
+              .min(1)
+              .default(() => `_:${dataFactory.blankNode().value}`),
             requiredStringProperty: z
               .string()
               .meta({ title: "Required string" }),

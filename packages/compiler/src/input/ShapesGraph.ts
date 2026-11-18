@@ -1,7 +1,7 @@
 import type { BlankNode, DatasetCore, NamedNode, Term } from "@rdfjs/types";
-import { datasetFactory, type PrefixMap, TermMap } from "@rdfx/collection";
-import { type Curie, shrinkIri } from "@rdfx/curie";
+import { datasetFactory, TermMap } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
+import { type Curie, type PrefixMap, shrinkIri } from "@rdfx/iri";
 import type { Logger } from "@rdfx/logger";
 import { ResourceSet } from "@rdfx/resource";
 import { AbstractShapesGraph } from "@shaclmate/shacl-ast";

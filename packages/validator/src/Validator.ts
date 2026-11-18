@@ -1,6 +1,6 @@
 import type { DatasetCore } from "@rdfjs/types";
-import { PrefixMap } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
+import { PrefixMap } from "@rdfx/iri";
 import { type Logger, nopLogger } from "@rdfx/logger";
 import type { ValidationReport } from "@shaclmate/shacl-ast";
 import type { Either } from "purify-ts";

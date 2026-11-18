@@ -9,11 +9,10 @@ import {
 export const snippets_FromJsonFunction: SnippetFactory = ({
   configuration,
   imports,
-  snippets,
   syntheticNamePrefix,
 }) => {
   const options: Code[] = [code`context?: unknown;`];
-  options.push(code`defaultNamespace?: ${snippets.NamespaceBuilder};`);
+  options.push(code`defaultNamespace?: ${imports.NamespaceBuilder};`);
   if (configuration.features.has("ObjectSet")) {
     options.push(code`objectSet?: ${syntheticNamePrefix}ObjectSet;`);
   }

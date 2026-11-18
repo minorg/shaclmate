@@ -7,8 +7,8 @@ import type {
   Variable,
 } from "@rdfjs/types";
 import { datasetFactory } from "@rdfx/collection";
-import { expandIri } from "@rdfx/curie";
 import dataFactory from "@rdfx/data-factory";
+import { expandIri, type NamespaceBuilder } from "@rdfx/iri";
 import { LiteralFactory } from "@rdfx/literal";
 import {
   PropertyPath as RdfxResourcePropertyPath,
@@ -82,14 +82,14 @@ function $compactRecord<KeyT extends string, ValueT extends {}>(
 type $ConversionFunction<
   SourceT,
   TargetT,
-  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
 > = (
   source: SourceT,
   defaultNamespace?: DefaultNamespaceT,
 ) => Either<Error, TargetT>;
 
 function $convertToIdentifierProperty<
-  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
 >(
   identifier:
     | (() => BlankNode | NamedNode)
@@ -119,7 +119,7 @@ function $convertToIdentifierProperty<
 }
 
 function $convertToIriIdentifierProperty<
-  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
 >(
   identifier:
     | (() => NamedNode)
@@ -217,7 +217,7 @@ function $convertToLazySet<PartialT, ResolvedT>(
 }
 
 function $convertToMaybe<
-  DefaultNamespaceT extends $NamespaceBuilder,
+  DefaultNamespaceT extends NamespaceBuilder,
   ItemSourceT,
   ItemTargetT,
 >(
@@ -489,7 +489,7 @@ class $IdentifierSet {
 
 function $identityConversionFunction<T>(
   value: T,
-  _defaultNamespace?: $NamespaceBuilder,
+  _defaultNamespace?: NamespaceBuilder,
 ): Either<Error, T> {
   return Either.of(value);
 }
@@ -708,15 +708,6 @@ function $monkeyPatchObject<T extends object>(
 
   return obj;
 }
-
-/**
- * NamespaceBuilder type excerpted from @rdfjs/namespace (MIT license) in lieu of a type import.
- */
-export type $NamespaceBuilder<TermNames extends string = any> = Record<
-  TermNames,
-  NamedNode
-> &
-  ((property?: TemplateStringsArray | TermNames) => NamedNode);
 
 interface $NumericFilter<T> {
   readonly in?: readonly T[];
@@ -1147,7 +1138,7 @@ export namespace $DefaultPartial {
     `$DefaultPartial(${JSON.stringify($DefaultPartial.toStringRecord(_defaultPartial))})`;
 
   export const create: <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   >(
     parameters?: $DefaultPartial.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, $DefaultPartial.Discriminated> = (parameters = {}) =>
@@ -1162,7 +1153,7 @@ export namespace $DefaultPartial {
     );
 
   export type CreateParameters<
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   > = {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
@@ -1173,7 +1164,7 @@ export namespace $DefaultPartial {
   };
 
   export const createUnsafe: <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   >(
     parameters?: $DefaultPartial.CreateParameters<$DefaultNamespaceT>,
   ) => $DefaultPartial.Discriminated = (parameters) =>
@@ -1299,7 +1290,7 @@ export namespace AnonymousObject {
     `AnonymousObject(${JSON.stringify(AnonymousObject.toStringRecord(_anonymousObject))})`;
 
   export const create: <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   >(
     parameters: AnonymousObject.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, AnonymousObject.Discriminated> = (parameters) =>
@@ -1311,14 +1302,14 @@ export namespace AnonymousObject {
     );
 
   export type CreateParameters<
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   > = {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly requiredStringProperty: string;
   };
 
   export const createUnsafe: <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   >(
     parameters: AnonymousObject.CreateParameters<$DefaultNamespaceT>,
   ) => AnonymousObject.Discriminated = (parameters) =>
@@ -1544,7 +1535,7 @@ export namespace LazyObject {
   ) => `LazyObject(${JSON.stringify(LazyObject.toStringRecord(_lazyObject))})`;
 
   export const create: <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   >(
     parameters: LazyObject.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, LazyObject.Discriminated> = (parameters) =>
@@ -1578,7 +1569,7 @@ export namespace LazyObject {
     );
 
   export type CreateParameters<
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   > = {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
@@ -1592,7 +1583,7 @@ export namespace LazyObject {
   };
 
   export const createUnsafe: <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   >(
     parameters: LazyObject.CreateParameters<$DefaultNamespaceT>,
   ) => LazyObject.Discriminated = (parameters) =>
@@ -2007,7 +1998,7 @@ export namespace RootObject {
   ) => `RootObject(${JSON.stringify(RootObject.toStringRecord(_rootObject))})`;
 
   export const create: <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   >(
     parameters: RootObject.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, RootObject.Discriminated> = (parameters) =>
@@ -2047,7 +2038,7 @@ export namespace RootObject {
     );
 
   export type CreateParameters<
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   > = {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
@@ -2068,7 +2059,7 @@ export namespace RootObject {
   };
 
   export const createUnsafe: <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   >(
     parameters: RootObject.CreateParameters<$DefaultNamespaceT>,
   ) => RootObject.Discriminated = (parameters) =>
@@ -2412,7 +2403,7 @@ export namespace UnionMember1 {
     `UnionMember1(${JSON.stringify(UnionMember1.toStringRecord(_unionMember1))})`;
 
   export const create: <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   >(
     parameters?: UnionMember1.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, UnionMember1.Discriminated> = (parameters = {}) =>
@@ -2436,7 +2427,7 @@ export namespace UnionMember1 {
     );
 
   export type CreateParameters<
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   > = {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
@@ -2448,7 +2439,7 @@ export namespace UnionMember1 {
   };
 
   export const createUnsafe: <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   >(
     parameters?: UnionMember1.CreateParameters<$DefaultNamespaceT>,
   ) => UnionMember1.Discriminated = (parameters) =>
@@ -2655,7 +2646,7 @@ export namespace UnionMember2 {
     `UnionMember2(${JSON.stringify(UnionMember2.toStringRecord(_unionMember2))})`;
 
   export const create: <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   >(
     parameters?: UnionMember2.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, UnionMember2.Discriminated> = (parameters = {}) =>
@@ -2679,7 +2670,7 @@ export namespace UnionMember2 {
     );
 
   export type CreateParameters<
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   > = {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
@@ -2691,7 +2682,7 @@ export namespace UnionMember2 {
   };
 
   export const createUnsafe: <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
   >(
     parameters?: UnionMember2.CreateParameters<$DefaultNamespaceT>,
   ) => UnionMember2.Discriminated = (parameters) =>

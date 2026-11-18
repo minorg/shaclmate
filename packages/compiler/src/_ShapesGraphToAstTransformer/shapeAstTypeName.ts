@@ -1,4 +1,4 @@
-import { Curie } from "@rdfx/curie";
+import { Curie } from "@rdfx/iri";
 import { Maybe } from "purify-ts";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";

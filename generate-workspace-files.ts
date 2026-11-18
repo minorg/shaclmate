@@ -5,9 +5,9 @@ import path from "node:path";
 import url from "node:url";
 import type { CompilerOptions } from "typescript";
 
-const VERSION = "4.0.106";
+const VERSION = "4.0.107";
 
-const rdfxVersion = "0.0.64";
+const rdfxVersion = "0.0.67";
 const vitestVersion = "~4.1.5";
 
 const externalDependencies = {
@@ -23,9 +23,9 @@ const externalDependencies = {
   "@rdfjs/namespace": "~2.0.1",
   "@rdfjs/types": "~2.0.1",
   "@rdfx/collection": rdfxVersion,
-  "@rdfx/curie": rdfxVersion,
   "@rdfx/data-factory": rdfxVersion,
   "@rdfx/fs": rdfxVersion,
+  "@rdfx/iri": rdfxVersion,
   "@rdfx/literal": rdfxVersion,
   "@rdfx/logger": rdfxVersion,
   "@rdfx/parser": rdfxVersion,
@@ -164,6 +164,7 @@ const workspaces = {
           "@rdfjs/types",
           "@rdfx/collection",
           "@rdfx/data-factory",
+          "@rdfx/iri",
           "@rdfx/fs",
           "@rdfx/logger",
           "@rdfx/serializer",
@@ -209,8 +210,8 @@ const workspaces = {
           "@mui/material",
           "@mui/x-date-pickers",
           "@rdfx/collection",
-          "@rdfx/curie",
           "@rdfx/data-factory",
+          "@rdfx/iri",
           "@rdfx/literal",
           "@rdfx/string",
           "@rdfx/resource",
@@ -260,8 +261,8 @@ const workspaces = {
         external: [
           "@rdfjs/types",
           "@rdfx/collection",
-          "@rdfx/curie",
           "@rdfx/data-factory",
+          "@rdfx/iri",
           "@rdfx/literal",
           "@rdfx/string",
           "@rdfx/resource",
@@ -280,8 +281,8 @@ const workspaces = {
         external: [
           "@rdfjs/types",
           "@rdfx/collection",
-          "@rdfx/curie",
           "@rdfx/data-factory",
+          "@rdfx/iri",
           "@rdfx/literal",
           "@rdfx/resource",
           "@rdfx/string",
@@ -312,8 +313,8 @@ const workspaces = {
           "@hono/zod-validator",
           "@rdfjs/types",
           "@rdfx/collection",
-          "@rdfx/curie",
           "@rdfx/data-factory",
+          "@rdfx/iri",
           "@rdfx/logger",
           "@rdfx/resource",
           "hono",
@@ -332,8 +333,8 @@ const workspaces = {
         external: [
           "@rdfjs/types",
           "@rdfx/collection",
-          "@rdfx/curie",
           "@rdfx/data-factory",
+          "@rdfx/iri",
           "@rdfx/literal",
           "@rdfx/logger",
           "@rdfx/resource",
@@ -368,8 +369,8 @@ const workspaces = {
       dependencies: {
         external: [
           "@rdfjs/types",
-          "@rdfx/curie",
           "@rdfx/data-factory",
+          "@rdfx/iri",
           "@rdfx/resource",
           "@rdfx/string",
           "@tpluscode/rdf-ns-builders",
@@ -393,6 +394,7 @@ const workspaces = {
       dependencies: {
         external: [
           "@rdfx/collection",
+          "@rdfx/iri",
           "@rdfjs/types",
           "@rdfx/data-factory",
           "@rdfx/logger",

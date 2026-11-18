@@ -19,7 +19,7 @@ export function ObjectType_conversionFunction(
   const sourceTypeExpression = code`{ ${joinCode(sourceTypePropertySignatures)} }`;
   const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
   return Maybe.of({
-    code: code`(<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(value: ${sourceTypeExpression}, ${syntheticNamePrefix}defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT) => ${this.createFunction.unannotatedUsage}({ ...value, ${syntheticNamePrefix}defaultNamespace }))`,
+    code: code`(<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.imports.NamespaceBuilder} = ${this.reusables.imports.NamespaceBuilder}>(value: ${sourceTypeExpression}, ${syntheticNamePrefix}defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT) => ${this.createFunction.unannotatedUsage}({ ...value, ${syntheticNamePrefix}defaultNamespace }))`,
     sourceTypes: [
       {
         expression: sourceTypeExpression,

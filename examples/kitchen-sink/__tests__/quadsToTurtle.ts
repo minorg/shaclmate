@@ -1,6 +1,6 @@
 import type { Quad } from "@rdfjs/types";
-import { PrefixMap } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
+import { PrefixMap } from "@rdfx/iri";
 import { serializeSync } from "@rdfx/serializer";
 import { rdf, rdfs, sh, xsd } from "@tpluscode/rdf-ns-builders";
 

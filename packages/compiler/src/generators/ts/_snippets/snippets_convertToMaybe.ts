@@ -9,7 +9,7 @@ export const snippets_convertToMaybe: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToMaybe`,
     code`\
-function ${syntheticNamePrefix}convertToMaybe<DefaultNamespaceT extends ${snippets.NamespaceBuilder}, ItemSourceT, ItemTargetT>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT, DefaultNamespaceT>): ${snippets.ConversionFunction}<ItemSourceT | ${imports.Maybe}<ItemTargetT> | undefined, ${imports.Maybe}<ItemTargetT>, DefaultNamespaceT> {
+function ${syntheticNamePrefix}convertToMaybe<DefaultNamespaceT extends ${imports.NamespaceBuilder}, ItemSourceT, ItemTargetT>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT, DefaultNamespaceT>): ${snippets.ConversionFunction}<ItemSourceT | ${imports.Maybe}<ItemTargetT> | undefined, ${imports.Maybe}<ItemTargetT>, DefaultNamespaceT> {
   return (value, defaultNamespace) => {
     switch (typeof value) {
       case "object": {
