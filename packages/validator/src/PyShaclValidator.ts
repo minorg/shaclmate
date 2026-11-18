@@ -4,6 +4,7 @@ import { Readable } from "node:stream";
 import type { DatasetCore } from "@rdfjs/types";
 import { datasetFactory } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
+import type { PrefixMap } from "@rdfx/iri";
 import { type Logger, nopLogger } from "@rdfx/logger";
 import parsers from "@rdfx/parser";
 import { ResourceSet } from "@rdfx/resource";
