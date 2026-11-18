@@ -1,9 +1,9 @@
 {
   "dependencies": {},
   "devDependencies": {
-    "@shaclmate/compiler": "4.0.106",
+    "@shaclmate/compiler": "4.0.107",
     "@rdfjs/namespace": "~2.0.1",
-    "@rdfx/logger": "0.0.64",
+    "@rdfx/logger": "0.0.67",
     "@tpluscode/rdf-ns-builders": "~4.3.0",
     "@types/rdfjs__namespace": "~2.0.10"
   },
@@ -33,5 +33,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.106"
+  "version": "4.0.107"
 }

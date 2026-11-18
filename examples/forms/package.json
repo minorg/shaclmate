@@ -7,13 +7,13 @@
     "@mui/material": "~6.1.0",
     "@mui/x-date-pickers": "~7.17.0",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/collection": "0.0.64",
-    "@rdfx/curie": "0.0.64",
-    "@rdfx/data-factory": "0.0.64",
-    "@rdfx/literal": "0.0.64",
-    "@rdfx/resource": "0.0.64",
-    "@rdfx/serializer": "0.0.64",
-    "@rdfx/string": "0.0.64",
+    "@rdfx/collection": "0.0.67",
+    "@rdfx/data-factory": "0.0.67",
+    "@rdfx/iri": "0.0.67",
+    "@rdfx/literal": "0.0.67",
+    "@rdfx/resource": "0.0.67",
+    "@rdfx/serializer": "0.0.67",
+    "@rdfx/string": "0.0.67",
     "purify-ts": "~2.1.4",
     "react": "~18",
     "react-dom": "~18",
@@ -42,5 +42,5 @@
     "start": "vite dev --port 3000"
   },
   "type": "module",
-  "version": "4.0.106"
+  "version": "4.0.107"
 }
