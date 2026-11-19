@@ -1,8 +1,13 @@
 import { describe, it } from "vitest";
 import "./harnesses.js"; // Must be imported before kitchenSink
+import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import dataFactory from "@rdfx/data-factory";
+import { LiteralFactory } from "@rdfx/literal";
+import { xsd } from "@tpluscode/rdf-ns-builders";
 import * as kitchenSink from "../src/kitchen-sink.shaclmate.js";
 import { harnesses } from "./harnesses.js";
+
+const literalFactory = new LiteralFactory({ dataFactory });
 
 describe("fromJson", () => {
   for (const [id, harness] of Object.entries(harnesses)) {
@@ -148,6 +153,55 @@ describe("fromJson", () => {
               .dateTime.extract()
               ?.toISOString(),
           ).toStrictEqual(date.toISOString());
+        });
+      }
+    });
+
+    describe("literal", () => {
+      for (const [input, expectedOutput] of [
+        [true, literalFactory.boolean(true)],
+        [42.3, literalFactory.number(42.3, xsd.double)],
+        ["test", dataFactory.literal("test")],
+        [
+          "http://example.com/test",
+          dataFactory.literal("http://example.com/test"),
+        ],
+      ] as readonly [boolean | number | object | string, Literal][]) {
+        it(`${typeof input} ${input}`, ({ expect }) => {
+          const actualOutput = kitchenSink.TermsStruct.fromJson(
+            kitchenSink.TermsStruct.Json.parse({
+              literalTerm: input,
+            }).unsafeCoerce(),
+          )
+            .unsafeCoerce()
+            .literalTerm.extract();
+          expect(actualOutput).toEqualRdfTerm(expectedOutput);
+        });
+      }
+    });
+
+    describe("term", () => {
+      for (const [input, expectedOutput] of [
+        [true, literalFactory.boolean(true)],
+        [42.3, literalFactory.number(42.3, xsd.double)],
+        ["test", dataFactory.literal("test")],
+        [
+          "http://example.com/test",
+          dataFactory.namedNode("http://example.com/test"),
+        ],
+      ] as readonly [
+        boolean | number | object | string,
+        BlankNode | Literal | NamedNode,
+      ][]) {
+        it(`${typeof input} ${input}`, ({ expect }) => {
+          const actualOutput = kitchenSink.TermsStruct.fromJson(
+            kitchenSink.TermsStruct.Json.parse({
+              term: input,
+            }).unsafeCoerce(),
+          )
+            .unsafeCoerce()
+            .term.extract();
+          expect(actualOutput).toEqualRdfTerm(expectedOutput);
         });
       }
     });
