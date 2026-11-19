@@ -78,7 +78,7 @@ abstract class AbstractJsonType {
   @Memoize()
   get expression(): Code {
     return this.snippets
-      .map((snippets) => code`${snippets}`)
+      .map((snippets) => snippets.expression)
       .alt(this.name.map((name) => code`${name.join(".")}`))
       .orDefaultLazy(() => this.inlineExpression);
   }
@@ -86,7 +86,7 @@ abstract class AbstractJsonType {
   @Memoize()
   get schema(): Code {
     return this.snippets
-      .map((snippets) => code`${snippets}.schema()`)
+      .map((snippets) => snippets.schema)
       .alt(this.name.map((name) => code`${name.join(".")}.schema()`))
       .orDefaultLazy(() => this.schemaExpression);
   }

@@ -115,7 +115,10 @@ export class TermType<
         },
       },
       {
-        snippet: this.reusables.snippets.TermJsonObject,
+        snippets: {
+          expression: code`${this.reusables.snippets.TermJsonObject}`,
+          schema: code`${this.reusables.snippets.TermJsonObject}.schema`,
+        },
       },
     );
   }

@@ -1800,7 +1800,7 @@ interface $IdentifierJsonObject<IdT extends string = string> {
 }
 
 namespace $IdentifierJsonObject {
-  export const schema = () => z.object({ "@id": z.string().min(1) });
+  export const schema = z.object({ "@id": z.string().min(1) });
 }
 
 interface $IdentifierSchema {
@@ -2021,8 +2021,10 @@ interface $LangStringJsonObject {
 }
 
 namespace $LangStringJsonObject {
-  export const schema = () =>
-    z.object({ "@language": z.string().min(1), "@value": z.string().min(1) });
+  export const schema = z.object({
+    "@language": z.string().min(1),
+    "@value": z.string().min(1),
+  });
 }
 
 type $LangStringSchema = Omit<$LiteralSchema, "kind"> & {
@@ -2507,12 +2509,11 @@ interface $LiteralJsonObject {
 }
 
 namespace $LiteralJsonObject {
-  export const schema = () =>
-    z.object({
-      "@language": z.string().min(1).optional(),
-      "@type": z.string().min(1).optional(),
-      "@value": z.string().min(1),
-    });
+  export const schema = z.object({
+    "@language": z.string().min(1).optional(),
+    "@type": z.string().min(1).optional(),
+    "@value": z.string().min(1),
+  });
 }
 
 interface $LiteralSchema {
@@ -4078,8 +4079,10 @@ function $termFromRdfResourceValues<
 type $TermJsonObject = $IdentifierJsonObject | $LiteralJsonObject;
 
 namespace $TermJsonObject {
-  export const schema = () =>
-    z.union([$IdentifierJsonObject.schema(), $LiteralJsonObject.schema()]);
+  export const schema = z.union([
+    $IdentifierJsonObject.schema,
+    $LiteralJsonObject.schema,
+  ]);
 }
 
 const $termLikeFromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -4267,8 +4270,10 @@ interface $TypedLiteralJsonObject {
 }
 
 namespace $TypedLiteralJsonObject {
-  export const schema = () =>
-    z.object({ "@type": z.string().min(1), "@value": z.string().min(1) });
+  export const schema = z.object({
+    "@type": z.string().min(1),
+    "@value": z.string().min(1),
+  });
 }
 
 const $typedLiteralToJsonObject: $ToJsonFunction<
@@ -9827,16 +9832,16 @@ export namespace ConvertibleTypesStruct {
         convertibleIriNonEmptySet: z.array(z.string().min(1)).min(1),
         convertibleIriOption: z.string().min(1).optional(),
         convertibleIriSet: z.array(z.string().min(1)).optional(),
-        convertibleLiteral: $LiteralJsonObject.schema(),
+        convertibleLiteral: $LiteralJsonObject.schema,
         convertibleLiteralNonEmptySet: z
-          .array($LiteralJsonObject.schema())
+          .array($LiteralJsonObject.schema)
           .min(1),
-        convertibleLiteralOption: $LiteralJsonObject.schema().optional(),
-        convertibleLiteralSet: z.array($LiteralJsonObject.schema()).optional(),
-        convertibleTerm: $TermJsonObject.schema(),
-        convertibleTermNonEmptySet: z.array($TermJsonObject.schema()).min(1),
-        convertibleTermOption: $TermJsonObject.schema().optional(),
-        convertibleTermSet: z.array($TermJsonObject.schema()).optional(),
+        convertibleLiteralOption: $LiteralJsonObject.schema.optional(),
+        convertibleLiteralSet: z.array($LiteralJsonObject.schema).optional(),
+        convertibleTerm: $TermJsonObject.schema,
+        convertibleTermNonEmptySet: z.array($TermJsonObject.schema).min(1),
+        convertibleTermOption: $TermJsonObject.schema.optional(),
+        convertibleTermSet: z.array($TermJsonObject.schema).optional(),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -14314,12 +14319,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           .default("http://example.com/DatatypeDiscriminatedUnionsStruct"),
         dateOrDateTime: z
           .discriminatedUnion("$type", [
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("date") }),
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("dateTime") }),
+            $TypedLiteralJsonObject.schema.extend({ $type: z.literal("date") }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("dateTime"),
+            }),
           ])
           .meta({
             description:
@@ -14327,12 +14330,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }),
         dateOrString: z
           .discriminatedUnion("$type", [
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("object") }),
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("string") }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("object"),
+            }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("string"),
+            }),
           ])
           .meta({
             description:
@@ -14340,12 +14343,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }),
         dateTimeOrDate: z
           .discriminatedUnion("$type", [
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("dateTime") }),
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("date") }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("dateTime"),
+            }),
+            $TypedLiteralJsonObject.schema.extend({ $type: z.literal("date") }),
           ])
           .meta({
             description:
@@ -14353,12 +14354,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }),
         decimalOrString: z
           .discriminatedUnion("$type", [
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("object") }),
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("string") }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("object"),
+            }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("string"),
+            }),
           ])
           .meta({
             description:
@@ -14366,12 +14367,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }),
         integerOrString: z
           .discriminatedUnion("$type", [
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("bigint") }),
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("string") }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("bigint"),
+            }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("string"),
+            }),
           ])
           .meta({
             description:
@@ -14379,18 +14380,18 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }),
         jsPrimitive: z
           .discriminatedUnion("$type", [
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("boolean") }),
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("number") }),
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("bigint") }),
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("string") }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("boolean"),
+            }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("number"),
+            }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("bigint"),
+            }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("string"),
+            }),
           ])
           .meta({
             description:
@@ -14398,12 +14399,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }),
         langStringOrString: z
           .discriminatedUnion("$type", [
-            $LangStringJsonObject
-              .schema()
-              .extend({ $type: z.literal("object") }),
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("string") }),
+            $LangStringJsonObject.schema.extend({ $type: z.literal("object") }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("string"),
+            }),
           ])
           .meta({
             description:
@@ -14419,12 +14418,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }),
         stringOrDate: z
           .discriminatedUnion("$type", [
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("string") }),
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("object") }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("string"),
+            }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("object"),
+            }),
           ])
           .meta({
             description:
@@ -14432,12 +14431,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }),
         stringOrDecimal: z
           .discriminatedUnion("$type", [
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("string") }),
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("object") }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("string"),
+            }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("object"),
+            }),
           ])
           .meta({
             description:
@@ -14445,12 +14444,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }),
         stringOrInteger: z
           .discriminatedUnion("$type", [
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("string") }),
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("bigint") }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("string"),
+            }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("bigint"),
+            }),
           ])
           .meta({
             description:
@@ -14458,12 +14457,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }),
         stringOrLangString: z
           .discriminatedUnion("$type", [
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("string") }),
-            $LangStringJsonObject
-              .schema()
-              .extend({ $type: z.literal("object") }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("string"),
+            }),
+            $LangStringJsonObject.schema.extend({ $type: z.literal("object") }),
           ])
           .meta({
             description:
@@ -25455,25 +25452,21 @@ export namespace LangStringStruct {
           .min(1)
           .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/LangStringStruct"),
-        langString: $LangStringJsonObject.schema().optional(),
+        langString: $LangStringJsonObject.schema.optional(),
         langStringOrString: z
           .discriminatedUnion("$type", [
-            $LangStringJsonObject
-              .schema()
-              .extend({ $type: z.literal("object") }),
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("string") }),
+            $LangStringJsonObject.schema.extend({ $type: z.literal("object") }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("string"),
+            }),
           ])
           .optional(),
         stringOrLangString: z
           .discriminatedUnion("$type", [
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("string") }),
-            $LangStringJsonObject
-              .schema()
-              .extend({ $type: z.literal("object") }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("string"),
+            }),
+            $LangStringJsonObject.schema.extend({ $type: z.literal("object") }),
           ])
           .optional(),
       }) satisfies z.ZodType<Json>;
@@ -26043,7 +26036,7 @@ export namespace LanguageInStruct {
           .string()
           .min(1)
           .default(() => `_:${dataFactory.blankNode().value}`),
-        languageIn: z.array($LangStringJsonObject.schema()).min(1),
+        languageIn: z.array($LangStringJsonObject.schema).min(1),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -31934,9 +31927,9 @@ export namespace ListSetsStruct {
               z
                 .object({ "@list": z.array(z.string()) })
                 .extend({ $type: z.literal("object") }),
-              $TypedLiteralJsonObject
-                .schema()
-                .extend({ $type: z.literal("string") }),
+              $TypedLiteralJsonObject.schema.extend({
+                $type: z.literal("string"),
+              }),
             ]),
           )
           .optional()
@@ -36225,10 +36218,10 @@ export namespace NodeKindsStruct {
           .string()
           .min(1)
           .default(() => `_:${dataFactory.blankNode().value}`),
-        blankNodeOrLiteralNodeKind: $TermJsonObject.schema(),
+        blankNodeOrLiteralNodeKind: $TermJsonObject.schema,
         iriNodeKind: z.string().min(1),
-        iriOrLiteralNodeKind: $TermJsonObject.schema(),
-        literalNodeKind: $LiteralJsonObject.schema(),
+        iriOrLiteralNodeKind: $TermJsonObject.schema,
+        literalNodeKind: $LiteralJsonObject.schema,
       }) satisfies z.ZodType<Json>;
     }
 
@@ -50458,10 +50451,10 @@ export namespace TermsStruct {
           .default(() => `_:${dataFactory.blankNode().value}`)
           .optional(),
         iriTerm: z.string().min(1).optional(),
-        langStringTerm: $LangStringJsonObject.schema().optional(),
-        literalTerm: $LiteralJsonObject.schema().optional(),
+        langStringTerm: $LangStringJsonObject.schema.optional(),
+        literalTerm: $LiteralJsonObject.schema.optional(),
         stringTerm: z.string().optional(),
-        term: $TermJsonObject.schema().optional(),
+        term: $TermJsonObject.schema.optional(),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -56565,12 +56558,10 @@ export namespace UnionDiscriminantsStruct {
           .default(() => `_:${dataFactory.blankNode().value}`),
         optionalIriOrString: z
           .discriminatedUnion("$type", [
-            $IdentifierJsonObject
-              .schema()
-              .extend({ $type: z.literal("object") }),
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("string") }),
+            $IdentifierJsonObject.schema.extend({ $type: z.literal("object") }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("string"),
+            }),
           ])
           .optional()
           .meta({
@@ -56582,7 +56573,7 @@ export namespace UnionDiscriminantsStruct {
             StructDiscriminatedUnionMember1.Json.schema().extend({
               $type: z.literal("StructDiscriminatedUnionMember1"),
             }),
-            $LiteralJsonObject.schema().extend({ $type: z.literal("Literal") }),
+            $LiteralJsonObject.schema.extend({ $type: z.literal("Literal") }),
           ])
           .optional()
           .meta({
@@ -56597,9 +56588,9 @@ export namespace UnionDiscriminantsStruct {
             StructDiscriminatedUnionMember2.Json.schema().extend({
               $type: z.literal("StructDiscriminatedUnionMember2"),
             }),
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("string") }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("string"),
+            }),
           ])
           .optional()
           .meta({
@@ -56608,10 +56599,10 @@ export namespace UnionDiscriminantsStruct {
           }),
         optionalTerm: z
           .discriminatedUnion("$type", [
-            $IdentifierJsonObject
-              .schema()
-              .extend({ $type: z.literal("BlankNode") }),
-            $LiteralJsonObject.schema().extend({ $type: z.literal("Literal") }),
+            $IdentifierJsonObject.schema.extend({
+              $type: z.literal("BlankNode"),
+            }),
+            $LiteralJsonObject.schema.extend({ $type: z.literal("Literal") }),
           ])
           .optional()
           .meta({
@@ -56620,12 +56611,10 @@ export namespace UnionDiscriminantsStruct {
           }),
         requiredIriOrString: z
           .discriminatedUnion("$type", [
-            $IdentifierJsonObject
-              .schema()
-              .extend({ $type: z.literal("object") }),
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("string") }),
+            $IdentifierJsonObject.schema.extend({ $type: z.literal("object") }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("string"),
+            }),
           ])
           .meta({
             description:
@@ -56636,7 +56625,7 @@ export namespace UnionDiscriminantsStruct {
             StructDiscriminatedUnionMember1.Json.schema().extend({
               $type: z.literal("StructDiscriminatedUnionMember1"),
             }),
-            $LiteralJsonObject.schema().extend({ $type: z.literal("Literal") }),
+            $LiteralJsonObject.schema.extend({ $type: z.literal("Literal") }),
           ])
           .meta({
             description:
@@ -56650,9 +56639,9 @@ export namespace UnionDiscriminantsStruct {
             StructDiscriminatedUnionMember2.Json.schema().extend({
               $type: z.literal("StructDiscriminatedUnionMember2"),
             }),
-            $TypedLiteralJsonObject
-              .schema()
-              .extend({ $type: z.literal("string") }),
+            $TypedLiteralJsonObject.schema.extend({
+              $type: z.literal("string"),
+            }),
           ])
           .meta({
             description:
@@ -56660,10 +56649,10 @@ export namespace UnionDiscriminantsStruct {
           }),
         requiredTerm: z
           .discriminatedUnion("$type", [
-            $IdentifierJsonObject
-              .schema()
-              .extend({ $type: z.literal("BlankNode") }),
-            $LiteralJsonObject.schema().extend({ $type: z.literal("Literal") }),
+            $IdentifierJsonObject.schema.extend({
+              $type: z.literal("BlankNode"),
+            }),
+            $LiteralJsonObject.schema.extend({ $type: z.literal("Literal") }),
           ])
           .meta({
             description:
@@ -56672,12 +56661,12 @@ export namespace UnionDiscriminantsStruct {
         setIriOrString: z
           .array(
             z.discriminatedUnion("$type", [
-              $IdentifierJsonObject
-                .schema()
-                .extend({ $type: z.literal("object") }),
-              $TypedLiteralJsonObject
-                .schema()
-                .extend({ $type: z.literal("string") }),
+              $IdentifierJsonObject.schema.extend({
+                $type: z.literal("object"),
+              }),
+              $TypedLiteralJsonObject.schema.extend({
+                $type: z.literal("string"),
+              }),
             ]),
           )
           .optional()
@@ -56691,9 +56680,7 @@ export namespace UnionDiscriminantsStruct {
               StructDiscriminatedUnionMember1.Json.schema().extend({
                 $type: z.literal("StructDiscriminatedUnionMember1"),
               }),
-              $LiteralJsonObject
-                .schema()
-                .extend({ $type: z.literal("Literal") }),
+              $LiteralJsonObject.schema.extend({ $type: z.literal("Literal") }),
             ]),
           )
           .optional()
@@ -56710,9 +56697,9 @@ export namespace UnionDiscriminantsStruct {
               StructDiscriminatedUnionMember2.Json.schema().extend({
                 $type: z.literal("StructDiscriminatedUnionMember2"),
               }),
-              $TypedLiteralJsonObject
-                .schema()
-                .extend({ $type: z.literal("string") }),
+              $TypedLiteralJsonObject.schema.extend({
+                $type: z.literal("string"),
+              }),
             ]),
           )
           .optional()
@@ -56723,12 +56710,10 @@ export namespace UnionDiscriminantsStruct {
         setTerm: z
           .array(
             z.discriminatedUnion("$type", [
-              $IdentifierJsonObject
-                .schema()
-                .extend({ $type: z.literal("BlankNode") }),
-              $LiteralJsonObject
-                .schema()
-                .extend({ $type: z.literal("Literal") }),
+              $IdentifierJsonObject.schema.extend({
+                $type: z.literal("BlankNode"),
+              }),
+              $LiteralJsonObject.schema.extend({ $type: z.literal("Literal") }),
             ]),
           )
           .optional()
@@ -57854,8 +57839,8 @@ export namespace DatatypeDiscriminatedUnion1 {
 
     export function schema() {
       return z.discriminatedUnion("$type", [
-        $IdentifierJsonObject.schema().extend({ $type: z.literal("object") }),
-        $TypedLiteralJsonObject.schema().extend({ $type: z.literal("string") }),
+        $IdentifierJsonObject.schema.extend({ $type: z.literal("object") }),
+        $TypedLiteralJsonObject.schema.extend({ $type: z.literal("string") }),
       ]) satisfies z.ZodType<Json>;
     }
   }
@@ -58207,10 +58192,8 @@ export namespace DatatypeDiscriminatedUnion2 {
 
     export function schema() {
       return z.discriminatedUnion("$type", [
-        $TypedLiteralJsonObject.schema().extend({ $type: z.literal("date") }),
-        $TypedLiteralJsonObject
-          .schema()
-          .extend({ $type: z.literal("dateTime") }),
+        $TypedLiteralJsonObject.schema.extend({ $type: z.literal("date") }),
+        $TypedLiteralJsonObject.schema.extend({ $type: z.literal("dateTime") }),
       ]) satisfies z.ZodType<Json>;
     }
   }

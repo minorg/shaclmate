@@ -31,7 +31,10 @@ export abstract class AbstractTypedLiteralType<
       },
     },
     {
-      snippet: this.reusables.snippets.TypedLiteralJsonObject,
+      snippets: {
+        expression: code`${this.reusables.snippets.TypedLiteralJsonObject}`,
+        schema: code`${this.reusables.snippets.TypedLiteralJsonObject}.schema`,
+      },
     },
   );
 

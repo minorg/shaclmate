@@ -41,7 +41,10 @@ export abstract class AbstractIdentifierType<
         "@id": { type: this.jsonValueType },
       },
       {
-        snippet: this.reusables.snippets.IdentifierJsonObject,
+        snippets: {
+          expression: code`${this.reusables.snippets.IdentifierJsonObject}`,
+          schema: code`${this.reusables.snippets.IdentifierJsonObject}.schema`,
+        },
       },
     );
   }

@@ -46,7 +46,12 @@ export class LangStringType extends AbstractLiteralType {
         },
         "@value": { type: this.jsonTypeFactory.createJsonStringType() },
       },
-      { snippet: this.reusables.snippets.LangStringJsonObject },
+      {
+        snippets: {
+          expression: code`${this.reusables.snippets.LangStringJsonObject}`,
+          schema: code`${this.reusables.snippets.LangStringJsonObject}.schema`,
+        },
+      },
     );
   override readonly jsonValueType: AbstractLiteralType["jsonValueType"] =
     this.jsonObjectType;

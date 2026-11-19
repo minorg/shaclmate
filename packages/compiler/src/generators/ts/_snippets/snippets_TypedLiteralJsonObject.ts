@@ -14,7 +14,7 @@ interface ${syntheticNamePrefix}TypedLiteralJsonObject {
 }
   
 namespace ${syntheticNamePrefix}TypedLiteralJsonObject {
-  export const schema = () => ${imports.z}.object({
+  export const schema = ${imports.z}.object({
     "@type": ${imports.z}.string().min(1),
     "@value": ${imports.z}.string().min(1)
   });
