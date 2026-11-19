@@ -9877,17 +9877,41 @@ export namespace ConvertibleTypesStruct {
           .string()
           .default("http://example.com/ConvertibleTypesStruct"),
         convertibleIri: z.string().min(1),
-        convertibleIriNonEmptySet: z.array(z.string().min(1)).min(1),
+        convertibleIriNonEmptySet: z.preprocess(
+          (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+          z.array(z.string().min(1)).min(1),
+        ),
         convertibleIriOption: z.string().min(1).optional(),
-        convertibleIriSet: z.array(z.string().min(1)).optional(),
+        convertibleIriSet: z
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(z.string().min(1)),
+          )
+          .optional(),
         convertibleLiteral: $literalJsonValueSchema,
-        convertibleLiteralNonEmptySet: z.array($literalJsonValueSchema).min(1),
+        convertibleLiteralNonEmptySet: z.preprocess(
+          (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+          z.array($literalJsonValueSchema).min(1),
+        ),
         convertibleLiteralOption: $literalJsonValueSchema.optional(),
-        convertibleLiteralSet: z.array($literalJsonValueSchema).optional(),
+        convertibleLiteralSet: z
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array($literalJsonValueSchema),
+          )
+          .optional(),
         convertibleTerm: $termJsonValueSchema,
-        convertibleTermNonEmptySet: z.array($termJsonValueSchema).min(1),
+        convertibleTermNonEmptySet: z.preprocess(
+          (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+          z.array($termJsonValueSchema).min(1),
+        ),
         convertibleTermOption: $termJsonValueSchema.optional(),
-        convertibleTermSet: z.array($termJsonValueSchema).optional(),
+        convertibleTermSet: z
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array($termJsonValueSchema),
+          )
+          .optional(),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -18620,8 +18644,10 @@ export namespace ExplicitFromToRdfTypesStruct {
           .min(1)
           .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z
-          .array(z.string())
-          .min(1)
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(z.string()).min(1),
+          )
           .default([
             "http://example.com/ToRdfType",
             "http://example.com/FromRdfType",
@@ -26082,7 +26108,10 @@ export namespace LanguageInStruct {
           .string()
           .min(1)
           .default(() => `_:${dataFactory.blankNode().value}`),
-        languageIn: z.array($LangStringJsonObject.schema).min(1),
+        languageIn: z.preprocess(
+          (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+          z.array($LangStringJsonObject.schema).min(1),
+        ),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -30400,10 +30429,16 @@ export namespace LazyPropertiesStruct {
         requiredPartialToResolvedBlankNodeOrIriIdentifier:
           PartialStruct.Json.schema(),
         setLazyToResolvedBlankNodeOrIriIdentifier: z
-          .array($DefaultPartial.Json.schema())
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array($DefaultPartial.Json.schema()),
+          )
           .optional(),
         setPartialToResolvedBlankNodeOrIriIdentifier: z
-          .array(PartialStruct.Json.schema())
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(PartialStruct.Json.schema()),
+          )
           .optional(),
       }) satisfies z.ZodType<Json>;
     }
@@ -31968,26 +32003,53 @@ export namespace ListSetsStruct {
           .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/ListSetsStruct"),
         listDiscriminatedUnionSet: z
-          .array(
-            z.discriminatedUnion("$type", [
-              z
-                .object({ "@list": z.array(z.string()) })
-                .extend({ $type: z.literal("object") }),
-              $TypedLiteralJsonObject.schema.extend({
-                $type: z.literal("string"),
-              }),
-            ]),
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(
+              z.discriminatedUnion("$type", [
+                z
+                  .object({
+                    "@list": z.preprocess(
+                      (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+                      z.array(z.string()),
+                    ),
+                  })
+                  .extend({ $type: z.literal("object") }),
+                $TypedLiteralJsonObject.schema.extend({
+                  $type: z.literal("string"),
+                }),
+              ]),
+            ),
           )
           .optional()
           .meta({ description: "Set of typeof union that includes a list" }),
         listListSet: z
-          .array(z.array(z.array(z.string())))
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(
+              z.preprocess(
+                (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+                z.array(
+                  z.preprocess(
+                    (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+                    z.array(z.string()),
+                  ),
+                ),
+              ),
+            ),
+          )
           .optional()
-          .meta({
-            description: "Set of lists of lists",
-          }),
+          .meta({ description: "Set of lists of lists" }),
         listSet: z
-          .array(z.array(z.string()))
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(
+              z.preprocess(
+                (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+                z.array(z.string()),
+              ),
+            ),
+          )
           .optional()
           .meta({ description: "Set of lists" }),
       }) satisfies z.ZodType<Json>;
@@ -33242,10 +33304,35 @@ export namespace ListsStruct {
           .min(1)
           .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/ListsStruct"),
-        iriList: z.array(z.string().min(1)).optional(),
-        stringList: z.array(z.string()).optional(),
-        stringListList: z.array(z.array(z.string())).optional(),
-        structList: z.array(NonClassStruct.Json.schema()).optional(),
+        iriList: z
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(z.string().min(1)),
+          )
+          .optional(),
+        stringList: z
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(z.string()),
+          )
+          .optional(),
+        stringListList: z
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(
+              z.preprocess(
+                (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+                z.array(z.string()),
+              ),
+            ),
+          )
+          .optional(),
+        structList: z
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(NonClassStruct.Json.schema()),
+          )
+          .optional(),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -34126,14 +34213,26 @@ export namespace MutablePropertiesStruct {
         "@type": z
           .string()
           .default("http://example.com/MutablePropertiesStruct"),
-        mutableList: z.array(z.string()).optional().meta({
-          description:
-            "List-valued property that can't be reassigned but whose value can be mutated",
-        }),
-        mutableSet: z.array(z.string()).optional().meta({
-          description:
-            "Set-valued property that can't be reassigned but whose value can be mutated",
-        }),
+        mutableList: z
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(z.string()),
+          )
+          .optional()
+          .meta({
+            description:
+              "List-valued property that can't be reassigned but whose value can be mutated",
+          }),
+        mutableSet: z
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(z.string()),
+          )
+          .optional()
+          .meta({
+            description:
+              "Set-valued property that can't be reassigned but whose value can be mutated",
+          }),
         mutableString: z.string().optional().meta({
           description: "String-valued property that can be re-assigned",
         }),
@@ -42684,12 +42783,17 @@ export namespace PropertyCardinalitiesStruct {
           .min(1)
           .default(() => `_:${dataFactory.blankNode().value}`),
         emptySet: z
-          .array(z.string())
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(z.string()),
+          )
           .optional()
           .meta({ description: "Set: minCount implicitly=0, no maxCount" }),
         nonEmptySet: z
-          .array(z.string())
-          .min(1)
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(z.string()).min(1),
+          )
           .meta({ description: "Set: minCount=1, no maxCount" }),
         optional: z
           .string()
@@ -56705,15 +56809,18 @@ export namespace UnionDiscriminantsStruct {
               "Discriminated union that can be discriminated by an intrinsic discriminant property (termType).",
           }),
         setIriOrString: z
-          .array(
-            z.discriminatedUnion("$type", [
-              $IdentifierJsonObject.schema.extend({
-                $type: z.literal("object"),
-              }),
-              $TypedLiteralJsonObject.schema.extend({
-                $type: z.literal("string"),
-              }),
-            ]),
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(
+              z.discriminatedUnion("$type", [
+                $IdentifierJsonObject.schema.extend({
+                  $type: z.literal("object"),
+                }),
+                $TypedLiteralJsonObject.schema.extend({
+                  $type: z.literal("string"),
+                }),
+              ]),
+            ),
           )
           .optional()
           .meta({
@@ -56721,13 +56828,18 @@ export namespace UnionDiscriminantsStruct {
               "Discriminated union that can be discriminated by typeof.",
           }),
         setNodeOrLiteral: z
-          .array(
-            z.discriminatedUnion("$type", [
-              StructDiscriminatedUnionMember1.Json.schema().extend({
-                $type: z.literal("StructDiscriminatedUnionMember1"),
-              }),
-              $LiteralJsonObject.schema.extend({ $type: z.literal("Literal") }),
-            ]),
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(
+              z.discriminatedUnion("$type", [
+                StructDiscriminatedUnionMember1.Json.schema().extend({
+                  $type: z.literal("StructDiscriminatedUnionMember1"),
+                }),
+                $LiteralJsonObject.schema.extend({
+                  $type: z.literal("Literal"),
+                }),
+              ]),
+            ),
           )
           .optional()
           .meta({
@@ -56735,18 +56847,21 @@ export namespace UnionDiscriminantsStruct {
               "Discriminated union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
           }),
         setNodeOrNodeOrString: z
-          .array(
-            z.discriminatedUnion("$type", [
-              StructDiscriminatedUnionMember1.Json.schema().extend({
-                $type: z.literal("StructDiscriminatedUnionMember1"),
-              }),
-              StructDiscriminatedUnionMember2.Json.schema().extend({
-                $type: z.literal("StructDiscriminatedUnionMember2"),
-              }),
-              $TypedLiteralJsonObject.schema.extend({
-                $type: z.literal("string"),
-              }),
-            ]),
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(
+              z.discriminatedUnion("$type", [
+                StructDiscriminatedUnionMember1.Json.schema().extend({
+                  $type: z.literal("StructDiscriminatedUnionMember1"),
+                }),
+                StructDiscriminatedUnionMember2.Json.schema().extend({
+                  $type: z.literal("StructDiscriminatedUnionMember2"),
+                }),
+                $TypedLiteralJsonObject.schema.extend({
+                  $type: z.literal("string"),
+                }),
+              ]),
+            ),
           )
           .optional()
           .meta({
@@ -56754,13 +56869,18 @@ export namespace UnionDiscriminantsStruct {
               "Discriminated union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
           }),
         setTerm: z
-          .array(
-            z.discriminatedUnion("$type", [
-              $IdentifierJsonObject.schema.extend({
-                $type: z.literal("BlankNode"),
-              }),
-              $LiteralJsonObject.schema.extend({ $type: z.literal("Literal") }),
-            ]),
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(
+              z.discriminatedUnion("$type", [
+                $IdentifierJsonObject.schema.extend({
+                  $type: z.literal("BlankNode"),
+                }),
+                $LiteralJsonObject.schema.extend({
+                  $type: z.literal("Literal"),
+                }),
+              ]),
+            ),
           )
           .optional()
           .meta({

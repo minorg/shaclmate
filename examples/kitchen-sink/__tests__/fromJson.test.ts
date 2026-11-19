@@ -53,6 +53,30 @@ describe("fromJson", () => {
   });
 
   describe("input transformations", () => {
+    describe("array", () => {
+      it("array value", ({ expect }) => {
+        expect(
+          kitchenSink.PropertyCardinalitiesStruct.fromJson(
+            kitchenSink.PropertyCardinalitiesStruct.Json.parse({
+              required: "test",
+              nonEmptySet: ["test1"],
+            }).unsafeCoerce(),
+          ).unsafeCoerce().nonEmptySet,
+        ).toEqual(["test1"]);
+      });
+
+      it("singleton value", ({ expect }) => {
+        expect(
+          kitchenSink.PropertyCardinalitiesStruct.fromJson(
+            kitchenSink.PropertyCardinalitiesStruct.Json.parse({
+              required: "test",
+              nonEmptySet: "test1",
+            }).unsafeCoerce(),
+          ).unsafeCoerce().nonEmptySet,
+        ).toEqual(["test1"]);
+      });
+    });
+
     describe("bigdecimal", () => {
       for (const inputFormat of ["number", "string"] as const) {
         it(inputFormat, ({ expect }) => {

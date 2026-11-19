@@ -202,6 +202,7 @@ class JsonArrayType extends AbstractJsonType {
     if (this.minCount > 0n) {
       expression = code`${expression}.min(${this.minCount})`;
     }
+    expression = code`${this.reusables.imports.z}.preprocess((v) => (v === undefined ? v : Array.isArray(v) ? v : [v]), ${expression})`;
     this.default.ifJust((default_) => {
       expression = code`${expression}.default(${literalOf(default_)})`;
     });
