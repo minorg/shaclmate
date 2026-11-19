@@ -4,7 +4,6 @@ import { Memoize } from "typescript-memoize";
 
 import type { Callable } from "../Callable.js";
 import type { Reusables } from "../Reusables.js";
-import type { Snippet } from "../Snippet.js";
 import type { TsGenerator } from "../TsGenerator.js";
 import {
   arrayOf,
@@ -19,7 +18,7 @@ abstract class AbstractJsonType {
   protected abstract readonly inlineExpression: Code;
   protected readonly reusables: Reusables;
   protected abstract readonly schemaExpression: Code;
-  protected readonly snippet: Maybe<Snippet>;
+  protected readonly snippets: Maybe<AbstractJsonType.Snippets>;
 
   abstract readonly kind: string;
   readonly name: Maybe<AbstractJsonType.Name>;
@@ -27,23 +26,23 @@ abstract class AbstractJsonType {
   constructor({
     configuration,
     name,
-    snippet,
+    snippets,
     reusables,
   }: {
     configuration: TsGenerator.Configuration;
     name: Maybe<AbstractJsonType.Name>;
-    snippet: Maybe<Snippet>;
+    snippets: Maybe<AbstractJsonType.Snippets>;
     reusables: Reusables;
   }) {
     this.configuration = configuration;
     this.name = name;
     this.reusables = reusables;
-    this.snippet = snippet;
+    this.snippets = snippets;
   }
 
   @Memoize()
   get declaration(): Maybe<Code> {
-    if (this.name.isNothing() || this.snippet.isJust()) {
+    if (this.name.isNothing() || this.snippets.isJust()) {
       return Maybe.empty();
     }
 
@@ -78,16 +77,16 @@ abstract class AbstractJsonType {
 
   @Memoize()
   get expression(): Code {
-    return this.snippet
-      .map((snippet) => code`${snippet}`)
+    return this.snippets
+      .map((snippets) => snippets.expression)
       .alt(this.name.map((name) => code`${name.join(".")}`))
       .orDefaultLazy(() => this.inlineExpression);
   }
 
   @Memoize()
   get schema(): Code {
-    return this.snippet
-      .map((snippet) => code`${snippet}.schema()`)
+    return this.snippets
+      .map((snippets) => snippets.schema)
       .alt(this.name.map((name) => code`${name.join(".")}.schema()`))
       .orDefaultLazy(() => this.schemaExpression);
   }
@@ -203,6 +202,7 @@ class JsonArrayType extends AbstractJsonType {
     if (this.minCount > 0n) {
       expression = code`${expression}.min(${this.minCount})`;
     }
+    expression = code`${this.reusables.imports.z}.preprocess((v) => (v === undefined ? v : Array.isArray(v) ? v : [v]), ${expression})`;
     this.default.ifJust((default_) => {
       expression = code`${expression}.default(${literalOf(default_)})`;
     });
@@ -545,81 +545,70 @@ class JsonTypeFactory {
     options?: {
       default?: JsonValue[];
       minCount?: bigint;
-      name?: AbstractJsonType.Name;
-      snippet?: Snippet;
-    },
+    } & AbstractJsonTypeFactoryMethodOptions,
   ): JsonArrayType {
     return new JsonArrayType({
       ...this.constructorParameters,
+      ...AbstractJsonTypeFactoryMethodOptions.toConstructorParameters(options),
       default_: Maybe.fromNullable(options?.default),
       itemType,
       minCount: options?.minCount ?? 0n,
-      name: Maybe.fromNullable(options?.name),
-      snippet: Maybe.fromNullable(options?.snippet),
     });
   }
 
-  createJsonBooleanType(options?: {
-    in_?: readonly boolean[];
-    inReference?: Code;
-    name?: AbstractJsonType.Name;
-    snippet?: Snippet;
-  }): JsonBooleanType {
+  createJsonBooleanType(
+    options?: {
+      in_?: readonly boolean[];
+      inReference?: Code;
+    } & AbstractJsonTypeFactoryMethodOptions,
+  ): JsonBooleanType {
     return new JsonBooleanType({
       ...this.constructorParameters,
+      ...AbstractJsonTypeFactoryMethodOptions.toConstructorParameters(options),
       in_: options?.in_ ?? [],
       inReference: Maybe.fromNullable(options?.inReference),
-      name: Maybe.fromNullable(options?.name),
-      snippet: Maybe.fromNullable(options?.snippet),
     });
   }
 
   createJsonDiscriminatedUnionType(
     members: readonly JsonDiscriminatedUnionType.Member[],
     options?: {
-      name?: AbstractJsonType.Name;
       recursive?: boolean;
-      snippet?: Snippet;
-    },
+    } & AbstractJsonTypeFactoryMethodOptions,
   ): JsonDiscriminatedUnionType {
     return new JsonDiscriminatedUnionType({
       ...this.constructorParameters,
+      ...AbstractJsonTypeFactoryMethodOptions.toConstructorParameters(options),
       members,
-      name: Maybe.fromNullable(options?.name),
       recursive: !!options?.recursive,
-      snippet: Maybe.fromNullable(options?.snippet),
     });
   }
 
   createJsonIntersectionType(
     memberTypes: readonly JsonType[],
     options?: {
-      name?: AbstractJsonType.Name;
       recursive?: boolean;
-      snippet?: Snippet;
-    },
+    } & AbstractJsonTypeFactoryMethodOptions,
   ): JsonIntersectionType {
     return new JsonIntersectionType({
       ...this.constructorParameters,
+      ...AbstractJsonTypeFactoryMethodOptions.toConstructorParameters(options),
       memberTypes,
-      name: Maybe.fromNullable(options?.name),
       recursive: !!options?.recursive,
-      snippet: Maybe.fromNullable(options?.snippet),
     });
   }
 
-  createJsonNumberType(options?: {
-    in_?: readonly number[];
-    inReference?: Code;
-    name?: AbstractJsonType.Name;
-    snippet?: Snippet;
-  }): JsonNumberType {
+  createJsonNumberType(
+    options?: {
+      in_?: readonly number[];
+      inReference?: Code;
+    } & AbstractJsonTypeFactoryMethodOptions,
+  ): JsonNumberType {
     return new JsonNumberType({
       ...this.constructorParameters,
+      ...AbstractJsonTypeFactoryMethodOptions.toConstructorParameters(options),
       in_: options?.in_ ?? [],
       inReference: Maybe.fromNullable(options?.inReference),
-      name: Maybe.fromNullable(options?.name),
-      snippet: Maybe.fromNullable(options?.snippet),
     });
   }
 
@@ -628,10 +617,8 @@ class JsonTypeFactory {
       | readonly JsonObjectType.PartialMember[]
       | Record<string, Omit<JsonObjectType.PartialMember, "name">>,
     options?: {
-      name?: AbstractJsonType.Name;
       shorthand?: JsonObjectType.Shorthand;
-      snippet?: Snippet;
-    },
+    } & AbstractJsonTypeFactoryMethodOptions,
   ): JsonObjectType {
     let partialMembersArray: readonly JsonObjectType.PartialMember[];
     if (Array.isArray(partialMembers)) {
@@ -644,6 +631,7 @@ class JsonTypeFactory {
 
     return new JsonObjectType({
       ...this.constructorParameters,
+      ...AbstractJsonTypeFactoryMethodOptions.toConstructorParameters(options),
       members: partialMembersArray.map((member) => ({
         description: Maybe.isMaybe(member.description)
           ? member.description
@@ -659,33 +647,35 @@ class JsonTypeFactory {
           ? member.uiSchemaElement
           : Maybe.fromNullable(member.uiSchemaElement),
       })),
-      name: Maybe.fromNullable(options?.name),
       shorthand: Maybe.fromNullable(options?.shorthand),
-      snippet: Maybe.fromNullable(options?.snippet),
     });
   }
 
-  createJsonStringType(options?: {
-    default?: Code | string;
-    format?: JsonStringType.Format;
-    in_?: readonly string[];
-    inReference?: Code;
-    minLength?: bigint;
-    name?: AbstractJsonType.Name;
-    snippet?: Snippet;
-  }): JsonStringType {
+  createJsonStringType(
+    options?: {
+      default?: Code | string;
+      format?: JsonStringType.Format;
+      in_?: readonly string[];
+      inReference?: Code;
+      minLength?: bigint;
+    } & AbstractJsonTypeFactoryMethodOptions,
+  ): JsonStringType {
     return new JsonStringType({
       ...this.constructorParameters,
+      ...AbstractJsonTypeFactoryMethodOptions.toConstructorParameters(options),
       default_: Maybe.fromNullable(options?.default),
       format: Maybe.fromNullable(options?.format),
       in_: options?.in_ ?? [],
       inReference: Maybe.fromNullable(options?.inReference),
       minLength: Maybe.fromNullable(options?.minLength),
-      name: Maybe.fromNullable(options?.name),
-      snippet: Maybe.fromNullable(options?.snippet),
     });
   }
 }
+
+type AbstractJsonTypeFactoryMethodOptions = {
+  name?: AbstractJsonType.Name;
+  snippets?: AbstractJsonType.Snippets;
+};
 
 type JsonArray = JsonValue[];
 
@@ -710,6 +700,20 @@ export type AbstractType_JsonType = JsonType;
 
 export type AbstractType_JsonTypeFactory = JsonTypeFactory;
 
+namespace AbstractJsonTypeFactoryMethodOptions {
+  export function toConstructorParameters(
+    options?: AbstractJsonTypeFactoryMethodOptions,
+  ): {
+    name: Maybe<AbstractJsonType.Name>;
+    snippets: Maybe<AbstractJsonType.Snippets>;
+  } {
+    return {
+      name: Maybe.fromNullable(options?.name),
+      snippets: Maybe.fromNullable(options?.snippets),
+    };
+  }
+}
+
 namespace JsonDiscriminatedUnionType {
   export interface Member {
     readonly discriminantValue: number | string;
@@ -719,6 +723,11 @@ namespace JsonDiscriminatedUnionType {
 
 export namespace AbstractJsonType {
   export type Name = readonly string[];
+
+  export interface Snippets {
+    readonly expression: Code;
+    readonly schema: Code;
+  }
 }
 
 export const AbstractType_JsonTypeFactory = JsonTypeFactory;

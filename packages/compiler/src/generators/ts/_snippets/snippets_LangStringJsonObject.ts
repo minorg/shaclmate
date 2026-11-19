@@ -14,7 +14,7 @@ interface ${syntheticNamePrefix}LangStringJsonObject {
 }
   
 namespace ${syntheticNamePrefix}LangStringJsonObject {
-  export const schema = () => ${imports.z}.object({
+  export const schema = ${imports.z}.object({
     "@language": ${imports.z}.string().min(1),
     "@value": ${imports.z}.string().min(1)
   });

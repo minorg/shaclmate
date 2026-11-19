@@ -202,6 +202,7 @@ import { snippets_listToJsonObject } from "./_snippets/snippets_listToJsonObject
 import { snippets_literalFactory } from "./_snippets/snippets_literalFactory.js";
 import { snippets_literalFromJsonObject } from "./_snippets/snippets_literalFromJsonObject.js";
 import { snippets_literalFromRdfResourceValues } from "./_snippets/snippets_literalFromRdfResourceValues.js";
+import { snippets_literalJsonValueSchema } from "./_snippets/snippets_literalJsonValueSchema.js";
 import { snippets_literalSchemaSparqlPatterns } from "./_snippets/snippets_literalSchemaSparqlPatterns.js";
 import { snippets_literalSparqlWherePatterns } from "./_snippets/snippets_literalSparqlWherePatterns.js";
 import { snippets_literalToJsonObject } from "./_snippets/snippets_literalToJsonObject.js";
@@ -245,6 +246,7 @@ import { snippets_stringSparqlWherePatterns } from "./_snippets/snippets_stringS
 import { snippets_termFilterSparqlPatterns } from "./_snippets/snippets_termFilterSparqlPatterns.js";
 import { snippets_termFromJsonObject } from "./_snippets/snippets_termFromJsonObject.js";
 import { snippets_termFromRdfResourceValues } from "./_snippets/snippets_termFromRdfResourceValues.js";
+import { snippets_termJsonValueSchema } from "./_snippets/snippets_termJsonValueSchema.js";
 import { snippets_termLikeFromRdfResourceValues } from "./_snippets/snippets_termLikeFromRdfResourceValues.js";
 import { snippets_termSchemaSparqlPatterns } from "./_snippets/snippets_termSchemaSparqlPatterns.js";
 import { snippets_termSparqlWherePatterns } from "./_snippets/snippets_termSparqlWherePatterns.js";
@@ -1273,6 +1275,11 @@ export class Snippets {
   }
 
   @Memoize()
+  get literalJsonValueSchema(): Snippet {
+    return this.snippet(snippets_literalJsonValueSchema);
+  }
+
+  @Memoize()
   get literalSchemaSparqlPatterns(): Snippet {
     return this.snippet(snippets_literalSchemaSparqlPatterns);
   }
@@ -1485,6 +1492,11 @@ export class Snippets {
   @Memoize()
   get termFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_termFromRdfResourceValues);
+  }
+
+  @Memoize()
+  get termJsonValueSchema(): Snippet {
+    return this.snippet(snippets_termJsonValueSchema);
   }
 
   @Memoize()

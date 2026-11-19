@@ -12,6 +12,6 @@ export const snippets_TermJsonObject: SnippetFactory = ({
 type ${syntheticNamePrefix}TermJsonObject = ${snippets.IdentifierJsonObject} | ${snippets.LiteralJsonObject};
   
 namespace ${syntheticNamePrefix}TermJsonObject {
-  export const schema = () => ${imports.z}.union([${snippets.IdentifierJsonObject}.schema(), ${snippets.LiteralJsonObject}.schema()]);
+  export const schema = ${imports.z}.union([${snippets.IdentifierJsonObject}.schema, ${snippets.LiteralJsonObject}.schema]);
 }`,
   );

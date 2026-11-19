@@ -50,7 +50,12 @@ export class LiteralType extends AbstractLiteralType {
     { instanceof: "Object", typeof: "object" },
   ] as const;
   override readonly jsonValueType: AbstractLiteralType["jsonValueType"] =
-    this.jsonObjectType;
+    this.jsonTypeFactory.createJsonObjectType(this.jsonObjectTypeMembers, {
+      snippets: {
+        expression: code`${this.reusables.snippets.LiteralJsonObject}`,
+        schema: code`${this.reusables.snippets.literalJsonValueSchema}`,
+      },
+    });
   override readonly kind = "Literal";
   override readonly toJsonObjectFunction = new BuiltinCallable(
     this.reusables.snippets.literalToJsonObject,

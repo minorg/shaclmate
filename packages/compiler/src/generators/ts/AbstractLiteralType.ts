@@ -1,5 +1,6 @@
 import type { Literal } from "@rdfjs/types";
 import { AbstractTermType } from "./AbstractTermType.js";
+import { code } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class of all types that are literals in RDF.
@@ -8,25 +9,32 @@ export abstract class AbstractLiteralType extends AbstractTermType<
   Literal,
   Literal
 > {
+  protected readonly jsonObjectTypeMembers: Record<
+    string,
+    { optional?: boolean; type: AbstractTermType.JsonType }
+  > = {
+    "@language": {
+      optional: true,
+      type: this.jsonTypeFactory.createJsonStringType(),
+    },
+    "@type": {
+      optional: true,
+      type: this.jsonTypeFactory.createJsonStringType(),
+    },
+    "@value": {
+      type: this.jsonTypeFactory.createJsonStringType(),
+    },
+  };
   override readonly jsonObjectType: AbstractTermType<
     Literal,
     Literal
   >["jsonObjectType"] = this.jsonTypeFactory.createJsonObjectType(
+    this.jsonObjectTypeMembers,
     {
-      "@language": {
-        optional: true,
-        type: this.jsonTypeFactory.createJsonStringType(),
+      snippets: {
+        expression: code`${this.reusables.snippets.LiteralJsonObject}`,
+        schema: code`${this.reusables.snippets.LiteralJsonObject}.schema`,
       },
-      "@type": {
-        optional: true,
-        type: this.jsonTypeFactory.createJsonStringType(),
-      },
-      "@value": {
-        type: this.jsonTypeFactory.createJsonStringType(),
-      },
-    },
-    {
-      snippet: this.reusables.snippets.LiteralJsonObject,
     },
   );
 

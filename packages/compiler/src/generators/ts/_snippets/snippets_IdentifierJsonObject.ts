@@ -13,7 +13,7 @@ interface ${syntheticNamePrefix}IdentifierJsonObject<IdT extends string = string
 }
   
 namespace ${syntheticNamePrefix}IdentifierJsonObject {
-  export const schema = () => ${imports.z}.object({
+  export const schema = ${imports.z}.object({
     "@id": ${imports.z}.string().min(1)
   });
 }`,

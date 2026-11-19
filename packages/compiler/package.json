@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "4.0.108",
+    "@shaclmate/shacl-ast": "4.0.109",
     "@rdfjs/types": "~2.0.1",
     "@rdfx/collection": "0.0.67",
     "@rdfx/data-factory": "0.0.67",
@@ -832,6 +832,8 @@
     "dist/generators/ts/_snippets/snippets_literalFromJsonObject.js",
     "dist/generators/ts/_snippets/snippets_literalFromRdfResourceValues.d.ts",
     "dist/generators/ts/_snippets/snippets_literalFromRdfResourceValues.js",
+    "dist/generators/ts/_snippets/snippets_literalJsonValueSchema.d.ts",
+    "dist/generators/ts/_snippets/snippets_literalJsonValueSchema.js",
     "dist/generators/ts/_snippets/snippets_literalSchemaSparqlPatterns.d.ts",
     "dist/generators/ts/_snippets/snippets_literalSchemaSparqlPatterns.js",
     "dist/generators/ts/_snippets/snippets_literalSparqlWherePatterns.d.ts",
@@ -918,6 +920,8 @@
     "dist/generators/ts/_snippets/snippets_termFromJsonObject.js",
     "dist/generators/ts/_snippets/snippets_termFromRdfResourceValues.d.ts",
     "dist/generators/ts/_snippets/snippets_termFromRdfResourceValues.js",
+    "dist/generators/ts/_snippets/snippets_termJsonValueSchema.d.ts",
+    "dist/generators/ts/_snippets/snippets_termJsonValueSchema.js",
     "dist/generators/ts/_snippets/snippets_termLikeFromRdfResourceValues.d.ts",
     "dist/generators/ts/_snippets/snippets_termLikeFromRdfResourceValues.js",
     "dist/generators/ts/_snippets/snippets_termSchemaSparqlPatterns.d.ts",
@@ -982,5 +986,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.108"
+  "version": "4.0.109"
 }
