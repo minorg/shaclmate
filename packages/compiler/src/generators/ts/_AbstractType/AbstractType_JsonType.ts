@@ -4,7 +4,6 @@ import { Memoize } from "typescript-memoize";
 
 import type { Callable } from "../Callable.js";
 import type { Reusables } from "../Reusables.js";
-import type { Snippet } from "../Snippet.js";
 import type { TsGenerator } from "../TsGenerator.js";
 import {
   arrayOf,
@@ -19,7 +18,7 @@ abstract class AbstractJsonType {
   protected abstract readonly inlineExpression: Code;
   protected readonly reusables: Reusables;
   protected abstract readonly schemaExpression: Code;
-  protected readonly snippet: Maybe<Snippet>;
+  protected readonly snippets: Maybe<AbstractJsonType.Snippets>;
 
   abstract readonly kind: string;
   readonly name: Maybe<AbstractJsonType.Name>;
@@ -27,23 +26,23 @@ abstract class AbstractJsonType {
   constructor({
     configuration,
     name,
-    snippet,
+    snippets,
     reusables,
   }: {
     configuration: TsGenerator.Configuration;
     name: Maybe<AbstractJsonType.Name>;
-    snippet: Maybe<Snippet>;
+    snippets: Maybe<AbstractJsonType.Snippets>;
     reusables: Reusables;
   }) {
     this.configuration = configuration;
     this.name = name;
     this.reusables = reusables;
-    this.snippet = snippet;
+    this.snippets = snippets;
   }
 
   @Memoize()
   get declaration(): Maybe<Code> {
-    if (this.name.isNothing() || this.snippet.isJust()) {
+    if (this.name.isNothing() || this.snippets.isJust()) {
       return Maybe.empty();
     }
 
@@ -78,16 +77,16 @@ abstract class AbstractJsonType {
 
   @Memoize()
   get expression(): Code {
-    return this.snippet
-      .map((snippet) => code`${snippet}`)
+    return this.snippets
+      .map((snippets) => code`${snippets}`)
       .alt(this.name.map((name) => code`${name.join(".")}`))
       .orDefaultLazy(() => this.inlineExpression);
   }
 
   @Memoize()
   get schema(): Code {
-    return this.snippet
-      .map((snippet) => code`${snippet}.schema()`)
+    return this.snippets
+      .map((snippets) => code`${snippets}.schema()`)
       .alt(this.name.map((name) => code`${name.join(".")}.schema()`))
       .orDefaultLazy(() => this.schemaExpression);
   }
@@ -674,7 +673,7 @@ class JsonTypeFactory {
 
 type AbstractJsonTypeFactoryMethodOptions = {
   name?: AbstractJsonType.Name;
-  snippet?: Snippet;
+  snippets?: AbstractJsonType.Snippets;
 };
 
 type JsonArray = JsonValue[];
@@ -705,11 +704,11 @@ namespace AbstractJsonTypeFactoryMethodOptions {
     options?: AbstractJsonTypeFactoryMethodOptions,
   ): {
     name: Maybe<AbstractJsonType.Name>;
-    snippet: Maybe<Snippet>;
+    snippets: Maybe<AbstractJsonType.Snippets>;
   } {
     return {
       name: Maybe.fromNullable(options?.name),
-      snippet: Maybe.fromNullable(options?.snippet),
+      snippets: Maybe.fromNullable(options?.snippets),
     };
   }
 }
@@ -723,6 +722,11 @@ namespace JsonDiscriminatedUnionType {
 
 export namespace AbstractJsonType {
   export type Name = readonly string[];
+
+  export interface Snippets {
+    readonly expression: Code;
+    readonly schema: Code;
+  }
 }
 
 export const AbstractType_JsonTypeFactory = JsonTypeFactory;
