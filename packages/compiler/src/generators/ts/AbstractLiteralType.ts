@@ -9,23 +9,27 @@ export abstract class AbstractLiteralType extends AbstractTermType<
   Literal,
   Literal
 > {
+  protected readonly jsonObjectTypeMembers: Record<
+    string,
+    { optional?: boolean; type: AbstractTermType.JsonType }
+  > = {
+    "@language": {
+      optional: true,
+      type: this.jsonTypeFactory.createJsonStringType(),
+    },
+    "@type": {
+      optional: true,
+      type: this.jsonTypeFactory.createJsonStringType(),
+    },
+    "@value": {
+      type: this.jsonTypeFactory.createJsonStringType(),
+    },
+  };
   override readonly jsonObjectType: AbstractTermType<
     Literal,
     Literal
   >["jsonObjectType"] = this.jsonTypeFactory.createJsonObjectType(
-    {
-      "@language": {
-        optional: true,
-        type: this.jsonTypeFactory.createJsonStringType(),
-      },
-      "@type": {
-        optional: true,
-        type: this.jsonTypeFactory.createJsonStringType(),
-      },
-      "@value": {
-        type: this.jsonTypeFactory.createJsonStringType(),
-      },
-    },
+    this.jsonObjectTypeMembers,
     {
       snippets: {
         expression: code`${this.reusables.snippets.LiteralJsonObject}`,

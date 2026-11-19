@@ -18,6 +18,25 @@ export class TermType<
     | Literal
     | NamedNode,
 > extends AbstractTermType {
+  private readonly jsonObjectTypeMembers = {
+    "@id": {
+      type: this.jsonTypeFactory.createJsonStringType({
+        minLength: 1n,
+      }),
+    },
+    "@language": {
+      optional: true,
+      type: this.jsonTypeFactory.createJsonStringType(),
+    },
+    "@type": {
+      optional: true,
+      type: this.jsonTypeFactory.createJsonStringType(),
+    },
+    "@value": {
+      type: this.jsonTypeFactory.createJsonStringType(),
+    },
+  };
+
   override readonly conversionFunction: Maybe<AbstractTermType.ConversionFunction> =
     Maybe.empty();
   override readonly filterFunction = new BuiltinCallable(
@@ -26,6 +45,20 @@ export class TermType<
   override readonly jsTypes = [
     { instanceof: "Object", typeof: "object" },
   ] as const;
+  override readonly jsonObjectType: AbstractTermType["jsonObjectType"] = // This is a z.union in the snippet but an object here so a discriminant can be added if necessary.
+    this.jsonTypeFactory.createJsonObjectType(this.jsonObjectTypeMembers, {
+      snippets: {
+        expression: code`${this.reusables.snippets.TermJsonObject}`,
+        schema: code`${this.reusables.snippets.TermJsonObject}.schema`,
+      },
+    });
+  override readonly jsonValueType: AbstractTermType["jsonValueType"] =
+    this.jsonTypeFactory.createJsonObjectType(this.jsonObjectTypeMembers, {
+      snippets: {
+        expression: code`${this.reusables.snippets.TermJsonObject}`,
+        schema: code`${this.reusables.snippets.termJsonValueSchema}`,
+      },
+    });
   override readonly kind = "Term";
   override readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly toJsonObjectFunction = new BuiltinCallable(
@@ -93,38 +126,17 @@ export class TermType<
   }
 
   @Memoize()
-  override get jsonObjectType(): AbstractTermType["jsonObjectType"] {
-    // This is a z.union in the snippet but an object here so a discriminant can be added if necessary.
-    return this.jsonTypeFactory.createJsonObjectType(
-      {
-        "@id": {
-          type: this.jsonTypeFactory.createJsonStringType({
-            minLength: 1n,
-          }),
-        },
-        "@language": {
-          optional: true,
-          type: this.jsonTypeFactory.createJsonStringType(),
-        },
-        "@type": {
-          optional: true,
-          type: this.jsonTypeFactory.createJsonStringType(),
-        },
-        "@value": {
-          type: this.jsonTypeFactory.createJsonStringType(),
-        },
+  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
+    return new SchemaObject({
+      properties: {
+        ...super.schema.properties,
+        types: code`types: ${arrayOf(...[...this.nodeKinds].map(NodeKind.toTermType))}`,
       },
-      {
-        snippets: {
-          expression: code`${this.reusables.snippets.TermJsonObject}`,
-          schema: code`${this.reusables.snippets.TermJsonObject}.schema`,
-        },
-      },
-    );
-  }
-
-  get jsonValueType(): AbstractTermType["jsonValueType"] {
-    return this.jsonObjectType;
+      type: new SchemaObject.BuiltinType(
+        code`${this.reusables.snippets.TermSchema}<${this.expression}>`,
+      ),
+      variable: super.schema.variable,
+    });
   }
 
   @Memoize()
@@ -147,20 +159,6 @@ export class TermType<
         .map((import_) => code`${import_}`),
       { on: " | " },
     )})`;
-  }
-
-  @Memoize()
-  override get schema(): SchemaObject<SchemaObject.BuiltinType> {
-    return new SchemaObject({
-      properties: {
-        ...super.schema.properties,
-        types: code`types: ${arrayOf(...[...this.nodeKinds].map(NodeKind.toTermType))}`,
-      },
-      type: new SchemaObject.BuiltinType(
-        code`${this.reusables.snippets.TermSchema}<${this.expression}>`,
-      ),
-      variable: super.schema.variable,
-    });
   }
 
   override graphqlResolveExpression(

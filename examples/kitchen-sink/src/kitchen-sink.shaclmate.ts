@@ -9,7 +9,12 @@ import type {
 } from "@rdfjs/types";
 import { datasetFactory } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
-import { expandIri, type NamespaceBuilder, type PrefixMap } from "@rdfx/iri";
+import {
+  expandIri,
+  type NamespaceBuilder,
+  type PrefixMap,
+  validateAbsoluteIri,
+} from "@rdfx/iri";
 import { LiteralDecoder, LiteralFactory } from "@rdfx/literal";
 import {
   PropertyPath as RdfxResourcePropertyPath,
@@ -2516,6 +2521,20 @@ namespace $LiteralJsonObject {
   });
 }
 
+const $literalJsonValueSchema = z
+  .union([z.boolean(), z.number(), $LiteralJsonObject.schema, z.string()])
+  .transform((v): $LiteralJsonObject => {
+    if (typeof v === "object") {
+      return v;
+    }
+
+    const literal = $literalFactory.primitive(v);
+    return { "@type": literal.datatype.value, "@value": literal.value };
+  }) as unknown as z.ZodType<
+  $LiteralJsonObject,
+  boolean | number | $LiteralJsonObject | string
+>;
+
 interface $LiteralSchema {
   readonly hasValues?: readonly Literal[];
   readonly in?: readonly Literal[];
@@ -4084,6 +4103,35 @@ namespace $TermJsonObject {
     $LiteralJsonObject.schema,
   ]);
 }
+
+const $termJsonValueSchema = z
+  .union([z.boolean(), z.number(), $TermJsonObject.schema, z.string()])
+  .transform((v): $TermJsonObject => {
+    if (typeof v === "object") {
+      return v;
+    }
+
+    switch (typeof v) {
+      case "boolean":
+      case "number": {
+        const literal = $literalFactory.primitive(v);
+        return { "@type": literal.datatype.value, "@value": literal.value };
+      }
+      case "string": {
+        if (validateAbsoluteIri(v).isRight()) {
+          return { "@id": v };
+        }
+        // Otherwise assume the string is a literal
+        return { "@value": v };
+      }
+      default:
+        v satisfies never;
+        throw new Error("should never reach this point");
+    }
+  }) as unknown as z.ZodType<
+  $TermJsonObject,
+  boolean | number | $TermJsonObject | string
+>;
 
 const $termLikeFromRdfResourceValues: $FromRdfResourceValuesFunction<
   Resource.Value,
@@ -9832,16 +9880,14 @@ export namespace ConvertibleTypesStruct {
         convertibleIriNonEmptySet: z.array(z.string().min(1)).min(1),
         convertibleIriOption: z.string().min(1).optional(),
         convertibleIriSet: z.array(z.string().min(1)).optional(),
-        convertibleLiteral: $LiteralJsonObject.schema,
-        convertibleLiteralNonEmptySet: z
-          .array($LiteralJsonObject.schema)
-          .min(1),
-        convertibleLiteralOption: $LiteralJsonObject.schema.optional(),
-        convertibleLiteralSet: z.array($LiteralJsonObject.schema).optional(),
-        convertibleTerm: $TermJsonObject.schema,
-        convertibleTermNonEmptySet: z.array($TermJsonObject.schema).min(1),
-        convertibleTermOption: $TermJsonObject.schema.optional(),
-        convertibleTermSet: z.array($TermJsonObject.schema).optional(),
+        convertibleLiteral: $literalJsonValueSchema,
+        convertibleLiteralNonEmptySet: z.array($literalJsonValueSchema).min(1),
+        convertibleLiteralOption: $literalJsonValueSchema.optional(),
+        convertibleLiteralSet: z.array($literalJsonValueSchema).optional(),
+        convertibleTerm: $termJsonValueSchema,
+        convertibleTermNonEmptySet: z.array($termJsonValueSchema).min(1),
+        convertibleTermOption: $termJsonValueSchema.optional(),
+        convertibleTermSet: z.array($termJsonValueSchema).optional(),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -36218,10 +36264,10 @@ export namespace NodeKindsStruct {
           .string()
           .min(1)
           .default(() => `_:${dataFactory.blankNode().value}`),
-        blankNodeOrLiteralNodeKind: $TermJsonObject.schema,
+        blankNodeOrLiteralNodeKind: $termJsonValueSchema,
         iriNodeKind: z.string().min(1),
-        iriOrLiteralNodeKind: $TermJsonObject.schema,
-        literalNodeKind: $LiteralJsonObject.schema,
+        iriOrLiteralNodeKind: $termJsonValueSchema,
+        literalNodeKind: $literalJsonValueSchema,
       }) satisfies z.ZodType<Json>;
     }
 
@@ -50452,9 +50498,9 @@ export namespace TermsStruct {
           .optional(),
         iriTerm: z.string().min(1).optional(),
         langStringTerm: $LangStringJsonObject.schema.optional(),
-        literalTerm: $LiteralJsonObject.schema.optional(),
+        literalTerm: $literalJsonValueSchema.optional(),
         stringTerm: z.string().optional(),
-        term: $TermJsonObject.schema.optional(),
+        term: $termJsonValueSchema.optional(),
       }) satisfies z.ZodType<Json>;
     }
 

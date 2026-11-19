@@ -52,6 +52,7 @@ export class Imports {
   readonly ResourceSet = imp("ResourceSet@@rdfx/resource");
   readonly Right = imp("Right@purify-ts");
   readonly sparqljs = imp("sparqljs*sparqljs");
+  readonly validateAbsoluteIri = imp("validateAbsoluteIri@@rdfx/iri");
   readonly Variable = imp("t:Variable@@rdfjs/types");
   readonly z = imp("z@zod");
   readonly ZodType = imp("t:ZodType@zod");
