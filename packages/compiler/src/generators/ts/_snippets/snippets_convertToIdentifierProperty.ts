@@ -8,7 +8,7 @@ export const snippets_convertToIdentifierProperty: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToIdentifierProperty`,
     code`\
-function ${syntheticNamePrefix}convertToIdentifierProperty<DefaultNamespaceT extends ${imports.NamespaceBuilder} = ${imports.NamespaceBuilder}>(identifier: (() => ${imports.BlankNode} | ${imports.NamedNode}) | ${imports.BlankNode} | ${imports.NamedNode} | (keyof DefaultNamespaceT & string) | undefined, defaultNamespace?: DefaultNamespaceT): ${imports.Either}<Error, () => ${imports.BlankNode} | ${imports.NamedNode}> {
+function ${syntheticNamePrefix}convertToIdentifierProperty<DefaultNamespaceT extends ${imports.NamespaceBuilder} = ${imports.NamespaceBuilder}>(identifier: (() => ${imports.BlankNode} | ${imports.NamedNode}) | ${imports.BlankNode} | ${imports.NamedNode} | (keyof DefaultNamespaceT & string) | undefined, { defaultNamespace }: { defaultNamespace: DefaultNamespaceT | undefined }): ${imports.Either}<Error, () => ${imports.BlankNode} | ${imports.NamedNode}> {
   switch (typeof identifier) {
     case "function":
       return ${imports.Either}.of(identifier);

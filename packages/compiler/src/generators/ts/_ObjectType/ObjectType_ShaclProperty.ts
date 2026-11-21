@@ -224,9 +224,9 @@ export class ObjectType_ShaclProperty<
       this.type.validationFunction.extract()?.unannotatedUsage;
     let rhs: Code;
     if (conversionFunction && validationFunction) {
-      rhs = code`${conversionFunction}(${parameterVariable}, ${defaultNamespaceVariable}).chain(value => ${validationFunction}(${this.typeSchemaVariable}, value))`;
+      rhs = code`${conversionFunction}(${parameterVariable}, { defaultNamespace: ${defaultNamespaceVariable} }).chain(value => ${validationFunction}(${this.typeSchemaVariable}, value))`;
     } else if (conversionFunction) {
-      rhs = code`${conversionFunction}(${parameterVariable}, ${defaultNamespaceVariable})`;
+      rhs = code`${conversionFunction}(${parameterVariable}, { defaultNamespace: ${defaultNamespaceVariable} })`;
     } else if (validationFunction) {
       rhs = code`${validationFunction}(${this.typeSchemaVariable}, ${parameterVariable})`;
     } else {

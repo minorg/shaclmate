@@ -8,7 +8,7 @@ export const snippets_convertToIriLiteral: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToIriLiteral`,
     code`\
-function ${syntheticNamePrefix}convertToIriLiteral<IriT extends string>(value: IriT | ${imports.NamedNode}<IriT>, _defaultNamespace?: ${imports.NamespaceBuilder}): ${imports.Either}<Error, ${imports.NamedNode}<IriT>> {
+function ${syntheticNamePrefix}convertToIriLiteral<IriT extends string>(value: IriT | ${imports.NamedNode}<IriT>, _options: { defaultNamespace: ${imports.NamespaceBuilder} | undefined }): ${imports.Either}<Error, ${imports.NamedNode}<IriT>> {
   switch (typeof value) {
     case "object":
       return ${imports.Either}.of(value);

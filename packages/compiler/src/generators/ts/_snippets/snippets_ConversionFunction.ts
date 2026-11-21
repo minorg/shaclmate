@@ -8,5 +8,5 @@ export const snippets_ConversionFunction: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}ConversionFunction`,
     code`\
-type ${syntheticNamePrefix}ConversionFunction<SourceT, TargetT, DefaultNamespaceT extends ${imports.NamespaceBuilder} = ${imports.NamespaceBuilder}> = (source: SourceT, defaultNamespace?: DefaultNamespaceT) => ${imports.Either}<Error, TargetT>;`,
+type ${syntheticNamePrefix}ConversionFunction<SourceT, TargetT, DefaultNamespaceT extends ${imports.NamespaceBuilder} = ${imports.NamespaceBuilder}> = (source: SourceT, options: { defaultNamespace: DefaultNamespaceT | undefined }) => ${imports.Either}<Error, TargetT>;`,
   );
