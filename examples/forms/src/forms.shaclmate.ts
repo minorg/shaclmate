@@ -675,7 +675,9 @@ export namespace FormStruct {
             | (keyof $DefaultNamespaceT & string);
           readonly requiredStringProperty: string;
         },
-        { defaultNamespace }: { defaultNamespace: $DefaultNamespaceT },
+        {
+          defaultNamespace,
+        }: { defaultNamespace: $DefaultNamespaceT | undefined },
       ) =>
         ((parameters) =>
           $sequenceRecord({
