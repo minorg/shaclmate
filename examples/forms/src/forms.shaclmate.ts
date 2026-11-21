@@ -94,7 +94,7 @@ type $ConversionFunction<
   DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
 > = (
   source: SourceT,
-  defaultNamespace?: DefaultNamespaceT,
+  options: { defaultNamespace: DefaultNamespaceT | undefined },
 ) => Either<Error, TargetT>;
 
 function $convertToIdentifierProperty<
@@ -106,7 +106,7 @@ function $convertToIdentifierProperty<
     | NamedNode
     | (keyof DefaultNamespaceT & string)
     | undefined,
-  defaultNamespace?: DefaultNamespaceT,
+  { defaultNamespace }: { defaultNamespace: DefaultNamespaceT | undefined },
 ): Either<Error, () => BlankNode | NamedNode> {
   switch (typeof identifier) {
     case "function":
@@ -142,7 +142,7 @@ function $convertToMaybe<
   Maybe<ItemTargetT>,
   DefaultNamespaceT
 > {
-  return (value, defaultNamespace) => {
+  return (value, options) => {
     switch (typeof value) {
       case "object": {
         if (Maybe.isMaybe(value)) {
@@ -154,7 +154,7 @@ function $convertToMaybe<
         return Either.of(Maybe.empty());
     }
 
-    return convertToItem(value, defaultNamespace).map(Maybe.of);
+    return convertToItem(value, options).map(Maybe.of);
   };
 }
 
@@ -173,7 +173,7 @@ function $convertToScalarSet<
   readonly ItemTargetT[],
   DefaultNamespaceT
 > {
-  return (value, defaultNamespace) => {
+  return (value, options) => {
     if (typeof value === "undefined") {
       return Either.of<Error, readonly ItemTargetT[]>(
         [] as unknown as readonly ItemTargetT[],
@@ -181,10 +181,10 @@ function $convertToScalarSet<
     }
     if (Array.isArray(value)) {
       return Either.sequence(
-        value.map((value) => convertToItem(value, defaultNamespace)),
+        value.map((value) => convertToItem(value, options)),
       ) as Either<Error, readonly ItemTargetT[]>;
     }
-    return convertToItem(value as ItemSourceT).map((value) => [
+    return convertToItem(value as ItemSourceT, options).map((value) => [
       value,
     ]) as Either<Error, readonly ItemTargetT[]>;
   };
@@ -234,7 +234,7 @@ interface $IdentifierSchema {
 
 function $identityConversionFunction<T>(
   value: T,
-  _defaultNamespace?: NamespaceBuilder,
+  _options: { defaultNamespace: NamespaceBuilder | undefined },
 ): Either<Error, T> {
   return Either.of(value);
 }
@@ -649,14 +649,15 @@ export namespace FormStruct {
     parameters: FormStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, FormStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("FormStruct" as const),
       emptyStringSetProperty: $convertToScalarSet($identityConversionFunction)(
         parameters.emptyStringSetProperty,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           FormStruct.schema.properties.emptyStringSetProperty.type,
@@ -674,14 +675,13 @@ export namespace FormStruct {
             | (keyof $DefaultNamespaceT & string);
           readonly requiredStringProperty: string;
         },
-        $defaultNamespace?: $DefaultNamespaceT,
+        { defaultNamespace }: { defaultNamespace: $DefaultNamespaceT },
       ) =>
         ((parameters) =>
           $sequenceRecord({
-            $identifier: $convertToIdentifierProperty(
-              parameters.$identifier,
-              parameters.$defaultNamespace,
-            ),
+            $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+              defaultNamespace: parameters.$defaultNamespace,
+            }),
             requiredStringProperty: Either.of(
               parameters.requiredStringProperty,
             ),
@@ -719,16 +719,17 @@ export namespace FormStruct {
                 readonly $identifier: () => BlankNode | NamedNode;
               }>,
             }),
-          ))({ ...value, $defaultNamespace }))(
+          ))({ ...value, $defaultNamespace: defaultNamespace }))(
         parameters.nestedStructProperty,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ),
       nonEmptyStringSetProperty: $convertToScalarSet(
         $identityConversionFunction,
-      )(
-        parameters.nonEmptyStringSetProperty,
-        parameters.$defaultNamespace,
-      ).chain((value) =>
+      )(parameters.nonEmptyStringSetProperty, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateArray($identityValidationFunction)(
           FormStruct.schema.properties.nonEmptyStringSetProperty.type,
           value,
@@ -736,7 +737,9 @@ export namespace FormStruct {
       ),
       optionalStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalStringProperty,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           FormStruct.schema.properties.optionalStringProperty.type,
@@ -832,10 +835,9 @@ export namespace FormStruct {
           ),
         }).chain(((parameters) =>
           $sequenceRecord({
-            $identifier: $convertToIdentifierProperty(
-              parameters.$identifier,
-              parameters.$defaultNamespace,
-            ),
+            $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+              defaultNamespace: parameters.$defaultNamespace,
+            }),
             requiredStringProperty: Either.of(
               parameters.requiredStringProperty,
             ),
@@ -961,7 +963,10 @@ export namespace FormStruct {
           .min(1)
           .default(() => `_:${dataFactory.blankNode().value}`),
         emptyStringSetProperty: z
-          .array(z.string())
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(z.string()),
+          )
           .optional()
           .meta({ title: "Empty string set" }),
         nestedStructProperty: z
@@ -976,8 +981,10 @@ export namespace FormStruct {
           })
           .meta({ title: "Nested object" }),
         nonEmptyStringSetProperty: z
-          .array(z.string())
-          .min(1)
+          .preprocess(
+            (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
+            z.array(z.string()).min(1),
+          )
           .meta({ title: "Non-empty string set" }),
         optionalStringProperty: z
           .string()
