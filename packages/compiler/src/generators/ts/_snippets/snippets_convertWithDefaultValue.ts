@@ -9,11 +9,11 @@ export const snippets_convertWithDefaultValue: SnippetFactory = ({
     `${syntheticNamePrefix}convertWithDefaultValue`,
     code`\
 function ${syntheticNamePrefix}convertWithDefaultValue<ItemSourceT, ItemTargetT>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT>, defaultValue: ItemSourceT): ${snippets.ConversionFunction}<ItemSourceT | undefined, ItemTargetT> {
-  return (value) => {
+  return (value, options) => {
     if (typeof value === "undefined") {
-      return convertToItem(defaultValue);
+      return convertToItem(defaultValue, options);
     }
-    return convertToItem(value);
+    return convertToItem(value, options);
   }
 }`,
   );

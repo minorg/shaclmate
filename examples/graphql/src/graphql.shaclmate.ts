@@ -85,7 +85,7 @@ type $ConversionFunction<
   DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
 > = (
   source: SourceT,
-  defaultNamespace?: DefaultNamespaceT,
+  options: { defaultNamespace: DefaultNamespaceT | undefined },
 ) => Either<Error, TargetT>;
 
 function $convertToIdentifierProperty<
@@ -97,7 +97,7 @@ function $convertToIdentifierProperty<
     | NamedNode
     | (keyof DefaultNamespaceT & string)
     | undefined,
-  defaultNamespace?: DefaultNamespaceT,
+  { defaultNamespace }: { defaultNamespace: DefaultNamespaceT | undefined },
 ): Either<Error, () => BlankNode | NamedNode> {
   switch (typeof identifier) {
     case "function":
@@ -125,7 +125,7 @@ function $convertToIriIdentifierProperty<
     | (() => NamedNode)
     | NamedNode
     | (keyof DefaultNamespaceT & string),
-  defaultNamespace?: DefaultNamespaceT,
+  { defaultNamespace }: { defaultNamespace: DefaultNamespaceT | undefined },
 ): Either<Error, () => NamedNode> {
   switch (typeof identifier) {
     case "function":
@@ -231,7 +231,7 @@ function $convertToMaybe<
   Maybe<ItemTargetT>,
   DefaultNamespaceT
 > {
-  return (value, defaultNamespace) => {
+  return (value, options) => {
     switch (typeof value) {
       case "object": {
         if (Maybe.isMaybe(value)) {
@@ -243,7 +243,7 @@ function $convertToMaybe<
         return Either.of(Maybe.empty());
     }
 
-    return convertToItem(value, defaultNamespace).map(Maybe.of);
+    return convertToItem(value, options).map(Maybe.of);
   };
 }
 
@@ -489,7 +489,7 @@ class $IdentifierSet {
 
 function $identityConversionFunction<T>(
   value: T,
-  _defaultNamespace?: NamespaceBuilder,
+  _options: { defaultNamespace: NamespaceBuilder | undefined },
 ): Either<Error, T> {
   return Either.of(value);
 }
@@ -1143,10 +1143,9 @@ export namespace $DefaultPartial {
     parameters?: $DefaultPartial.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, $DefaultPartial.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("DefaultPartial" as const),
     }).map((object) =>
       $monkeyPatchObject(object, { $toString: $DefaultPartial.$toString }),
@@ -1540,14 +1539,15 @@ export namespace LazyObject {
     parameters: LazyObject.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, LazyObject.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("LazyObject" as const),
       optionalNumberProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalNumberProperty,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           LazyObject.schema.properties.optionalNumberProperty.type,
@@ -1556,7 +1556,9 @@ export namespace LazyObject {
       ),
       optionalStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalStringProperty,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           LazyObject.schema.properties.optionalStringProperty.type,
@@ -2003,20 +2005,25 @@ export namespace RootObject {
     parameters: RootObject.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, RootObject.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIriIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIriIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("RootObject" as const),
       lazyObjectSetProperty: $convertToLazySet<$DefaultPartial, LazyObject>(
         $DefaultPartial.createUnsafe,
-      )(parameters.lazyObjectSetProperty, parameters.$defaultNamespace),
+      )(parameters.lazyObjectSetProperty, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       optionalLazyProperty: $convertToLazyOption<$DefaultPartial, LazyObject>(
         $DefaultPartial.createUnsafe,
-      )(parameters.optionalLazyProperty, parameters.$defaultNamespace),
+      )(parameters.optionalLazyProperty, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       optionalObjectProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalObjectProperty,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           RootObject.schema.properties.optionalObjectProperty.type,
@@ -2025,7 +2032,9 @@ export namespace RootObject {
       ),
       optionalStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalStringProperty,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           LazyObject.schema.properties.optionalStringProperty.type,
@@ -2408,14 +2417,15 @@ export namespace UnionMember1 {
     parameters?: UnionMember1.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, UnionMember1.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("UnionMember1" as const),
       optionalNumberProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalNumberProperty,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           LazyObject.schema.properties.optionalNumberProperty.type,
@@ -2651,14 +2661,15 @@ export namespace UnionMember2 {
     parameters?: UnionMember2.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, UnionMember2.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("UnionMember2" as const),
       optionalStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalStringProperty,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           LazyObject.schema.properties.optionalStringProperty.type,

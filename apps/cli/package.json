@@ -3,8 +3,8 @@
     "shaclmate": "dist/cli.js"
   },
   "dependencies": {
-    "@shaclmate/compiler": "4.0.109",
-    "@shaclmate/validator": "4.0.109",
+    "@shaclmate/compiler": "4.0.110",
+    "@shaclmate/validator": "4.0.110",
     "@rdfjs/types": "~2.0.1",
     "@rdfx/collection": "0.0.67",
     "@rdfx/data-factory": "0.0.67",
@@ -62,5 +62,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.109"
+  "version": "4.0.110"
 }

@@ -549,7 +549,7 @@ type $ConversionFunction<
   DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
 > = (
   source: SourceT,
-  defaultNamespace?: DefaultNamespaceT,
+  options: { defaultNamespace: DefaultNamespaceT | undefined },
 ) => Either<Error, TargetT>;
 
 function $convertToArraySet<
@@ -567,11 +567,11 @@ function $convertToArraySet<
   readonly ItemTargetT[],
   DefaultNamespaceT
 > {
-  return (value, defaultNamespace) =>
+  return (value, options) =>
     (typeof value === "undefined"
       ? Either.of([])
       : Either.sequence(
-          value.map((value) => convertToItem(value, defaultNamespace)),
+          value.map((value) => convertToItem(value, options)),
         )) as Either<Error, readonly ItemTargetT[]>;
 }
 
@@ -601,7 +601,7 @@ function $convertToIdentifier<
   DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
 >(
   value: BlankNode | NamedNode | (keyof DefaultNamespaceT & string) | undefined,
-  defaultNamespace?: DefaultNamespaceT,
+  { defaultNamespace }: { defaultNamespace: DefaultNamespaceT | undefined },
 ): Either<Error, BlankNode | NamedNode> {
   switch (typeof value) {
     case "object":
@@ -622,7 +622,7 @@ function $convertToIdentifierProperty<
     | NamedNode
     | (keyof DefaultNamespaceT & string)
     | undefined,
-  defaultNamespace?: DefaultNamespaceT,
+  { defaultNamespace }: { defaultNamespace: DefaultNamespaceT | undefined },
 ): Either<Error, () => BlankNode | NamedNode> {
   switch (typeof identifier) {
     case "function":
@@ -647,7 +647,7 @@ function $convertToIri<
   DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
 >(
   value: NamedNode | (keyof DefaultNamespaceT & string),
-  defaultNamespace?: DefaultNamespaceT,
+  { defaultNamespace }: { defaultNamespace: DefaultNamespaceT | undefined },
 ): Either<Error, NamedNode> {
   switch (typeof value) {
     case "object":
@@ -664,7 +664,7 @@ function $convertToIriIdentifierProperty<
     | (() => NamedNode)
     | NamedNode
     | (keyof DefaultNamespaceT & string),
-  defaultNamespace?: DefaultNamespaceT,
+  { defaultNamespace }: { defaultNamespace: DefaultNamespaceT | undefined },
 ): Either<Error, () => NamedNode> {
   switch (typeof identifier) {
     case "function":
@@ -684,7 +684,7 @@ function $convertToIriIdentifierProperty<
 
 function $convertToIriLiteral<IriT extends string>(
   value: IriT | NamedNode<IriT>,
-  _defaultNamespace?: NamespaceBuilder,
+  _options: { defaultNamespace: NamespaceBuilder | undefined },
 ): Either<Error, NamedNode<IriT>> {
   switch (typeof value) {
     case "object":
@@ -696,7 +696,7 @@ function $convertToIriLiteral<IriT extends string>(
 
 function $convertToIriLiteralIdentifierProperty<InIriT extends string>(
   identifier: (() => NamedNode<InIriT>) | NamedNode<InIriT> | InIriT,
-  _defaultNamespace?: NamespaceBuilder,
+  _options: { defaultNamespace: NamespaceBuilder | undefined },
 ): Either<Error, () => NamedNode<InIriT>> {
   switch (typeof identifier) {
     case "function":
@@ -837,9 +837,9 @@ function $convertToList<
   readonly ItemTargetT[],
   DefaultNamespaceT
 > {
-  return (value, defaultNamespace) =>
+  return (value, options) =>
     Either.sequence(
-      value.map((value) => convertToItem(value, defaultNamespace)),
+      value.map((value) => convertToItem(value, options)),
     ) as Either<Error, readonly ItemTargetT[]>;
 }
 
@@ -872,7 +872,7 @@ function $convertToMaybe<
   Maybe<ItemTargetT>,
   DefaultNamespaceT
 > {
-  return (value, defaultNamespace) => {
+  return (value, options) => {
     switch (typeof value) {
       case "object": {
         if (Maybe.isMaybe(value)) {
@@ -884,7 +884,7 @@ function $convertToMaybe<
         return Either.of(Maybe.empty());
     }
 
-    return convertToItem(value, defaultNamespace).map(Maybe.of);
+    return convertToItem(value, options).map(Maybe.of);
   };
 }
 
@@ -903,9 +903,9 @@ function $convertToMutableList<
   ItemTargetT[],
   DefaultNamespaceT
 > {
-  return (value, defaultNamespace) =>
+  return (value, options) =>
     Either.sequence(
-      value.map((value) => convertToItem(value, defaultNamespace)),
+      value.map((value) => convertToItem(value, options)),
     ) as Either<Error, ItemTargetT[]>;
 }
 
@@ -924,18 +924,18 @@ function $convertToMutableScalarSet<
   ItemTargetT[],
   DefaultNamespaceT
 > {
-  return (value, defaultNamespace) => {
+  return (value, options) => {
     if (typeof value === "undefined") {
       return Either.of<Error, ItemTargetT[]>([] as unknown as ItemTargetT[]);
     }
     if (Array.isArray(value)) {
       return Either.sequence(
-        value.map((value) => convertToItem(value, defaultNamespace)),
+        value.map((value) => convertToItem(value, options)),
       ) as Either<Error, ItemTargetT[]>;
     }
-    return convertToItem(value as ItemSourceT, defaultNamespace).map(
-      (value) => [value],
-    ) as Either<Error, ItemTargetT[]>;
+    return convertToItem(value as ItemSourceT, options).map((value) => [
+      value,
+    ]) as Either<Error, ItemTargetT[]>;
   };
 }
 
@@ -954,7 +954,7 @@ function $convertToScalarSet<
   readonly ItemTargetT[],
   DefaultNamespaceT
 > {
-  return (value, defaultNamespace) => {
+  return (value, options) => {
     if (typeof value === "undefined") {
       return Either.of<Error, readonly ItemTargetT[]>(
         [] as unknown as readonly ItemTargetT[],
@@ -962,10 +962,10 @@ function $convertToScalarSet<
     }
     if (Array.isArray(value)) {
       return Either.sequence(
-        value.map((value) => convertToItem(value, defaultNamespace)),
+        value.map((value) => convertToItem(value, options)),
       ) as Either<Error, readonly ItemTargetT[]>;
     }
-    return convertToItem(value as ItemSourceT).map((value) => [
+    return convertToItem(value as ItemSourceT, options).map((value) => [
       value,
     ]) as Either<Error, readonly ItemTargetT[]>;
   };
@@ -975,11 +975,11 @@ function $convertWithDefaultValue<ItemSourceT, ItemTargetT>(
   convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
   defaultValue: ItemSourceT,
 ): $ConversionFunction<ItemSourceT | undefined, ItemTargetT> {
-  return (value) => {
+  return (value, options) => {
     if (typeof value === "undefined") {
-      return convertToItem(defaultValue);
+      return convertToItem(defaultValue, options);
     }
-    return convertToItem(value);
+    return convertToItem(value, options);
   };
 }
 
@@ -1890,7 +1890,7 @@ const $identifierToJsonString: $ToJsonFunction<
 
 function $identityConversionFunction<T>(
   value: T,
-  _defaultNamespace?: NamespaceBuilder,
+  _options: { defaultNamespace: NamespaceBuilder | undefined },
 ): Either<Error, T> {
   return Either.of(value);
 }
@@ -4588,10 +4588,9 @@ export namespace $DefaultPartial {
     parameters?: $DefaultPartial.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, $DefaultPartial.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("DefaultPartial" as const),
     }).map((object) =>
       $monkeyPatchObject(object, {
@@ -4928,10 +4927,9 @@ export namespace $NamedDefaultPartial {
     parameters: $NamedDefaultPartial.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, $NamedDefaultPartial.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIriIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIriIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("NamedDefaultPartial" as const),
     }).map((object) =>
       $monkeyPatchObject(object, {
@@ -5344,7 +5342,9 @@ export namespace AnonymousTypesStruct {
                         $sequenceRecord({
                           $identifier: $convertToIdentifierProperty(
                             parameters.$identifier,
-                            parameters.$defaultNamespace,
+                            {
+                              defaultNamespace: parameters.$defaultNamespace,
+                            },
                           ),
                           anonymousStructString: Either.of(
                             parameters.anonymousStructString,
@@ -5480,10 +5480,9 @@ export namespace AnonymousTypesStruct {
     parameters?: AnonymousTypesStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, AnonymousTypesStruct.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("AnonymousTypesStruct" as const),
       anonymousStruct: $convertToMaybe(
         <$DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder>(
@@ -5495,13 +5494,17 @@ export namespace AnonymousTypesStruct {
               | (keyof $DefaultNamespaceT & string);
             readonly anonymousStructString: string;
           },
-          $defaultNamespace?: $DefaultNamespaceT,
+          {
+            defaultNamespace,
+          }: { defaultNamespace: $DefaultNamespaceT | undefined },
         ) =>
           ((parameters) =>
             $sequenceRecord({
               $identifier: $convertToIdentifierProperty(
                 parameters.$identifier,
-                parameters.$defaultNamespace,
+                {
+                  defaultNamespace: parameters.$defaultNamespace,
+                },
               ),
               anonymousStructString: Either.of(
                 parameters.anonymousStructString,
@@ -5536,13 +5539,14 @@ export namespace AnonymousTypesStruct {
                   readonly $identifier: () => BlankNode | NamedNode;
                 }>,
               }),
-            ))({ ...value, $defaultNamespace }),
-      )(parameters.anonymousStruct, parameters.$defaultNamespace).chain(
-        (value) =>
-          $validateMaybe($identityValidationFunction)(
-            AnonymousTypesStruct.schema.properties.anonymousStruct.type,
-            value,
-          ),
+            ))({ ...value, $defaultNamespace: defaultNamespace }),
+      )(parameters.anonymousStruct, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          AnonymousTypesStruct.schema.properties.anonymousStruct.type,
+          value,
+        ),
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
@@ -5945,10 +5949,9 @@ export namespace AnonymousTypesStruct {
           ),
         }).chain(((parameters) =>
           $sequenceRecord({
-            $identifier: $convertToIdentifierProperty(
-              parameters.$identifier,
-              parameters.$defaultNamespace,
-            ),
+            $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+              defaultNamespace: parameters.$defaultNamespace,
+            }),
             anonymousStructString: Either.of(parameters.anonymousStructString),
           }).map((object) =>
             $monkeyPatchObject(object, {
@@ -6398,7 +6401,9 @@ export namespace BlankNodeIdentifierStruct {
       $type: Right("BlankNodeIdentifierStruct" as const),
       blankNodeIdentifierString: $convertToMaybe($identityConversionFunction)(
         parameters.blankNodeIdentifierString,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           BlankNodeIdentifierStruct.schema.properties.blankNodeIdentifierString
@@ -6910,17 +6915,15 @@ export namespace BlankNodeOrIriIdentifierStruct {
     parameters = {},
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("BlankNodeOrIriIdentifierStruct" as const),
       blankNodeOrIriIdentifierString: $convertToMaybe(
         $identityConversionFunction,
-      )(
-        parameters.blankNodeOrIriIdentifierString,
-        parameters.$defaultNamespace,
-      ).chain((value) =>
+      )(parameters.blankNodeOrIriIdentifierString, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           BlankNodeOrIriIdentifierStruct.schema.properties
             .blankNodeOrIriIdentifierString.type,
@@ -7603,24 +7606,21 @@ export namespace ClassConstraintsStruct {
     parameters = {},
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("ClassConstraintsStruct" as const),
-      iriClass: $convertToMaybe($convertToIri)(
-        parameters.iriClass,
-        parameters.$defaultNamespace,
-      ).chain((value) =>
+      iriClass: $convertToMaybe($convertToIri)(parameters.iriClass, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ClassConstraintsStruct.schema.properties.iriClass.type,
           value,
         ),
       ),
-      multiClass: $convertToMaybe($convertToIdentifier)(
-        parameters.multiClass,
-        parameters.$defaultNamespace,
-      ).chain((value) =>
+      multiClass: $convertToMaybe($convertToIdentifier)(parameters.multiClass, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ClassConstraintsStruct.schema.properties.multiClass.type,
           value,
@@ -7628,7 +7628,9 @@ export namespace ClassConstraintsStruct {
       ),
       nodeClass1: $convertToMaybe($identityConversionFunction)(
         parameters.nodeClass1,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ClassConstraintsStruct.schema.properties.nodeClass1.type,
@@ -7637,7 +7639,9 @@ export namespace ClassConstraintsStruct {
       ),
       nodeClass2: $convertToMaybe($identityConversionFunction)(
         parameters.nodeClass2,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ClassConstraintsStruct.schema.properties.nodeClass2.type,
@@ -7646,7 +7650,9 @@ export namespace ClassConstraintsStruct {
       ),
       singleClass: $convertToMaybe($convertToIdentifier)(
         parameters.singleClass,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ClassConstraintsStruct.schema.properties.singleClass.type,
@@ -8773,18 +8779,18 @@ export namespace ConvertibleTypesStruct {
     parameters: ConvertibleTypesStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, ConvertibleTypesStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("ConvertibleTypesStruct" as const),
-      convertibleIri: $convertToIri(
-        parameters.convertibleIri,
-        parameters.$defaultNamespace,
-      ),
+      convertibleIri: $convertToIri(parameters.convertibleIri, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       convertibleIriNonEmptySet: $convertToScalarSet($convertToIri)(
         parameters.convertibleIriNonEmptySet,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleIriNonEmptySet
@@ -8794,7 +8800,9 @@ export namespace ConvertibleTypesStruct {
       ),
       convertibleIriOption: $convertToMaybe($convertToIri)(
         parameters.convertibleIriOption,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleIriOption.type,
@@ -8803,20 +8811,23 @@ export namespace ConvertibleTypesStruct {
       ),
       convertibleIriSet: $convertToScalarSet($convertToIri)(
         parameters.convertibleIriSet,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleIriSet.type,
           value,
         ),
       ),
-      convertibleLiteral: $convertToLiteral(
-        parameters.convertibleLiteral,
-        parameters.$defaultNamespace,
-      ),
+      convertibleLiteral: $convertToLiteral(parameters.convertibleLiteral, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       convertibleLiteralNonEmptySet: $convertToScalarSet($convertToLiteral)(
         parameters.convertibleLiteralNonEmptySet,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleLiteralNonEmptySet
@@ -8826,7 +8837,9 @@ export namespace ConvertibleTypesStruct {
       ),
       convertibleLiteralOption: $convertToMaybe($convertToLiteral)(
         parameters.convertibleLiteralOption,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleLiteralOption
@@ -8836,7 +8849,9 @@ export namespace ConvertibleTypesStruct {
       ),
       convertibleLiteralSet: $convertToScalarSet($convertToLiteral)(
         parameters.convertibleLiteralSet,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleLiteralSet.type,
@@ -8846,10 +8861,9 @@ export namespace ConvertibleTypesStruct {
       convertibleTerm: Either.of(parameters.convertibleTerm),
       convertibleTermNonEmptySet: $convertToScalarSet(
         $identityConversionFunction,
-      )(
-        parameters.convertibleTermNonEmptySet,
-        parameters.$defaultNamespace,
-      ).chain((value) =>
+      )(parameters.convertibleTermNonEmptySet, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleTermNonEmptySet
             .type,
@@ -8858,7 +8872,9 @@ export namespace ConvertibleTypesStruct {
       ),
       convertibleTermOption: $convertToMaybe($identityConversionFunction)(
         parameters.convertibleTermOption,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleTermOption.type,
@@ -8867,7 +8883,9 @@ export namespace ConvertibleTypesStruct {
       ),
       convertibleTermSet: $convertToScalarSet($identityConversionFunction)(
         parameters.convertibleTermSet,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleTermSet.type,
@@ -12045,55 +12063,51 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     parameters,
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("DatatypeDiscriminatedUnionsStruct" as const),
       dateOrDateTime: Either.of(parameters.dateOrDateTime),
-      dateOrString: $identityConversionFunction(
-        parameters.dateOrString,
-        parameters.$defaultNamespace,
-      ),
+      dateOrString: $identityConversionFunction(parameters.dateOrString, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       dateTimeOrDate: Either.of(parameters.dateTimeOrDate),
-      decimalOrString: $identityConversionFunction(
-        parameters.decimalOrString,
-        parameters.$defaultNamespace,
-      ),
-      integerOrString: $identityConversionFunction(
-        parameters.integerOrString,
-        parameters.$defaultNamespace,
-      ),
-      jsPrimitive: $identityConversionFunction(
-        parameters.jsPrimitive,
-        parameters.$defaultNamespace,
-      ),
+      decimalOrString: $identityConversionFunction(parameters.decimalOrString, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
+      integerOrString: $identityConversionFunction(parameters.integerOrString, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
+      jsPrimitive: $identityConversionFunction(parameters.jsPrimitive, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       langStringOrString: $identityConversionFunction(
         parameters.langStringOrString,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ),
       namedDatatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.convert(
         parameters.namedDatatypeDiscriminatedUnion1,
-        parameters.$defaultNamespace,
+        { defaultNamespace: parameters.$defaultNamespace },
       ),
       namedDatatypeDiscriminatedUnion2: Either.of(
         parameters.namedDatatypeDiscriminatedUnion2,
       ),
-      stringOrDate: $identityConversionFunction(
-        parameters.stringOrDate,
-        parameters.$defaultNamespace,
-      ),
-      stringOrDecimal: $identityConversionFunction(
-        parameters.stringOrDecimal,
-        parameters.$defaultNamespace,
-      ),
-      stringOrInteger: $identityConversionFunction(
-        parameters.stringOrInteger,
-        parameters.$defaultNamespace,
-      ),
+      stringOrDate: $identityConversionFunction(parameters.stringOrDate, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
+      stringOrDecimal: $identityConversionFunction(parameters.stringOrDecimal, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
+      stringOrInteger: $identityConversionFunction(parameters.stringOrInteger, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       stringOrLangString: $identityConversionFunction(
         parameters.stringOrLangString,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
@@ -15351,15 +15365,13 @@ export namespace DatesStruct {
     parameters?: DatesStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, DatesStruct.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("DatesStruct" as const),
-      date: $convertToMaybe($identityConversionFunction)(
-        parameters.date,
-        parameters.$defaultNamespace,
-      ).chain((value) =>
+      date: $convertToMaybe($identityConversionFunction)(parameters.date, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           DatesStruct.schema.properties.date.type,
           value,
@@ -15367,7 +15379,9 @@ export namespace DatesStruct {
       ),
       dateTime: $convertToMaybe($identityConversionFunction)(
         parameters.dateTime,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           DatesStruct.schema.properties.dateTime.type,
@@ -15376,7 +15390,9 @@ export namespace DatesStruct {
       ),
       dateTimeStamp: $convertToMaybe($identityConversionFunction)(
         parameters.dateTimeStamp,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           DatesStruct.schema.properties.dateTimeStamp.type,
@@ -16196,35 +16212,46 @@ export namespace DefaultValuesStruct {
     parameters?: DefaultValuesStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, DefaultValuesStruct.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("DefaultValuesStruct" as const),
       dateDefaultValue: $convertWithDefaultValue(
         $identityConversionFunction,
         new Date("2018-04-09T00:00:00.000Z"),
-      )(parameters.dateDefaultValue, parameters.$defaultNamespace),
+      )(parameters.dateDefaultValue, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       dateTimeDefaultValue: $convertWithDefaultValue(
         $identityConversionFunction,
         new Date("2018-04-09T10:00:00.000Z"),
-      )(parameters.dateTimeDefaultValue, parameters.$defaultNamespace),
+      )(parameters.dateTimeDefaultValue, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       falseBooleanDefaultValue: $convertWithDefaultValue(
         $identityConversionFunction,
         false,
-      )(parameters.falseBooleanDefaultValue, parameters.$defaultNamespace),
+      )(parameters.falseBooleanDefaultValue, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       numberDefaultValue: $convertWithDefaultValue(
         $identityConversionFunction,
         0,
-      )(parameters.numberDefaultValue, parameters.$defaultNamespace),
+      )(parameters.numberDefaultValue, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       stringDefaultValue: $convertWithDefaultValue(
         $identityConversionFunction,
         "",
-      )(parameters.stringDefaultValue, parameters.$defaultNamespace),
+      )(parameters.stringDefaultValue, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       trueBooleanDefaultValue: $convertWithDefaultValue(
         $identityConversionFunction,
         true,
-      )(parameters.trueBooleanDefaultValue, parameters.$defaultNamespace),
+      )(parameters.trueBooleanDefaultValue, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
     }).map((object) =>
       $monkeyPatchObject(object, {
         toJson: DefaultValuesStruct.toJson,
@@ -17123,14 +17150,15 @@ export namespace DirectRecursiveStruct {
     parameters?: DirectRecursiveStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, DirectRecursiveStruct.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("DirectRecursiveStruct" as const),
       directRecursive: $convertToMaybe($identityConversionFunction)(
         parameters.directRecursive,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           DirectRecursiveStruct.schema.properties.directRecursive.type,
@@ -17695,10 +17723,9 @@ export namespace DisplayStruct {
     parameters: DisplayStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, DisplayStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("DisplayStruct" as const),
       explicitFalseDisplay: Either.of(parameters.explicitFalseDisplay),
       explicitTrueDisplay: Either.of(parameters.explicitTrueDisplay),
@@ -18355,10 +18382,9 @@ export namespace ExplicitFromToRdfTypesStruct {
     parameters,
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("ExplicitFromToRdfTypesStruct" as const),
       explicitFromToRdfTypesString: Either.of(
         parameters.explicitFromToRdfTypesString,
@@ -18915,10 +18941,9 @@ export namespace ExplicitRdfTypeStruct {
     parameters: ExplicitRdfTypeStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, ExplicitRdfTypeStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("ExplicitRdfTypeStruct" as const),
       explicitRdfTypeString: Either.of(parameters.explicitRdfTypeString),
     }).map((object) =>
@@ -19430,15 +19455,13 @@ export namespace HasValuesStruct {
     parameters: HasValuesStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, HasValuesStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("HasValuesStruct" as const),
-      hasIriValue: $convertToIri(
-        parameters.hasIriValue,
-        parameters.$defaultNamespace,
-      ),
+      hasIriValue: $convertToIri(parameters.hasIriValue, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       hasLiteralValue: Either.of(parameters.hasLiteralValue),
     }).map((object) =>
       $monkeyPatchObject(object, {
@@ -19970,10 +19993,9 @@ export namespace IgnoredPropertiesStruct {
     parameters: IgnoredPropertiesStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, IgnoredPropertiesStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("IgnoredPropertiesStruct" as const),
       severityDefaultProperty: Either.of(parameters.severityDefaultProperty),
       severityViolationProperty: Either.of(
@@ -20601,14 +20623,15 @@ export namespace IndirectRecursiveStruct {
     parameters = {},
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("IndirectRecursiveStruct" as const),
       indirectRecursiveHelper: $convertToMaybe($identityConversionFunction)(
         parameters.indirectRecursiveHelper,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           IndirectRecursiveStruct.schema.properties.indirectRecursiveHelper
@@ -21167,14 +21190,15 @@ export namespace IndirectRecursiveStructHelper {
     parameters = {},
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("IndirectRecursiveStructHelper" as const),
       indirectRecursive: $convertToMaybe($identityConversionFunction)(
         parameters.indirectRecursive,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           IndirectRecursiveStructHelper.schema.properties.indirectRecursive
@@ -21722,11 +21746,15 @@ export namespace InIdentifierStruct {
       $identifier: $convertToIriLiteralIdentifierProperty<
         | "http://example.com/InIdentifierStructInstance1"
         | "http://example.com/InIdentifierStructInstance2"
-      >(parameters.$identifier, parameters.$defaultNamespace),
+      >(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("InIdentifierStruct" as const),
       inIdentifierString: $convertToMaybe($identityConversionFunction)(
         parameters.inIdentifierString,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           InIdentifierStruct.schema.properties.inIdentifierString.type,
@@ -22462,14 +22490,15 @@ export namespace InPropertiesStruct {
     parameters?: InPropertiesStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, InPropertiesStruct.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("InPropertiesStruct" as const),
       inBooleans: $convertToMaybe($identityConversionFunction)(
         parameters.inBooleans,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           InPropertiesStruct.schema.properties.inBooleans.type,
@@ -22478,7 +22507,9 @@ export namespace InPropertiesStruct {
       ),
       inDateTimes: $convertToMaybe($identityConversionFunction)(
         parameters.inDateTimes,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           InPropertiesStruct.schema.properties.inDateTimes.type,
@@ -22487,7 +22518,9 @@ export namespace InPropertiesStruct {
       ),
       inDoubles: $convertToMaybe($identityConversionFunction)(
         parameters.inDoubles,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           InPropertiesStruct.schema.properties.inDoubles.type,
@@ -22496,7 +22529,9 @@ export namespace InPropertiesStruct {
       ),
       inIntegers: $convertToMaybe($identityConversionFunction)(
         parameters.inIntegers,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           InPropertiesStruct.schema.properties.inIntegers.type,
@@ -22507,7 +22542,9 @@ export namespace InPropertiesStruct {
         $convertToIriLiteral<
           "http://example.com/InIri1" | "http://example.com/InIri2"
         >,
-      )(parameters.inIris, parameters.$defaultNamespace).chain((value) =>
+      )(parameters.inIris, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           InPropertiesStruct.schema.properties.inIris.type,
           value,
@@ -22515,7 +22552,9 @@ export namespace InPropertiesStruct {
       ),
       inStrings: $convertToMaybe($identityConversionFunction)(
         parameters.inStrings,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           InPropertiesStruct.schema.properties.inStrings.type,
@@ -23478,10 +23517,9 @@ export namespace IntersectionPropertiesStruct {
     parameters,
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("IntersectionPropertiesStruct" as const),
       namedStructIntersection: Either.of(parameters.namedStructIntersection),
     }).map((object) =>
@@ -23955,14 +23993,15 @@ export namespace IriIdentifierStruct {
     parameters: IriIdentifierStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, IriIdentifierStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIriIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIriIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("IriIdentifierStruct" as const),
       iriIdentifierString: $convertToMaybe($identityConversionFunction)(
         parameters.iriIdentifierString,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           IriIdentifierStruct.schema.properties.iriIdentifierString.type,
@@ -24795,15 +24834,13 @@ export namespace LangStringStruct {
     parameters?: LangStringStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, LangStringStruct.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("LangStringStruct" as const),
-      langString: $convertToMaybe($convertToLangString)(
-        parameters.langString,
-        parameters.$defaultNamespace,
-      ).chain((value) =>
+      langString: $convertToMaybe($convertToLangString)(parameters.langString, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           LangStringStruct.schema.properties.langString.type,
           value,
@@ -24811,7 +24848,9 @@ export namespace LangStringStruct {
       ),
       langStringOrString: $convertToMaybe($identityConversionFunction)(
         parameters.langStringOrString,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           LangStringStruct.schema.properties.langStringOrString.type,
@@ -24820,7 +24859,9 @@ export namespace LangStringStruct {
       ),
       stringOrLangString: $convertToMaybe($identityConversionFunction)(
         parameters.stringOrLangString,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           LangStringStruct.schema.properties.stringOrLangString.type,
@@ -25892,14 +25933,15 @@ export namespace LanguageInStruct {
     parameters: LanguageInStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, LanguageInStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("LanguageInStruct" as const),
       languageIn: $convertToScalarSet($convertToLangString)(
         parameters.languageIn,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           LanguageInStruct.schema.properties.languageIn.type,
@@ -26371,10 +26413,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     LazilyResolvedBlankNodeOrIriIdentifierStruct.Discriminated
   > = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("LazilyResolvedBlankNodeOrIriIdentifierStruct" as const),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     }).map((object) =>
@@ -26943,10 +26984,9 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     parameters,
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("LazilyResolvedDiscriminatedUnionMember1" as const),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     }).map((object) =>
@@ -27505,10 +27545,9 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     parameters,
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("LazilyResolvedDiscriminatedUnionMember2" as const),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     }).map((object) =>
@@ -28050,10 +28089,9 @@ export namespace LazilyResolvedIriIdentifierStruct {
     parameters,
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIriIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIriIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("LazilyResolvedIriIdentifierStruct" as const),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     }).map((object) =>
@@ -29089,31 +29127,34 @@ export namespace LazyPropertiesStruct {
     parameters: LazyPropertiesStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, LazyPropertiesStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("LazyPropertiesStruct" as const),
       optionalLazyToResolvedBlankNodeOrIriIdentifier: $convertToLazyOption<
         $DefaultPartial,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
       >($DefaultPartial.createUnsafe)(
         parameters.optionalLazyToResolvedBlankNodeOrIriIdentifier,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ),
       optionalLazyToResolvedDiscriminatedUnion: $convertToLazyOption<
         $DefaultPartial,
         LazilyResolvedDiscriminatedUnion
       >($DefaultPartial.createUnsafe)(
         parameters.optionalLazyToResolvedDiscriminatedUnion,
-        parameters.$defaultNamespace,
+        { defaultNamespace: parameters.$defaultNamespace },
       ),
       optionalLazyToResolvedIriIdentifier: $convertToLazyOption<
         $NamedDefaultPartial,
         LazilyResolvedIriIdentifierStruct
       >($NamedDefaultPartial.createUnsafe)(
         parameters.optionalLazyToResolvedIriIdentifier,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ),
       optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion:
         $convertToLazyOption<
@@ -29131,49 +29172,63 @@ export namespace LazyPropertiesStruct {
           }
         })(
           parameters.optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion,
-          parameters.$defaultNamespace,
+          {
+            defaultNamespace: parameters.$defaultNamespace,
+          },
         ),
       optionalPartialToResolvedBlankNodeOrIriIdentifier: $convertToLazyOption<
         PartialStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
       >(PartialStruct.createUnsafe)(
         parameters.optionalPartialToResolvedBlankNodeOrIriIdentifier,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ),
       optionalPartialToResolvedDiscriminatedUnion: $convertToLazyOption<
         PartialStruct,
         LazilyResolvedDiscriminatedUnion
       >(PartialStruct.createUnsafe)(
         parameters.optionalPartialToResolvedDiscriminatedUnion,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ),
       requiredLazyToResolvedBlankNodeOrIriIdentifier: $convertToLazy<
         $DefaultPartial,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
       >($DefaultPartial.createUnsafe)(
         parameters.requiredLazyToResolvedBlankNodeOrIriIdentifier,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ),
       requiredPartialToResolvedBlankNodeOrIriIdentifier: $convertToLazy<
         PartialStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
       >(PartialStruct.createUnsafe)(
         parameters.requiredPartialToResolvedBlankNodeOrIriIdentifier,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ),
       setLazyToResolvedBlankNodeOrIriIdentifier: $convertToLazySet<
         $DefaultPartial,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
       >($DefaultPartial.createUnsafe)(
         parameters.setLazyToResolvedBlankNodeOrIriIdentifier,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ),
       setPartialToResolvedBlankNodeOrIriIdentifier: $convertToLazySet<
         PartialStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
       >(PartialStruct.createUnsafe)(
         parameters.setPartialToResolvedBlankNodeOrIriIdentifier,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ),
     }).map((object) =>
       $monkeyPatchObject(object, {
@@ -31362,17 +31417,15 @@ export namespace ListSetsStruct {
     parameters?: ListSetsStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, ListSetsStruct.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("ListSetsStruct" as const),
       listDiscriminatedUnionSet: $convertToArraySet(
         $identityConversionFunction,
-      )(
-        parameters.listDiscriminatedUnionSet,
-        parameters.$defaultNamespace,
-      ).chain((value) =>
+      )(parameters.listDiscriminatedUnionSet, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateArray($identityValidationFunction)(
           ListSetsStruct.schema.properties.listDiscriminatedUnionSet.type,
           value,
@@ -31380,14 +31433,18 @@ export namespace ListSetsStruct {
       ),
       listListSet: $convertToArraySet(
         $convertToList($convertToList($identityConversionFunction)),
-      )(parameters.listListSet, parameters.$defaultNamespace).chain((value) =>
+      )(parameters.listListSet, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateArray(
           $validateArray($validateArray($identityValidationFunction)),
         )(ListSetsStruct.schema.properties.listListSet.type, value),
       ),
       listSet: $convertToArraySet($convertToList($identityConversionFunction))(
         parameters.listSet,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateArray($validateArray($identityValidationFunction))(
           ListSetsStruct.schema.properties.listSet.type,
@@ -32732,14 +32789,15 @@ export namespace ListsStruct {
     parameters?: ListsStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, ListsStruct.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("ListsStruct" as const),
       iriList: $convertToMaybe($convertToList($convertToIri))(
         parameters.iriList,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction))(
           ListsStruct.schema.properties.iriList.type,
@@ -32748,7 +32806,9 @@ export namespace ListsStruct {
       ),
       stringList: $convertToMaybe($convertToList($identityConversionFunction))(
         parameters.stringList,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction))(
           ListsStruct.schema.properties.stringList.type,
@@ -32757,15 +32817,18 @@ export namespace ListsStruct {
       ),
       stringListList: $convertToMaybe(
         $convertToList($convertToList($identityConversionFunction)),
-      )(parameters.stringListList, parameters.$defaultNamespace).chain(
-        (value) =>
-          $validateMaybe(
-            $validateArray($validateArray($identityValidationFunction)),
-          )(ListsStruct.schema.properties.stringListList.type, value),
+      )(parameters.stringListList, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
+        $validateMaybe(
+          $validateArray($validateArray($identityValidationFunction)),
+        )(ListsStruct.schema.properties.stringListList.type, value),
       ),
       structList: $convertToMaybe($convertToList($identityConversionFunction))(
         parameters.structList,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction))(
           ListsStruct.schema.properties.structList.type,
@@ -33767,14 +33830,15 @@ export namespace MutablePropertiesStruct {
     parameters = {},
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("MutablePropertiesStruct" as const),
       mutableList: $convertToMaybe(
         $convertToMutableList($identityConversionFunction),
-      )(parameters.mutableList, parameters.$defaultNamespace).chain((value) =>
+      )(parameters.mutableList, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateMaybe($validateMutableArray($identityValidationFunction))(
           MutablePropertiesStruct.schema.properties.mutableList.type,
           value,
@@ -33782,7 +33846,9 @@ export namespace MutablePropertiesStruct {
       ),
       mutableSet: $convertToMutableScalarSet($identityConversionFunction)(
         parameters.mutableSet,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMutableArray($identityValidationFunction)(
           MutablePropertiesStruct.schema.properties.mutableSet.type,
@@ -33791,7 +33857,9 @@ export namespace MutablePropertiesStruct {
       ),
       mutableString: $convertToMaybe($identityConversionFunction)(
         parameters.mutableString,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           MutablePropertiesStruct.schema.properties.mutableString.type,
@@ -34568,15 +34636,13 @@ export namespace NamedTypesStruct {
     parameters: NamedTypesStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, NamedTypesStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("NamedTypesStruct" as const),
-      inIri: $convertToIriLiteral<InIri["value"]>(
-        parameters.inIri,
-        parameters.$defaultNamespace,
-      ),
+      inIri: $convertToIriLiteral<InIri["value"]>(parameters.inIri, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       inLiteral: Either.of(parameters.inLiteral),
       namedDatatype: Either.of(parameters.namedDatatype),
     }).map((object) =>
@@ -35210,14 +35276,15 @@ export namespace NewName {
     parameters?: NewName.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, NewName.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("NewName" as const),
       newNameString: $convertToMaybe($identityConversionFunction)(
         parameters.newNameString,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NewName.schema.properties.newNameString.type,
@@ -35819,31 +35886,29 @@ export namespace NodeKindsStruct {
     parameters: NodeKindsStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, NodeKindsStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("NodeKindsStruct" as const),
-      blankNodeKind: $convertToBlankNode(
-        parameters.blankNodeKind,
-        parameters.$defaultNamespace,
-      ),
+      blankNodeKind: $convertToBlankNode(parameters.blankNodeKind, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       blankNodeOrIriNodeKind: $convertToIdentifier(
         parameters.blankNodeOrIriNodeKind,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ),
       blankNodeOrLiteralNodeKind: Either.of(
         parameters.blankNodeOrLiteralNodeKind,
       ),
-      iriNodeKind: $convertToIri(
-        parameters.iriNodeKind,
-        parameters.$defaultNamespace,
-      ),
+      iriNodeKind: $convertToIri(parameters.iriNodeKind, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       iriOrLiteralNodeKind: Either.of(parameters.iriOrLiteralNodeKind),
-      literalNodeKind: $convertToLiteral(
-        parameters.literalNodeKind,
-        parameters.$defaultNamespace,
-      ),
+      literalNodeKind: $convertToLiteral(parameters.literalNodeKind, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
     }).map((object) =>
       $monkeyPatchObject(object, {
         toJson: NodeKindsStruct.toJson,
@@ -36667,10 +36732,9 @@ export namespace NonClassStruct {
     parameters: NonClassStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, NonClassStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("NonClassStruct" as const),
       nonClassString: Either.of(parameters.nonClassString),
     }).map((object) =>
@@ -37097,10 +37161,9 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
     parameters,
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("NoRdfTypeDiscriminatedUnionMember1" as const),
       noRdfTypeDiscriminatedUnionMember1String: Either.of(
         parameters.noRdfTypeDiscriminatedUnionMember1String,
@@ -37567,10 +37630,9 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
     parameters,
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("NoRdfTypeDiscriminatedUnionMember2" as const),
       noRdfTypeDiscriminatedUnionMember2String: Either.of(
         parameters.noRdfTypeDiscriminatedUnionMember2String,
@@ -38386,14 +38448,15 @@ export namespace NumericsStruct {
     parameters?: NumericsStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, NumericsStruct.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("NumericsStruct" as const),
       byteNumeric: $convertToMaybe($identityConversionFunction)(
         parameters.byteNumeric,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.byteNumeric.type,
@@ -38402,7 +38465,9 @@ export namespace NumericsStruct {
       ),
       decimalNumeric: $convertToMaybe($convertToBigDecimal)(
         parameters.decimalNumeric,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.decimalNumeric.type,
@@ -38411,7 +38476,9 @@ export namespace NumericsStruct {
       ),
       doubleNumeric: $convertToMaybe($identityConversionFunction)(
         parameters.doubleNumeric,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.doubleNumeric.type,
@@ -38420,7 +38487,9 @@ export namespace NumericsStruct {
       ),
       floatNumeric: $convertToMaybe($identityConversionFunction)(
         parameters.floatNumeric,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.floatNumeric.type,
@@ -38429,7 +38498,9 @@ export namespace NumericsStruct {
       ),
       integerNumeric: $convertToMaybe($convertToBigInt)(
         parameters.integerNumeric,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.integerNumeric.type,
@@ -38438,17 +38509,18 @@ export namespace NumericsStruct {
       ),
       intNumeric: $convertToMaybe($identityConversionFunction)(
         parameters.intNumeric,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.intNumeric.type,
           value,
         ),
       ),
-      longNumeric: $convertToMaybe($convertToBigInt)(
-        parameters.longNumeric,
-        parameters.$defaultNamespace,
-      ).chain((value) =>
+      longNumeric: $convertToMaybe($convertToBigInt)(parameters.longNumeric, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.longNumeric.type,
           value,
@@ -38456,7 +38528,9 @@ export namespace NumericsStruct {
       ),
       negativeIntegerNumeric: $convertToMaybe($convertToBigInt)(
         parameters.negativeIntegerNumeric,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.negativeIntegerNumeric.type,
@@ -38465,7 +38539,9 @@ export namespace NumericsStruct {
       ),
       nonNegativeIntegerNumeric: $convertToMaybe($convertToBigInt)(
         parameters.nonNegativeIntegerNumeric,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.nonNegativeIntegerNumeric.type,
@@ -38474,7 +38550,9 @@ export namespace NumericsStruct {
       ),
       nonPositiveIntegerNumeric: $convertToMaybe($convertToBigInt)(
         parameters.nonPositiveIntegerNumeric,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.nonPositiveIntegerNumeric.type,
@@ -38483,7 +38561,9 @@ export namespace NumericsStruct {
       ),
       positiveIntegerNumeric: $convertToMaybe($convertToBigInt)(
         parameters.positiveIntegerNumeric,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.positiveIntegerNumeric.type,
@@ -38492,7 +38572,9 @@ export namespace NumericsStruct {
       ),
       shortNumeric: $convertToMaybe($identityConversionFunction)(
         parameters.shortNumeric,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.shortNumeric.type,
@@ -38501,7 +38583,9 @@ export namespace NumericsStruct {
       ),
       unsignedByteNumeric: $convertToMaybe($identityConversionFunction)(
         parameters.unsignedByteNumeric,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.unsignedByteNumeric.type,
@@ -38510,7 +38594,9 @@ export namespace NumericsStruct {
       ),
       unsignedIntNumeric: $convertToMaybe($identityConversionFunction)(
         parameters.unsignedIntNumeric,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.unsignedIntNumeric.type,
@@ -38519,7 +38605,9 @@ export namespace NumericsStruct {
       ),
       unsignedLongNumeric: $convertToMaybe($convertToBigInt)(
         parameters.unsignedLongNumeric,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.unsignedLongNumeric.type,
@@ -38528,7 +38616,9 @@ export namespace NumericsStruct {
       ),
       unsignedShortNumeric: $convertToMaybe($identityConversionFunction)(
         parameters.unsignedShortNumeric,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.unsignedShortNumeric.type,
@@ -40264,10 +40354,9 @@ export namespace OrderedStruct {
     parameters: OrderedStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, OrderedStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("OrderedStruct" as const),
       orderedC: Either.of(parameters.orderedC),
       orderedB: Either.of(parameters.orderedB),
@@ -40816,10 +40905,9 @@ export namespace PartialDiscriminatedUnionMember1 {
     parameters,
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("PartialDiscriminatedUnionMember1" as const),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     }).map((object) =>
@@ -41359,10 +41447,9 @@ export namespace PartialDiscriminatedUnionMember2 {
     parameters,
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("PartialDiscriminatedUnionMember2" as const),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     }).map((object) =>
@@ -41875,10 +41962,9 @@ export namespace PartialStruct {
     parameters: PartialStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, PartialStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("PartialStruct" as const),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     }).map((object) =>
@@ -42372,14 +42458,15 @@ export namespace PropertyCardinalitiesStruct {
     parameters,
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("PropertyCardinalitiesStruct" as const),
       emptySet: $convertToScalarSet($identityConversionFunction)(
         parameters.emptySet,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           PropertyCardinalitiesStruct.schema.properties.emptySet.type,
@@ -42388,7 +42475,9 @@ export namespace PropertyCardinalitiesStruct {
       ),
       nonEmptySet: $convertToScalarSet($identityConversionFunction)(
         parameters.nonEmptySet,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           PropertyCardinalitiesStruct.schema.properties.nonEmptySet.type,
@@ -42397,7 +42486,9 @@ export namespace PropertyCardinalitiesStruct {
       ),
       optional: $convertToMaybe($identityConversionFunction)(
         parameters.optional,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyCardinalitiesStruct.schema.properties.optional.type,
@@ -43165,10 +43256,9 @@ export namespace PropertyNamesStruct {
     parameters: PropertyNamesStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, PropertyNamesStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("PropertyNamesStruct" as const),
       actualName1: Either.of(parameters.actualName1),
       actualName2: Either.of(parameters.actualName2),
@@ -43961,15 +44051,13 @@ export namespace PropertyPathsStruct {
     parameters?: PropertyPathsStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, PropertyPathsStruct.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("PropertyPathsStruct" as const),
-      inversePath: $convertToMaybe($convertToIri)(
-        parameters.inversePath,
-        parameters.$defaultNamespace,
-      ).chain((value) =>
+      inversePath: $convertToMaybe($convertToIri)(parameters.inversePath, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyPathsStruct.schema.properties.inversePath.type,
           value,
@@ -43977,7 +44065,9 @@ export namespace PropertyPathsStruct {
       ),
       predicatePath: $convertToMaybe($identityConversionFunction)(
         parameters.predicatePath,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyPathsStruct.schema.properties.predicatePath.type,
@@ -44627,17 +44717,15 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     parameters = {},
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("RecursiveDiscriminatedUnionMember1" as const),
       recursiveDiscriminatedUnionMember1Property: $convertToMaybe(
         $identityConversionFunction,
-      )(
-        parameters.recursiveDiscriminatedUnionMember1Property,
-        parameters.$defaultNamespace,
-      ).chain((value) =>
+      )(parameters.recursiveDiscriminatedUnionMember1Property, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           RecursiveDiscriminatedUnionMember1.schema.properties
             .recursiveDiscriminatedUnionMember1Property.type,
@@ -45214,17 +45302,15 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     parameters = {},
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("RecursiveDiscriminatedUnionMember2" as const),
       recursiveDiscriminatedUnionMember2Property: $convertToMaybe(
         $identityConversionFunction,
-      )(
-        parameters.recursiveDiscriminatedUnionMember2Property,
-        parameters.$defaultNamespace,
-      ).chain((value) =>
+      )(parameters.recursiveDiscriminatedUnionMember2Property, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           RecursiveDiscriminatedUnionMember2.schema.properties
             .recursiveDiscriminatedUnionMember2Property.type,
@@ -45814,10 +45900,9 @@ export namespace StructDiscriminatedUnionMember1 {
     parameters,
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("StructDiscriminatedUnionMember1" as const),
       structDiscriminatedUnionMember1Distinct: Either.of(
         parameters.structDiscriminatedUnionMember1Distinct,
@@ -46493,10 +46578,9 @@ export namespace StructDiscriminatedUnionMember2 {
     parameters,
   ) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("StructDiscriminatedUnionMember2" as const),
       structDiscriminatedUnionMember2Distinct: Either.of(
         parameters.structDiscriminatedUnionMember2Distinct,
@@ -47113,10 +47197,9 @@ export namespace StructInheritance1 {
     parameters: StructInheritance1.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, StructInheritance1.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("StructInheritance1" as const),
       structInheritance1: Either.of(parameters.structInheritance1),
     }).map((object) =>
@@ -47581,10 +47664,9 @@ export namespace StructIntersectionMember1 {
     parameters: StructIntersectionMember1.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, StructIntersectionMember1.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("StructIntersectionMember1" as const),
       structIntersectionMember1Distinct: Either.of(
         parameters.structIntersectionMember1Distinct,
@@ -48243,10 +48325,9 @@ export namespace StructIntersectionMember2 {
     parameters: StructIntersectionMember2.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, StructIntersectionMember2.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("StructIntersectionMember2" as const),
       structIntersectionMember2Distinct: Either.of(
         parameters.structIntersectionMember2Distinct,
@@ -48874,10 +48955,9 @@ export namespace TargetClassStruct {
     parameters: TargetClassStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, TargetClassStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("TargetClassStruct" as const),
       targetClassString: Either.of(parameters.targetClassString),
     }).map((object) =>
@@ -49600,14 +49680,15 @@ export namespace TermsStruct {
     parameters?: TermsStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, TermsStruct.Discriminated> = (parameters = {}) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("TermsStruct" as const),
       blankNodeTerm: $convertToMaybe($convertToBlankNode)(
         parameters.blankNodeTerm,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.blankNodeTerm.type,
@@ -49616,7 +49697,9 @@ export namespace TermsStruct {
       ),
       booleanTerm: $convertToMaybe($identityConversionFunction)(
         parameters.booleanTerm,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.booleanTerm.type,
@@ -49625,7 +49708,9 @@ export namespace TermsStruct {
       ),
       dateTerm: $convertToMaybe($identityConversionFunction)(
         parameters.dateTerm,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.dateTerm.type,
@@ -49634,7 +49719,9 @@ export namespace TermsStruct {
       ),
       dateTimeTerm: $convertToMaybe($identityConversionFunction)(
         parameters.dateTimeTerm,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.dateTimeTerm.type,
@@ -49643,7 +49730,9 @@ export namespace TermsStruct {
       ),
       doubleTerm: $convertToMaybe($identityConversionFunction)(
         parameters.doubleTerm,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.doubleTerm.type,
@@ -49652,17 +49741,18 @@ export namespace TermsStruct {
       ),
       identifierTerm: $convertToMaybe($convertToIdentifier)(
         parameters.identifierTerm,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.identifierTerm.type,
           value,
         ),
       ),
-      iriTerm: $convertToMaybe($convertToIri)(
-        parameters.iriTerm,
-        parameters.$defaultNamespace,
-      ).chain((value) =>
+      iriTerm: $convertToMaybe($convertToIri)(parameters.iriTerm, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.iriTerm.type,
           value,
@@ -49670,17 +49760,18 @@ export namespace TermsStruct {
       ),
       langStringTerm: $convertToMaybe($convertToLangString)(
         parameters.langStringTerm,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.langStringTerm.type,
           value,
         ),
       ),
-      literalTerm: $convertToMaybe($convertToLiteral)(
-        parameters.literalTerm,
-        parameters.$defaultNamespace,
-      ).chain((value) =>
+      literalTerm: $convertToMaybe($convertToLiteral)(parameters.literalTerm, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.literalTerm.type,
           value,
@@ -49688,17 +49779,18 @@ export namespace TermsStruct {
       ),
       stringTerm: $convertToMaybe($identityConversionFunction)(
         parameters.stringTerm,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.stringTerm.type,
           value,
         ),
       ),
-      term: $convertToMaybe($identityConversionFunction)(
-        parameters.term,
-        parameters.$defaultNamespace,
-      ).chain((value) =>
+      term: $convertToMaybe($identityConversionFunction)(parameters.term, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.term.type,
           value,
@@ -53343,14 +53435,15 @@ export namespace UnionDiscriminantsStruct {
     parameters: UnionDiscriminantsStruct.CreateParameters<$DefaultNamespaceT>,
   ) => Either<Error, UnionDiscriminantsStruct.Discriminated> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }),
       $type: Right("UnionDiscriminantsStruct" as const),
       optionalIriOrString: $convertToMaybe($identityConversionFunction)(
         parameters.optionalIriOrString,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.optionalIriOrString.type,
@@ -53359,7 +53452,9 @@ export namespace UnionDiscriminantsStruct {
       ),
       optionalNodeOrLiteral: $convertToMaybe($identityConversionFunction)(
         parameters.optionalNodeOrLiteral,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.optionalNodeOrLiteral.type,
@@ -53368,7 +53463,9 @@ export namespace UnionDiscriminantsStruct {
       ),
       optionalNodeOrNodeOrString: $convertToMaybe($identityConversionFunction)(
         parameters.optionalNodeOrNodeOrString,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.optionalNodeOrNodeOrString
@@ -53378,7 +53475,9 @@ export namespace UnionDiscriminantsStruct {
       ),
       optionalTerm: $convertToMaybe($identityConversionFunction)(
         parameters.optionalTerm,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.optionalTerm.type,
@@ -53387,7 +53486,9 @@ export namespace UnionDiscriminantsStruct {
       ),
       requiredIriOrString: $identityConversionFunction(
         parameters.requiredIriOrString,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ),
       requiredNodeOrLiteral: Either.of(parameters.requiredNodeOrLiteral),
       requiredNodeOrNodeOrString: Either.of(
@@ -53396,7 +53497,9 @@ export namespace UnionDiscriminantsStruct {
       requiredTerm: Either.of(parameters.requiredTerm),
       setIriOrString: $convertToScalarSet($identityConversionFunction)(
         parameters.setIriOrString,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setIriOrString.type,
@@ -53405,7 +53508,9 @@ export namespace UnionDiscriminantsStruct {
       ),
       setNodeOrLiteral: $convertToScalarSet($identityConversionFunction)(
         parameters.setNodeOrLiteral,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setNodeOrLiteral.type,
@@ -53414,7 +53519,9 @@ export namespace UnionDiscriminantsStruct {
       ),
       setNodeOrNodeOrString: $convertToScalarSet($identityConversionFunction)(
         parameters.setNodeOrNodeOrString,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setNodeOrNodeOrString.type,
@@ -53423,7 +53530,9 @@ export namespace UnionDiscriminantsStruct {
       ),
       setTerm: $convertToScalarSet($identityConversionFunction)(
         parameters.setTerm,
-        parameters.$defaultNamespace,
+        {
+          defaultNamespace: parameters.$defaultNamespace,
+        },
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setTerm.type,
@@ -61362,7 +61471,9 @@ export namespace StructInheritance2 {
               $sequenceRecord({
                 $identifier: $convertToIdentifierProperty(
                   parameters.$identifier,
-                  parameters.$defaultNamespace,
+                  {
+                    defaultNamespace: parameters.$defaultNamespace,
+                  },
                 ),
                 structInheritance2: Either.of(parameters.structInheritance2),
               }).map((object) =>
@@ -61459,10 +61570,9 @@ export namespace StructInheritance2 {
       .chain((member0) =>
         ((parameters) =>
           $sequenceRecord({
-            $identifier: $convertToIdentifierProperty(
-              parameters.$identifier,
-              parameters.$defaultNamespace,
-            ),
+            $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+              defaultNamespace: parameters.$defaultNamespace,
+            }),
             structInheritance2: Either.of(parameters.structInheritance2),
           }).map((object) =>
             $monkeyPatchObject(object, {
@@ -61700,10 +61810,9 @@ export namespace StructInheritance2 {
           ),
         }).chain(((parameters) =>
           $sequenceRecord({
-            $identifier: $convertToIdentifierProperty(
-              parameters.$identifier,
-              parameters.$defaultNamespace,
-            ),
+            $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+              defaultNamespace: parameters.$defaultNamespace,
+            }),
             structInheritance2: Either.of(parameters.structInheritance2),
           }).map((object) =>
             $monkeyPatchObject(object, {
@@ -62168,7 +62277,9 @@ export namespace StructInheritance3 {
               $sequenceRecord({
                 $identifier: $convertToIdentifierProperty(
                   parameters.$identifier,
-                  parameters.$defaultNamespace,
+                  {
+                    defaultNamespace: parameters.$defaultNamespace,
+                  },
                 ),
                 structInheritance3: Either.of(parameters.structInheritance3),
               }).map((object) =>
@@ -62265,10 +62376,9 @@ export namespace StructInheritance3 {
       .chain((member0) =>
         ((parameters) =>
           $sequenceRecord({
-            $identifier: $convertToIdentifierProperty(
-              parameters.$identifier,
-              parameters.$defaultNamespace,
-            ),
+            $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+              defaultNamespace: parameters.$defaultNamespace,
+            }),
             structInheritance3: Either.of(parameters.structInheritance3),
           }).map((object) =>
             $monkeyPatchObject(object, {
@@ -62506,10 +62616,9 @@ export namespace StructInheritance3 {
           ),
         }).chain(((parameters) =>
           $sequenceRecord({
-            $identifier: $convertToIdentifierProperty(
-              parameters.$identifier,
-              parameters.$defaultNamespace,
-            ),
+            $identifier: $convertToIdentifierProperty(parameters.$identifier, {
+              defaultNamespace: parameters.$defaultNamespace,
+            }),
             structInheritance3: Either.of(parameters.structInheritance3),
           }).map((object) =>
             $monkeyPatchObject(object, {

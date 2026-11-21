@@ -161,7 +161,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     }
 
     return Maybe.of(
-      code`${this.name}: ${conversionFunction}(${variables.parameters}.${this.name}, ${variables.parameters}.${this.configuration.syntheticNamePrefix}defaultNamespace)`,
+      code`${this.name}: ${conversionFunction}(${variables.parameters}.${this.name}, { defaultNamespace: ${variables.parameters}.${this.configuration.syntheticNamePrefix}defaultNamespace })`,
     );
   }
 

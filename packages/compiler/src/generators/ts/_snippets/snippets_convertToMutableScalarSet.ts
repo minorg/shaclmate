@@ -10,14 +10,14 @@ export const snippets_convertToMutableScalarSet: SnippetFactory = ({
     `${syntheticNamePrefix}convertToMutableScalarSet`,
     code`\
 function ${syntheticNamePrefix}convertToMutableScalarSet<DefaultNamespaceT extends ${imports.NamespaceBuilder}, ItemSourceT, ItemTargetT>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT, DefaultNamespaceT>): ${snippets.ConversionFunction}<ItemSourceT | readonly ItemSourceT[] | undefined, ItemTargetT[], DefaultNamespaceT> {
-  return (value, defaultNamespace) => {
+  return (value, options) => {
     if (typeof value === "undefined") {
       return ${imports.Either}.of<Error, ItemTargetT[]>([] as unknown as ItemTargetT[]);
     }
     if (Array.isArray(value)) {
-      return ${imports.Either}.sequence(value.map(value => convertToItem(value, defaultNamespace))) as ${imports.Either}<Error, ItemTargetT[]>;
+      return ${imports.Either}.sequence(value.map(value => convertToItem(value, options))) as ${imports.Either}<Error, ItemTargetT[]>;
     }
-    return convertToItem(value as ItemSourceT, defaultNamespace).map(value => [value]) as ${imports.Either}<Error, ItemTargetT[]>;
+    return convertToItem(value as ItemSourceT, options).map(value => [value]) as ${imports.Either}<Error, ItemTargetT[]>;
   };
 }`,
   );

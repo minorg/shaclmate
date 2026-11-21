@@ -8,7 +8,7 @@ export const snippets_identityConversionFunction: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}identityConversionFunction`,
     code`\
-function ${syntheticNamePrefix}identityConversionFunction<T>(value: T, _defaultNamespace?: ${imports.NamespaceBuilder}): ${imports.Either}<Error, T> {
+function ${syntheticNamePrefix}identityConversionFunction<T>(value: T, _options: { defaultNamespace: ${imports.NamespaceBuilder} | undefined }): ${imports.Either}<Error, T> {
   return ${imports.Either}.of(value);
 }`,
   );

@@ -120,13 +120,13 @@ export function AbstractDiscriminatedUnionType_conversionFunctionExpression<
 (<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.imports.NamespaceBuilder} = ${this.reusables.imports.NamespaceBuilder}>(value: ${joinCode(
         sourceTypes.map((sourceType) => sourceType.expression),
         { on: " | " },
-      )}, defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT): ${this.reusables.imports.Either}<Error, ${this.expression}> => {
+      )}, options: { defaultNamespace: ${syntheticNamePrefix}DefaultNamespaceT | undefined }): ${this.reusables.imports.Either}<Error, ${this.expression}> => {
   switch (typeof value) {
     case "object": return ${this.reusables.imports.Either}.of(value);
     ${joinCode(
       otherMemberConversions.map(
         ([otherMemberSourceType, otherMemberConversionFunction]) =>
-          code`case "${otherMemberSourceType.jsType.typeof}": return ${otherMemberConversionFunction.code}(value, defaultNamespace);`,
+          code`case "${otherMemberSourceType.jsType.typeof}": return ${otherMemberConversionFunction.code}(value, options);`,
       ),
       { on: "\n" },
     )}

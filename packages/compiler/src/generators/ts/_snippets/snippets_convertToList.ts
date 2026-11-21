@@ -10,6 +10,6 @@ export const snippets_convertToList: SnippetFactory = ({
     `${syntheticNamePrefix}convertToList`,
     code`\
 function ${syntheticNamePrefix}convertToList<DefaultNamespaceT extends ${imports.NamespaceBuilder}, ItemSourceT, ItemTargetT>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT, DefaultNamespaceT>): ${snippets.ConversionFunction}<readonly ItemSourceT[], readonly ItemTargetT[], DefaultNamespaceT> {
-  return (value, defaultNamespace) => ${imports.Either}.sequence(value.map(value => convertToItem(value, defaultNamespace))) as ${imports.Either}<Error, readonly ItemTargetT[]>;
+  return (value, options) => ${imports.Either}.sequence(value.map(value => convertToItem(value, options))) as ${imports.Either}<Error, readonly ItemTargetT[]>;
 }`,
   );
