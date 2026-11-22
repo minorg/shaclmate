@@ -114,14 +114,9 @@ shaclmate:Operation-result
 shaclmate:OperationError
     a sh:NodeShape ;
     rdfs:comment "Error type associated with an operation. Must be a struct type (i.e., have at least one sh:property)." ;
-    sh:and (
-        shaclmate:NodeShape
-        shaclamte:OperationErrorSpecificProperties
+    sh:and (shaclmate:NodeShape
+        shaclmate:OperationErrorSpecificProperties
     ) .
-
-shaclmate:OperationErrorSpecificProperties
-    a sh:NodeShape ;
-    sh:property shaclmate:OperationError-binding .
 
 shaclmate:OperationError-binding
     a sh:PropertyShape ;
@@ -190,6 +185,10 @@ shaclmate:OperationErrorHttpBindingStatusCode
         511
     ) .
 
+shaclmate:OperationErrorSpecificProperties
+    a sh:NodeShape ;
+    sh:property shaclmate:OperationError-binding .
+
 shaclmate:OperationHttpBinding
     a sh:NodeShape ;
     rdfs:comment "HTTP binding for an operation." ;
@@ -246,14 +245,9 @@ shaclmate:OperationHttpBindingStatusCode
 shaclmate:OperationParameter
     a sh:NodeShape ;
     rdfs:comment "Parameter associated with an operation." ;
-    sh:and (
-        shaclmate:NodeShape
+    sh:and (shaclmate:NodeShape
         shaclmate:OperationParameterSpecificProperties
     ) .
-
-shaclmate:OperationParameterSpecificProperties
-    a sh:NodeShape ;
-    sh:property OperationParameter-binding .
 
 shaclmate:OperationParameter-binding
     a sh:PropertyShape ;
@@ -279,17 +273,16 @@ shaclmate:OperationParameterHttpBindingContentType
     sh:in ("application/json"
     ) .
 
+shaclmate:OperationParameterSpecificProperties
+    a sh:NodeShape ;
+    sh:property shaclmate:OperationParameter-binding .
+
 shaclmate:OperationResult
     a sh:NodeShape ;
-    rdfs:comment "Result associated with an operation." .
-    sh:and (
-        shaclmate:PropertyShape
+    rdfs:comment "Result associated with an operation." ;
+    sh:and (shaclmate:PropertyShape
         shaclmate:OperationResultSpecificProperties
     ) .
-
-shaclmate:OperationResultSpecificProperties
-    a sh:NodeShape ;
-    sh:property OperationResult-binding .
 
 shaclmate:OperationResult-binding
     a sh:PropertyShape ;
@@ -314,6 +307,10 @@ shaclmate:OperationResultHttpBindingContentType
     a sh:NodeShape ;
     sh:in ("application/json"
     ) .
+
+shaclmate:OperationResultSpecificProperties
+    a sh:NodeShape ;
+    sh:property shaclmate:OperationResult-binding .
 
 shaclmate:PropertyShape-display
     a sh:PropertyShape ;
