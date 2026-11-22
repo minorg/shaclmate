@@ -68,22 +68,24 @@ shaclmate:NodeShape-tsImports
     sh:path shaclmate:tsImport .
 
 shaclmate:NodeShapeSpecificProperties
+    a sh:NodeShape ;
     sh:property shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:NodeShape-tsImports .
 
 shaclmate:Operation
-    a rdfs:Class, sh:NodeShape ;
-    rdfs:comment "Service operation" ;
-    sh:property shaclmate:Operation-bindings, shaclmate:Operation-error, shaclmate:Operation-name, shaclmate:Operation-parameter, shaclmate:Operation-result, shaclmate:comment, shaclmate:label .
+    a sh:NodeShape ;
+    rdfs:comment "Service operation." ;
+    sh:property shaclmate:Operation-binding, shaclmate:Operation-error, shaclmate:Operation-name, shaclmate:Operation-parameter, shaclmate:Operation-result, shaclmate:comment, shaclmate:label .
 
-shaclmate:Operation-bindings
+shaclmate:Operation-binding
     a sh:PropertyShape ;
     rdfs:comment "Transport bindings for the operation, loosely modeled after WSDL. If no bindings are specified the operation will be excluded from transport client and server generation." ;
+    sh:name "bindings" ;
     sh:node shaclmate:OperationHttpBinding ;
     sh:path shaclmate:binding .
 
 shaclmate:Operation-error
     a sh:PropertyShape ;
-    rdfs:comment "Error types associated with the operation" ;
+    rdfs:comment "Error types associated with the operation." ;
     sh:node shaclmate:OperationError ;
     sh:path shaclmate:error .
 
@@ -97,14 +99,14 @@ shaclmate:Operation-name
 
 shaclmate:Operation-parameter
     a sh:PropertyShape ;
-    rdfs:comment "Optional parameter type. This must be a node shape with properties (a 'struct')." ;
+    rdfs:comment "Optional operation parameter type." ;
     sh:maxCount 1 ;
     sh:node shaclmate:OperationParameter ;
     sh:path shaclmate:parameter .
 
 shaclmate:Operation-result
     a sh:PropertyShape ;
-    rdfs:comment "Optional result type. The type is a property shape in order to incorporate cardinality." ;
+    rdfs:comment "Optional operation result type." ;
     sh:maxCount 1 ;
     sh:node shaclmate:OperationResult ;
     sh:path shaclmate:result .
@@ -112,23 +114,25 @@ shaclmate:Operation-result
 shaclmate:OperationError
     a sh:NodeShape ;
     rdfs:comment "Error type associated with an operation. Must be a struct type (i.e., have at least one sh:property)." ;
-    sh:property shaclmate:NodeShape-closed, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-ignoredProperties, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-subClassOf, shaclmate:NodeShape-toRdfTypes, shaclmate:NodeShape-tsImports, shaclmate:NodeShape-types, shaclmate:OperationError-properties, shaclmate:Shape-classes, shaclmate:Shape-deactivated, shaclmate:Shape-isDefinedBy, shaclmate:Shape-message, shaclmate:Shape-nodeKind, shaclmate:Shape-severity, shaclmate:Shape-shaclmateName, shaclmate:comment, shaclmate:label .
+    sh:and (
+        shaclmate:NodeShape
+        shaclamte:OperationErrorSpecificProperties
+    ) .
 
-shaclmate:OperationError-bindings
+shaclmate:OperationErrorSpecificProperties
+    a sh:NodeShape ;
+    sh:property shaclmate:OperationError-binding .
+
+shaclmate:OperationError-binding
     a sh:PropertyShape ;
     rdfs:comment "Transport bindings for the operation error." ;
+    sh:name "bindings" ;
     sh:node shaclmate:OperationErrorHttpBinding ;
     sh:path shaclmate:binding .
 
-shaclmate:OperationError-properties
-    a sh:PropertyShape ;
-    sh:minCount 1 ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:path sh:property .
-
 shaclmate:OperationErrorHttpBinding
     a sh:NodeShape ;
-    rdfs:comment "HTTP binding for an operation error" ;
+    rdfs:comment "HTTP binding for an operation error." ;
     sh:property shaclmate:OperationErrorHttpBinding-statusCode .
 
 shaclmate:OperationErrorHttpBinding-statusCode
@@ -142,7 +146,7 @@ shaclmate:OperationErrorHttpBinding-statusCode
 
 shaclmate:OperationErrorHttpBindingStatusCode
     a sh:NodeShape ;
-    rdfs:comment "Enumeration of both client error (4xx) and server error (5xx) response codes" ;
+    rdfs:comment "Enumeration of both client error (4xx) and server error (5xx) response codes." ;
     sh:datatype xsd:int ;
     sh:in (400
         401
@@ -188,12 +192,12 @@ shaclmate:OperationErrorHttpBindingStatusCode
 
 shaclmate:OperationHttpBinding
     a sh:NodeShape ;
-    rdfs:comment "HTTP binding for an operation" ;
+    rdfs:comment "HTTP binding for an operation." ;
     sh:property shaclmate:OperationHttpBinding-method, shaclmate:OperationHttpBinding-urlTemplate .
 
 shaclmate:OperationHttpBinding-method
     a sh:PropertyShape ;
-    rdfs:comment "HTTP request body method. If this is not specified, it's inferred from the existence of path, query, and/or body parameters" ;
+    rdfs:comment "HTTP request body method. If this is not specified, it's inferred from the existence of path, query, and/or body parameters." ;
     sh:maxCount 1 ;
     sh:node shaclmate:OperationHttpBindingMethod ;
     sh:path schema:httpMethod .
@@ -216,7 +220,7 @@ shaclmate:OperationHttpBinding-urlTemplate
 
 shaclmate:OperationHttpBindingMethod
     a sh:NodeShape ;
-    rdfs:comment "Enumeration of common HTTP request methods" ;
+    rdfs:comment "Enumeration of common HTTP request methods." ;
     sh:in ("DELETE"
         "GET"
         "POST"
@@ -225,7 +229,7 @@ shaclmate:OperationHttpBindingMethod
 
 shaclmate:OperationHttpBindingStatusCode
     a sh:NodeShape ;
-    rdfs:comment "Enumeration of HTTP successful (2xx) status codes" ;
+    rdfs:comment "Enumeration of HTTP successful (2xx) status codes." ;
     sh:datatype xsd:int ;
     sh:in (200
         201
@@ -240,8 +244,28 @@ shaclmate:OperationHttpBindingStatusCode
     ) .
 
 shaclmate:OperationParameter
-    a rdfs:Class, sh:NodeShape ;
-    rdfs:comment "Parameter associated with an operation. Can be any node shape." .
+    a sh:NodeShape ;
+    rdfs:comment "Parameter associated with an operation." ;
+    sh:and (
+        shaclmate:NodeShape
+        shaclmate:OperationParameterSpecificProperties
+    ) .
+
+shaclmate:OperationParameterSpecificProperties
+    a sh:NodeShape ;
+    sh:property OperationParameter-binding .
+
+shaclmate:OperationParameter-binding
+    a sh:PropertyShape ;
+    rdfs:comment "Transport bindings for the operation parameter." ;
+    sh:name "bindings" ;
+    sh:node shaclmate:OperationParameterHttpBinding ;
+    sh:path shaclmate:binding .
+
+shaclmate:OperationParameterHttpBinding
+    a sh:NodeShape ;
+    rdfs:comment "HTTP binding for an operation parameter." ;
+    sh:property shaclmate:OperationParameterHttpBinding-contentType .
 
 shaclmate:OperationParameterHttpBinding-contentType
     a sh:PropertyShape ;
@@ -256,8 +280,28 @@ shaclmate:OperationParameterHttpBindingContentType
     ) .
 
 shaclmate:OperationResult
-    a rdfs:Class, sh:NodeShape ;
-    rdfs:comment "Result associated with an operation. Can be any node shape." .
+    a sh:NodeShape ;
+    rdfs:comment "Result associated with an operation." .
+    sh:and (
+        shaclmate:PropertyShape
+        shaclmate:OperationResultSpecificProperties
+    ) .
+
+shaclmate:OperationResultSpecificProperties
+    a sh:NodeShape ;
+    sh:property OperationResult-binding .
+
+shaclmate:OperationResult-binding
+    a sh:PropertyShape ;
+    rdfs:comment "Transport bindings for the operation result." ;
+    sh:name "bindings" ;
+    sh:node shaclmate:OperationResultHttpBinding ;
+    sh:path shaclmate:binding .
+
+shaclmate:OperationResultHttpBinding
+    a sh:NodeShape ;
+    rdfs:comment "HTTP binding for an operation result." ;
+    sh:property shaclmate:OperationResultHttpBinding-contentType .
 
 shaclmate:OperationResultHttpBinding-contentType
     a sh:PropertyShape ;
@@ -290,7 +334,7 @@ shaclmate:PropertyShapeSpecificProperties
     sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve .
 
 shaclmate:Service
-    a rdfs:Class, sh:NodeShape ;
+    a sh:NodeShape ;
     rdfs:comment "Service with operations" ;
     sh:property shaclmate:Service-name, shaclmate:Service-operations, shaclmate:comment, shaclmate:label .
 
