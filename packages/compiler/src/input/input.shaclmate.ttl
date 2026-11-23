@@ -74,18 +74,19 @@ shaclmate:NodeShapeSpecificProperties
 shaclmate:Operation
     a sh:NodeShape ;
     rdfs:comment "Service operation." ;
-    sh:property shaclmate:Operation-binding, shaclmate:Operation-error, shaclmate:Operation-name, shaclmate:Operation-parameter, shaclmate:Operation-result, shaclmate:comment, shaclmate:label .
+    sh:property shaclmate:Operation-httpBinding, shaclmate:Operation-error, shaclmate:Operation-name, shaclmate:Operation-input, shaclmate:Operation-output, shaclmate:comment, shaclmate:label .
 
-shaclmate:Operation-binding
+shaclmate:Operation-httpBinding
     a sh:PropertyShape ;
-    rdfs:comment "Transport bindings for the operation, loosely modeled after WSDL. If no bindings are specified the operation will be excluded from transport client and server generation." ;
-    sh:name "bindings" ;
+    rdfs:comment "HTTP binding for the operation." ;
+    sh:maxCount 1 ;
     sh:node shaclmate:OperationHttpBinding ;
-    sh:path shaclmate:binding .
+    sh:path shaclmate:httpBinding .
 
 shaclmate:Operation-error
     a sh:PropertyShape ;
     rdfs:comment "Error types associated with the operation." ;
+    sh:name "errors" ;
     sh:node shaclmate:OperationError ;
     sh:path shaclmate:error .
 
@@ -97,19 +98,19 @@ shaclmate:Operation-name
     sh:maxCount 1 ;
     sh:path shaclmate:name .
 
-shaclmate:Operation-parameter
+shaclmate:Operation-input
     a sh:PropertyShape ;
-    rdfs:comment "Optional operation parameter type." ;
+    rdfs:comment "Optional operation input type." ;
     sh:maxCount 1 ;
-    sh:node shaclmate:OperationParameter ;
-    sh:path shaclmate:parameter .
+    sh:node shaclmate:OperationInput ;
+    sh:path shaclmate:input .
 
-shaclmate:Operation-result
+shaclmate:Operation-output
     a sh:PropertyShape ;
-    rdfs:comment "Optional operation result type." ;
+    rdfs:comment "Optional operation output type." ;
     sh:maxCount 1 ;
-    sh:node shaclmate:OperationResult ;
-    sh:path shaclmate:result .
+    sh:node shaclmate:OperationOutput ;
+    sh:path shaclmate:output .
 
 shaclmate:OperationError
     a sh:NodeShape ;
@@ -118,12 +119,12 @@ shaclmate:OperationError
         shaclmate:OperationErrorSpecificProperties
     ) .
 
-shaclmate:OperationError-binding
+shaclmate:OperationError-httpBinding
     a sh:PropertyShape ;
-    rdfs:comment "Transport bindings for the operation error." ;
-    sh:name "bindings" ;
+    rdfs:comment "HTTP binding for the operation error." ;
+    sh:maxCount 1 ;
     sh:node shaclmate:OperationErrorHttpBinding ;
-    sh:path shaclmate:binding .
+    sh:path shaclmate:httpBinding .
 
 shaclmate:OperationErrorHttpBinding
     a sh:NodeShape ;
@@ -187,12 +188,12 @@ shaclmate:OperationErrorHttpBindingStatusCode
 
 shaclmate:OperationErrorSpecificProperties
     a sh:NodeShape ;
-    sh:property shaclmate:OperationError-binding .
+    sh:property shaclmate:operation input .
 
 shaclmate:OperationHttpBinding
     a sh:NodeShape ;
     rdfs:comment "HTTP binding for an operation." ;
-    sh:property shaclmate:OperationHttpBinding-method, shaclmate:OperationHttpBinding-urlTemplate .
+    sh:property shaclmate:OperationHttpBinding-method, OperationHttpBinding-statusCode, shaclmate:OperationHttpBinding-urlTemplate .
 
 shaclmate:OperationHttpBinding-method
     a sh:PropertyShape ;
@@ -205,7 +206,6 @@ shaclmate:OperationHttpBinding-statusCode
     a sh:PropertyShape ;
     rdfs:comment "HTTP result response status code. If not specified, it defaults to 200 if there is a result, 204 if not." ;
     sh:maxCount 1 ;
-    sh:name "statusCode" ;
     sh:node shaclmate:OperationHttpBindingStatusCode ;
     sh:path shaclmate:httpStatusCode .
 
@@ -242,75 +242,75 @@ shaclmate:OperationHttpBindingStatusCode
         226
     ) .
 
-shaclmate:OperationParameter
+shaclmate:OperationInput
     a sh:NodeShape ;
     rdfs:comment "Parameter associated with an operation." ;
     sh:and (shaclmate:NodeShape
-        shaclmate:OperationParameterSpecificProperties
+        shaclmate:OperationInputSpecificProperties
     ) .
 
-shaclmate:OperationParameter-binding
+shaclmate:OperationInput-httpBinding
     a sh:PropertyShape ;
-    rdfs:comment "Transport bindings for the operation parameter." ;
-    sh:name "bindings" ;
-    sh:node shaclmate:OperationParameterHttpBinding ;
-    sh:path shaclmate:binding .
+    rdfs:comment "HTTP binding for the operation input." ;
+    sh:maxCount 1 ;
+    sh:node shaclmate:OperationInputHttpBinding ;
+    sh:path shaclmate:httpBinding .
 
-shaclmate:OperationParameterHttpBinding
+shaclmate:OperationInputHttpBinding
     a sh:NodeShape ;
-    rdfs:comment "HTTP binding for an operation parameter." ;
-    sh:property shaclmate:OperationParameterHttpBinding-contentType .
+    rdfs:comment "HTTP binding for an operation input." ;
+    sh:property shaclmate:OperationInputHttpBinding-contentType .
 
-shaclmate:OperationParameterHttpBinding-contentType
+shaclmate:OperationInputHttpBinding-contentType
     a sh:PropertyShape ;
     rdfs:comment "HTTP request body content type. This should be specified if the operation has parameters that are not bound to its request URI template. If it's not specified it defaults to JSON." ;
     sh:maxCount 1 ;
-    sh:node shaclmate:OperationParameterHttpBindingContentType ;
+    sh:node shaclmate:OperationInputHttpBindingContentType ;
     sh:path schema:encodingType .
 
-shaclmate:OperationParameterHttpBindingContentType
+shaclmate:OperationInputHttpBindingContentType
     a sh:NodeShape ;
     sh:in ("application/json"
     ) .
 
-shaclmate:OperationParameterSpecificProperties
+shaclmate:OperationInputSpecificProperties
     a sh:NodeShape ;
-    sh:property shaclmate:OperationParameter-binding .
+    sh:property shaclmate:OperationInput-httpBinding .
 
-shaclmate:OperationResult
+shaclmate:OperationOutput
     a sh:NodeShape ;
     rdfs:comment "Result associated with an operation." ;
     sh:and (shaclmate:PropertyShape
-        shaclmate:OperationResultSpecificProperties
+        shaclmate:OperationOutputSpecificProperties
     ) .
 
-shaclmate:OperationResult-binding
+shaclmate:OperationOutput-httpBinding
     a sh:PropertyShape ;
-    rdfs:comment "Transport bindings for the operation result." ;
-    sh:name "bindings" ;
-    sh:node shaclmate:OperationResultHttpBinding ;
-    sh:path shaclmate:binding .
+    rdfs:comment "HTTP binding for the operation output." ;
+    sh:maxCount 1 ;
+    sh:node shaclmate:OperationOutputHttpBinding ;
+    sh:path shaclmate:httpBinding .
 
-shaclmate:OperationResultHttpBinding
+shaclmate:OperationOutputHttpBinding
     a sh:NodeShape ;
-    rdfs:comment "HTTP binding for an operation result." ;
-    sh:property shaclmate:OperationResultHttpBinding-contentType .
+    rdfs:comment "HTTP binding for an operation output." ;
+    sh:property shaclmate:OperationOutputHttpBinding-contentType .
 
-shaclmate:OperationResultHttpBinding-contentType
+shaclmate:OperationOutputHttpBinding-contentType
     a sh:PropertyShape ;
     rdfs:comment "HTTP result response body content type. If not specified, it's inferred from the request method and content type." ;
     sh:maxCount 1 ;
-    sh:node shaclmate:OperationResultHttpBindingContentType ;
+    sh:node shaclmate:OperationOutputHttpBindingContentType ;
     sh:path schema:contentType .
 
-shaclmate:OperationResultHttpBindingContentType
+shaclmate:OperationOutputHttpBindingContentType
     a sh:NodeShape ;
     sh:in ("application/json"
     ) .
 
-shaclmate:OperationResultSpecificProperties
+shaclmate:OperationOutputSpecificProperties
     a sh:NodeShape ;
-    sh:property shaclmate:OperationResult-binding .
+    sh:property shaclmate:OperationOutput-httpBinding .
 
 shaclmate:PropertyShape-display
     a sh:PropertyShape ;
@@ -331,7 +331,7 @@ shaclmate:PropertyShapeSpecificProperties
     sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve .
 
 shaclmate:Service
-    a sh:NodeShape ;
+    a rdfs:Class, sh:NodeShape ;
     rdfs:comment "Service with operations" ;
     sh:property shaclmate:Service-name, shaclmate:Service-operations, shaclmate:comment, shaclmate:label .
 
