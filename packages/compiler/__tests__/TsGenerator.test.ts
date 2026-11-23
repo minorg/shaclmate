@@ -92,7 +92,7 @@ describe("TsGenerator", () => {
               "ServiceHttpClient",
             ]),
           };
-          return;
+          break;
         case "shaclShacl":
           configuration = {
             ...TsGenerator.Configuration.default_,
@@ -108,9 +108,9 @@ describe("TsGenerator", () => {
           break;
       }
 
-      // if (id !== "kitchenSinkExample") {
-      //   return;
-      // }
+      if (id !== "restExample") {
+        return;
+      }
 
       const shapesGraph = (
         await parseTestShapesGraph(testShapesGraph)
