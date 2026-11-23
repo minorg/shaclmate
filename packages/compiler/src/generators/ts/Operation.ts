@@ -1,71 +1,72 @@
 import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+import type { parse as parseUriTemplate } from "uri-template";
 import type * as ast from "../../ast/index.js";
 import { AbstractConstruct } from "./AbstractConstruct.js";
-import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { Reusables } from "./Reusables.js";
+import type { OptionType } from "./OptionType.js";
 import type { Service } from "./Service.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class Operation extends AbstractConstruct {
-  readonly error: Maybe<ObjectType | ObjectDiscriminatedUnionType>;
+  readonly errors: readonly Operation.Error[];
   readonly name: string;
-  readonly parameter: Maybe<ObjectType>;
-  readonly result: Maybe<Type>;
+  readonly input: Maybe<Operation.Input>;
+  readonly output: Maybe<Operation.Output>;
+  private readonly lazyHttpBinding: () => Operation.HttpBinding;
   private readonly service: Pick<Service, "name">;
 
   constructor({
-    error,
+    errors,
     name,
-    lazyBindings,
-    parameter,
-    result,
+    input,
+    lazyHttpBinding,
+    output,
     service,
     ...superParameters
   }: {
-    error: Maybe<ObjectType | ObjectDiscriminatedUnionType>;
+    errors: readonly Operation.Error[];
+    input: Maybe<Operation.Input>;
+    lazyHttpBinding: () => Operation.HttpBinding;
     name: string;
-    lazyBindings: () => readonly Operation.Binding[];
-    parameter: Maybe<ObjectType>;
-    result: Maybe<Type>;
+    output: Maybe<Operation.Output>;
     service: Pick<Service, "name">;
   } & ConstructorParameters<typeof AbstractConstruct>[0]) {
     super(superParameters);
-    this.error = error;
-    this.lazyBindings = lazyBindings;
+    this.errors = errors;
+    this.input = input;
+    this.lazyHttpBinding = lazyHttpBinding;
     this.name = name;
-    this.parameter = parameter;
-    this.result = result;
+    this.output = output;
     this.service = service;
   }
 
   @Memoize()
-  get bindings(): readonly Operation.Binding[] {
-    return this.lazyBindings();
+  get httpBinding(): Operation.HttpBinding {
+    return this.lazyHttpBinding();
   }
 
   @Memoize()
   get interfaceSignature(): Code {
-    return code`${this.name}(${this.parameterDeclaration}): ${this.returnTypeAnnotation}`;
+    return code`${this.name}(${this.parametersDeclaration}): ${this.returnTypeAnnotation}`;
   }
 
   @Memoize()
   get loggingMethodDeclaration(): Code {
-    const parametersVariableName = this.parameter
+    const parametersVariableName = this.input
       .map(() => code`parameters`)
       .orDefault(code``);
     return code`\
-async ${this.name}(${this.parameterDeclaration}): ${this.returnTypeAnnotation} {
+async ${this.name}(${this.parametersDeclaration}): ${this.returnTypeAnnotation} {
   const logContext: Record<string, unknown> = {
     service: ${literalOf(this.service.name)},
-    operation: ${literalOf(this.name)}${this.parameter
+    operation: ${literalOf(this.name)}${this.input
       .map(
-        (parameter) =>
+        (input) =>
           code`,\n    parameters: { ${joinCode(
-            parameter.properties.flatMap((property) =>
+            input.type.properties.flatMap((property) =>
               property
                 .toLoggableInitializer({
                   variables: {
@@ -84,22 +85,22 @@ async ${this.name}(${this.parameterDeclaration}): ${this.returnTypeAnnotation} {
     .ifLeft((error) => {
       this.logger.error({ ...logContext, error }, "error");
     })
-    .ifRight((${this.result.map(() => code`result`).orDefault(code``)}) => {
-      this.logger.debug(${this.result.map((result) => code`{ ...logContext, result: ${result.toLoggableExpression({ variables: { value: code`result` } })} }`).orDefault(code`logContext`)}, "success")
+    .ifRight((${this.output.map(() => code`output`).orDefault(code``)}) => {
+      this.logger.debug(${this.output.map((output) => code`{ ...logContext, output: ${output.type.toLoggableExpression({ variables: { value: code`output` } })} }`).orDefault(code`logContext`)}, "success")
     });
 }`;
   }
 
   @Memoize()
-  private get parameterDeclaration(): Code {
-    return this.parameter
+  private get parametersDeclaration(): Code {
+    return this.input
       .map(
-        (parameter) =>
-          code`parameters: ${parameter.name
+        (input) =>
+          code`parameters: ${input.type.name
             .map((name) => code`${name}`)
             .orDefault(
               code`{ ${joinCode(
-                parameter.properties.flatMap((property) =>
+                input.type.properties.flatMap((property) =>
                   property.declaration.toList(),
                 ),
                 { on: "\n\n" },
@@ -111,38 +112,58 @@ async ${this.name}(${this.parameterDeclaration}): ${this.returnTypeAnnotation} {
 
   @Memoize()
   private get returnTypeAnnotation(): Code {
-    return code`Promise<${this.reusables.imports.Either}<${this.error.map((error) => error.expression).orDefault(code`Error`)}, ${this.result.map((result) => result.expression).orDefault(code`void`)}>>`;
+    return code`Promise<${this.reusables.imports.Either}<${
+      this.errors.length > 0
+        ? joinCode(
+            this.errors.map(
+              (error) => error.type.discriminatedType.unsafeCoerce().expression,
+            ),
+            { on: "|" },
+          )
+        : code`Error`
+    }, ${this.output.map((output) => output.type.expression).orDefault(code`void`)}>>`;
   }
-
-  private readonly lazyBindings: () => readonly Operation.Binding[];
 }
 
 export namespace Operation {
-  export class HttpBinding {
-    private readonly errorResponses: readonly ast.Operation.HttpBinding.ErrorResponse[];
+  export interface Error {
+    readonly httpBinding: ast.Operation.Error.HttpBinding;
+    readonly type: ObjectType;
+  }
+
+  export interface Input {
+    readonly httpBinding: ast.Operation.Input.HttpBinding;
+    readonly type: ObjectType;
+  }
+
+  export interface Output {
+    readonly httpBinding: ast.Operation.Output.HttpBinding;
+    readonly type: ObjectType | OptionType<ObjectType>;
+  }
+
+  export class HttpBinding extends AbstractConstruct {
+    private readonly method: string;
     private readonly operation: Operation;
-    private readonly request: ast.Operation.HttpBinding.Request;
-    private readonly resultResponse: ast.Operation.HttpBinding.ResultResponse;
-    private readonly reusables: Reusables;
+    private readonly statusCode: number;
+    private readonly uriTemplate: ReturnType<typeof parseUriTemplate>["ast"];
 
     constructor({
-      errorResponses,
+      method,
       operation,
-      request,
-      resultResponse,
-      reusables,
+      statusCode,
+      uriTemplate,
+      ...superParameters
     }: {
-      errorResponses: readonly ast.Operation.HttpBinding.ErrorResponse[];
+      method: string;
       operation: Operation;
-      request: ast.Operation.HttpBinding.Request;
-      resultResponse: ast.Operation.HttpBinding.ResultResponse;
-      reusables: Reusables;
-    }) {
-      this.errorResponses = errorResponses;
+      statusCode: number;
+      uriTemplate: ReturnType<typeof parseUriTemplate>["ast"];
+    } & ConstructorParameters<typeof AbstractConstruct>[0]) {
+      super(superParameters);
+      this.method = method;
       this.operation = operation;
-      this.request = request;
-      this.resultResponse = resultResponse;
-      this.reusables = reusables;
+      this.statusCode = statusCode;
+      this.uriTemplate = uriTemplate;
     }
 
     httpApiRouteRegistration({
@@ -150,24 +171,22 @@ export namespace Operation {
     }: {
       variables: { logger: Code; service: Code };
     }): Code {
-      const errorDiscriminantPropertyName = this.operation.error
-        .chain((error) => error.discriminatedType)
-        .map((discriminatedType) => discriminatedType.discriminantProperty.name)
-        .extract();
-      invariant(
-        this.errorResponses.length === 0 || errorDiscriminantPropertyName,
-      );
       const mapErrorBranches: Code[] = [];
-      if (this.errorResponses.length > 0) {
+      if (this.operation.errors.length > 0) {
+        const errorDiscriminantPropertyName =
+          this.operation.errors[0].type.discriminatedType.unsafeCoerce()
+            .discriminantProperty.name;
         mapErrorBranches.push(code`\
 if (${literalOf(errorDiscriminantPropertyName)} in error) {
   switch (error.${errorDiscriminantPropertyName}) {
 ${joinCode(
-  this.errorResponses.map((errorResponse) => {
-    const errorName = errorResponse.error.name.unsafeCoerce();
-    const errorType = errorResponse.error.shapeIdentifier;
+  this.operation.errors.map((error) => {
+    const errorDiscriminantPropertyValues =
+      error.type.discriminatedType.unsafeCoerce().discriminantProperty.values;
+    const errorName = error.type.name.unsafeCoerce();
+    const errorType = error.type.shapeIdentifier;
     invariant(errorType.termType === "NamedNode");
-    return code`case ${literalOf(errorName)}: problemDetailsJson = { status: ${literalOf(errorResponse.statusCode)}, title: ${literalOf(errorName)}, type: ${literalOf(errorType.value)} }; break;`;
+    return code`${joinCode(errorDiscriminantPropertyValues.map((value) => code`case ${literalOf(value)}:`))} problemDetailsJson = { status: ${literalOf(error.httpBinding.statusCode)}, title: ${literalOf(errorName)}, type: ${literalOf(errorType.value)} }; break;`;
   }),
   { on: "\n" },
 )}
@@ -182,7 +201,7 @@ ${joinCode(
 
       httpApiRouteRegistrationParameters.push(
         code`${literalOf(
-          this.request.uriTemplate.parts
+          this.uriTemplate.parts
             .map((part) => {
               if (part.type === "literal") {
                 return part.value;
@@ -211,37 +230,49 @@ ${joinCode(
         )}`,
       );
 
-      const parameterProperties = new Map<
-        string,
-        ObjectType.ShaclProperty<Type>
-      >();
-      this.operation.parameter.ifJust((parameter) => {
-        for (const property of parameter.properties) {
-          if (property.kind === "Shacl") {
-            parameterProperties.set(property.name, property);
-          }
-        }
-      });
+      let inputForwarding: Code;
       const targetSchemas = new Map<
-        ast.Operation.HttpBinding.Request.ParameterSource,
+        ast.Operation.Input.HttpBinding.PropertySource,
         Code[]
       >();
-      for (const [
-        parameterName,
-        parameterSource,
-      ] of this.request.parameterSources.entries()) {
-        let targetSchemas_ = targetSchemas.get(parameterSource);
-        if (!targetSchemas_) {
-          targetSchemas_ = [];
-          targetSchemas.set(parameterSource, targetSchemas_);
-        }
-        const parameterProperty = parameterProperties.get(parameterName);
-        invariant(parameterProperty);
-        const parameterJsonSchema = parameterProperty.type.jsonValueType.schema;
-        targetSchemas_.push(
-          code`${parameterProperty.name}: ${parameterJsonSchema}`,
-        );
-      }
+      this.operation.input
+        .ifJust((input) => {
+          const inputPropertiesByName = new Map<
+            string,
+            ObjectType.ShaclProperty<Type>
+          >();
+          for (const property of input.type.properties) {
+            if (property.kind === "Shacl") {
+              inputPropertiesByName.set(property.name, property);
+            }
+          }
+
+          const inputForwardingPropertyAssignments: Record<string, Code> = {};
+          for (const [
+            inputPropertyName,
+            inputPropertySource,
+          ] of input.httpBinding.propertySourcesByPropertyName.entries()) {
+            const inputProperty = inputPropertiesByName.get(inputPropertyName);
+            invariant(inputProperty);
+
+            inputForwardingPropertyAssignments[inputPropertyName] =
+              code`${inputProperty.type.fromJsonValueFunction.unannotatedUsage}(c.req.valid("${inputPropertySource === "path" ? "param" : inputPropertySource}").${inputPropertyName})`;
+
+            let targetSchemas_ = targetSchemas.get(inputPropertySource);
+            if (!targetSchemas_) {
+              targetSchemas_ = [];
+              targetSchemas.set(inputPropertySource, targetSchemas_);
+            }
+            targetSchemas_.push(
+              code`${inputProperty.name}: ${inputProperty.type.jsonValueType.schema}`,
+            );
+          }
+
+          inputForwarding = code`${this.reusables.snippets.sequenceRecord}(${{ inputForwardingPropertyAssignments }}).unsafeCoerce()`;
+        })
+        .ifNothing(() => {
+          inputForwarding = code``;
+        });
       for (const [target, properties] of targetSchemas.entries()) {
         httpApiRouteRegistrationParameters.push(
           code`${this.reusables.snippets.zValidator}(${literalOf(target === "path" ? "param" : target)}, ${this.reusables.imports.z}.object({ ${joinCode(properties, { on: ", " })} }))`,
@@ -249,21 +280,7 @@ ${joinCode(
       }
       httpApiRouteRegistrationParameters.push(code`\
 async (c) =>
-  (await ${variables.service}.${this.operation.name}(${
-    this.request.parameterSources.size > 0
-      ? code`${this.reusables.snippets.sequenceRecord}(${[
-          ...this.request.parameterSources.entries(),
-        ].reduce(
-          (acc, [parameterName, parameterSource]) => {
-            const parameterProperty = parameterProperties.get(parameterName)!;
-            acc[parameterName] =
-              code`${parameterProperty.type.fromJsonValueFunction.unannotatedUsage}(c.req.valid("${parameterSource === "path" ? "param" : parameterSource}").${parameterName})`;
-            return acc;
-          },
-          {} as Record<string, Code>,
-        )}).unsafeCoerce()`
-      : ""
-  }))
+  (await ${variables.service}.${this.operation.name}(${inputForwarding!}))
   .mapLeft(error => {
     ${mapErrorBranches.length > 1 ? code`let problemDetailsJson: ${this.reusables.snippets.ProblemDetailsJson};` : code`const `}${joinCode(mapErrorBranches, { on: " else " })}
 
@@ -271,24 +288,21 @@ async (c) =>
 
     return c.json(problemDetailsJson, problemDetailsJson.status ?? 500, { "Content-Type": "application/problem+json" });
   })
-  .map((${this.operation.result.map(() => "result").orDefault("")}) => ${this.resultResponse.contentType
-    .map((contentType): Code => {
-      const result = this.operation.result.unsafeCoerce();
-      switch (contentType) {
+  .map(${this.operation.output
+    .map((output): Code => {
+      switch (output.httpBinding.contentType) {
         case "application/json":
-          return code`c.json(${result.toJsonValueFunction.unannotatedUsage}(result))`;
+          return code`((result) => c.json(${output.type.toJsonValueFunction.unannotatedUsage}(result)))`;
         default:
           // contentType satisfies never;
-          throw new RangeError(contentType);
+          throw new RangeError(output.httpBinding.contentType);
       }
     })
-    .orDefault(code`c.body(null`)}, ${this.resultResponse.statusCode}))
+    .orDefault(code`() => c.body(null)`)}, ${this.statusCode}))
   .extract()
 `);
 
-      return code`${this.request.method.toLowerCase()}(${joinCode(httpApiRouteRegistrationParameters, { on: ", " })})`;
+      return code`${this.method.toLowerCase()}(${joinCode(httpApiRouteRegistrationParameters, { on: ", " })})`;
     }
   }
-
-  export type Binding = HttpBinding;
 }

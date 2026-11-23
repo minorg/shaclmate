@@ -1,4 +1,5 @@
 import type { Logger } from "@rdfx/logger";
+import { Maybe } from "purify-ts";
 import type * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { GraphqlSchema } from "./GraphqlSchema.js";
@@ -7,6 +8,7 @@ import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import { ObjectSetType } from "./ObjectSetType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { Operation } from "./Operation.js";
+import type { OptionType } from "./OptionType.js";
 import { RdfjsDatasetObjectSetType } from "./RdfjsDatasetObjectSetType.js";
 import { Reusables } from "./Reusables.js";
 import { Service } from "./Service.js";
@@ -148,39 +150,35 @@ export class TsGenerator implements Generator {
                 const operation = new Operation({
                   configuration,
                   comment: astOperation.comment,
-                  error: astOperation.error.map((astType) => {
-                    switch (astType.kind) {
-                      case "DiscriminatedUnion":
-                        return typeFactory.createObjectDiscriminatedUnionType(
-                          astType,
-                        );
-                      case "Struct":
-                        return typeFactory.createObjectType(astType);
-                      default:
-                        astType satisfies never;
-                        throw new Error("should never reach this point");
-                    }
-                  }),
+                  errors: astOperation.errors.map((astError) => ({
+                    httpBinding: astError.httpBinding,
+                    type: typeFactory.createObjectType(astError.type),
+                  })),
                   label: astOperation.label,
-                  lazyBindings: (): readonly Operation.Binding[] =>
-                    astOperation.bindings.map(
-                      (astBinding) =>
-                        new Operation.HttpBinding({
-                          errorResponses: astBinding.errorResponses,
-                          operation,
-                          request: astBinding.request,
-                          resultResponse: astBinding.resultResponse,
-                          reusables,
-                        }),
-                    ),
+                  lazyHttpBinding: (): Operation.HttpBinding =>
+                    new Operation.HttpBinding({
+                      comment: Maybe.empty(),
+                      configuration,
+                      label: Maybe.empty(),
+                      logger: this.logger,
+                      method: astOperation.httpBinding.method,
+                      operation,
+                      statusCode: astOperation.httpBinding.statusCode,
+                      reusables,
+                      uriTemplate: astOperation.httpBinding.uriTemplate,
+                    }),
+                  input: astOperation.input.map((astInput) => ({
+                    httpBinding: astInput.httpBinding,
+                    type: typeFactory.createObjectType(astInput.type),
+                  })),
                   logger: this.logger,
                   name: astOperation.name,
-                  parameter: astOperation.parameter.map((astType) =>
-                    typeFactory.createObjectType(astType),
-                  ),
-                  result: astOperation.result.map((astType) =>
-                    typeFactory.createType(astType),
-                  ),
+                  output: astOperation.output.map((astOutput) => ({
+                    httpBinding: astOutput.httpBinding,
+                    type: typeFactory.createType(astOutput.type) as
+                      | ObjectType
+                      | OptionType<ObjectType>,
+                  })),
                   reusables,
                   service: { name: astService.name },
                 });
