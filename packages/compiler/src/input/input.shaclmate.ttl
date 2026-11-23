@@ -74,14 +74,7 @@ shaclmate:NodeShapeSpecificProperties
 shaclmate:Operation
     a sh:NodeShape ;
     rdfs:comment "Service operation." ;
-    sh:property shaclmate:Operation-httpBinding, shaclmate:Operation-error, shaclmate:Operation-name, shaclmate:Operation-input, shaclmate:Operation-output, shaclmate:comment, shaclmate:label .
-
-shaclmate:Operation-httpBinding
-    a sh:PropertyShape ;
-    rdfs:comment "HTTP binding for the operation." ;
-    sh:maxCount 1 ;
-    sh:node shaclmate:OperationHttpBinding ;
-    sh:path shaclmate:httpBinding .
+    sh:property shaclmate:Operation-error, shaclmate:Operation-httpBinding, shaclmate:Operation-input, shaclmate:Operation-name, shaclmate:Operation-output, shaclmate:comment, shaclmate:label .
 
 shaclmate:Operation-error
     a sh:PropertyShape ;
@@ -90,13 +83,12 @@ shaclmate:Operation-error
     sh:node shaclmate:OperationError ;
     sh:path shaclmate:error .
 
-shaclmate:Operation-name
-    shaclmate:display true ;
+shaclmate:Operation-httpBinding
     a sh:PropertyShape ;
-    rdfs:comment "Identifier-safe name of the operation, incorporated into generated code." ;
-    sh:datatype xsd:string ;
+    rdfs:comment "HTTP binding for the operation." ;
     sh:maxCount 1 ;
-    sh:path shaclmate:name .
+    sh:node shaclmate:OperationHttpBinding ;
+    sh:path shaclmate:httpBinding .
 
 shaclmate:Operation-input
     a sh:PropertyShape ;
@@ -104,6 +96,14 @@ shaclmate:Operation-input
     sh:maxCount 1 ;
     sh:node shaclmate:OperationInput ;
     sh:path shaclmate:input .
+
+shaclmate:Operation-name
+    shaclmate:display true ;
+    a sh:PropertyShape ;
+    rdfs:comment "Identifier-safe name of the operation, incorporated into generated code." ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:path shaclmate:name .
 
 shaclmate:Operation-output
     a sh:PropertyShape ;
@@ -188,12 +188,12 @@ shaclmate:OperationErrorHttpBindingStatusCode
 
 shaclmate:OperationErrorSpecificProperties
     a sh:NodeShape ;
-    sh:property shaclmate:operation input .
+    sh:property shaclmate:OperationError-httpBinding .
 
 shaclmate:OperationHttpBinding
     a sh:NodeShape ;
     rdfs:comment "HTTP binding for an operation." ;
-    sh:property shaclmate:OperationHttpBinding-method, OperationHttpBinding-statusCode, shaclmate:OperationHttpBinding-urlTemplate .
+    sh:property shaclmate:OperationHttpBinding-method, shaclmate:OperationHttpBinding-statusCode, shaclmate:OperationHttpBinding-urlTemplate .
 
 shaclmate:OperationHttpBinding-method
     a sh:PropertyShape ;
