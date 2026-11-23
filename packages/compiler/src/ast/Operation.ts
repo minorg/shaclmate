@@ -1,20 +1,23 @@
 import type { Maybe } from "purify-ts";
 import type * as uriTemplate from "uri-template";
+import type {
+  OperationErrorHttpBindingStatusCode,
+  OperationHttpBindingStatusCode,
+} from "../input/input.shaclmate.js";
 import { AbstractConstruct } from "./AbstractConstruct.js";
 import type { OptionType } from "./OptionType.js";
-import type { StructDiscriminatedUnionType } from "./StructDiscriminatedUnionType.js";
 import type { StructType } from "./StructType.js";
 
 export class Operation extends AbstractConstruct {
   /**
-   * Bindings of this operation.
-   */
-  readonly bindings: readonly Operation.Binding[];
-
-  /**
    * Error(s) returned by this operation.
    */
   readonly error: Maybe<Operation.Error>;
+
+  /**
+   * HTTP binding of this operation.
+   */
+  readonly httpBinding: Operation.HttpBinding;
 
   /**
    * Name of this operation.
@@ -22,74 +25,85 @@ export class Operation extends AbstractConstruct {
   readonly name: string;
 
   /**
-   * Parameter type.
+   * Input type.
    */
-  readonly parameter: Maybe<Operation.Parameter>;
+  readonly input: Maybe<Operation.Input>;
 
   /**
-   * Result type.
+   * Output type.
    */
-  readonly result: Maybe<Operation.Result>;
+  readonly output: Maybe<Operation.Output>;
 
   constructor({
-    bindings,
     error,
+    httpBinding,
     name,
-    parameter,
-    result,
+    input,
+    output,
     ...superParameters
   }: {
-    bindings: readonly Operation.Binding[];
     error: Maybe<Operation.Error>;
     name: string;
-    parameter: Maybe<Operation.Parameter>;
-    result: Maybe<Operation.Result>;
+    httpBinding: Operation.HttpBinding;
+    input: Maybe<Operation.Input>;
+    output: Maybe<Operation.Output>;
   } & ConstructorParameters<typeof AbstractConstruct>[0]) {
     super(superParameters);
-    this.bindings = bindings;
     this.error = error;
+    this.httpBinding = httpBinding;
     this.name = name;
-    this.parameter = parameter;
-    this.result = result;
+    this.input = input;
+    this.output = output;
   }
 }
 
 export namespace Operation {
-  export type Error = StructType | StructDiscriminatedUnionType;
-
-  export interface HttpBinding {
-    readonly request: HttpBinding.Request;
-    readonly errorResponses: readonly HttpBinding.ErrorResponse[];
-    readonly resultResponse: HttpBinding.ResultResponse;
+  export interface Error {
+    readonly httpBinding: Error.HttpBinding;
+    readonly type: StructType;
   }
 
-  export namespace HttpBinding {
-    export interface Request {
-      readonly contentType: Maybe<string>;
-      readonly method: string;
-      readonly parameterSources: ReadonlyMap<string, Request.ParameterSource>;
-      readonly uriTemplate: ReturnType<typeof uriTemplate.parse>["ast"];
-    }
-
-    export namespace Request {
-      export type ParameterSource = "body" | "path" | "query";
-    }
-
-    export interface ErrorResponse {
+  export namespace Error {
+    export interface HttpBinding {
       readonly contentType: "application/problem+json";
       readonly error: StructType;
-      readonly statusCode: 500; //HttpResponseErrorStatusCode;
-    }
-
-    export interface ResultResponse {
-      readonly contentType: Maybe<string>;
-      readonly statusCode: 200; //HttpResponseSuccessfulStatusCode;
+      readonly statusCode: OperationErrorHttpBindingStatusCode;
     }
   }
 
-  export type Binding = HttpBinding;
+  export interface HttpBinding {
+    readonly method: string;
+    readonly statusCode: OperationHttpBindingStatusCode;
+    readonly uriTemplate: ReturnType<typeof uriTemplate.parse>["ast"];
+  }
 
-  export type Parameter = StructType;
+  export interface Input {
+    readonly httpBinding: Input.HttpBinding;
+    readonly type: StructType;
+  }
 
-  export type Result = OptionType<StructType> | StructType;
+  export namespace Input {
+    export interface HttpBinding {
+      readonly contentType: string;
+      readonly propertySourcesByPropertyName: ReadonlyMap<
+        string,
+        HttpBinding.PropertySource
+      >;
+    }
+
+    export namespace HttpBinding {
+      export type PropertySource = "body" | "path" | "query";
+    }
+  }
+
+  export interface Output {
+    readonly httpBinding: Output.HttpBinding;
+    readonly type: OptionType<StructType> | StructType;
+  }
+
+  export namespace Output {
+    export interface HttpBinding {
+      readonly contentType: string;
+    }
+  }
 }
