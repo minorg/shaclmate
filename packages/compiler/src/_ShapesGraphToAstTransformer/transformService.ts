@@ -1,4 +1,4 @@
-import { Curie } from "@shaclmate/shacl-ast";
+import { Curie } from "@rdfx/iri";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { parse as parseUriTemplate } from "uri-template";
@@ -11,6 +11,7 @@ import { ShapeStack } from "./ShapeStack.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 function astConstructName(
+  this: ShapesGraphToAstTransformer,
   object: input.Operation | input.Service,
 ): Either<Error, string> {
   // Explicit shaclmate:name
@@ -22,7 +23,9 @@ function astConstructName(
 
   // CURIE identifier
   if (objectIdentifier instanceof Curie) {
-    if (objectIdentifier.hasUniqueReference) {
+    if (
+      this.shapesGraph.uniqueCurieReferences.has(objectIdentifier.reference)
+    ) {
       return Either.of(objectIdentifier.reference);
     }
 
@@ -33,7 +36,7 @@ function astConstructName(
 
   return Left(
     new Error(
-      `${object.$type} ${objectIdentifier} has a non-CURIE identifier (${objectIdentifier}) and no shaclmate:name`,
+      `${objectIdentifier} has a non-CURIE identifier (${objectIdentifier}) and no shaclmate:name`,
     ),
   );
 }
@@ -360,7 +363,7 @@ function transformOperation(
           inputHttpBinding: binding,
         }),
       ),
-      astConstructName(inputOperation),
+      astConstructName.call(this, inputOperation),
     ).chain(([bindings, name]) => {
       return Either.of(
         new ast.Operation({
@@ -381,7 +384,7 @@ export function transformService(
   this: ShapesGraphToAstTransformer,
   inputService: input.Service,
 ): Either<Error, ast.Service> {
-  return astConstructName(inputService).chain((name) => {
+  return astConstructName.call(this, inputService).chain((name) => {
     const astOperations: ast.Operation[] = [];
     for (const inputOperation of inputService.operations) {
       const astOperationEither = transformOperation.call(this, inputOperation);
