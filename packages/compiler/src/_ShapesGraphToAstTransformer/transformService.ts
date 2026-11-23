@@ -41,137 +41,187 @@ function astConstructName(
   );
 }
 
+function parseUrlTemplate(
+  input: string,
+): Either<Error, ReturnType<typeof parseUriTemplate>["ast"]> {
+  return Either.encase(() => parseUriTemplate(input).ast);
+}
+
 function transformOperation(
   this: ShapesGraphToAstTransformer,
-  inputOperation: input.Operation,
+  {
+    inputOperation,
+    inputServiceName,
+  }: {
+    inputOperation: input.Operation;
+    inputServiceName: string;
+  },
 ): Either<Error, ast.Operation> {
-  const self = this;
-  const logger = this.logger;
+  return astConstructName
+    .call(this, inputOperation)
+    .chain((inputOperationName) => {
+      const httpBindingUriTemplate =
+        inputOperation.httpBinding.extract()?.urlTemplate ??
+        `/${inputServiceName}/${inputOperationName}`;
+      return parseUrlTemplate(httpBindingUriTemplate).chain(
+        (parsedHttpBindingUriTemplate) => {
+          function transformHttpBinding({
+            astInput,
+            astOutput,
+          }: {
+            astInput: Maybe<ast.Operation.Input>;
+            astOutput: Maybe<ast.Operation.Output>;
+          }): Either<Error, ast.Operation.HttpBinding> {
+            const inputHttpBinding: OperationHttpBinding | undefined =
+              inputOperation.httpBinding.extract();
 
-  function transformError(): Either<
-    Error,
-    Maybe<ast.StructType | ast.StructDiscriminatedUnionType>
-  > {
-    const inputError = inputOperation.error.extract();
-    if (!inputError) {
-      return Either.of(Maybe.empty());
-    }
-    return transformShapeToAstType
-      .call(self, inputError, new ShapeStack())
-      .chain((astParameter) => {
-        if (
-          (astParameter.kind === "DiscriminatedUnion" &&
-            astParameter.isStructDiscriminatedUnionType()) ||
-          astParameter.kind === "Struct"
-        ) {
-          return Either.of<
-            Error,
-            ast.StructType | ast.StructDiscriminatedUnionType
-          >(astParameter);
-        }
-        return Left(
-          new Error(
-            `expected ${inputError} to be a struct or discriminated union of structs`,
-          ),
-        );
-      })
-      .map(Maybe.of);
+            let method = inputHttpBinding?.method.extract();
+            if (method === undefined) {
+              astInput.ifJust((astInput) => {
+                if (
+                  astInput.httpBinding.propertySourcesByPropertyName
+                    .values()
+                    .some((value) => value === "body")
+                ) {
+                  method = "POST";
+                }
+              });
+              if (!method) {
+                method = "GET";
+              }
+            }
+
+            let statusCode: ast.Operation.HttpBinding["statusCode"] | undefined;
+            if (statusCode === undefined) {
+              statusCode = astOutput.isJust() ? 200 : 204;
+            }
+
+            return Either.of({
+              method,
+              statusCode,
+              uriTemplate: parsedHttpBindingUriTemplate,
+            });
+          }
+
+          return Eithers.chain3(
+            transformOperationErrors.call(this, { inputOperation }),
+            transformOperationInput.call(this, {
+              astOperationHttpBinding: {
+                uriTemplate: parsedHttpBindingUriTemplate,
+              },
+              inputOperation,
+            }),
+            transformOperationOutput.call(this, { inputOperation }),
+          ).chain(([astErrors, astInput, astOutput]) => {
+            return transformHttpBinding({ astInput, astOutput }).map(
+              (httpBinding) =>
+                new ast.Operation({
+                  comment: inputOperation.comment,
+                  errors: astErrors,
+                  httpBinding,
+                  label: inputOperation.label,
+                  name: inputOperationName,
+                  input: astInput,
+                  output: astOutput,
+                }),
+            );
+          });
+        },
+      );
+    });
+}
+
+function transformOperationErrors(
+  this: ShapesGraphToAstTransformer,
+  { inputOperation }: { inputOperation: input.Operation },
+): Either<Error, readonly ast.Operation.Error[]> {
+  return Either.sequence(
+    inputOperation.errors.map((inputError) =>
+      transformShapeToAstType
+        .call(this, inputError, new ShapeStack())
+        .chain((astErrorType) => {
+          if (astErrorType.kind !== "Struct") {
+            return Left(
+              new Error(
+                `expected ${inputError} to be a struct or discriminated union of structs`,
+              ),
+            );
+          }
+
+          const inputHttpBinding = inputError.httpBinding.extract();
+
+          return Either.of<Error, ast.Operation.Error>({
+            httpBinding: {
+              contentType: "application/problem+json",
+              statusCode: inputHttpBinding?.statusCode ?? 500,
+            },
+            type: astErrorType,
+          });
+        }),
+    ),
+  );
+}
+
+function transformOperationInput(
+  this: ShapesGraphToAstTransformer,
+  {
+    astOperationHttpBinding,
+    inputOperation,
+  }: {
+    astOperationHttpBinding: Pick<ast.Operation.HttpBinding, "uriTemplate">;
+    inputOperation: input.Operation;
+  },
+): Either<Error, Maybe<ast.Operation.Input>> {
+  const inputInput = inputOperation.input.extract();
+  if (!inputInput) {
+    return Either.of(Maybe.empty());
   }
 
-  function transformHttpBinding({
-    astError,
-    astParameter,
-    astResult,
-    inputHttpBinding,
-  }: {
-    astError: Maybe<ast.StructType | ast.StructDiscriminatedUnionType>;
-    astParameter: Maybe<ast.Operation.Parameter>;
-    astResult: Maybe<ast.Operation.Result>;
-    inputHttpBinding: OperationHttpBinding;
-  }): Either<Error, ast.Operation.HttpBinding> {
-    function transformErrorResponses(): Either<
-      Error,
-      readonly ast.Operation.HttpBinding.ErrorResponse[]
-    > {
-      const astErrorStructTypes: readonly ast.StructType[] = astError
-        .toList()
-        .flatMap((astError) => {
-          switch (astError.kind) {
-            case "DiscriminatedUnion":
-              return astError.members.map(
-                (member) => member.type as ast.StructType,
-              );
-            case "Struct":
-              return [astError];
-            default:
-              astError satisfies never;
-              throw new Error("should never reach this point");
-          }
-        });
+  const logger = this.logger;
 
-      return Either.encase(() =>
-        inputHttpBinding.errorResponses.map((inputErrorResponse) => {
-          const error = astErrorStructTypes.find((astErrorStructType) =>
-            astErrorStructType.shapeIdentifier.equals(inputErrorResponse.error),
-          );
-          if (!error) {
-            throw new Error(
-              `${inputOperation.$identifier()} HTTP binding error response ${inputErrorResponse.$identifier()} references error ${inputErrorResponse.error} that is not associated with the operation`,
-            );
-          }
-          if (error.name.isNothing()) {
-            throw new Error(
-              `${inputOperation.$identifier()} HTTP binding error response ${inputErrorResponse.$identifier()} references unnamed error ${inputErrorResponse.error}`,
-            );
-          }
-
-          return {
-            contentType: "application/problem+json",
-            error,
-            statusCode: inputErrorResponse.statusCode,
-          } satisfies ast.Operation.HttpBinding.ErrorResponse;
-        }),
-      );
-    }
-
-    function transformRequest(): Either<
-      Error,
-      ast.Operation.HttpBinding.Request
-    > {
-      return Either.encase(() => {
-        const inputRequest = inputHttpBinding.request;
-        const parsedUrlTemplate = parseUriTemplate(inputRequest.urlTemplate);
-
-        const parameterNames = new Set(
-          astParameter
-            .map((astParameter) =>
-              astParameter.fields
-                .filter((field) => field.kind === "Shacl")
-                .map((field) => field.name),
-            )
-            .orDefault([]),
+  return transformShapeToAstType
+    .call(this, inputInput, new ShapeStack())
+    .chain((astInputType) => {
+      if (astInputType.kind !== "Struct") {
+        return Left(
+          new Error(
+            `expected ${inputOperation} input ${inputInput} to be a struct`,
+          ),
         );
-        const parameterSources = new Map<
+      }
+
+      function transformHttpBinding(): Either<
+        Error,
+        ast.Operation.Input.HttpBinding
+      > {
+        const propertyNames = new Set(
+          (astInputType as ast.StructType).fields
+            .filter((field) => field.kind === "Shacl")
+            .map((field) => field.name),
+        );
+        const propertySourcesByPropertyName = new Map<
           string,
-          ast.Operation.HttpBinding.Request.ParameterSource
+          ast.Operation.Input.HttpBinding.PropertySource
         >();
 
-        for (const part of parsedUrlTemplate.ast.parts) {
+        for (const part of astOperationHttpBinding.uriTemplate.parts) {
           if (part.type === "literal") {
             continue;
           }
           const parameterSource =
             part.operator === "?" || part.operator === "&" ? "query" : "path";
           for (const variable of part.variables) {
-            if (!parameterNames.has(variable.name)) {
+            if (!propertyNames.has(variable.name)) {
               throw new Error(
                 `${inputOperation.$identifier()} HTTP binding URI template references variable ${variable.name} that is not in parameter`,
               );
             }
 
-            const existingParameterSource = parameterSources.get(variable.name);
+            const existingParameterSource = propertySourcesByPropertyName.get(
+              variable.name,
+            );
             if (existingParameterSource == null) {
-              parameterSources.set(variable.name, parameterSource);
+              propertySourcesByPropertyName.set(variable.name, parameterSource);
             } else if (existingParameterSource !== parameterSource) {
               logger.warn(
                 "%s HTTP binding URI template has parameter %s with multiple sources (%s and %s)",
@@ -185,209 +235,144 @@ function transformOperation(
         }
 
         let bodyParametersCount = 0;
-        for (const parameterName of parameterNames) {
-          if (!parameterSources.has(parameterName)) {
-            parameterSources.set(parameterName, "body");
+        for (const parameterName of propertyNames) {
+          if (!propertySourcesByPropertyName.has(parameterName)) {
+            propertySourcesByPropertyName.set(parameterName, "body");
             bodyParametersCount++;
           }
         }
 
-        let method = inputRequest.method.extract();
-        if (!method) {
-          if (bodyParametersCount > 0) {
-            method = "POST";
-          } else {
-            method = "GET";
-          }
-        }
+        // let method = inputRequest.method.extract();
+        // if (!method) {
+        //   if (bodyParametersCount > 0) {
+        //     method = "POST";
+        //   } else {
+        //     method = "GET";
+        //   }
+        // }
 
-        let contentType = inputRequest.contentType.extract();
+        let contentType = inputInput?.httpBinding
+          .extract()
+          ?.contentType.extract();
         if (!contentType) {
           if (bodyParametersCount > 0) {
             contentType = "application/json";
           }
         }
 
-        return {
+        return Either.of({
           contentType: Maybe.fromNullable(contentType),
-          method,
-          parameterSources,
-          uriTemplate: parsedUrlTemplate.ast,
-        } satisfies ast.Operation.HttpBinding.Request;
-      });
-    }
+          propertySourcesByPropertyName,
+        } satisfies ast.Operation.Input.HttpBinding);
+      }
 
-    function transformResultResponse(): Either<
-      Error,
-      ast.Operation.HttpBinding.ResultResponse
-    > {
-      const inputResultResponse = inputHttpBinding.resultResponse.extract();
-
-      if (astResult.isJust()) {
-        if (inputResultResponse) {
-          let contentType = inputResultResponse.contentType.extract();
-          const astResult_ = astResult.extract();
-          if (astResult_) {
-            contentType = "application/json";
+      if (!astInputType.extern && astInputType.identifierField.isJust()) {
+        // If the struct type has an identifier property, mint a new, anonymous struct type with the other properties
+        const fields = astInputType.fields;
+        astInputType = new ast.StructType({
+          comment: astInputType.comment,
+          extern: false,
+          fromRdfType: Maybe.empty(),
+          identifierType: new ast.BlankNodeType({
+            comment: Maybe.empty(),
+            label: Maybe.empty(),
+            name: Maybe.empty(),
+            shapeIdentifier: astInputType.identifierType.shapeIdentifier,
+          }),
+          label: astInputType.label,
+          name: Maybe.empty(),
+          shapeIdentifier: astInputType.shapeIdentifier,
+          synthetic: false,
+          toRdfTypes: [],
+          tsImports: [],
+        });
+        for (const field of fields) {
+          if (field.kind === "Identifier") {
+            continue;
           }
-
-          return Either.of({
-            contentType: Maybe.fromNullable(contentType),
-            statusCode: inputResultResponse.statusCode.orDefault(200),
-          });
-        } else {
-          return Either.of({
-            contentType: Maybe.of("application/json"),
-            statusCode: 200,
-          });
-        }
-      } else {
-        if (inputResultResponse) {
-          return Left(
-            new Error(
-              `${inputOperation.$identifier()} has HTTP result response binding but no result specified`,
-            ),
+          invariant(field.kind === "Shacl");
+          astInputType.addField(
+            new ast.StructType.ShaclField({
+              ...field,
+              structType: astInputType,
+            }),
           );
         }
-
-        return Either.of({
-          contentType: Maybe.empty(),
-          statusCode: 204,
-        });
       }
-    }
 
-    return Eithers.chain3(
-      transformErrorResponses(),
-      transformRequest(),
-      transformResultResponse(),
-    ).chain(([errorResponses, request, resultResponse]) =>
-      Either.of({
-        errorResponses,
-        request,
-        resultResponse,
-      }),
-    );
-  }
-
-  function transformParameter(): Either<Error, Maybe<ast.Operation.Parameter>> {
-    const inputParameter = inputOperation.parameter.extract();
-    if (!inputParameter) {
-      return Either.of(Maybe.empty());
-    }
-    return transformShapeToAstType
-      .call(self, inputParameter, new ShapeStack())
-      .chain((astParameter) => {
-        if (astParameter.kind === "Struct") {
-          let astStructType = astParameter;
-
-          if (!astStructType.extern && astStructType.identifierField.isJust()) {
-            // If the struct type has an identifier property, mint a new, anonymous struct type with the other properties
-            const fields = astStructType.fields;
-            astStructType = new ast.StructType({
-              comment: astStructType.comment,
-              extern: false,
-              fromRdfType: Maybe.empty(),
-              identifierType: new ast.BlankNodeType({
-                comment: Maybe.empty(),
-                label: Maybe.empty(),
-                name: Maybe.empty(),
-                shapeIdentifier: astStructType.identifierType.shapeIdentifier,
-              }),
-              label: astStructType.label,
-              name: Maybe.empty(),
-              shapeIdentifier: astStructType.shapeIdentifier,
-              synthetic: false,
-              toRdfTypes: [],
-              tsImports: [],
-            });
-            for (const field of fields) {
-              if (field.kind === "Identifier") {
-                continue;
-              }
-              invariant(field.kind === "Shacl");
-              astStructType.addField(
-                new ast.StructType.ShaclField({
-                  ...field,
-                  structType: astStructType,
-                }),
-              );
-            }
-          }
-
-          return Either.of<Error, ast.StructType>(astStructType);
-        }
-
-        return Left(
-          new Error(
-            `expected ${inputOperation} parameter ${inputParameter} to be a struct`,
-          ),
-        );
-      })
-      .map(Maybe.of);
-  }
-
-  function transformResult(): Either<Error, Maybe<ast.Operation.Result>> {
-    const inputResult = inputOperation.result.extract();
-    if (!inputResult) {
-      return Either.of(Maybe.empty());
-    }
-    return transformShapeToAstType
-      .call(self, inputResult, new ShapeStack())
-      .chain<Error, ast.Operation.Result>((type) => {
-        if (type.kind === "Struct") {
-          return Either.of(type);
-        } else if (type.kind === "Option" && type.itemType.kind === "Struct") {
-          return Either.of(type as ast.OptionType<ast.StructType>);
-        }
-        return Left(
-          new Error(
-            `expected ${inputOperation} result ${inputResult} to be a struct or optional struct`,
-          ),
-        );
-      })
-      .map(Maybe.of);
-  }
-
-  return Eithers.chain3(
-    transformError(),
-    transformParameter(),
-    transformResult(),
-  ).chain(([error, parameter, result]) => {
-    return Eithers.chain2(
-      Eithers.chainMap(inputOperation.bindings, (binding) =>
-        transformHttpBinding({
-          astError: error,
-          astParameter: parameter,
-          astResult: result,
-          inputHttpBinding: binding,
-        }),
-      ),
-      astConstructName.call(this, inputOperation),
-    ).chain(([bindings, name]) => {
-      return Either.of(
-        new ast.Operation({
-          bindings,
-          comment: inputOperation.comment,
-          label: inputOperation.label,
-          error,
-          name,
-          parameter,
-          result,
+      return transformHttpBinding().map((httpBinding) =>
+        Maybe.of({
+          httpBinding,
+          type: astInputType,
         }),
       );
     });
-  });
+}
+
+function transformOperationOutput(
+  this: ShapesGraphToAstTransformer,
+  { inputOperation }: { inputOperation: input.Operation },
+): Either<Error, Maybe<ast.Operation.Output>> {
+  const inputOutput = inputOperation.output.extract();
+  if (!inputOutput) {
+    return Either.of(Maybe.empty());
+  }
+  return transformShapeToAstType
+    .call(this, inputOutput, new ShapeStack())
+    .chain((astOutputType) => {
+      let httpBindingContentType = inputOutput.httpBinding
+        .extract()
+        ?.contentType.extract();
+
+      switch (astOutputType.kind) {
+        case "Struct":
+          if (httpBindingContentType === undefined) {
+            httpBindingContentType = "application/json";
+          }
+          break;
+        case "Option":
+          if (astOutputType.itemType.kind === "Struct") {
+            if (httpBindingContentType === undefined) {
+              httpBindingContentType = "application/json";
+            }
+            break;
+          } else {
+            return Left(
+              new Error(
+                `expected ${inputOperation} result ${inputOutput} to be a struct or optional struct`,
+              ),
+            );
+          }
+        default:
+          return Left(
+            new Error(
+              `expected ${inputOperation} result ${inputOutput} to be a struct or optional struct`,
+            ),
+          );
+      }
+
+      return Either.of(
+        Maybe.of({
+          httpBinding: { contentType: httpBindingContentType },
+          type: astOutputType as
+            | ast.StructType
+            | ast.OptionType<ast.StructType>,
+        }),
+      );
+    });
 }
 
 export function transformService(
   this: ShapesGraphToAstTransformer,
   inputService: input.Service,
 ): Either<Error, ast.Service> {
-  return astConstructName.call(this, inputService).chain((name) => {
+  return astConstructName.call(this, inputService).chain((inputServiceName) => {
     const astOperations: ast.Operation[] = [];
     for (const inputOperation of inputService.operations) {
-      const astOperationEither = transformOperation.call(this, inputOperation);
+      const astOperationEither = transformOperation.call(this, {
+        inputOperation,
+        inputServiceName,
+      });
       if (astOperationEither.isLeft()) {
         return astOperationEither;
       }
@@ -403,7 +388,7 @@ export function transformService(
       new ast.Service({
         comment: inputService.comment,
         label: inputService.label,
-        name,
+        name: inputServiceName,
         operations: astOperations,
       }),
     );

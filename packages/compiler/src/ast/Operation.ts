@@ -12,7 +12,7 @@ export class Operation extends AbstractConstruct {
   /**
    * Error(s) returned by this operation.
    */
-  readonly error: Maybe<Operation.Error>;
+  readonly errors: readonly Operation.Error[];
 
   /**
    * HTTP binding of this operation.
@@ -35,21 +35,21 @@ export class Operation extends AbstractConstruct {
   readonly output: Maybe<Operation.Output>;
 
   constructor({
-    error,
+    errors,
     httpBinding,
     name,
     input,
     output,
     ...superParameters
   }: {
-    error: Maybe<Operation.Error>;
+    errors: readonly Operation.Error[];
     name: string;
     httpBinding: Operation.HttpBinding;
     input: Maybe<Operation.Input>;
     output: Maybe<Operation.Output>;
   } & ConstructorParameters<typeof AbstractConstruct>[0]) {
     super(superParameters);
-    this.error = error;
+    this.errors = errors;
     this.httpBinding = httpBinding;
     this.name = name;
     this.input = input;
@@ -66,7 +66,6 @@ export namespace Operation {
   export namespace Error {
     export interface HttpBinding {
       readonly contentType: "application/problem+json";
-      readonly error: StructType;
       readonly statusCode: OperationErrorHttpBindingStatusCode;
     }
   }
@@ -84,7 +83,7 @@ export namespace Operation {
 
   export namespace Input {
     export interface HttpBinding {
-      readonly contentType: string;
+      readonly contentType: Maybe<string>;
       readonly propertySourcesByPropertyName: ReadonlyMap<
         string,
         HttpBinding.PropertySource
