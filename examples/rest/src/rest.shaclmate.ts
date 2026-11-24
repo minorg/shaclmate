@@ -1,6 +1,7 @@
 import { zValidator as honoZodValidator } from "@hono/zod-validator";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import dataFactory from "@rdfx/data-factory";
+import { expandIri, type NamespaceBuilder, type PrefixMap } from "@rdfx/iri";
 import { type Logger, nopLogger } from "@rdfx/logger";
 import { NTriplesIdentifier } from "@rdfx/string";
 import {
@@ -59,6 +60,35 @@ export function $errorToProblemDetailsJson(
   return { status: 500 };
 }
 
+export type $FromJsonFunction<JsonValueT, ValueT, ValueSchemaT> = [
+  ValueSchemaT,
+] extends [undefined]
+  ? (
+      jsonValue: JsonValueT,
+      options?: {
+        context?: unknown;
+        defaultNamespace?: NamespaceBuilder;
+        prefixMap?: PrefixMap;
+        schema?: unknown;
+      },
+    ) => Either<Error, ValueT>
+  : (
+      jsonValue: JsonValueT,
+      options: {
+        context?: unknown;
+        defaultNamespace?: NamespaceBuilder;
+        prefixMap?: PrefixMap;
+        schema: ValueSchemaT;
+      },
+    ) => Either<Error, ValueT>;
+
+function $iriFromJsonString(
+  jsonString: string,
+  options: Parameters<$FromJsonFunction<string, NamedNode, object>>[1],
+): Either<Error, NamedNode> {
+  return expandIri(jsonString, { ...options, dataFactory: dataFactory });
+}
+
 function $monkeyPatchObject<T extends object>(
   obj: T,
   methods: { toJson?: (obj: T) => object; $toString?: (obj: T) => string },
@@ -88,14 +118,9 @@ function $monkeyPatchObject<T extends object>(
   return obj;
 }
 
-/**
- * NamespaceBuilder type excerpted from @rdfjs/namespace (MIT license) in lieu of a type import.
- */
-export type $NamespaceBuilder<TermNames extends string = any> = Record<
-  TermNames,
-  NamedNode
-> &
-  ((property?: TemplateStringsArray | TermNames) => NamedNode);
+export type $ObjectTypeGuardFunction<ObjectT extends $Object> = (
+  object: $Object,
+) => object is ObjectT;
 
 export function $parseBlankNode(identifier: string): Either<Error, BlankNode> {
   return $parseIdentifier(identifier).chain((identifier) =>
@@ -106,6 +131,12 @@ export function $parseBlankNode(identifier: string): Either<Error, BlankNode> {
 }
 
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
+
+function $primitiveToJsonValue<PrimitiveT extends boolean | number | string>(
+  primitive: PrimitiveT,
+): PrimitiveT {
+  return primitive;
+}
 
 /**
  * Problem details JSON object, following RFC 9457.
@@ -197,6 +228,16 @@ function $sequenceRecord<T extends Record<string, unknown>>(
   return Right(result as T);
 }
 
+export type $ToLoggableFunction<T> = (value: T) => any;
+
+export type $ToStringFunction<T> = (value: T) => string;
+
+export type $ToStringRecordFunction<T> = (value: T) => Record<string, string>;
+
+const $xsd_string = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#string",
+);
+
 const $zValidator = <
   T extends ZodType,
   Target extends keyof HonoValidationTargets,
@@ -219,135 +260,143 @@ const $zValidator = <
     return undefined;
   });
 
-export type ForbiddenError = {
-  readonly $type: "ForbiddenError";
-  readonly message: string;
-};
+export type PaymentRequiredError = { readonly message: string };
 
-export namespace ForbiddenError {
-  export const $toLoggable = (_forbiddenError: ForbiddenError) =>
-    $compactRecord({
-      $type: "ForbiddenError",
-      message: _forbiddenError.message,
-    });
+export namespace PaymentRequiredError {
+  export const $toString: $ToStringFunction<object> = (_paymentRequiredError) =>
+    `PaymentRequiredError(${JSON.stringify(PaymentRequiredError.toStringRecord(_paymentRequiredError))})`;
 
-  export const $toString: (_forbiddenError: ForbiddenError) => string = (
-    _forbiddenError,
-  ) => `ForbiddenError(${JSON.stringify(toStringRecord(_forbiddenError))})`;
+  export const create: <
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
+  >(
+    parameters: PaymentRequiredError.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, PaymentRequiredError.Discriminated> = (parameters) =>
+    $sequenceRecord({
+      $type: Right("PaymentRequiredError" as const),
+      message: Either.of(parameters.message),
+    }).map((object) =>
+      $monkeyPatchObject(object, { $toString: PaymentRequiredError.$toString }),
+    );
 
-  export const create = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
+  export type CreateParameters<
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
+  > = {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly message: string;
-  }): Either<Error, ForbiddenError> =>
-    $sequenceRecord({ message: Either.of(parameters.message) })
-      .map((properties) => ({
-        ...properties,
-        $type: "ForbiddenError" as const,
-      }))
-      .map((object) =>
-        $monkeyPatchObject(object, { $toString: ForbiddenError.$toString }),
-      );
+  };
 
-  export function createUnsafe<
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly message: string;
-  }): ForbiddenError {
-    return create(parameters).unsafeCoerce();
-  }
+  export const createUnsafe: <
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
+  >(
+    parameters: PaymentRequiredError.CreateParameters<$DefaultNamespaceT>,
+  ) => PaymentRequiredError.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = PaymentRequiredError & {
+    readonly $type: "PaymentRequiredError";
+  };
 
   export type Identifier = BlankNode;
   export namespace Identifier {
     export const parse = $parseBlankNode;
   }
 
-  export const isForbiddenError = (object: $Object): object is ForbiddenError =>
+  export const isPaymentRequiredError: $ObjectTypeGuardFunction<
+    PaymentRequiredError.Discriminated
+  > = (object): object is PaymentRequiredError.Discriminated =>
+    object.$type === "PaymentRequiredError";
+
+  export const schema = {
+    kind: "Object",
+    properties: {
+      message: {
+        kind: "Shacl",
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
+    },
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export const toLoggable: $ToLoggableFunction<PaymentRequiredError> = (
+    _paymentRequiredError,
+  ) => $compactRecord({ message: _paymentRequiredError.message });
+
+  export const toStringRecord: $ToStringRecordFunction<object> = (
+    _paymentRequiredError,
+  ) => $compactRecord({});
+}
+
+export type ForbiddenError = { readonly message: string };
+
+export namespace ForbiddenError {
+  export const $toString: $ToStringFunction<object> = (_forbiddenError) =>
+    `ForbiddenError(${JSON.stringify(ForbiddenError.toStringRecord(_forbiddenError))})`;
+
+  export const create: <
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
+  >(
+    parameters: ForbiddenError.CreateParameters<$DefaultNamespaceT>,
+  ) => Either<Error, ForbiddenError.Discriminated> = (parameters) =>
+    $sequenceRecord({
+      $type: Right("ForbiddenError" as const),
+      message: Either.of(parameters.message),
+    }).map((object) =>
+      $monkeyPatchObject(object, { $toString: ForbiddenError.$toString }),
+    );
+
+  export type CreateParameters<
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
+  > = {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly message: string;
+  };
+
+  export const createUnsafe: <
+    $DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
+  >(
+    parameters: ForbiddenError.CreateParameters<$DefaultNamespaceT>,
+  ) => ForbiddenError.Discriminated = (parameters) =>
+    create(parameters).unsafeCoerce();
+
+  export type Discriminated = ForbiddenError & {
+    readonly $type: "ForbiddenError";
+  };
+
+  export type Identifier = BlankNode;
+  export namespace Identifier {
+    export const parse = $parseBlankNode;
+  }
+
+  export const isForbiddenError: $ObjectTypeGuardFunction<
+    ForbiddenError.Discriminated
+  > = (object): object is ForbiddenError.Discriminated =>
     object.$type === "ForbiddenError";
 
   export const schema = {
+    kind: "Object",
     properties: {
-      $type: { kind: "Discriminant", value: "ForbiddenError" },
-      message: { kind: "Shacl", type: { kind: "String" as const } },
+      message: {
+        kind: "Shacl",
+        type: { datatype: $xsd_string, kind: "String" } as const,
+      } as const,
     },
   } as const;
 
   export type Schema = typeof schema;
 
-  export const toStringRecord: (
-    _forbiddenError: ForbiddenError,
-  ) => Record<string, string> = (_forbiddenError) => $compactRecord({});
+  export const toLoggable: $ToLoggableFunction<ForbiddenError> = (
+    _forbiddenError,
+  ) => $compactRecord({ message: _forbiddenError.message });
+
+  export const toStringRecord: $ToStringRecordFunction<object> = (
+    _forbiddenError,
+  ) => $compactRecord({});
 }
 
-export type PaymentRequiredError = {
-  readonly $type: "PaymentRequiredError";
-  readonly message: string;
-};
-
-export namespace PaymentRequiredError {
-  export const $toLoggable = (_paymentRequiredError: PaymentRequiredError) =>
-    $compactRecord({
-      $type: "PaymentRequiredError",
-      message: _paymentRequiredError.message,
-    });
-
-  export const $toString: (
-    _paymentRequiredError: PaymentRequiredError,
-  ) => string = (_paymentRequiredError) =>
-    `PaymentRequiredError(${JSON.stringify(toStringRecord(_paymentRequiredError))})`;
-
-  export const create = <
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly message: string;
-  }): Either<Error, PaymentRequiredError> =>
-    $sequenceRecord({ message: Either.of(parameters.message) })
-      .map((properties) => ({
-        ...properties,
-        $type: "PaymentRequiredError" as const,
-      }))
-      .map((object) =>
-        $monkeyPatchObject(object, {
-          $toString: PaymentRequiredError.$toString,
-        }),
-      );
-
-  export function createUnsafe<
-    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
-    readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly message: string;
-  }): PaymentRequiredError {
-    return create(parameters).unsafeCoerce();
-  }
-
-  export type Identifier = BlankNode;
-  export namespace Identifier {
-    export const parse = $parseBlankNode;
-  }
-
-  export const isPaymentRequiredError = (
-    object: $Object,
-  ): object is PaymentRequiredError => object.$type === "PaymentRequiredError";
-
-  export const schema = {
-    properties: {
-      $type: { kind: "Discriminant", value: "PaymentRequiredError" },
-      message: { kind: "Shacl", type: { kind: "String" as const } },
-    },
-  } as const;
-
-  export type Schema = typeof schema;
-
-  export const toStringRecord: (
-    _paymentRequiredError: PaymentRequiredError,
-  ) => Record<string, string> = (_paymentRequiredError) => $compactRecord({});
-}
-
-export type $Object = ForbiddenError | PaymentRequiredError;
+export type $Object =
+  | ForbiddenError.Discriminated
+  | PaymentRequiredError.Discriminated;
 
 export namespace $Object {
   export function $toString(object: $Object) {
@@ -367,7 +416,10 @@ export interface ExampleService {
   get(parameters: {
     readonly identifier: NamedNode;
   }): Promise<
-    Either<ForbiddenError | PaymentRequiredError, { readonly result: string }>
+    Either<
+      ForbiddenError.Discriminated | PaymentRequiredError.Discriminated,
+      { readonly result: string }
+    >
   >;
 }
 
@@ -386,7 +438,10 @@ export class LoggingExampleService implements ExampleService {
   async get(parameters: {
     readonly identifier: NamedNode;
   }): Promise<
-    Either<ForbiddenError | PaymentRequiredError, { readonly result: string }>
+    Either<
+      ForbiddenError.Discriminated | PaymentRequiredError.Discriminated,
+      { readonly result: string }
+    >
   > {
     const logContext: Record<string, unknown> = {
       service: "ExampleService",
@@ -398,9 +453,14 @@ export class LoggingExampleService implements ExampleService {
       .ifLeft((error) => {
         this.logger.error({ ...logContext, error }, "error");
       })
-      .ifRight((result) => {
+      .ifRight((output) => {
         this.logger.debug(
-          { ...logContext, result: $compactRecord({ result: result.result }) },
+          {
+            ...logContext,
+            output: ((_object) => $compactRecord({ result: _object.result }))(
+              output,
+            ),
+          },
           "success",
         );
       });
@@ -419,9 +479,9 @@ export function createExampleServiceHttpApi<EnvT extends Env>(
       (
         await service.get(
           $sequenceRecord({
-            identifier: Either.of<Error, NamedNode>(
-              dataFactory.namedNode(c.req.valid("param").identifier),
-            ),
+            identifier: $iriFromJsonString(c.req.valid("param").identifier, {
+              schema: { kind: "Iri" } as const,
+            }),
           }).unsafeCoerce(),
         )
       )
@@ -429,18 +489,18 @@ export function createExampleServiceHttpApi<EnvT extends Env>(
           let problemDetailsJson: $ProblemDetailsJson;
           if ("$type" in error) {
             switch (error.$type) {
-              case "PaymentRequiredError":
-                problemDetailsJson = {
-                  status: 402,
-                  title: "PaymentRequiredError",
-                  type: "http://example.com/PaymentRequiredError",
-                };
-                break;
               case "ForbiddenError":
                 problemDetailsJson = {
                   status: 403,
                   title: "ForbiddenError",
                   type: "http://example.com/ForbiddenError",
+                };
+                break;
+              case "PaymentRequiredError":
+                problemDetailsJson = {
+                  status: 402,
+                  title: "PaymentRequiredError",
+                  type: "http://example.com/PaymentRequiredError",
                 };
                 break;
             }
@@ -464,8 +524,8 @@ export function createExampleServiceHttpApi<EnvT extends Env>(
           c.json(
             ((_object) =>
               JSON.parse(
-                JSON.stringify({ result: _object.result } satisfies {
-                  result: string;
+                JSON.stringify({
+                  result: $primitiveToJsonValue<string>(_object.result),
                 }),
               ))(result),
             200,

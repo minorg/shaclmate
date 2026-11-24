@@ -215,7 +215,8 @@ Unsupported.
 
 ### [Logical constraint components](https://www.w3.org/TR/shacl/#core-components-logical)
 
-* `sh:xone` is (mostly) supported on node shapes and property shapes and used to generate union types in TypeScript. 
+* `sh:and` is supported on node shapes with `sh:property` but is unsupported on other node shapes (e.g., `sh:in` intersections); it is used to generate [intersection types](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html) in TypeScript.
+* `sh:xone` is (mostly) supported on node shapes and property shapes and used to generate discriminated [union types](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html) in TypeScript. 
 
 ### [Shape-based constraint components](https://www.w3.org/TR/shacl/#core-components-shape)
 

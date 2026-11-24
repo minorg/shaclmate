@@ -1,4 +1,7 @@
 import type { Logger } from "@rdfx/logger";
+import { Maybe } from "purify-ts";
+import toposort from "toposort";
+import { invariant } from "ts-invariant";
 import type * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { GraphqlSchema } from "./GraphqlSchema.js";
@@ -7,6 +10,7 @@ import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import { ObjectSetType } from "./ObjectSetType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { Operation } from "./Operation.js";
+import type { OptionType } from "./OptionType.js";
 import { RdfjsDatasetObjectSetType } from "./RdfjsDatasetObjectSetType.js";
 import { Reusables } from "./Reusables.js";
 import { Service } from "./Service.js";
@@ -47,14 +51,16 @@ export class TsGenerator implements Generator {
 
     let declarations: Code[] = [];
 
-    const tsNamedTypes: Type[] = [];
+    const tsNamedTypesByName = new Map<string, Type>();
     const tsNamedObjectDiscriminatedUnionTypes: ObjectDiscriminatedUnionType[] =
       [];
     const tsNamedObjectIntersectionTypes: ObjectIntersectionType[] = [];
     const tsNamedObjectTypes: ObjectType[] = [];
     for (const astNamedType of ast_.namedTypes) {
       const tsNamedType = typeFactory.createType(astNamedType);
-      tsNamedTypes.push(tsNamedType);
+      const tsName = tsNamedType.name.unsafeCoerce();
+      invariant(!tsNamedTypesByName.has(tsName));
+      tsNamedTypesByName.set(tsName, tsNamedType);
 
       if (astNamedType.kind === "Struct") {
         for (const tsImport of astNamedType.tsImports) {
@@ -75,34 +81,29 @@ export class TsGenerator implements Generator {
       }
     }
 
-    tsNamedTypes.sort(compareTsNamedType);
-    tsNamedObjectTypes.sort(compareTsNamedType);
     tsNamedObjectDiscriminatedUnionTypes.sort(compareTsNamedType);
+    tsNamedObjectIntersectionTypes.sort(compareTsNamedType);
+    tsNamedObjectTypes.sort(compareTsNamedType);
 
-    for (const tsNamedType of tsNamedTypes) {
+    // Topologically sort tsNamedTypes
+    const tsNamedTypeGraphEdges: [string, string | undefined][] = [];
+    for (const [tsName, tsNamedType] of tsNamedTypesByName.entries()) {
       switch (tsNamedType.kind) {
-        case "DiscriminatedUnion":
         case "ObjectDiscriminatedUnion":
         case "ObjectIntersection":
-          continue; // Declare compound types last.
-      }
-
-      tsNamedType.declaration.ifJust((declaration) => {
-        declarations.push(declaration);
-      });
-    }
-
-    // Declare compound types last.
-    for (const tsNamedType of tsNamedTypes) {
-      switch (tsNamedType.kind) {
-        case "DiscriminatedUnion":
-        case "ObjectDiscriminatedUnion":
-        case "ObjectIntersection":
+          for (const member of tsNamedType.members) {
+            member.type.name.ifJust((tsMemberTypeName) => {
+              tsNamedTypeGraphEdges.push([tsName, tsMemberTypeName]);
+            });
+          }
           break;
-        default:
-          continue;
       }
-
+    }
+    const tsNamedTypesSorted = toposort
+      .array([...tsNamedTypesByName.keys()].sort(), tsNamedTypeGraphEdges)
+      .map((tsName) => tsNamedTypesByName.get(tsName)!)
+      .reverse();
+    for (const tsNamedType of tsNamedTypesSorted) {
       tsNamedType.declaration.ifJust((declaration) => {
         declarations.push(declaration);
       });
@@ -148,39 +149,35 @@ export class TsGenerator implements Generator {
                 const operation = new Operation({
                   configuration,
                   comment: astOperation.comment,
-                  error: astOperation.error.map((astType) => {
-                    switch (astType.kind) {
-                      case "DiscriminatedUnion":
-                        return typeFactory.createObjectDiscriminatedUnionType(
-                          astType,
-                        );
-                      case "Struct":
-                        return typeFactory.createObjectType(astType);
-                      default:
-                        astType satisfies never;
-                        throw new Error("should never reach this point");
-                    }
-                  }),
+                  errors: astOperation.errors.map((astError) => ({
+                    httpBinding: astError.httpBinding,
+                    type: typeFactory.createObjectType(astError.type),
+                  })),
                   label: astOperation.label,
-                  lazyBindings: (): readonly Operation.Binding[] =>
-                    astOperation.bindings.map(
-                      (astBinding) =>
-                        new Operation.HttpBinding({
-                          errorResponses: astBinding.errorResponses,
-                          operation,
-                          request: astBinding.request,
-                          resultResponse: astBinding.resultResponse,
-                          reusables,
-                        }),
-                    ),
+                  lazyHttpBinding: (): Operation.HttpBinding =>
+                    new Operation.HttpBinding({
+                      comment: Maybe.empty(),
+                      configuration,
+                      label: Maybe.empty(),
+                      logger: this.logger,
+                      method: astOperation.httpBinding.method,
+                      operation,
+                      statusCode: astOperation.httpBinding.statusCode,
+                      reusables,
+                      uriTemplate: astOperation.httpBinding.uriTemplate,
+                    }),
+                  input: astOperation.input.map((astInput) => ({
+                    httpBinding: astInput.httpBinding,
+                    type: typeFactory.createObjectType(astInput.type),
+                  })),
                   logger: this.logger,
                   name: astOperation.name,
-                  parameter: astOperation.parameter.map((astType) =>
-                    typeFactory.createObjectType(astType),
-                  ),
-                  result: astOperation.result.map((astType) =>
-                    typeFactory.createType(astType),
-                  ),
+                  output: astOperation.output.map((astOutput) => ({
+                    httpBinding: astOutput.httpBinding,
+                    type: typeFactory.createType(astOutput.type) as
+                      | ObjectType
+                      | OptionType<ObjectType>,
+                  })),
                   reusables,
                   service: { name: astService.name },
                 });

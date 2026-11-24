@@ -9,29 +9,11 @@
 
 :ExampleService
     shaclmate:operation [
-        shaclmate:binding [
-            shaclmate:errorResponse [
-                shaclmate:error :PaymentRequiredError ;
-                shaclmate:httpStatusCode 402
-            ], [
-                shaclmate:error :ForbiddenError ;
-                shaclmate:httpStatusCode 403
-            ] ;
-            shaclmate:request [
-                schema:urlTemplate "/{identifier}"
-            ]
+        shaclmate:error :ForbiddenError, :PaymentRequiredError ;
+        shaclmate:httpBinding [
+            schema:urlTemplate "/{identifier}"
         ] ;
-        shaclmate:error [
-            sh:xone ([
-                    sh:node :ForbiddenError
-                ]
-                [
-                    sh:node :PaymentRequiredError
-                ]
-            )
-        ] ;
-        shaclmate:name "get" ;
-        shaclmate:parameter [
+        shaclmate:input [
             sh:property [
                 sh:maxCount 1 ;
                 sh:minCount 1 ;
@@ -39,7 +21,8 @@
                 sh:path :identifier
             ]
         ] ;
-        shaclmate:result [
+        shaclmate:name "get" ;
+        shaclmate:output [
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:node [
@@ -51,12 +34,15 @@
                     sh:path :result
                 ]
             ] ;
-            sh:path :result
+            sh:path :output
         ]
     ] ;
     a shaclmate:Service .
 
 :ForbiddenError
+    shaclmate:httpBinding [
+        shaclmate:httpStatusCode 403
+    ] ;
     a sh:NodeShape ;
     sh:nodeKind sh:BlankNode ;
     sh:property [
@@ -67,6 +53,9 @@
     ] .
 
 :PaymentRequiredError
+    shaclmate:httpBinding [
+        shaclmate:httpStatusCode 402
+    ] ;
     a sh:NodeShape ;
     sh:nodeKind sh:BlankNode ;
     sh:property [

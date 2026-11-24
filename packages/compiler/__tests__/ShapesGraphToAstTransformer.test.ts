@@ -20,9 +20,6 @@ describe("ShapesGraphToAstTransformer", () => {
         case "error":
           continue;
         case "example":
-          if (id === "restExample") {
-            continue;
-          }
           break;
         case "stress": {
           switch (id) {
@@ -84,6 +81,8 @@ describe("ShapesGraphToAstTransformer", () => {
           );
           switch (id) {
             case "compilerInput":
+              expect(namedIntersectionTypes).toHaveLength(5);
+              break;
             case "shaclShacl":
               expect(namedIntersectionTypes).toHaveLength(2);
               break;
