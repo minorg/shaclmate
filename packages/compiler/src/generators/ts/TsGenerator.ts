@@ -1,5 +1,7 @@
 import type { Logger } from "@rdfx/logger";
 import { Maybe } from "purify-ts";
+import toposort from "toposort";
+import { invariant } from "ts-invariant";
 import type * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { GraphqlSchema } from "./GraphqlSchema.js";
@@ -49,14 +51,16 @@ export class TsGenerator implements Generator {
 
     let declarations: Code[] = [];
 
-    const tsNamedTypes: Type[] = [];
+    const tsNamedTypesByName = new Map<string, Type>();
     const tsNamedObjectDiscriminatedUnionTypes: ObjectDiscriminatedUnionType[] =
       [];
     const tsNamedObjectIntersectionTypes: ObjectIntersectionType[] = [];
     const tsNamedObjectTypes: ObjectType[] = [];
     for (const astNamedType of ast_.namedTypes) {
       const tsNamedType = typeFactory.createType(astNamedType);
-      tsNamedTypes.push(tsNamedType);
+      const tsName = tsNamedType.name.unsafeCoerce();
+      invariant(!tsNamedTypesByName.has(tsName));
+      tsNamedTypesByName.set(tsName, tsNamedType);
 
       if (astNamedType.kind === "Struct") {
         for (const tsImport of astNamedType.tsImports) {
@@ -77,34 +81,29 @@ export class TsGenerator implements Generator {
       }
     }
 
-    tsNamedTypes.sort(compareTsNamedType);
-    tsNamedObjectTypes.sort(compareTsNamedType);
     tsNamedObjectDiscriminatedUnionTypes.sort(compareTsNamedType);
+    tsNamedObjectIntersectionTypes.sort(compareTsNamedType);
+    tsNamedObjectTypes.sort(compareTsNamedType);
 
-    for (const tsNamedType of tsNamedTypes) {
+    // Topologically sort tsNamedTypes
+    const tsNamedTypeGraphEdges: [string, string | undefined][] = [];
+    for (const [tsName, tsNamedType] of tsNamedTypesByName.entries()) {
       switch (tsNamedType.kind) {
-        case "DiscriminatedUnion":
         case "ObjectDiscriminatedUnion":
         case "ObjectIntersection":
-          continue; // Declare compound types last.
-      }
-
-      tsNamedType.declaration.ifJust((declaration) => {
-        declarations.push(declaration);
-      });
-    }
-
-    // Declare compound types last.
-    for (const tsNamedType of tsNamedTypes) {
-      switch (tsNamedType.kind) {
-        case "DiscriminatedUnion":
-        case "ObjectDiscriminatedUnion":
-        case "ObjectIntersection":
+          for (const member of tsNamedType.members) {
+            member.type.name.ifJust((tsMemberTypeName) => {
+              tsNamedTypeGraphEdges.push([tsName, tsMemberTypeName]);
+            });
+          }
           break;
-        default:
-          continue;
       }
-
+    }
+    const tsNamedTypesSorted = toposort
+      .array([...tsNamedTypesByName.keys()].sort(), tsNamedTypeGraphEdges)
+      .map((tsName) => tsNamedTypesByName.get(tsName)!)
+      .reverse();
+    for (const tsNamedType of tsNamedTypesSorted) {
       tsNamedType.declaration.ifJust((declaration) => {
         declarations.push(declaration);
       });
