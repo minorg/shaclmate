@@ -2369,6 +2369,8 @@ export type BaseShape = {
 
   readonly targetSubjectsOf: readonly NamedNode[];
 
+  readonly types: readonly NamedNode[];
+
   readonly xone: Maybe<readonly (BlankNode | NamedNode)[]>;
 };
 
@@ -2847,6 +2849,19 @@ export namespace BaseShape {
           $IriSchema<string>
         >($iriFromRdfResourceValues<string>),
       }),
+      types: $shaclPropertyFromRdf<
+        readonly NamedNode[],
+        $CollectionSchema<$IriSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: BaseShape.schema.properties.types,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NamedNode,
+          $IriSchema<string>
+        >($iriFromRdfResourceValues<string>),
+      }),
       xone: $shaclPropertyFromRdf<
         Maybe<readonly (BlankNode | NamedNode)[]>,
         $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
@@ -3196,6 +3211,14 @@ export namespace BaseShape {
           value,
         ),
       ),
+      types: $convertToScalarSet($convertToIri)(parameters.types, {
+        defaultNamespace: parameters.$defaultNamespace,
+      }).chain((value) =>
+        $validateArray($identityValidationFunction)(
+          BaseShape.schema.properties.types.type,
+          value,
+        ),
+      ),
       xone: $convertToMaybe($convertToList($convertToIdentifier))(
         parameters.xone,
         {
@@ -3354,6 +3377,10 @@ export namespace BaseShape {
       | NamedNode
       | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly targetSubjectsOf?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly types?:
       | (keyof $DefaultNamespaceT & string)
       | NamedNode
       | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
@@ -3681,6 +3708,11 @@ export namespace BaseShape {
         ),
         type: { itemType: { kind: "Iri" } as const, kind: "Set" } as const,
       } as const,
+      types: {
+        kind: "Shacl",
+        path: $rdf_type,
+        type: { itemType: { kind: "Iri" } as const, kind: "Set" } as const,
+      } as const,
       xone: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
@@ -3843,8 +3875,6 @@ export type NodeShapeSpecificProperties = {
   readonly toRdfTypes: readonly NamedNode[];
 
   readonly tsImports: readonly string[];
-
-  readonly types: readonly NamedNode[];
 };
 
 export namespace NodeShapeSpecificProperties {
@@ -4002,19 +4032,6 @@ export namespace NodeShapeSpecificProperties {
           $StringSchema<string>
         >($stringFromRdfResourceValues<string>),
       }),
-      types: $shaclPropertyFromRdf<
-        readonly NamedNode[],
-        $CollectionSchema<$IriSchema<string>>
-      >({
-        ...options,
-        focusResource: resource,
-        ignoreRdfType: true,
-        propertySchema: NodeShapeSpecificProperties.schema.properties.types,
-        typeFromRdfResourceValues: $setFromRdfResourceValues<
-          NamedNode,
-          $IriSchema<string>
-        >($iriFromRdfResourceValues<string>),
-      }),
     }).chain((properties) => NodeShapeSpecificProperties.create(properties));
 
   export const $toString: $ToStringFunction<
@@ -4128,14 +4145,6 @@ export namespace NodeShapeSpecificProperties {
           value,
         ),
       ),
-      types: $convertToScalarSet($convertToIri)(parameters.types, {
-        defaultNamespace: parameters.$defaultNamespace,
-      }).chain((value) =>
-        $validateArray($identityValidationFunction)(
-          NodeShapeSpecificProperties.schema.properties.types.type,
-          value,
-        ),
-      ),
     }).map((object) =>
       $monkeyPatchObject(object, {
         $toString: NodeShapeSpecificProperties.$toString,
@@ -4184,10 +4193,6 @@ export namespace NodeShapeSpecificProperties {
       | NamedNode
       | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly tsImports?: string | readonly string[];
-    readonly types?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
   };
 
   export const createUnsafe: <
@@ -4317,11 +4322,6 @@ export namespace NodeShapeSpecificProperties {
           itemType: { datatype: $xsd_string, kind: "String" } as const,
           kind: "Set",
         } as const,
-      } as const,
-      types: {
-        kind: "Shacl",
-        path: $rdf_type,
-        type: { itemType: { kind: "Iri" } as const, kind: "Set" } as const,
       } as const,
     },
   } as const;
