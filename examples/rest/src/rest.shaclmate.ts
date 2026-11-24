@@ -10,7 +10,7 @@ import {
   type ValidationTargets as HonoValidationTargets,
 } from "hono";
 import { type ClientRequestOptions, hc } from "hono/client";
-import { Either, EitherAsync, Left, Right } from "purify-ts";
+import { Either, EitherAsync, Left, type Maybe, Right } from "purify-ts";
 import { type ZodType, z } from "zod";
 
 /**
@@ -88,6 +88,12 @@ function $iriFromJsonString(
   options: Parameters<$FromJsonFunction<string, NamedNode, object>>[1],
 ): Either<Error, NamedNode> {
   return expandIri(jsonString, { ...options, dataFactory: dataFactory });
+}
+
+function $maybeToJsonValue<ItemT, ItemJsonValueT>(
+  itemToJsonValue: $ToJsonFunction<ItemT, ItemJsonValueT>,
+): $ToJsonFunction<Maybe<ItemT>, ItemJsonValueT | undefined> {
+  return (value) => value.map((value) => itemToJsonValue(value)).extract();
 }
 
 function $monkeyPatchObject<T extends object>(
@@ -228,6 +234,8 @@ function $sequenceRecord<T extends Record<string, unknown>>(
 
   return Right(result as T);
 }
+
+export type $ToJsonFunction<T, JsonT> = (value: T) => JsonT;
 
 export type $ToLoggableFunction<T> = (value: T) => any;
 
@@ -419,7 +427,7 @@ export interface ExampleService {
   }): Promise<
     Either<
       ForbiddenError.Discriminated | PaymentRequiredError.Discriminated,
-      { readonly result: string }
+      Maybe<{ readonly result: string }>
     >
   >;
 }
@@ -441,7 +449,7 @@ export class LoggingExampleService implements ExampleService {
   }): Promise<
     Either<
       ForbiddenError.Discriminated | PaymentRequiredError.Discriminated,
-      { readonly result: string }
+      Maybe<{ readonly result: string }>
     >
   > {
     const logContext: Record<string, unknown> = {
@@ -458,9 +466,11 @@ export class LoggingExampleService implements ExampleService {
         this.logger.debug(
           {
             ...logContext,
-            output: ((_object) => $compactRecord({ result: _object.result }))(
-              output,
-            ),
+            output: output
+              .map((item) =>
+                ((_object) => $compactRecord({ result: _object.result }))(item),
+              )
+              .extract(),
           },
           "success",
         );
@@ -532,12 +542,15 @@ export namespace ExampleServiceHttpApi {
           })
           .map((result) =>
             c.json(
-              ((_object) =>
+              $maybeToJsonValue(((_object) =>
                 JSON.parse(
                   JSON.stringify({
                     result: $primitiveToJsonValue<string>(_object.result),
                   }),
-                ))(result),
+                )) satisfies $ToJsonFunction<
+                { readonly result: string },
+                { result: string }
+              >)(result),
               200,
             ),
           )
@@ -560,7 +573,7 @@ export class ExampleServiceHttpClient implements ExampleService {
   }): Promise<
     Either<
       ForbiddenError.Discriminated | PaymentRequiredError.Discriminated,
-      { readonly result: string }
+      Maybe<{ readonly result: string }>
     >
   > {
     return EitherAsync(async ({ throwE }) => {
