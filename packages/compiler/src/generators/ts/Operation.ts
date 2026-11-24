@@ -256,7 +256,7 @@ ${joinCode(
             invariant(inputProperty);
 
             inputForwardingPropertyAssignments[inputPropertyName] =
-              code`${inputProperty.type.fromJsonValueFunction.unannotatedUsage}(c.req.valid("${inputPropertySource === "path" ? "param" : inputPropertySource}").${inputPropertyName})`;
+              code`${inputProperty.type.fromJsonValueFunction.unannotatedUsage}(c.req.valid("${inputPropertySource === "path" ? "param" : inputPropertySource}").${inputPropertyName}, { schema: ${inputProperty.type.schema.expression} })`;
 
             let targetSchemas_ = targetSchemas.get(inputPropertySource);
             if (!targetSchemas_) {
@@ -268,7 +268,7 @@ ${joinCode(
             );
           }
 
-          inputForwarding = code`${this.reusables.snippets.sequenceRecord}(${{ inputForwardingPropertyAssignments }}).unsafeCoerce()`;
+          inputForwarding = code`${this.reusables.snippets.sequenceRecord}(${inputForwardingPropertyAssignments}).unsafeCoerce()`;
         })
         .ifNothing(() => {
           inputForwarding = code``;
@@ -292,13 +292,13 @@ async (c) =>
     .map((output): Code => {
       switch (output.httpBinding.contentType) {
         case "application/json":
-          return code`((result) => c.json(${output.type.toJsonValueFunction.unannotatedUsage}(result)))`;
+          return code`((result) => c.json(${output.type.toJsonValueFunction.unannotatedUsage}(result), ${this.statusCode}))`;
         default:
           // contentType satisfies never;
           throw new RangeError(output.httpBinding.contentType);
       }
     })
-    .orDefault(code`() => c.body(null)`)}, ${this.statusCode}))
+    .orDefault(code`() => c.body(null, ${this.statusCode})`)})
   .extract()
 `);
 
