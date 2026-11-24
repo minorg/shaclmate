@@ -9,7 +9,8 @@ import {
   Hono,
   type ValidationTargets as HonoValidationTargets,
 } from "hono";
-import { Either, Left, Right } from "purify-ts";
+import { type ClientRequestOptions, hc } from "hono/client";
+import { Either, EitherAsync, Left, Right } from "purify-ts";
 import { type ZodType, z } from "zod";
 
 /**
@@ -467,70 +468,107 @@ export class LoggingExampleService implements ExampleService {
   }
 }
 
-export function createExampleServiceHttpApi<EnvT extends Env>(
-  service: ExampleService,
-  options?: { logger?: Logger },
-) {
-  const logger: Logger = options?.logger ?? nopLogger;
-  return new Hono<EnvT>().get(
-    "/:identifier",
-    $zValidator("param", z.object({ identifier: z.string().min(1) })),
-    async (c) =>
-      (
-        await service.get(
-          $sequenceRecord({
-            identifier: $iriFromJsonString(c.req.valid("param").identifier, {
-              schema: { kind: "Iri" } as const,
-            }),
-          }).unsafeCoerce(),
+export type ExampleServiceHttpApi<EnvT extends Env> = ReturnType<
+  typeof ExampleServiceHttpApi.create<EnvT>
+>;
+
+export namespace ExampleServiceHttpApi {
+  export function create<EnvT extends Env>(
+    service: ExampleService,
+    options?: { logger?: Logger },
+  ) {
+    const logger: Logger = options?.logger ?? nopLogger;
+    return new Hono<EnvT>().get(
+      "/:identifier",
+      $zValidator("param", z.object({ identifier: z.string().min(1) })),
+      async (c) =>
+        (
+          await service.get(
+            $sequenceRecord({
+              identifier: $iriFromJsonString(c.req.valid("param").identifier, {
+                schema: { kind: "Iri" } as const,
+              }),
+            }).unsafeCoerce(),
+          )
         )
-      )
-        .mapLeft((error) => {
-          let problemDetailsJson: $ProblemDetailsJson;
-          if ("$type" in error) {
-            switch (error.$type) {
-              case "ForbiddenError":
-                problemDetailsJson = {
-                  status: 403,
-                  title: "ForbiddenError",
-                  type: "http://example.com/ForbiddenError",
-                };
-                break;
-              case "PaymentRequiredError":
-                problemDetailsJson = {
-                  status: 402,
-                  title: "PaymentRequiredError",
-                  type: "http://example.com/PaymentRequiredError",
-                };
-                break;
+          .mapLeft((error) => {
+            let problemDetailsJson: $ProblemDetailsJson;
+            if ("$type" in error) {
+              switch (error.$type) {
+                case "ForbiddenError":
+                  problemDetailsJson = {
+                    status: 403,
+                    title: "ForbiddenError",
+                    type: "http://example.com/ForbiddenError",
+                  };
+                  break;
+                case "PaymentRequiredError":
+                  problemDetailsJson = {
+                    status: 402,
+                    title: "PaymentRequiredError",
+                    type: "http://example.com/PaymentRequiredError",
+                  };
+                  break;
+              }
+            } else {
+              problemDetailsJson = $errorToProblemDetailsJson(error);
             }
-          } else {
-            problemDetailsJson = $errorToProblemDetailsJson(error);
-          }
 
-          logger.error(
-            {
-              status: problemDetailsJson.status,
-              type: problemDetailsJson.type,
-            },
-            problemDetailsJson.detail ?? "(no message)",
-          );
+            logger.error(
+              {
+                status: problemDetailsJson.status,
+                type: problemDetailsJson.type,
+              },
+              problemDetailsJson.detail ?? "(no message)",
+            );
 
-          return c.json(problemDetailsJson, problemDetailsJson.status ?? 500, {
-            "Content-Type": "application/problem+json",
-          });
-        })
-        .map((result) =>
-          c.json(
-            ((_object) =>
-              JSON.parse(
-                JSON.stringify({
-                  result: $primitiveToJsonValue<string>(_object.result),
-                }),
-              ))(result),
-            200,
-          ),
-        )
-        .extract(),
-  );
+            return c.json(
+              problemDetailsJson,
+              problemDetailsJson.status ?? 500,
+              {
+                "Content-Type": "application/problem+json",
+              },
+            );
+          })
+          .map((result) =>
+            c.json(
+              ((_object) =>
+                JSON.parse(
+                  JSON.stringify({
+                    result: $primitiveToJsonValue<string>(_object.result),
+                  }),
+                ))(result),
+              200,
+            ),
+          )
+          .extract(),
+    );
+  }
+}
+
+export class ExampleServiceHttpClient implements ExampleService {
+  private readonly honoClient: ReturnType<
+    typeof hc<ExampleServiceHttpApi<Env>>
+  >;
+
+  constructor(baseUrl: string, options?: ClientRequestOptions) {
+    this.honoClient = hc<ExampleServiceHttpApi<Env>>(baseUrl, options);
+  }
+
+  async get(parameters: {
+    readonly identifier: NamedNode;
+  }): Promise<
+    Either<
+      ForbiddenError.Discriminated | PaymentRequiredError.Discriminated,
+      { readonly result: string }
+    >
+  > {
+    return EitherAsync(async ({ throwE }) => {
+      const response = await this.honoClient[":identifier"].$get({
+        param: {
+          identifier: encodeURIComponent(parameters.identifier.toString()),
+        },
+      });
+    });
+  }
 }

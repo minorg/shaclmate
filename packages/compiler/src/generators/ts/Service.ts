@@ -22,23 +22,27 @@ export class Service extends AbstractConstruct {
   }
 
   @Memoize()
-  get httpApiFactoryFunctionDeclaration(): Code {
+  get httpApiDeclaration(): Code {
     const variables = { logger: code`logger`, service: code`service` };
     return code`\
-export function create${this.name}HttpApi<EnvT extends ${this.reusables.imports.HonoEnv}>(service: ${this.name}, options?: { logger?: ${this.reusables.imports.Logger} }) {
-  const logger: ${this.reusables.imports.Logger} = options?.logger ?? ${this.reusables.imports.nopLogger};
-  return new ${this.reusables.imports.Hono}<EnvT>()${joinCode(this.operations.map((operation) => code`.${operation.httpBinding.httpApiRouteRegistration({ variables })}`))};
+export type ${this.name}HttpApi<EnvT extends ${this.reusables.imports.HonoEnv}> = ReturnType<typeof ${this.name}HttpApi.create<EnvT>>;
+
+export namespace ${this.name}HttpApi {
+  export function create<EnvT extends ${this.reusables.imports.HonoEnv}>(service: ${this.name}, options?: { logger?: ${this.reusables.imports.Logger} }) {
+    const logger: ${this.reusables.imports.Logger} = options?.logger ?? ${this.reusables.imports.nopLogger};
+    return new ${this.reusables.imports.Hono}<EnvT>()${joinCode(this.operations.map((operation) => code`.${operation.httpBinding.httpApiRouteRegistration({ variables })}`))};
+  }
 }`;
   }
 
   @Memoize()
   get httpClientClassDeclaration(): Code {
     return code`\
-export class ${this.name}HttpClient {
-  private readonly honoClient: ReturnType<typeof hc<${this.name}HttpApi>>;
+export class ${this.name}HttpClient implements ${this.name} {
+  private readonly honoClient: ReturnType<typeof hc<${this.name}HttpApi<${this.reusables.imports.HonoEnv}>>>;
 
   constructor(baseUrl: string, options?: ${this.reusables.imports.HonoClientRequestOptions}) {
-    this.honoClient = ${this.reusables.imports.hc}<${this.name}HttpApi>(baseUrl, options);
+    this.honoClient = ${this.reusables.imports.hc}<${this.name}HttpApi<${this.reusables.imports.HonoEnv}>>(baseUrl, options);
   }
 
 ${joinCode(this.operations.map((operation) => operation.httpBinding.httpClientMethod({ variables: { honoClient: code`this.honoClient` } })))}

@@ -7,7 +7,6 @@ import { AbstractConstruct } from "./AbstractConstruct.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { OptionType } from "./OptionType.js";
 import type { Service } from "./Service.js";
-import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class Operation extends AbstractConstruct {
@@ -237,26 +236,19 @@ ${joinCode(
       >();
       this.operation.input
         .ifJust((input) => {
-          const inputPropertiesByName = new Map<
-            string,
-            ObjectType.ShaclProperty<Type>
-          >();
-          for (const property of input.type.properties) {
-            if (property.kind === "Shacl") {
-              inputPropertiesByName.set(property.name, property);
-            }
-          }
-
           const inputForwardingPropertyAssignments: Record<string, Code> = {};
-          for (const [
-            inputPropertyName,
-            inputPropertySource,
-          ] of input.httpBinding.propertySourcesByPropertyName.entries()) {
-            const inputProperty = inputPropertiesByName.get(inputPropertyName);
-            invariant(inputProperty);
+          for (const inputProperty of input.type.properties) {
+            if (inputProperty.kind !== "Shacl") {
+              continue;
+            }
+            const inputPropertySource =
+              input.httpBinding.propertySourcesByPropertyName.get(
+                inputProperty.name,
+              );
+            invariant(inputPropertySource);
 
-            inputForwardingPropertyAssignments[inputPropertyName] =
-              code`${inputProperty.type.fromJsonValueFunction.unannotatedUsage}(c.req.valid("${inputPropertySource === "path" ? "param" : inputPropertySource}").${inputPropertyName}, { schema: ${inputProperty.type.schema.expression} })`;
+            inputForwardingPropertyAssignments[inputProperty.name] =
+              code`${inputProperty.type.fromJsonValueFunction.unannotatedUsage}(c.req.valid("${inputPropertySource === "path" ? "param" : inputPropertySource}").${inputProperty.name}, { schema: ${inputProperty.type.schema.expression} })`;
 
             let targetSchemas_ = targetSchemas.get(inputPropertySource);
             if (!targetSchemas_) {
@@ -305,8 +297,78 @@ async (c) =>
       return code`${this.method.toLowerCase()}(${joinCode(httpApiRouteRegistrationParameters, { on: ", " })})`;
     }
 
-    httpClientMethod({ variables }: { variables: { honoClient: Code } }): Code {
-      return variables.honoClient;
+    httpClientMethod(parameters: { variables: { honoClient: Code } }): Code {
+      const variables = {
+        ...parameters.variables,
+        parameters: code`parameters`,
+      };
+
+      const honoClientMethodParts: Code[] = [variables.honoClient];
+      for (const part of this.operation.httpBinding.uriTemplate.parts) {
+        if (part.type === "literal") {
+          for (const piece of part.value.split("/")) {
+            if (piece) {
+              honoClientMethodParts.push(code`[${literalOf(piece)}]`);
+            }
+          }
+          continue;
+        }
+
+        if (part.operator === "/" || part.operator === "") {
+          for (const variable of part.variables) {
+            honoClientMethodParts.push(
+              code`[${literalOf(`:${variable.name}`)}]`,
+            );
+          }
+        }
+      }
+      honoClientMethodParts.push(
+        code`.\$${this.operation.httpBinding.method.toLowerCase()}`,
+      );
+      const honoClientMethod = joinCode(honoClientMethodParts);
+
+      let honoClientMethodParameters: Code;
+      this.operation.input
+        .ifJust((input) => {
+          const honoClientMethodParametersRecord: Record<
+            string,
+            Record<string, Code>
+          > = {};
+          for (const inputProperty of input.type.properties) {
+            if (inputProperty.kind !== "Shacl") {
+              continue;
+            }
+            const inputPropertySource =
+              input.httpBinding.propertySourcesByPropertyName.get(
+                inputProperty.name,
+              );
+            invariant(inputPropertySource);
+            const honoInputPropertySource =
+              inputPropertySource === "path" ? "param" : inputPropertySource;
+
+            if (!honoClientMethodParametersRecord[honoInputPropertySource]) {
+              honoClientMethodParametersRecord[honoInputPropertySource] = {};
+            }
+            let inputPropertyValueExpression = code`${inputProperty.type.toStringExpression({ variables: { value: code`${variables.parameters}.${inputProperty.name}` } })}`;
+            if (honoInputPropertySource === "param") {
+              inputPropertyValueExpression = code`encodeURIComponent(${inputPropertyValueExpression})`;
+            }
+            honoClientMethodParametersRecord[honoInputPropertySource][
+              inputProperty.name
+            ] = inputPropertyValueExpression;
+          }
+          honoClientMethodParameters = code`${honoClientMethodParametersRecord}`;
+        })
+        .ifNothing(() => {
+          honoClientMethodParameters = code``;
+        });
+
+      return code`\
+async ${this.operation.interfaceSignature} {
+  return ${this.reusables.imports.EitherAsync}(async ({ throwE }) => {
+    const response = await ${honoClientMethod}(${honoClientMethodParameters!});
+  });
+}`;
     }
   }
 }
