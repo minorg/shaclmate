@@ -55,13 +55,13 @@ shaclmate:NodeShape-rdfType
     sh:nodeKind sh:IRI ;
     sh:path shaclmate:rdfType .
 
-shaclmate:NodeShape-toRdfTypes
+shaclmate:NodeShape-toRdfType
     a sh:PropertyShape ;
     sh:name "toRdfTypes" ;
     sh:nodeKind sh:IRI ;
     sh:path shaclmate:toRdfType .
 
-shaclmate:NodeShape-tsImports
+shaclmate:NodeShape-tsImport
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:name "tsImports" ;
@@ -69,7 +69,7 @@ shaclmate:NodeShape-tsImports
 
 shaclmate:NodeShapeSpecificProperties
     a sh:NodeShape ;
-    sh:property shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:NodeShape-tsImports .
+    sh:property shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfType, shaclmate:NodeShape-tsImport .
 
 shaclmate:Operation
     a sh:NodeShape ;
@@ -333,7 +333,7 @@ shaclmate:PropertyShapeSpecificProperties
 shaclmate:Service
     a rdfs:Class, sh:NodeShape ;
     rdfs:comment "Service with operations" ;
-    sh:property shaclmate:Service-name, shaclmate:Service-operations, shaclmate:comment, shaclmate:label .
+    sh:property shaclmate:Service-name, shaclmate:Service-operation, shaclmate:comment, shaclmate:label .
 
 shaclmate:Service-name
     shaclmate:display true ;
@@ -343,9 +343,10 @@ shaclmate:Service-name
     sh:maxCount 1 ;
     sh:path shaclmate:name .
 
-shaclmate:Service-operations
+shaclmate:Service-operation
     a sh:PropertyShape ;
     rdfs:comment "Set of operations associated with the service" ;
+    sh:name "operations" ;
     sh:node shaclmate:Operation ;
     sh:path shaclmate:operation .
 
@@ -372,4 +373,3 @@ shaclmate:Shape-shaclmateName
     sh:maxCount 1 ;
     sh:name "shaclmateName" ;
     sh:path shaclmate:name .
-
