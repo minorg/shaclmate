@@ -304,5 +304,9 @@ async (c) =>
 
       return code`${this.method.toLowerCase()}(${joinCode(httpApiRouteRegistrationParameters, { on: ", " })})`;
     }
+
+    httpClientMethod({ variables }: { variables: { honoClient: Code } }): Code {
+      return variables.honoClient;
+    }
   }
 }

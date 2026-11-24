@@ -100,7 +100,7 @@ export namespace TsFeature {
 
     ServiceHttpApi: ["Service"],
 
-    ServiceHttpClient: ["Service"],
+    ServiceHttpClient: ["Service", "ServiceHttpApi"],
 
     SPARQL: ["Object.SPARQL", "SparqlObjectSet"],
 
