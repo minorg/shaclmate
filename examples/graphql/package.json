@@ -13,12 +13,8 @@
   },
   "devDependencies": {},
   "files": [
-    "dist/dataset.d.ts",
-    "dist/dataset.js",
-    "dist/graphql.shaclmate.d.ts",
-    "dist/graphql.shaclmate.js",
-    "dist/main.d.ts",
-    "dist/main.js"
+    "dist/**/*.js",
+    "dist/**/.d.ts"
   ],
   "license": "Apache-2.0",
   "main": "./dist/index.js",
@@ -41,5 +37,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.110"
+  "version": "4.0.111"
 }

@@ -30,7 +30,7 @@ export type ${this.name}HttpApi<EnvT extends ${this.reusables.imports.HonoEnv}> 
 export namespace ${this.name}HttpApi {
   export function create<EnvT extends ${this.reusables.imports.HonoEnv}>(service: ${this.name}, options?: { logger?: ${this.reusables.imports.Logger} }) {
     const logger: ${this.reusables.imports.Logger} = options?.logger ?? ${this.reusables.imports.nopLogger};
-    return new ${this.reusables.imports.Hono}<EnvT>()${joinCode(this.operations.map((operation) => code`.${operation.httpBinding.httpApiRouteRegistration({ variables })}`))};
+    return new ${this.reusables.imports.Hono}<EnvT>()${joinCode(this.operations.map((operation) => code`.${operation.httpApiRouteRegistration({ variables })}`))};
   }
 }`;
   }
@@ -45,7 +45,7 @@ export class ${this.name}HttpClient implements ${this.name} {
     this.honoClient = ${this.reusables.imports.hc}<${this.name}HttpApi<${this.reusables.imports.HonoEnv}>>(baseUrl, options);
   }
 
-${joinCode(this.operations.map((operation) => operation.httpBinding.httpClientMethod({ variables: { honoClient: code`this.honoClient` } })))}
+${joinCode(this.operations.map((operation) => operation.httpClientMethodDeclaration({ variables: { honoClient: code`this.honoClient` } })))}
 }`;
   }
 

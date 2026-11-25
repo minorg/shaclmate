@@ -1,5 +1,4 @@
 import type { Logger } from "@rdfx/logger";
-import { Maybe } from "purify-ts";
 import toposort from "toposort";
 import { invariant } from "ts-invariant";
 import type * as ast from "../../ast/index.js";
@@ -153,19 +152,8 @@ export class TsGenerator implements Generator {
                     httpBinding: astError.httpBinding,
                     type: typeFactory.createObjectType(astError.type),
                   })),
+                  httpBinding: astOperation.httpBinding,
                   label: astOperation.label,
-                  lazyHttpBinding: (): Operation.HttpBinding =>
-                    new Operation.HttpBinding({
-                      comment: Maybe.empty(),
-                      configuration,
-                      label: Maybe.empty(),
-                      logger: this.logger,
-                      method: astOperation.httpBinding.method,
-                      operation,
-                      statusCode: astOperation.httpBinding.statusCode,
-                      reusables,
-                      uriTemplate: astOperation.httpBinding.uriTemplate,
-                    }),
                   input: astOperation.input.map((astInput) => ({
                     httpBinding: astInput.httpBinding,
                     type: typeFactory.createObjectType(astInput.type),
