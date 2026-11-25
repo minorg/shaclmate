@@ -5,13 +5,24 @@ import { fileURLToPath } from "node:url";
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
 interface TestShapesGraph {
+  readonly counts?: {
+    readonly nodeShapes?: number;
+    readonly propertyGroups?: number;
+    readonly propertyShapes?: number;
+    readonly namedDiscriminatedUnionTypes?: number;
+    readonly namedStructTypes?: number;
+    readonly namedIntersectionTypes?: number;
+  };
   readonly description: string;
   readonly filePaths: readonly string[];
   readonly kind: "dogfood" | "error" | "example" | "stress";
 }
 
-export const testShapesGraphs = {
+const testShapesGraphsLiteral = {
   compilerInput: {
+    counts: {
+      namedIntersectionTypes: 5,
+    },
     description:
       "SHACL-SHACL + additional SHACLmate properties, used as inputs to the compiler",
     filePaths: [
@@ -70,6 +81,9 @@ export const testShapesGraphs = {
   },
 
   empty: {
+    counts: {
+      namedStructTypes: 0,
+    },
     description: "Empty .ttl file",
     filePaths: [path.join(thisDirectoryPath, "empty.shaclmate.ttl")],
     kind: "stress",
@@ -138,6 +152,14 @@ export const testShapesGraphs = {
   },
 
   kitchenSinkExample: {
+    counts: {
+      namedDiscriminatedUnionTypes: 8,
+      namedIntersectionTypes: 3,
+      namedStructTypes: 56,
+      nodeShapes: 150,
+      propertyGroups: 0,
+      propertyShapes: 190,
+    },
     description: "Kitchen sink example",
     filePaths: [
       path.join(
@@ -150,6 +172,12 @@ export const testShapesGraphs = {
       ),
     ],
     kind: "example",
+  },
+
+  minimalPropertyShape: {
+    description: "Minimal property shape: single triple with sh:path",
+    filePaths: [path.join(thisDirectoryPath, "minimal-property-shape.ttl")],
+    kind: "stress",
   },
 
   nodeShapeNameConflicts: {
@@ -181,6 +209,9 @@ export const testShapesGraphs = {
   },
 
   propertyShapesOnly: {
+    counts: {
+      namedStructTypes: 0,
+    },
     description: "Shapes graph with only property shapes",
     filePaths: [path.join(thisDirectoryPath, "property-shapes-only.ttl")],
     kind: "stress",
@@ -202,6 +233,9 @@ export const testShapesGraphs = {
   },
 
   shaclShacl: {
+    counts: {
+      namedIntersectionTypes: 2,
+    },
     description: "SHACL-SHACL",
     filePaths: [
       path.join(
@@ -248,3 +282,8 @@ export const testShapesGraphs = {
     kind: "error",
   },
 } as const satisfies Record<string, TestShapesGraph>;
+
+export const testShapesGraphs: Record<
+  keyof typeof testShapesGraphsLiteral,
+  TestShapesGraph
+> = testShapesGraphsLiteral;

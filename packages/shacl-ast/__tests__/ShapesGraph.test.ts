@@ -19,25 +19,29 @@ describe("ShapesGraph", () => {
           ).unsafeCoerce();
         });
 
-        it("nodeShapes", ({ expect }) => {
-          if (id === "kitchenSinkExample") {
-            expect(shapesGraph.nodeShapes).toHaveLength(150);
-          }
-        });
+        if (testShapesGraph?.counts?.nodeShapes !== undefined) {
+          it("nodeShapes", ({ expect }) => {
+            expect(shapesGraph.nodeShapes).toHaveLength(
+              testShapesGraph.counts!.nodeShapes!,
+            );
+          });
+        }
 
-        it("propertyShapes", ({ expect }) => {
-          if (id === "kitchenSinkExample") {
-            expect(shapesGraph.propertyShapes).toHaveLength(190);
-          } else {
-            expect(shapesGraph.propertyShape).not.toHaveLength(0);
-          }
-        });
+        if (testShapesGraph?.counts?.propertyShapes !== undefined) {
+          it("propertyShapes", ({ expect }) => {
+            expect(shapesGraph.propertyShapes).toHaveLength(
+              testShapesGraph.counts!.propertyShapes!,
+            );
+          });
+        }
 
-        it("propertyGroups", ({ expect }) => {
-          if (id === "kitchenSinkExample") {
-            expect(shapesGraph.propertyGroups).toHaveLength(0);
-          }
-        });
+        if (testShapesGraph?.counts?.propertyGroups !== undefined) {
+          it("propertyGroups", ({ expect }) => {
+            expect(shapesGraph.propertyGroups).toHaveLength(
+              testShapesGraph.counts!.propertyGroups!,
+            );
+          });
+        }
       });
     }
   });
