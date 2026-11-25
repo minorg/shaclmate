@@ -13,8 +13,8 @@
   },
   "devDependencies": {},
   "files": [
-    "dist/**/*.js",
-    "dist/**/.d.ts"
+    "dist/**/*.d.ts",
+    "dist/**/*.js"
   ],
   "license": "Apache-2.0",
   "main": "./dist/index.js",
@@ -37,5 +37,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.111"
+  "version": "4.0.112"
 }

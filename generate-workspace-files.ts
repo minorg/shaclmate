@@ -5,7 +5,7 @@ import path from "node:path";
 import url from "node:url";
 import type { CompilerOptions } from "typescript";
 
-const VERSION = "4.0.111";
+const VERSION = "4.0.112";
 
 const rdfxVersion = "0.0.67";
 const vitestVersion = "~4.1.5";
@@ -478,7 +478,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
         const direntPath = path.join(dirent.parentPath, dirent.name);
         switch (path.extname(dirent.name)) {
           case ".ts":
-            files.add("dist/**/.d.ts");
+            files.add("dist/**/*.d.ts");
             files.add("dist/**/*.js");
             break;
           case ".ttl":
