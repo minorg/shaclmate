@@ -108,9 +108,9 @@ describe("TsGenerator", () => {
           break;
       }
 
-      if (id !== "restExample") {
-        return;
-      }
+      // if (id !== "restExample") {
+      //   return;
+      // }
 
       const shapesGraph = (
         await parseTestShapesGraph(testShapesGraph)
@@ -125,7 +125,7 @@ describe("TsGenerator", () => {
     }, 60000);
   }
 
-  it.skip("objectDiscriminantProperty", async () => {
+  it("objectDiscriminantProperty", async () => {
     const shapesGraph = (
       await parseTestShapesGraph(testShapesGraphs.objectDiscriminantProperty)
     ).unsafeCoerce();
@@ -145,7 +145,7 @@ describe("TsGenerator", () => {
     expect(diagnostics).toHaveLength(0);
   });
 
-  describe.skip("TsFeature combinations", async () => {
+  describe("TsFeature combinations", async () => {
     const shapesGraph = (
       await parseTestShapesGraph(testShapesGraphs.featureCombinations)
     ).unsafeCoerce();
