@@ -414,14 +414,11 @@ ${mapErrorToProblemDetailsJson}
         });
 
       const responseHandlingStatements: Code[] = [];
+      const unknownErrorDiscriminantPropertyAssignment = code`${this.configuration.objectDiscriminantProperty.name}: "${this.configuration.syntheticNamePrefix}UnknownError"`;
       const mapLeftToUnknownError =
         this.operation.errors.length > 0
-          ? code`.mapLeft(error => ({ error, ${this.configuration.objectDiscriminantProperty.name}: "${this.configuration.syntheticNamePrefix}UnknownError" }))`
+          ? code`.mapLeft(error => ({ error, ${unknownErrorDiscriminantPropertyAssignment} }))`
           : code``;
-      const responseJsonExpression =
-        this.operation.errors.length > 0
-          ? code`await ${variables.eitherAsyncHelpers}.liftEither(await (${this.reusables.imports.EitherAsync}(() => ${variables.response}.json()))${mapLeftToUnknownError})`
-          : code`await ${variables.response}.json()`;
 
       this.operation.output
         .ifJust((output) => {
@@ -429,21 +426,47 @@ ${mapErrorToProblemDetailsJson}
             case "Object":
               responseHandlingStatements.push(code`\
 if (${variables.response}.status === ${this.operation.httpBinding.statusCode}) {
-  return await ${variables.eitherAsyncHelpers}.liftEither(${output.type.fromJsonValueFunction.annotatedUsage}(${responseJsonExpression})${mapLeftToUnknownError});
+${
+  this.operation.errors.length > 0
+    ? code`\
+let responseJson: ${output.type.jsonValueType.expression};
+try {
+  responseJson = await ${variables.response}.json();
+} catch (e) {
+  return ${variables.eitherAsyncHelpers}.throwE({ error: e as Error, ${unknownErrorDiscriminantPropertyAssignment} });
+}`
+    : code`const responseJson = await ${variables.response}.json();`
+}
+
+  return await ${variables.eitherAsyncHelpers}.liftEither(${output.type.fromJsonValueFunction.annotatedUsage}(responseJson)${mapLeftToUnknownError});
 }`);
               break;
 
-            case "Option":
+            case "Option": {
               invariant(output.type.itemType.kind === "Object");
               responseHandlingStatements.push(code`\
 if (${variables.response}.status === 404) {
   return ${this.reusables.imports.Maybe}.empty();
 }`);
+
               responseHandlingStatements.push(code`\
 if (${variables.response}.status === ${this.operation.httpBinding.statusCode}) {
-  return ${this.reusables.imports.Maybe}.of(await ${variables.eitherAsyncHelpers}.liftEither(${output.type.itemType.fromJsonValueFunction.annotatedUsage}(${responseJsonExpression})${mapLeftToUnknownError}));
+${
+  this.operation.errors.length > 0
+    ? code`\
+let responseJson: ${output.type.itemType.jsonValueType.expression};
+try {
+  responseJson = await ${variables.response}.json();
+} catch (e) {
+  return ${variables.eitherAsyncHelpers}.throwE({ error: e as Error, ${unknownErrorDiscriminantPropertyAssignment} });
+}`
+    : code`const responseJson = await ${variables.response}.json();`
+}
+
+  return ${this.reusables.imports.Maybe}.of(await ${variables.eitherAsyncHelpers}.liftEither(${output.type.itemType.fromJsonValueFunction.annotatedUsage}(responseJson)${mapLeftToUnknownError}));
 }`);
               break;
+            }
 
             default:
               output.type satisfies never;
@@ -460,7 +483,14 @@ if (${variables.response}.status === ${this.operation.httpBinding.statusCode}) {
       for (const error of this.operation.errors) {
         responseHandlingStatements.push(code`\
 if (${variables.response}.status === ${error.httpBinding.statusCode}) {
-  return ${variables.eitherAsyncHelpers}.throwE(await ${variables.eitherAsyncHelpers}.liftEither((${error.type.fromJsonValueFunction.annotatedUsage}(${responseJsonExpression}))${mapLeftToUnknownError}));
+  let responseJson: ${error.type.jsonValueType.expression};
+  try {
+    responseJson = await ${variables.response}.json();
+  } catch (e) {
+    return ${variables.eitherAsyncHelpers}.throwE({ error: e as Error, ${unknownErrorDiscriminantPropertyAssignment} });
+  }
+
+  return ${variables.eitherAsyncHelpers}.throwE(await ${variables.eitherAsyncHelpers}.liftEither((${error.type.fromJsonValueFunction.annotatedUsage}(responseJson))${mapLeftToUnknownError}));
 }`);
       }
 

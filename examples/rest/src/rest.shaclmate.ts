@@ -804,6 +804,16 @@ export class ExampleServiceHttpClient implements ExampleService {
       }
 
       if (response.status === 200) {
+        let responseJson: { result: string };
+        try {
+          responseJson = await response.json();
+        } catch (e) {
+          return _eitherAsyncHelpers.throwE({
+            error: e as Error,
+            $type: "$UnknownError",
+          });
+        }
+
         return Maybe.of(
           await _eitherAsyncHelpers.liftEither(
             (
@@ -845,44 +855,52 @@ export class ExampleServiceHttpClient implements ExampleService {
                 { readonly result: string },
                 undefined
               >
-            )(
-              await _eitherAsyncHelpers.liftEither(
-                await EitherAsync(() => response.json()).mapLeft((error) => ({
-                  error,
-                  $type: "$UnknownError",
-                })),
-              ),
-            ).mapLeft((error) => ({ error, $type: "$UnknownError" })),
+            )(responseJson).mapLeft((error) => ({
+              error,
+              $type: "$UnknownError",
+            })),
           ),
         );
       }
 
       if (response.status === 403) {
+        let responseJson: ForbiddenError.Json;
+        try {
+          responseJson = await response.json();
+        } catch (e) {
+          return _eitherAsyncHelpers.throwE({
+            error: e as Error,
+            $type: "$UnknownError",
+          });
+        }
+
         return _eitherAsyncHelpers.throwE(
           await _eitherAsyncHelpers.liftEither(
-            ForbiddenError.fromJson(
-              await _eitherAsyncHelpers.liftEither(
-                await EitherAsync(() => response.json()).mapLeft((error) => ({
-                  error,
-                  $type: "$UnknownError",
-                })),
-              ),
-            ).mapLeft((error) => ({ error, $type: "$UnknownError" })),
+            ForbiddenError.fromJson(responseJson).mapLeft((error) => ({
+              error,
+              $type: "$UnknownError",
+            })),
           ),
         );
       }
 
       if (response.status === 402) {
+        let responseJson: PaymentRequiredError.Json;
+        try {
+          responseJson = await response.json();
+        } catch (e) {
+          return _eitherAsyncHelpers.throwE({
+            error: e as Error,
+            $type: "$UnknownError",
+          });
+        }
+
         return _eitherAsyncHelpers.throwE(
           await _eitherAsyncHelpers.liftEither(
-            PaymentRequiredError.fromJson(
-              await _eitherAsyncHelpers.liftEither(
-                await EitherAsync(() => response.json()).mapLeft((error) => ({
-                  error,
-                  $type: "$UnknownError",
-                })),
-              ),
-            ).mapLeft((error) => ({ error, $type: "$UnknownError" })),
+            PaymentRequiredError.fromJson(responseJson).mapLeft((error) => ({
+              error,
+              $type: "$UnknownError",
+            })),
           ),
         );
       }
