@@ -175,6 +175,10 @@ const testShapesGraphsLiteral = {
   },
 
   minimalPropertyShape: {
+    counts: {
+      nodeShapes: 0,
+      propertyShapes: 1,
+    },
     description: "Minimal property shape: single triple with sh:path",
     filePaths: [path.join(thisDirectoryPath, "minimal-property-shape.ttl")],
     kind: "stress",
