@@ -7,7 +7,6 @@ import { AbstractConstruct } from "./AbstractConstruct.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { OptionType } from "./OptionType.js";
 import type { Service } from "./Service.js";
-import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class Operation extends AbstractConstruct {
@@ -332,10 +331,28 @@ ${mapErrorToProblemDetailsJson}
     .map((output): Code => {
       switch (output.httpBinding.contentType) {
         case "application/json":
-          return code`((result) => c.json(${output.type.toJsonValueFunction.unannotatedUsage}(result), ${this.statusCode}))`;
+          switch (output.type.kind) {
+            case "Object":
+              return code`((result) => c.json(${output.type.toJsonValueFunction.unannotatedUsage}(result) as ${output.type.jsonValueType.expression}, ${this.statusCode}))`;
+            case "Option":
+              invariant(output.type.itemType.kind === "Object");
+              return code`\
+((resultMaybe) => {
+  const result = resultMaybe.extract();
+  if (result === undefined) {
+    return c.body(null, 404);
+  }
+  return c.json(${output.type.itemType.toJsonValueFunction.unannotatedUsage}(result) as ${output.type.itemType.jsonValueType.expression}, ${this.statusCode});
+})`;
+            default:
+              output.type satisfies never;
+              throw new Error("should never reach this point");
+          }
+
         default:
-          // contentType satisfies never;
-          throw new RangeError(output.httpBinding.contentType);
+          throw new RangeError(
+            `unsupported output content type: ${output.httpBinding.contentType}`,
+          );
       }
     })
     .orDefault(code`() => c.body(null, ${this.statusCode})`)})
@@ -492,6 +509,17 @@ if (${variables.response}.status === ${error.httpBinding.statusCode}) {
 
   return ${variables.eitherAsyncHelpers}.throwE(await ${variables.eitherAsyncHelpers}.liftEither((${error.type.fromJsonValueFunction.annotatedUsage}(responseJson))${mapLeftToUnknownError}));
 }`);
+      }
+
+      const fallThroughErrorExpression = code`new Error(\`unexpected response status: \${response.status}\`)`;
+      if (this.operation.errors.length > 0) {
+        responseHandlingStatements.push(
+          code`return ${variables.eitherAsyncHelpers}.throwE({ error: ${fallThroughErrorExpression}, ${unknownErrorDiscriminantPropertyAssignment} });`,
+        );
+      } else {
+        responseHandlingStatements.push(
+          code`return ${variables.eitherAsyncHelpers}.throwE(${fallThroughErrorExpression})`,
+        );
       }
 
       return code`\

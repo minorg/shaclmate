@@ -174,12 +174,6 @@ interface $MaybeSchema<ItemSchemaT> {
   readonly kind: "Option";
 }
 
-function $maybeToJsonValue<ItemT, ItemJsonValueT>(
-  itemToJsonValue: $ToJsonFunction<ItemT, ItemJsonValueT>,
-): $ToJsonFunction<Maybe<ItemT>, ItemJsonValueT | undefined> {
-  return (value) => value.map((value) => itemToJsonValue(value)).extract();
-}
-
 function $monkeyPatchObject<T extends object>(
   obj: T,
   methods: { toJson?: (obj: T) => object; $toString?: (obj: T) => string },
@@ -342,8 +336,6 @@ interface $StringSchema<StringT extends string> {
   readonly languageIn?: readonly string[];
   readonly kind: "String";
 }
-
-export type $ToJsonFunction<T, JsonT> = (value: T) => JsonT;
 
 export type $ToLoggableFunction<T> = (value: T) => any;
 
@@ -752,20 +744,21 @@ export namespace ExampleServiceHttpApi {
               "Content-Type": "application/problem+json",
             });
           })
-          .map((result) =>
-            c.json(
-              $maybeToJsonValue(((_object) =>
+          .map((resultMaybe) => {
+            const result = resultMaybe.extract();
+            if (result === undefined) {
+              return c.body(null, 404);
+            }
+            return c.json(
+              ((_object) =>
                 JSON.parse(
                   JSON.stringify({
                     result: $primitiveToJsonValue<string>(_object.result),
                   }),
-                )) satisfies $ToJsonFunction<
-                { readonly result: string },
-                { result: string }
-              >)(result),
+                ))(result) as { result: string },
               200,
-            ),
-          )
+            );
+          })
           .extract(),
     );
   }
@@ -904,6 +897,11 @@ export class ExampleServiceHttpClient implements ExampleService {
           ),
         );
       }
+
+      return _eitherAsyncHelpers.throwE({
+        error: new Error(`unexpected response status: ${response.status}`),
+        $type: "$UnknownError",
+      });
     });
   }
 }
