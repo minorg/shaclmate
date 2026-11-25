@@ -680,7 +680,7 @@ fs.writeFileSync(
         "check:write:unsafe": "biome check --write --unsafe",
         clean: "turbo run clean",
         depcheck: "turbo run depcheck",
-        dev: "turbo run --concurrency 15 dev dev:tests",
+        dev: "turbo run --concurrency 16 dev dev:tests",
         test: "vitest run",
         "test:coverage": "vitest run --coverage",
         "test:watch": "vitest watch",
