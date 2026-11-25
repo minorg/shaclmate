@@ -477,18 +477,10 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
         }
         const direntPath = path.join(dirent.parentPath, dirent.name);
         switch (path.extname(dirent.name)) {
-          case ".ts": {
-            for (const distFileExt of [".d.ts", ".js"]) {
-              files.add(
-                path.join(
-                  "dist",
-                  path.relative(srcDirectoryPath, dirent.parentPath),
-                  `${path.basename(dirent.name, path.extname(dirent.name))}${distFileExt}`,
-                ),
-              );
-            }
+          case ".ts":
+            files.add("dist/**/.d.ts");
+            files.add("dist/**/*.js");
             break;
-          }
           case ".ttl":
             if (workspacesDirectoryName === "examples") {
               continue;

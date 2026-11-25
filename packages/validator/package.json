@@ -38,23 +38,9 @@
     }
   },
   "files": [
-    "dist/JenaValidator.d.ts",
-    "dist/JenaValidator.js",
-    "dist/PyShaclValidator.d.ts",
-    "dist/PyShaclValidator.js",
-    "dist/Validator.d.ts",
-    "dist/Validator.js",
-    "dist/ZazukoValidator.d.ts",
-    "dist/ZazukoValidator.js",
-    "dist/execPromisified.d.ts",
-    "dist/execPromisified.js",
-    "dist/index.d.ts",
-    "dist/index.js",
-    "dist/shacl-shacl.ttl",
-    "dist/shaclShaclDataset.d.ts",
-    "dist/shaclShaclDataset.js",
-    "dist/shaclShaclQuads.d.ts",
-    "dist/shaclShaclQuads.js"
+    "dist/**/*.js",
+    "dist/**/.d.ts",
+    "dist/shacl-shacl.ttl"
   ],
   "license": "Apache-2.0",
   "main": "./dist/index.js",

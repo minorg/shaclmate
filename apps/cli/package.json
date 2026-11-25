@@ -21,22 +21,8 @@
   "devDependencies": {},
   "files": [
     "README.md",
-    "dist/cli.d.ts",
-    "dist/cli.js",
-    "dist/commands/generate.d.ts",
-    "dist/commands/generate.js",
-    "dist/commands/index.d.ts",
-    "dist/commands/index.js",
-    "dist/commands/merge.d.ts",
-    "dist/commands/merge.js",
-    "dist/commands/validate.d.ts",
-    "dist/commands/validate.js",
-    "dist/index.d.ts",
-    "dist/index.js",
-    "dist/logger.d.ts",
-    "dist/logger.js",
-    "dist/parseInputs.d.ts",
-    "dist/parseInputs.js"
+    "dist/**/*.js",
+    "dist/**/.d.ts"
   ],
   "homepage": "https://github.com/minorg/shaclmate",
   "keywords": [

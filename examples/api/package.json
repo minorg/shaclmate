@@ -8,10 +8,8 @@
     "@types/rdfjs__namespace": "~2.0.10"
   },
   "files": [
-    "dist/compile.d.ts",
-    "dist/compile.js",
-    "dist/shapesGraph.d.ts",
-    "dist/shapesGraph.js"
+    "dist/**/*.js",
+    "dist/**/.d.ts"
   ],
   "license": "Apache-2.0",
   "main": "./dist/index.js",
