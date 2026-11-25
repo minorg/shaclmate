@@ -7,7 +7,7 @@ import {
 } from "@shaclmate/compiler";
 import { describe, expect, it } from "vitest";
 import { testShapesGraphs } from "../../../test-shapes-graphs/index.js";
-import type { TsFeature } from "../dist/generators/ts/TsFeature.js";
+import type { TsFeature } from "../src/generators/ts/TsFeature.js";
 import { TS_FEATURES } from "../src/generators/ts/TsFeature.js";
 import { compileTs } from "./compileTs.js";
 import { logger } from "./logger.js";
