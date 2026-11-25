@@ -324,7 +324,7 @@ const workspaces = {
         ],
       },
       scripts: {
-        start: "NODE_ENV=development bun src/server.ts",
+        start: "NODE_ENV=development bun src/main.ts",
       },
       tsconfig: exampleTsconfig,
     },

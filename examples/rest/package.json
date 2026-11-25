@@ -12,10 +12,12 @@
   },
   "devDependencies": {},
   "files": [
+    "dist/client.d.ts",
+    "dist/client.js",
+    "dist/main.d.ts",
+    "dist/main.js",
     "dist/rest.shaclmate.d.ts",
-    "dist/rest.shaclmate.js",
-    "dist/server.d.ts",
-    "dist/server.js"
+    "dist/rest.shaclmate.js"
   ],
   "license": "Apache-2.0",
   "main": "./dist/index.js",
@@ -30,9 +32,11 @@
     "build": "tsc -b",
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
+    "dev:tests": "tsc -p __tests__ -w --preserveWatchOutput",
+    "test": "cd ../.. && vitest run /Users/minor/projects/shaclmate/examples/rest/__tests__",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput",
-    "start": "NODE_ENV=development bun src/server.ts"
+    "start": "NODE_ENV=development bun src/main.ts"
   },
   "type": "module",
   "types": "./dist/index.d.ts",
