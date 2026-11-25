@@ -7,6 +7,7 @@ import { AbstractConstruct } from "./AbstractConstruct.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { OptionType } from "./OptionType.js";
 import type { Service } from "./Service.js";
+import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class Operation extends AbstractConstruct {
@@ -114,9 +115,14 @@ async ${this.name}(${this.parametersDeclaration}): ${this.returnTypeAnnotation} 
     return code`Promise<${this.reusables.imports.Either}<${
       this.errors.length > 0
         ? joinCode(
-            this.errors.map(
-              (error) => error.type.discriminatedType.unsafeCoerce().expression,
-            ),
+            this.errors
+              .map(
+                (error) =>
+                  error.type.discriminatedType.unsafeCoerce().expression,
+              )
+              .concat(
+                code`${this.reusables.snippets.UnknownError}.Discriminated`,
+              ),
             { on: "|" },
           )
         : code`Error`
@@ -170,14 +176,24 @@ export namespace Operation {
     }: {
       variables: { logger: Code; service: Code };
     }): Code {
-      const mapErrorBranches: Code[] = [];
+      let mapErrorToProblemDetailsJson: Code;
       if (this.operation.errors.length > 0) {
+        const errorStatusCodes = new Set<number>(
+          this.operation.errors.map((error) => error.httpBinding.statusCode),
+        );
+        errorStatusCodes.add(500); // For UnknownError
+
         const errorDiscriminantPropertyName =
           this.operation.errors[0].type.discriminatedType.unsafeCoerce()
             .discriminantProperty.name;
-        mapErrorBranches.push(code`\
-if (${literalOf(errorDiscriminantPropertyName)} in error) {
-  switch (error.${errorDiscriminantPropertyName}) {
+        mapErrorToProblemDetailsJson = code`\
+let problemDetailsJson: ${this.reusables.snippets.ProblemDetailsJson}<${joinCode(
+          [...errorStatusCodes]
+            .sort()
+            .map((errorStatusCode) => code`${literalOf(errorStatusCode)}`),
+          { on: "|" },
+        )}>;
+switch (error.${errorDiscriminantPropertyName}) {
 ${joinCode(
   this.operation.errors.map((error) => {
     const errorDiscriminantPropertyValues =
@@ -185,16 +201,48 @@ ${joinCode(
     const errorName = error.type.name.unsafeCoerce();
     const errorType = error.type.shapeIdentifier;
     invariant(errorType.termType === "NamedNode");
-    return code`${joinCode(errorDiscriminantPropertyValues.map((value) => code`case ${literalOf(value)}:`))} problemDetailsJson = { status: ${literalOf(error.httpBinding.statusCode)}, title: ${literalOf(errorName)}, type: ${literalOf(errorType.value)} }; break;`;
+
+    const problemDetailsJson: Record<string, Code> = {
+      status: code`${literalOf(error.httpBinding.statusCode)}`,
+      title: code`${literalOf(errorName)}`,
+      type: code`${literalOf(errorType.value)}`,
+    };
+
+    for (const errorProperty of error.type.properties) {
+      if (errorProperty.kind !== "Shacl") {
+        continue;
+      }
+      if (errorProperty.name !== "detail") {
+        continue;
+      }
+      let errorDetailPropertyValueExpression: Code = code`error.${errorProperty.name}`;
+      switch (errorProperty.type.kind) {
+        case "Option":
+          if (errorProperty.type.itemType.kind === "String") {
+            errorDetailPropertyValueExpression = code`${errorDetailPropertyValueExpression}.extract()`;
+            break;
+          } else {
+            continue;
+          }
+        case "String":
+          break;
+        default:
+          continue;
+      }
+      problemDetailsJson["detail"] = errorDetailPropertyValueExpression;
+    }
+
+    return code`${joinCode(errorDiscriminantPropertyValues.map((value) => code`case ${literalOf(value)}:`))} problemDetailsJson = ${problemDetailsJson}; break;`;
   }),
   { on: "\n" },
 )}
-  }
-}`);
+  case ${literalOf(`${this.configuration.syntheticNamePrefix}UnknownError`)}:
+    problemDetailsJson = ${this.reusables.snippets.errorToProblemDetailsJson}(error.error);
+    break;
+}`;
+      } else {
+        mapErrorToProblemDetailsJson = code`const problemDetailsJson = ${this.reusables.snippets.errorToProblemDetailsJson}(error);`;
       }
-      mapErrorBranches.push(
-        code`problemDetailsJson = ${this.reusables.snippets.errorToProblemDetailsJson}(error);`,
-      );
 
       const httpApiRouteRegistrationParameters: Code[] = [];
 
@@ -274,11 +322,11 @@ ${joinCode(
 async (c) =>
   (await ${variables.service}.${this.operation.name}(${inputForwarding!}))
   .mapLeft(error => {
-    ${mapErrorBranches.length > 1 ? code`let problemDetailsJson: ${this.reusables.snippets.ProblemDetailsJson};` : code`const `}${joinCode(mapErrorBranches, { on: " else " })}
+${mapErrorToProblemDetailsJson}
 
     ${variables.logger}.error({ status: problemDetailsJson.status, type: problemDetailsJson.type }, problemDetailsJson.detail ?? "(no message)");
 
-    return c.json(problemDetailsJson, problemDetailsJson.status ?? 500, { "Content-Type": "application/problem+json" });
+    return c.json(problemDetailsJson, problemDetailsJson.status, { "Content-Type": "application/problem+json" });
   })
   .map(${this.operation.output
     .map((output): Code => {
@@ -300,7 +348,9 @@ async (c) =>
     httpClientMethod(parameters: { variables: { honoClient: Code } }): Code {
       const variables = {
         ...parameters.variables,
+        eitherAsyncHelpers: code`_eitherAsyncHelpers`,
         parameters: code`parameters`,
+        response: code`response`,
       };
 
       const honoClientMethodParts: Code[] = [variables.honoClient];
@@ -349,7 +399,7 @@ async (c) =>
             if (!honoClientMethodParametersRecord[honoInputPropertySource]) {
               honoClientMethodParametersRecord[honoInputPropertySource] = {};
             }
-            let inputPropertyValueExpression = code`${inputProperty.type.toStringExpression({ variables: { value: code`${variables.parameters}.${inputProperty.name}` } })}`;
+            let inputPropertyValueExpression = code`${inputProperty.type.toJsonValueFunction.annotatedUsage}(${variables.parameters}.${inputProperty.name})`;
             if (honoInputPropertySource === "param") {
               inputPropertyValueExpression = code`encodeURIComponent(${inputPropertyValueExpression})`;
             }
@@ -363,10 +413,63 @@ async (c) =>
           honoClientMethodParameters = code``;
         });
 
+      const responseHandlingStatements: Code[] = [];
+      const mapLeftToUnknownError =
+        this.operation.errors.length > 0
+          ? code`.mapLeft(error => ({ error, ${this.configuration.objectDiscriminantProperty.name}: "${this.configuration.syntheticNamePrefix}UnknownError" }))`
+          : code``;
+      const responseJsonExpression =
+        this.operation.errors.length > 0
+          ? code`await ${variables.eitherAsyncHelpers}.liftEither(await (${this.reusables.imports.EitherAsync}(() => ${variables.response}.json()))${mapLeftToUnknownError})`
+          : code`await ${variables.response}.json()`;
+
+      this.operation.output
+        .ifJust((output) => {
+          switch (output.type.kind) {
+            case "Object":
+              responseHandlingStatements.push(code`\
+if (${variables.response}.status === ${this.operation.httpBinding.statusCode}) {
+  return await ${variables.eitherAsyncHelpers}.liftEither(${output.type.fromJsonValueFunction.annotatedUsage}(${responseJsonExpression})${mapLeftToUnknownError});
+}`);
+              break;
+
+            case "Option":
+              invariant(output.type.itemType.kind === "Object");
+              responseHandlingStatements.push(code`\
+if (${variables.response}.status === 404) {
+  return ${this.reusables.imports.Maybe}.empty();
+}`);
+              responseHandlingStatements.push(code`\
+if (${variables.response}.status === ${this.operation.httpBinding.statusCode}) {
+  return ${this.reusables.imports.Maybe}.of(await ${variables.eitherAsyncHelpers}.liftEither(${output.type.itemType.fromJsonValueFunction.annotatedUsage}(${responseJsonExpression})${mapLeftToUnknownError}));
+}`);
+              break;
+
+            default:
+              output.type satisfies never;
+              throw new Error("should never reach this point");
+          }
+        })
+        .ifNothing(() => {
+          responseHandlingStatements.push(code`\
+if (${variables.response}.status === ${this.operation.httpBinding.statusCode}) {
+  return;
+}`);
+        });
+
+      for (const error of this.operation.errors) {
+        responseHandlingStatements.push(code`\
+if (${variables.response}.status === ${error.httpBinding.statusCode}) {
+  return ${variables.eitherAsyncHelpers}.throwE(await ${variables.eitherAsyncHelpers}.liftEither((${error.type.fromJsonValueFunction.annotatedUsage}(${responseJsonExpression}))${mapLeftToUnknownError}));
+}`);
+      }
+
       return code`\
 async ${this.operation.interfaceSignature} {
-  return ${this.reusables.imports.EitherAsync}(async ({ throwE }) => {
+  return ${this.reusables.imports.EitherAsync}(async (${variables.eitherAsyncHelpers}) => {
     const response = await ${honoClientMethod}(${honoClientMethodParameters!});
+
+${joinCode(responseHandlingStatements, { on: "\n\n" })}
   });
 }`;
     }

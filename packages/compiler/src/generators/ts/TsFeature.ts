@@ -98,9 +98,9 @@ export namespace TsFeature {
 
     Service: ["Object.type"],
 
-    ServiceHttpApi: ["Service"],
+    ServiceHttpApi: ["Object.fromJson", "Service"],
 
-    ServiceHttpClient: ["Service", "ServiceHttpApi"],
+    ServiceHttpClient: ["Object.fromJson", "Service", "ServiceHttpApi"],
 
     SPARQL: ["Object.SPARQL", "SparqlObjectSet"],
 

@@ -11,7 +11,7 @@ export const snippets_errorToProblemDetailsJson: SnippetFactory = ({
 /**
  * Convert a thrown error (type: unknown) to a problem details JSON object.
  */
-export function ${syntheticNamePrefix}errorToProblemDetailsJson(error: unknown): ${snippets.ProblemDetailsJson} {
+export function ${syntheticNamePrefix}errorToProblemDetailsJson(error: unknown): ${snippets.ProblemDetailsJson}<500> {
   switch (typeof error) {
     case "bigint":
     case "boolean":
