@@ -1,8 +1,8 @@
 import { ConsoleLogger } from "@rdfx/logger";
-import { EitherAsync } from "purify-ts";
+import { EitherAsync, Maybe } from "purify-ts";
 import {
-  createExampleServiceHttpApi,
   type ExampleService,
+  ExampleServiceHttpApi,
   ForbiddenError,
   LoggingExampleService,
   PaymentRequiredError,
@@ -16,27 +16,27 @@ const service: ExampleService = new LoggingExampleService({
       return EitherAsync(async ({ throwE }) => {
         switch (identifier.value) {
           case "http://example.com/ForbiddenError":
-            throwE(ForbiddenError.createUnsafe({ message: "forbidden" }));
+            throwE(ForbiddenError.createUnsafe({ detail: "forbidden" }));
             break;
           case "http://example.com/PaymentRequiredError":
             throwE(
               PaymentRequiredError.createUnsafe({
-                message: "payment required",
+                detail: "payment required",
               }),
             );
             break;
         }
 
-        return {
+        return Maybe.of({
           result: identifier.value,
-        };
+        });
       });
     },
   },
   logger,
 });
 
-const serviceHttpApi = createExampleServiceHttpApi(service, { logger });
+const serviceHttpApi = ExampleServiceHttpApi.create(service, { logger });
 
 // Export the Hono API as the default so bun run picks it up.
 export default serviceHttpApi;
