@@ -566,6 +566,8 @@
     "dist/generators/ts/_snippets/snippets_ToStringRecordFunction.js",
     "dist/generators/ts/_snippets/snippets_TypedLiteralJsonObject.d.ts",
     "dist/generators/ts/_snippets/snippets_TypedLiteralJsonObject.js",
+    "dist/generators/ts/_snippets/snippets_UnknownError.d.ts",
+    "dist/generators/ts/_snippets/snippets_UnknownError.js",
     "dist/generators/ts/_snippets/snippets_UnwrapR.d.ts",
     "dist/generators/ts/_snippets/snippets_UnwrapR.js",
     "dist/generators/ts/_snippets/snippets_ValidationFunction.d.ts",

@@ -12,10 +12,10 @@
   },
   "devDependencies": {},
   "files": [
-    "dist/main.d.ts",
-    "dist/main.js",
     "dist/rest.shaclmate.d.ts",
-    "dist/rest.shaclmate.js"
+    "dist/rest.shaclmate.js",
+    "dist/server.d.ts",
+    "dist/server.js"
   ],
   "license": "Apache-2.0",
   "main": "./dist/index.js",
@@ -32,7 +32,7 @@
     "dev": "tsc -w --preserveWatchOutput",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput",
-    "start": "NODE_ENV=development bun src/main.ts"
+    "start": "NODE_ENV=development bun src/server.ts"
   },
   "type": "module",
   "types": "./dist/index.d.ts",
