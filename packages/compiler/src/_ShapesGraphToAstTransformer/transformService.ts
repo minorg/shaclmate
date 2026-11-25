@@ -1,3 +1,4 @@
+import dataFactory from "@rdfx/data-factory";
 import { Curie } from "@rdfx/iri";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
@@ -8,6 +9,7 @@ import type * as input from "../input/index.js";
 import type { OperationHttpBinding } from "../input/input.shaclmate.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { ShapeStack } from "./ShapeStack.js";
+import { transformPropertyShapeToAstStructTypeField } from "./transformPropertyShapeToAstStructTypeField.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 function astConstructName(
@@ -317,9 +319,29 @@ function transformOperationOutput(
   if (!inputOutput) {
     return Either.of(Maybe.empty());
   }
-  return transformShapeToAstType
-    .call(this, inputOutput, new ShapeStack())
-    .chain((astOutputType) => {
+  return transformPropertyShapeToAstStructTypeField
+    .call(this, {
+      propertyShape: inputOutput,
+      structType: new ast.StructType({
+        comment: Maybe.empty(),
+        extern: false,
+        fromRdfType: Maybe.empty(),
+        identifierType: new ast.IdentifierType({
+          comment: Maybe.empty(),
+          label: Maybe.empty(),
+          name: Maybe.empty(),
+          shapeIdentifier: dataFactory.blankNode(),
+        }),
+        label: Maybe.empty(),
+        name: inputOperation.name,
+        shapeIdentifier: inputOperation.$identifier(),
+        synthetic: true,
+        toRdfTypes: [],
+        tsImports: [],
+      }),
+    })
+    .chain((astOutputTypeMaybe) => {
+      const astOutputType = astOutputTypeMaybe.unsafeCoerce().type;
       let httpBindingContentType = inputOutput.httpBinding
         .extract()
         ?.contentType.extract();

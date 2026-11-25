@@ -22,6 +22,8 @@ export class Imports {
   readonly GraphQLSchema = imp("GraphQLSchema@graphql");
   readonly GraphQLString = imp("GraphQLString@graphql");
   readonly GraphQLUnionType = imp("GraphQLUnionType@graphql");
+  readonly hc = imp("hc@hono/client");
+  readonly HonoClientRequestOptions = imp("t:ClientRequestOptions@hono/client");
   readonly Hono = imp("Hono@hono");
   readonly HonoEnv = imp("t:Env@hono");
   readonly HonoValidationTargets = imp(

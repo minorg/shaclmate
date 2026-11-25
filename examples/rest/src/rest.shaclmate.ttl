@@ -7,6 +7,14 @@
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
+:Error-detail
+    a sh:PropertyShape ;
+    rdfs:label "A human-readable explanation specific to this occurrence of the problem." ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "detail" ;
+    sh:path :errorDetail .
+
 :ExampleService
     shaclmate:operation [
         shaclmate:error :ForbiddenError, :PaymentRequiredError ;
@@ -24,7 +32,6 @@
         shaclmate:name "get" ;
         shaclmate:output [
             sh:maxCount 1 ;
-            sh:minCount 1 ;
             sh:node [
                 sh:nodeKind sh:BlankNode ;
                 sh:property [
@@ -44,24 +51,16 @@
         shaclmate:httpStatusCode 403
     ] ;
     a sh:NodeShape ;
+    rdfs:comment "403 Forbidden Error. Any properties must mirror problem JSON." ;
     sh:nodeKind sh:BlankNode ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :message
-    ] .
+    sh:property :Error-detail .
 
 :PaymentRequiredError
     shaclmate:httpBinding [
         shaclmate:httpStatusCode 402
     ] ;
     a sh:NodeShape ;
+    rdfs:comment "403 Payment Required Error. Any properties must mirror problem JSON." ;
     sh:nodeKind sh:BlankNode ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :message
-    ] .
+    sh:property :Error-detail .
 

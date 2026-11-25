@@ -67,6 +67,7 @@ import { snippets_ToRdfResourceValuesFunction } from "./_snippets/snippets_ToRdf
 import { snippets_ToStringFunction } from "./_snippets/snippets_ToStringFunction.js";
 import { snippets_ToStringRecordFunction } from "./_snippets/snippets_ToStringRecordFunction.js";
 import { snippets_TypedLiteralJsonObject } from "./_snippets/snippets_TypedLiteralJsonObject.js";
+import { snippets_UnknownError } from "./_snippets/snippets_UnknownError.js";
 import { snippets_UnwrapR } from "./_snippets/snippets_UnwrapR.js";
 import { snippets_ValidationFunction } from "./_snippets/snippets_ValidationFunction.js";
 import { snippets_ValueSparqlConstructTriplesFunction } from "./_snippets/snippets_ValueSparqlConstructTriplesFunction.js";
@@ -597,6 +598,11 @@ export class Snippets {
   @Memoize()
   get TypedLiteralJsonObject(): Snippet {
     return this.snippet(snippets_TypedLiteralJsonObject);
+  }
+
+  @Memoize()
+  get UnknownError(): Snippet {
+    return this.snippet(snippets_UnknownError);
   }
 
   @Memoize()
