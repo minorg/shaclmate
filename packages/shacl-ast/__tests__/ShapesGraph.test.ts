@@ -5,7 +5,10 @@ import { parseTestShapesGraph } from "./parseTestShapesGraph.js";
 
 describe("ShapesGraph", () => {
   describe("well-formed", () => {
-    for (const [id, testShapesGraph] of Object.entries(testShapesGraphs)) {
+    for (const [idString, testShapesGraph] of Object.entries(
+      testShapesGraphs,
+    )) {
+      const id = idString as keyof typeof testShapesGraphs;
       if (testShapesGraph.kind === "error" || id === "featureCombinations") {
         continue;
       }

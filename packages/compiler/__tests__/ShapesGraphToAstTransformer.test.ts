@@ -186,7 +186,6 @@ describe("ShapesGraphToAstTransformer", () => {
           case "graphqlExample":
           case "empty":
           case "kitchenSinkExample":
-          case "minimalPropertyShape":
           case "nodeShapeNameConflicts":
           case "objectDiscriminantProperty":
           case "propertyShapeNameConflicts":

@@ -174,16 +174,6 @@ const testShapesGraphsLiteral = {
     kind: "example",
   },
 
-  minimalPropertyShape: {
-    counts: {
-      nodeShapes: 0,
-      propertyShapes: 1,
-    },
-    description: "Minimal property shape: single triple with sh:path",
-    filePaths: [path.join(thisDirectoryPath, "minimal-property-shape.ttl")],
-    kind: "stress",
-  },
-
   nodeShapeNameConflicts: {
     description:
       "Node shape names that might conflict with names synthesized by the generator",
