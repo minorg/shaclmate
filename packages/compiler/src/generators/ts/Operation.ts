@@ -431,10 +431,9 @@ ${mapErrorToProblemDetailsJson}
         });
 
       const responseHandlingStatements: Code[] = [];
-      const unknownErrorDiscriminantPropertyAssignment = code`${this.configuration.objectDiscriminantProperty.name}: "${this.configuration.syntheticNamePrefix}UnknownError"`;
       const mapLeftToUnknownError =
         this.operation.errors.length > 0
-          ? code`.mapLeft(error => ({ error, ${unknownErrorDiscriminantPropertyAssignment} }))`
+          ? code`.mapLeft(${this.reusables.snippets.UnknownError}.fromError)`
           : code``;
 
       this.operation.output
@@ -450,7 +449,7 @@ let responseJson: ${output.type.jsonValueType.expression};
 try {
   responseJson = await ${variables.response}.json();
 } catch (e) {
-  return ${variables.eitherAsyncHelpers}.throwE({ error: e as Error, ${unknownErrorDiscriminantPropertyAssignment} });
+  return ${variables.eitherAsyncHelpers}.throwE(${this.reusables.snippets.UnknownError}.fromError(e as Error));
 }`
     : code`const responseJson = await ${variables.response}.json();`
 }
@@ -475,7 +474,7 @@ let responseJson: ${output.type.itemType.jsonValueType.expression};
 try {
   responseJson = await ${variables.response}.json();
 } catch (e) {
-  return ${variables.eitherAsyncHelpers}.throwE({ error: e as Error, ${unknownErrorDiscriminantPropertyAssignment} });
+  return ${variables.eitherAsyncHelpers}.throwE(${this.reusables.snippets.UnknownError}.fromError(e as Error));
 }`
     : code`const responseJson = await ${variables.response}.json();`
 }
@@ -504,7 +503,7 @@ if (${variables.response}.status === ${error.httpBinding.statusCode}) {
   try {
     responseJson = await ${variables.response}.json();
   } catch (e) {
-    return ${variables.eitherAsyncHelpers}.throwE({ error: e as Error, ${unknownErrorDiscriminantPropertyAssignment} });
+    return ${variables.eitherAsyncHelpers}.throwE(${this.reusables.snippets.UnknownError}.fromError(e as Error));
   }
 
   return ${variables.eitherAsyncHelpers}.throwE(await ${variables.eitherAsyncHelpers}.liftEither((${error.type.fromJsonValueFunction.annotatedUsage}(responseJson))${mapLeftToUnknownError}));
@@ -514,7 +513,7 @@ if (${variables.response}.status === ${error.httpBinding.statusCode}) {
       const fallThroughErrorExpression = code`new Error(\`unexpected response status: \${response.status}\`)`;
       if (this.operation.errors.length > 0) {
         responseHandlingStatements.push(
-          code`return ${variables.eitherAsyncHelpers}.throwE({ error: ${fallThroughErrorExpression}, ${unknownErrorDiscriminantPropertyAssignment} });`,
+          code`return ${variables.eitherAsyncHelpers}.throwE(${this.reusables.snippets.UnknownError}.fromError(${fallThroughErrorExpression}));`,
         );
       } else {
         responseHandlingStatements.push(

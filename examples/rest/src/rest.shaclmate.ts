@@ -349,6 +349,10 @@ export interface $UnknownError {
 
 export namespace $UnknownError {
   export type Discriminated = $UnknownError & { $type: "$UnknownError" };
+
+  export function fromError(error: Error): Discriminated {
+    return { error, $type: "$UnknownError" };
+  }
 }
 
 function $validateMaybe<ItemSchemaT, ItemValueT>(
@@ -801,10 +805,9 @@ export class ExampleServiceHttpClient implements ExampleService {
         try {
           responseJson = await response.json();
         } catch (e) {
-          return _eitherAsyncHelpers.throwE({
-            error: e as Error,
-            $type: "$UnknownError",
-          });
+          return _eitherAsyncHelpers.throwE(
+            $UnknownError.fromError(e as Error),
+          );
         }
 
         return Maybe.of(
@@ -848,10 +851,7 @@ export class ExampleServiceHttpClient implements ExampleService {
                 { readonly result: string },
                 undefined
               >
-            )(responseJson).mapLeft((error) => ({
-              error,
-              $type: "$UnknownError",
-            })),
+            )(responseJson).mapLeft($UnknownError.fromError),
           ),
         );
       }
@@ -861,18 +861,16 @@ export class ExampleServiceHttpClient implements ExampleService {
         try {
           responseJson = await response.json();
         } catch (e) {
-          return _eitherAsyncHelpers.throwE({
-            error: e as Error,
-            $type: "$UnknownError",
-          });
+          return _eitherAsyncHelpers.throwE(
+            $UnknownError.fromError(e as Error),
+          );
         }
 
         return _eitherAsyncHelpers.throwE(
           await _eitherAsyncHelpers.liftEither(
-            ForbiddenError.fromJson(responseJson).mapLeft((error) => ({
-              error,
-              $type: "$UnknownError",
-            })),
+            ForbiddenError.fromJson(responseJson).mapLeft(
+              $UnknownError.fromError,
+            ),
           ),
         );
       }
@@ -882,26 +880,25 @@ export class ExampleServiceHttpClient implements ExampleService {
         try {
           responseJson = await response.json();
         } catch (e) {
-          return _eitherAsyncHelpers.throwE({
-            error: e as Error,
-            $type: "$UnknownError",
-          });
+          return _eitherAsyncHelpers.throwE(
+            $UnknownError.fromError(e as Error),
+          );
         }
 
         return _eitherAsyncHelpers.throwE(
           await _eitherAsyncHelpers.liftEither(
-            PaymentRequiredError.fromJson(responseJson).mapLeft((error) => ({
-              error,
-              $type: "$UnknownError",
-            })),
+            PaymentRequiredError.fromJson(responseJson).mapLeft(
+              $UnknownError.fromError,
+            ),
           ),
         );
       }
 
-      return _eitherAsyncHelpers.throwE({
-        error: new Error(`unexpected response status: ${response.status}`),
-        $type: "$UnknownError",
-      });
+      return _eitherAsyncHelpers.throwE(
+        $UnknownError.fromError(
+          new Error(`unexpected response status: ${response.status}`),
+        ),
+      );
     });
   }
 }

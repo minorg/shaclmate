@@ -14,5 +14,12 @@ export interface ${syntheticNamePrefix}UnknownError {
   
 export namespace ${syntheticNamePrefix}UnknownError {
   export type Discriminated = ${syntheticNamePrefix}UnknownError & { ${configuration.objectDiscriminantProperty.name}: "${syntheticNamePrefix}UnknownError" };
+
+  export function fromError(error: Error): Discriminated {
+    return {
+      error,
+      ${configuration.objectDiscriminantProperty.name}: "${syntheticNamePrefix}UnknownError"
+    }
+  }
 }`,
   );
