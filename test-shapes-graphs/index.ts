@@ -155,7 +155,7 @@ const testShapesGraphsLiteral = {
     counts: {
       namedDiscriminatedUnionTypes: 8,
       namedIntersectionTypes: 3,
-      namedStructTypes: 56,
+      namedStructTypes: 58,
       nodeShapes: 152,
       propertyGroups: 0,
       propertyShapes: 192,
