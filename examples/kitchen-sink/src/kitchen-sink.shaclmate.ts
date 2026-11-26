@@ -110,28 +110,30 @@ export namespace $Array {
   }
 }
 
-function $arrayFromJsonArray<ItemJsonValueT, ItemT, ItemSchemaT>(
-  itemFromJsonValue: $FromJsonFunction<ItemJsonValueT, ItemT, ItemSchemaT>,
-): $FromJsonFunction<
-  ItemJsonValueT[] | undefined,
-  ItemT[],
-  $CollectionSchema<ItemSchemaT>
-> {
-  return (jsonArray, options) => {
-    if (jsonArray === undefined) {
-      return Either.of([]);
-    }
-    const { schema, ...otherOptions } = options;
-    const itemFromJsonValueOptions = {
-      schema: schema.itemType,
-      ...otherOptions,
+export namespace $Array {
+  export function fromJson<ItemJsonValueT, ItemT, ItemSchemaT>(
+    itemFromJsonValue: $FromJsonFunction<ItemJsonValueT, ItemT, ItemSchemaT>,
+  ): $FromJsonFunction<
+    ItemJsonValueT[] | undefined,
+    ItemT[],
+    $CollectionSchema<ItemSchemaT>
+  > {
+    return (jsonArray, options) => {
+      if (jsonArray === undefined) {
+        return Either.of([]);
+      }
+      const { schema, ...otherOptions } = options;
+      const itemFromJsonValueOptions = {
+        schema: schema.itemType,
+        ...otherOptions,
+      };
+      return Either.sequence(
+        jsonArray.map((itemJsonValue) =>
+          itemFromJsonValue(itemJsonValue, itemFromJsonValueOptions),
+        ),
+      );
     };
-    return Either.sequence(
-      jsonArray.map((itemJsonValue) =>
-        itemFromJsonValue(itemJsonValue, itemFromJsonValueOptions),
-      ),
-    );
-  };
+  }
 }
 
 function $arrayIntersection<T>(
@@ -9822,7 +9824,7 @@ export namespace UnionDiscriminantsStruct {
         ...options,
         schema: UnionDiscriminantsStruct.schema.properties.requiredTerm.type,
       }),
-      setIriOrString: $arrayFromJsonArray(((value, options) => {
+      setIriOrString: $Array.fromJson(((value, options) => {
         if (value.$type === "object") {
           return $iriFromJsonObject(value, {
             ...options,
@@ -9846,7 +9848,7 @@ export namespace UnionDiscriminantsStruct {
         ...options,
         schema: UnionDiscriminantsStruct.schema.properties.setIriOrString.type,
       }),
-      setNodeOrLiteral: $arrayFromJsonArray(((value, options) => {
+      setNodeOrLiteral: $Array.fromJson(((value, options) => {
         if (value.$type === "StructDiscriminatedUnionMember1") {
           return StructDiscriminatedUnionMember1.fromJson(value, {
             ...options,
@@ -9894,7 +9896,7 @@ export namespace UnionDiscriminantsStruct {
         schema:
           UnionDiscriminantsStruct.schema.properties.setNodeOrLiteral.type,
       }),
-      setNodeOrNodeOrString: $arrayFromJsonArray(((value, options) => {
+      setNodeOrNodeOrString: $Array.fromJson(((value, options) => {
         if (value.$type === "StructDiscriminatedUnionMember1") {
           return StructDiscriminatedUnionMember1.fromJson(value, {
             ...options,
@@ -9980,7 +9982,7 @@ export namespace UnionDiscriminantsStruct {
         schema:
           UnionDiscriminantsStruct.schema.properties.setNodeOrNodeOrString.type,
       }),
-      setTerm: $arrayFromJsonArray(((value, options) => {
+      setTerm: $Array.fromJson(((value, options) => {
         if (value.$type === "BlankNode") {
           return $identifierFromJsonObject(value, {
             ...options,
@@ -23554,14 +23556,14 @@ export namespace PropertyCardinalitiesStruct {
         ...options,
         schema: PropertyCardinalitiesStruct.schema.properties.$identifier.type,
       }),
-      emptySet: $arrayFromJsonArray($stringFromJsonString<string>)(
+      emptySet: $Array.fromJson($stringFromJsonString<string>)(
         jsonObject["emptySet"],
         {
           ...options,
           schema: PropertyCardinalitiesStruct.schema.properties.emptySet.type,
         },
       ),
-      nonEmptySet: $arrayFromJsonArray($stringFromJsonString<string>)(
+      nonEmptySet: $Array.fromJson($stringFromJsonString<string>)(
         jsonObject["nonEmptySet"],
         {
           ...options,
@@ -33359,12 +33361,12 @@ export namespace MutablePropertiesStruct {
         schema: MutablePropertiesStruct.schema.properties.$identifier.type,
       }),
       mutableList: $maybeFromJsonValue(
-        $arrayFromJsonArray($stringFromJsonString<string>),
+        $Array.fromJson($stringFromJsonString<string>),
       )(jsonObject["mutableList"], {
         ...options,
         schema: MutablePropertiesStruct.schema.properties.mutableList.type,
       }),
-      mutableSet: $arrayFromJsonArray($stringFromJsonString<string>)(
+      mutableSet: $Array.fromJson($stringFromJsonString<string>)(
         jsonObject["mutableSet"],
         {
           ...options,
@@ -34591,7 +34593,7 @@ export namespace ListsStruct {
         ...options,
         schema: ListsStruct.schema.properties.$identifier.type,
       }),
-      iriList: $maybeFromJsonValue($arrayFromJsonArray($iriFromJsonString))(
+      iriList: $maybeFromJsonValue($Array.fromJson($iriFromJsonString))(
         jsonObject["iriList"],
         {
           ...options,
@@ -34599,23 +34601,24 @@ export namespace ListsStruct {
         },
       ),
       stringList: $maybeFromJsonValue(
-        $arrayFromJsonArray($stringFromJsonString<string>),
+        $Array.fromJson($stringFromJsonString<string>),
       )(jsonObject["stringList"], {
         ...options,
         schema: ListsStruct.schema.properties.stringList.type,
       }),
       stringListList: $maybeFromJsonValue(
-        $arrayFromJsonArray($arrayFromJsonArray($stringFromJsonString<string>)),
+        $Array.fromJson($Array.fromJson($stringFromJsonString<string>)),
       )(jsonObject["stringListList"], {
         ...options,
         schema: ListsStruct.schema.properties.stringListList.type,
       }),
-      structList: $maybeFromJsonValue(
-        $arrayFromJsonArray(NonClassStruct.fromJson),
-      )(jsonObject["structList"], {
-        ...options,
-        schema: ListsStruct.schema.properties.structList.type,
-      }),
+      structList: $maybeFromJsonValue($Array.fromJson(NonClassStruct.fromJson))(
+        jsonObject["structList"],
+        {
+          ...options,
+          schema: ListsStruct.schema.properties.structList.type,
+        },
+      ),
     }).chain(ListsStruct.create);
 
   export const fromRdfResource: $FromRdfResourceFunction<ListsStruct.Discriminated> =
@@ -35954,7 +35957,7 @@ export namespace ListSetsStruct {
         ...options,
         schema: ListSetsStruct.schema.properties.$identifier.type,
       }),
-      listDiscriminatedUnionSet: $arrayFromJsonArray(((value, options) => {
+      listDiscriminatedUnionSet: $Array.fromJson(((value, options) => {
         if (value.$type === "object") {
           return $listFromJsonObject($stringFromJsonString<string>)(value, {
             ...options,
@@ -35981,18 +35984,19 @@ export namespace ListSetsStruct {
         ...options,
         schema: ListSetsStruct.schema.properties.listDiscriminatedUnionSet.type,
       }),
-      listListSet: $arrayFromJsonArray(
-        $arrayFromJsonArray($arrayFromJsonArray($stringFromJsonString<string>)),
+      listListSet: $Array.fromJson(
+        $Array.fromJson($Array.fromJson($stringFromJsonString<string>)),
       )(jsonObject["listListSet"], {
         ...options,
         schema: ListSetsStruct.schema.properties.listListSet.type,
       }),
-      listSet: $arrayFromJsonArray(
-        $arrayFromJsonArray($stringFromJsonString<string>),
-      )(jsonObject["listSet"], {
-        ...options,
-        schema: ListSetsStruct.schema.properties.listSet.type,
-      }),
+      listSet: $Array.fromJson($Array.fromJson($stringFromJsonString<string>))(
+        jsonObject["listSet"],
+        {
+          ...options,
+          schema: ListSetsStruct.schema.properties.listSet.type,
+        },
+      ),
     }).chain(ListSetsStruct.create);
 
   export const fromRdfResource: $FromRdfResourceFunction<ListSetsStruct.Discriminated> =
@@ -38226,28 +38230,34 @@ export namespace LazyPropertiesStruct {
         jsonValue,
         fromJsonValueOptions,
       ) =>
-        $arrayFromJsonArray($DefaultPartial.fromJson)(jsonValue, {
-          ...fromJsonValueOptions,
-          schema: fromJsonValueOptions.schema.partialType,
-        }).map(
-          (partials) =>
-            new $LazySet<
-              $DefaultPartial,
-              LazilyResolvedBlankNodeOrIriIdentifierStruct
-            >({
-              partials,
-              resolver: (partial, resolverOptions) => {
-                const objectSet = fromJsonValueOptions?.objectSet;
-                if (!objectSet) {
-                  return $missingResolver();
-                }
-                return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs({
-                  identifiers: partial.map((partial) => partial.$identifier()),
-                  ...resolverOptions,
-                });
-              },
-            }),
-        ))(jsonObject["setLazyToResolvedBlankNodeOrIriIdentifier"], {
+        $Array
+          .fromJson($DefaultPartial.fromJson)(jsonValue, {
+            ...fromJsonValueOptions,
+            schema: fromJsonValueOptions.schema.partialType,
+          })
+          .map(
+            (partials) =>
+              new $LazySet<
+                $DefaultPartial,
+                LazilyResolvedBlankNodeOrIriIdentifierStruct
+              >({
+                partials,
+                resolver: (partial, resolverOptions) => {
+                  const objectSet = fromJsonValueOptions?.objectSet;
+                  if (!objectSet) {
+                    return $missingResolver();
+                  }
+                  return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs(
+                    {
+                      identifiers: partial.map((partial) =>
+                        partial.$identifier(),
+                      ),
+                      ...resolverOptions,
+                    },
+                  );
+                },
+              }),
+          ))(jsonObject["setLazyToResolvedBlankNodeOrIriIdentifier"], {
         ...options,
         schema:
           LazyPropertiesStruct.schema.properties
@@ -38257,28 +38267,34 @@ export namespace LazyPropertiesStruct {
         jsonValue,
         fromJsonValueOptions,
       ) =>
-        $arrayFromJsonArray(PartialStruct.fromJson)(jsonValue, {
-          ...fromJsonValueOptions,
-          schema: fromJsonValueOptions.schema.partialType,
-        }).map(
-          (partials) =>
-            new $LazySet<
-              PartialStruct,
-              LazilyResolvedBlankNodeOrIriIdentifierStruct
-            >({
-              partials,
-              resolver: (partial, resolverOptions) => {
-                const objectSet = fromJsonValueOptions?.objectSet;
-                if (!objectSet) {
-                  return $missingResolver();
-                }
-                return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs({
-                  identifiers: partial.map((partial) => partial.$identifier()),
-                  ...resolverOptions,
-                });
-              },
-            }),
-        ))(jsonObject["setPartialToResolvedBlankNodeOrIriIdentifier"], {
+        $Array
+          .fromJson(PartialStruct.fromJson)(jsonValue, {
+            ...fromJsonValueOptions,
+            schema: fromJsonValueOptions.schema.partialType,
+          })
+          .map(
+            (partials) =>
+              new $LazySet<
+                PartialStruct,
+                LazilyResolvedBlankNodeOrIriIdentifierStruct
+              >({
+                partials,
+                resolver: (partial, resolverOptions) => {
+                  const objectSet = fromJsonValueOptions?.objectSet;
+                  if (!objectSet) {
+                    return $missingResolver();
+                  }
+                  return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs(
+                    {
+                      identifiers: partial.map((partial) =>
+                        partial.$identifier(),
+                      ),
+                      ...resolverOptions,
+                    },
+                  );
+                },
+              }),
+          ))(jsonObject["setPartialToResolvedBlankNodeOrIriIdentifier"], {
         ...options,
         schema:
           LazyPropertiesStruct.schema.properties
@@ -41813,7 +41829,7 @@ export namespace LanguageInStruct {
         ...options,
         schema: LanguageInStruct.schema.properties.$identifier.type,
       }),
-      languageIn: $arrayFromJsonArray($langStringFromJsonObject)(
+      languageIn: $Array.fromJson($langStringFromJsonObject)(
         jsonObject["languageIn"],
         {
           ...options,
@@ -60552,7 +60568,7 @@ export namespace ConvertibleTypesStruct {
         ...options,
         schema: ConvertibleTypesStruct.schema.properties.convertibleIri.type,
       }),
-      convertibleIriNonEmptySet: $arrayFromJsonArray($iriFromJsonString)(
+      convertibleIriNonEmptySet: $Array.fromJson($iriFromJsonString)(
         jsonObject["convertibleIriNonEmptySet"],
         {
           ...options,
@@ -60569,7 +60585,7 @@ export namespace ConvertibleTypesStruct {
             ConvertibleTypesStruct.schema.properties.convertibleIriOption.type,
         },
       ),
-      convertibleIriSet: $arrayFromJsonArray($iriFromJsonString)(
+      convertibleIriSet: $Array.fromJson($iriFromJsonString)(
         jsonObject["convertibleIriSet"],
         {
           ...options,
@@ -60585,14 +60601,15 @@ export namespace ConvertibleTypesStruct {
             ConvertibleTypesStruct.schema.properties.convertibleLiteral.type,
         },
       ),
-      convertibleLiteralNonEmptySet: $arrayFromJsonArray(
-        $literalFromJsonObject,
-      )(jsonObject["convertibleLiteralNonEmptySet"], {
-        ...options,
-        schema:
-          ConvertibleTypesStruct.schema.properties.convertibleLiteralNonEmptySet
-            .type,
-      }),
+      convertibleLiteralNonEmptySet: $Array.fromJson($literalFromJsonObject)(
+        jsonObject["convertibleLiteralNonEmptySet"],
+        {
+          ...options,
+          schema:
+            ConvertibleTypesStruct.schema.properties
+              .convertibleLiteralNonEmptySet.type,
+        },
+      ),
       convertibleLiteralOption: $maybeFromJsonValue($literalFromJsonObject)(
         jsonObject["convertibleLiteralOption"],
         {
@@ -60602,7 +60619,7 @@ export namespace ConvertibleTypesStruct {
               .type,
         },
       ),
-      convertibleLiteralSet: $arrayFromJsonArray($literalFromJsonObject)(
+      convertibleLiteralSet: $Array.fromJson($literalFromJsonObject)(
         jsonObject["convertibleLiteralSet"],
         {
           ...options,
@@ -60617,7 +60634,7 @@ export namespace ConvertibleTypesStruct {
           schema: ConvertibleTypesStruct.schema.properties.convertibleTerm.type,
         },
       ),
-      convertibleTermNonEmptySet: $arrayFromJsonArray(
+      convertibleTermNonEmptySet: $Array.fromJson(
         $termFromJsonObject<BlankNode | NamedNode | Literal>,
       )(jsonObject["convertibleTermNonEmptySet"], {
         ...options,
@@ -60632,7 +60649,7 @@ export namespace ConvertibleTypesStruct {
         schema:
           ConvertibleTypesStruct.schema.properties.convertibleTermOption.type,
       }),
-      convertibleTermSet: $arrayFromJsonArray(
+      convertibleTermSet: $Array.fromJson(
         $termFromJsonObject<BlankNode | NamedNode | Literal>,
       )(jsonObject["convertibleTermSet"], {
         ...options,

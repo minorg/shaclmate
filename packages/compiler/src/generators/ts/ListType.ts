@@ -93,7 +93,7 @@ export class ListType<
   @Memoize()
   override get fromJsonValueFunction(): AbstractCollectionType<ItemTypeT>["fromJsonValueFunction"] {
     return new BuiltinCallable(
-      code`${this.reusables.snippets.arrayFromJsonArray}(${this.itemType.fromJsonValueFunction.annotatedUsage})`,
+      code`${this.reusables.snippets.Array_fromJson}(${this.itemType.fromJsonValueFunction.annotatedUsage})`,
     );
   }
 
