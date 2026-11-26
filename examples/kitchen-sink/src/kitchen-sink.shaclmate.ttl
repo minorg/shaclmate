@@ -390,14 +390,30 @@
         sh:path :implicitFalseDisplay
     ] .
 
+:ExplicitFromRdfTypeStruct
+    shaclmate:fromRdfType :FromRdfType ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment """Struct node shape with custom rdf:type's.
+
+The shaclmate:fromRdfType is expected on deserialization and added on serialization.
+""" ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :explicitFromRdfTypeString
+    ] .
+
 :ExplicitFromToRdfTypesStruct
     shaclmate:fromRdfType :FromRdfType ;
     shaclmate:toRdfType :ToRdfType ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment """Struct node shape with custom rdf:type's.
 
-The shaclmate:fromRdfType is expected on deserialization.
-shaclmate:toRdfType's are added an serialization.""" ;
+The shaclmate:fromRdfType is expected on deserialization and added on serialization.
+The shaclmate:toRdfType is only added an serialization.
+They override the implicit fromRdfType/toRdfType of the implicit class target.
+""" ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -410,13 +426,31 @@ shaclmate:toRdfType's are added an serialization.""" ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment """Struct node shape with custom rdf:type's.
 
-The shaclmate:rdfType is expected on deserialization and added on serialization.""" ;
+The shaclmate:rdfType is expected on deserialization and added on serialization.
+It overrides the implied rdfType of the implicit class target.
+""" ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :explicitRdfTypeString
     ] .
+
+:ExplicitToRdfTypeStruct
+    shaclmate:toRdfType :ToRdfType ;
+    a sh:NodeShape ;
+    rdfs:comment """Struct node shape with custom rdf:type's.
+
+The shaclmate:toRdfType is added on serialization.
+The shape is not an implicit class target so it has no fromRdfType, and no rdf:type is expected on deserialization.
+""" ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :explicitToRdfTypeString
+    ] .
+
 
 :HasValuesStruct
     a sh:NodeShape ;

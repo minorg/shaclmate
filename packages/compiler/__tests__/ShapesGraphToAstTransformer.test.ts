@@ -64,45 +64,35 @@ describe("ShapesGraphToAstTransformer", () => {
           }
         });
 
-        it("should transform object types", ({ expect }) => {
-          const namedObjectTypes = ast.namedTypes.filter(
-            (_) => _.kind === "Struct",
-          );
-          if (id === "kitchenSinkExample") {
-            expect(namedObjectTypes).toHaveLength(56);
-          } else if (id !== "empty" && id !== "propertyShapesOnly") {
-            expect(namedObjectTypes).not.toHaveLength(0);
-          }
-        });
+        if (testShapesGraph.counts?.namedStructTypes !== undefined) {
+          it("should transform struct types", ({ expect }) => {
+            expect(
+              ast.namedTypes.filter((_) => _.kind === "Struct"),
+            ).toHaveLength(testShapesGraph.counts!.namedStructTypes!);
+          });
+        }
 
-        it("should transform named intersection types", ({ expect }) => {
-          const namedIntersectionTypes = ast.namedTypes.filter(
-            (_) => _.kind === "Intersection",
-          );
-          switch (id) {
-            case "compilerInput":
-              expect(namedIntersectionTypes).toHaveLength(5);
-              break;
-            case "shaclShacl":
-              expect(namedIntersectionTypes).toHaveLength(2);
-              break;
-            case "kitchenSinkExample":
-              expect(namedIntersectionTypes).toHaveLength(3);
-              break;
-            default:
-              expect(namedIntersectionTypes).toHaveLength(0);
-              break;
-          }
-        });
+        if (testShapesGraph.counts?.namedIntersectionTypes !== undefined) {
+          it("should transform named intersection types", ({ expect }) => {
+            expect(
+              ast.namedTypes.filter((_) => _.kind === "Intersection"),
+            ).toHaveLength(testShapesGraph.counts!.namedIntersectionTypes!);
+          });
+        }
 
-        it("should transform named union types", ({ expect }) => {
-          const namedDiscriminatedUnionTypes = ast.namedTypes.filter(
-            (_) => _.kind === "DiscriminatedUnion",
-          );
-          if (id === "kitchenSinkExample") {
-            expect(namedDiscriminatedUnionTypes).toHaveLength(8);
-          }
-        });
+        if (
+          testShapesGraph.counts?.namedDiscriminatedUnionTypes !== undefined
+        ) {
+          it("should transform named discriminated union types", ({
+            expect,
+          }) => {
+            expect(
+              ast.namedTypes.filter((_) => _.kind === "DiscriminatedUnion"),
+            ).toHaveLength(
+              testShapesGraph.counts!.namedDiscriminatedUnionTypes!,
+            );
+          });
+        }
 
         if (id === "kitchenSinkExample") {
           for (const [classIri, recursivePropertyIri] of [

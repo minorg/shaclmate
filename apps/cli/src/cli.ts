@@ -3,10 +3,10 @@ import fs from "node:fs";
 import {
   AstJsonGenerator,
   Cx2Generator,
+  TS_FEATURES,
   TsGenerator,
   ZodGenerator,
 } from "@shaclmate/compiler";
-import { TS_FEATURES } from "@shaclmate/compiler/dist/generators/ts/TsFeature.js";
 import {
   command,
   multioption,

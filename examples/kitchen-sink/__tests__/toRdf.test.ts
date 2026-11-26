@@ -32,7 +32,9 @@ describe("toRdf", async () => {
     expect(ttl).not.toHaveLength(0);
   });
 
-  it("explicit rdfType", ({ expect }) => {
+  it("explicit shaclmate:rdfType overriding the implicit class target rdf:type", ({
+    expect,
+  }) => {
     const resource = kitchenSink.ExplicitRdfTypeStruct.toRdfResource(
       harnesses.explicitRdfTypeStruct.instance,
     );
@@ -53,7 +55,32 @@ describe("toRdf", async () => {
     ).toStrictEqual("test");
   });
 
-  it("explicit toRdfType", ({ expect }) => {
+  it("explicit shaclmate:fromRdfType overriding the implicit class target rdf:type", ({
+    expect,
+  }) => {
+    const resource = kitchenSink.ExplicitFromRdfTypeStruct.toRdfResource(
+      harnesses.explicitFromRdfTypeStruct.instance,
+    );
+    expect(resource.dataset.size).toStrictEqual(2); // One rdf:type and the property
+    expect(
+      resource.isInstanceOf(
+        dataFactory.namedNode("http://example.com/FromRdfType"),
+      ),
+    ).toBe(true);
+    expect(
+      resource
+        .value(
+          kitchenSink.ExplicitFromRdfTypeStruct.schema.properties
+            .explicitFromRdfTypeString.path,
+        )
+        .chain((value) => value.toString())
+        .unsafeCoerce(),
+    ).toStrictEqual("test");
+  });
+
+  it("explicit shaclmate:fromRdfType and shaclmate:toRdfType overriding the implicit class target rdf:type", ({
+    expect,
+  }) => {
     const resource = kitchenSink.ExplicitFromToRdfTypesStruct.toRdfResource(
       harnesses.explicitFromToRdfTypesStruct.instance,
     );
@@ -73,6 +100,29 @@ describe("toRdf", async () => {
         .value(
           kitchenSink.ExplicitFromToRdfTypesStruct.schema.properties
             .explicitFromToRdfTypesString.path,
+        )
+        .chain((value) => value.toString())
+        .unsafeCoerce(),
+    ).toStrictEqual("test");
+  });
+
+  it("explicit shaclmate:toRdfType adding an rdf:type statement to a node shape that's not an implicit class target", ({
+    expect,
+  }) => {
+    const resource = kitchenSink.ExplicitToRdfTypeStruct.toRdfResource(
+      harnesses.explicitToRdfTypeStruct.instance,
+    );
+    expect(resource.dataset.size).toStrictEqual(2); // One rdf:type and the property
+    expect(
+      resource.isInstanceOf(
+        dataFactory.namedNode("http://example.com/ToRdfType"),
+      ),
+    ).toBe(true);
+    expect(
+      resource
+        .value(
+          kitchenSink.ExplicitToRdfTypeStruct.schema.properties
+            .explicitToRdfTypeString.path,
         )
         .chain((value) => value.toString())
         .unsafeCoerce(),
