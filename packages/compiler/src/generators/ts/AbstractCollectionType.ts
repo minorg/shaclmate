@@ -31,7 +31,7 @@ export abstract class AbstractCollectionType<
   @Memoize()
   override get equalsFunction(): Callable {
     return new InlineCallable(
-      code`((left, right) => ${this.reusables.snippets.arrayEquals}(left, right, ${this.itemType.equalsFunction.unannotatedUsage}))`,
+      code`((left, right) => ${this.reusables.snippets.Array_equals}(left, right, ${this.itemType.equalsFunction.unannotatedUsage}))`,
       {
         type: code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`,
       },

@@ -49,63 +49,65 @@ export type $_ToRdfResourceFunction<
   resourceSet: ResourceSet;
 }) => void;
 
-/**
- * Compare two arrays element-wise with the provided elementEquals function.
- */
-function $arrayEquals<T>(
-  leftArray: readonly T[],
-  rightArray: readonly T[],
-  elementEquals: (left: T, right: T) => boolean | $EqualsResult,
-): $EqualsResult {
-  if (leftArray.length !== rightArray.length) {
-    return Left({ left: leftArray, right: rightArray, type: "array-length" });
-  }
+export namespace $Array {
+  /**
+   * Compare two arrays element-wise with the provided elementEquals function.
+   */
+  export function equals<T>(
+    leftArray: readonly T[],
+    rightArray: readonly T[],
+    elementEquals: (left: T, right: T) => boolean | $EqualsResult,
+  ): $EqualsResult {
+    if (leftArray.length !== rightArray.length) {
+      return Left({ left: leftArray, right: rightArray, type: "array-length" });
+    }
 
-  for (
-    let leftElementIndex = 0;
-    leftElementIndex < leftArray.length;
-    leftElementIndex++
-  ) {
-    const leftElement = leftArray[leftElementIndex];
-
-    const rightUnequals: $EqualsResult.Unequal[] = [];
     for (
-      let rightElementIndex = 0;
-      rightElementIndex < rightArray.length;
-      rightElementIndex++
+      let leftElementIndex = 0;
+      leftElementIndex < leftArray.length;
+      leftElementIndex++
     ) {
-      const rightElement = rightArray[rightElementIndex];
+      const leftElement = leftArray[leftElementIndex];
 
-      const leftElementEqualsRightElement =
-        $EqualsResult.fromBooleanEqualsResult(
-          leftElement,
-          rightElement,
-          elementEquals(leftElement, rightElement),
+      const rightUnequals: $EqualsResult.Unequal[] = [];
+      for (
+        let rightElementIndex = 0;
+        rightElementIndex < rightArray.length;
+        rightElementIndex++
+      ) {
+        const rightElement = rightArray[rightElementIndex];
+
+        const leftElementEqualsRightElement =
+          $EqualsResult.fromBooleanEqualsResult(
+            leftElement,
+            rightElement,
+            elementEquals(leftElement, rightElement),
+          );
+        if (leftElementEqualsRightElement.isRight()) {
+          break; // left element === right element, break out of the right iteration
+        }
+        rightUnequals.push(
+          leftElementEqualsRightElement.extract() as $EqualsResult.Unequal,
         );
-      if (leftElementEqualsRightElement.isRight()) {
-        break; // left element === right element, break out of the right iteration
       }
-      rightUnequals.push(
-        leftElementEqualsRightElement.extract() as $EqualsResult.Unequal,
-      );
+
+      if (rightUnequals.length === rightArray.length) {
+        // All right elements were unequal to the left element
+        return Left({
+          left: {
+            array: leftArray,
+            element: leftElement,
+            elementIndex: leftElementIndex,
+          },
+          right: { array: rightArray, unequals: rightUnequals },
+          type: "array-element",
+        });
+      }
+      // Else there was a right element equal to the left element, continue to the next left element
     }
 
-    if (rightUnequals.length === rightArray.length) {
-      // All right elements were unequal to the left element
-      return Left({
-        left: {
-          array: leftArray,
-          element: leftElement,
-          elementIndex: leftElementIndex,
-        },
-        right: { array: rightArray, unequals: rightUnequals },
-        type: "array-element",
-      });
-    }
-    // Else there was a right element equal to the left element, continue to the next left element
+    return $EqualsResult.Equal;
   }
-
-  return $EqualsResult.Equal;
 }
 
 function $arrayFromJsonArray<ItemJsonValueT, ItemT, ItemSchemaT>(
@@ -7530,7 +7532,7 @@ export namespace UnionDiscriminantsStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, (left, right) => {
+              $Array.equals(left, right, (left, right) => {
                 if (typeof left === "object" && typeof right === "object") {
                   return $booleanEquals(left as NamedNode, right as NamedNode);
                 }
@@ -7560,7 +7562,7 @@ export namespace UnionDiscriminantsStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, (left, right) => {
+              $Array.equals(left, right, (left, right) => {
                 if (
                   left["termType"] === "StructDiscriminatedUnionMember1" &&
                   right["termType"] === "StructDiscriminatedUnionMember1"
@@ -7599,7 +7601,7 @@ export namespace UnionDiscriminantsStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, (left, right) => {
+              $Array.equals(left, right, (left, right) => {
                 if (
                   left["$type"] === "StructDiscriminatedUnionMember1" &&
                   right["$type"] === "StructDiscriminatedUnionMember1"
@@ -7647,7 +7649,7 @@ export namespace UnionDiscriminantsStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, (left, right) => {
+              $Array.equals(left, right, (left, right) => {
                 if (
                   (left["termType"] === "BlankNode" ||
                     left["termType"] === "NamedNode") &&
@@ -23311,7 +23313,7 @@ export namespace PropertyCardinalitiesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $strictEquals),
+              $Array.equals(left, right, $strictEquals),
             name: "emptySet",
           },
           [left, left.emptySet],
@@ -23322,7 +23324,7 @@ export namespace PropertyCardinalitiesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $strictEquals),
+              $Array.equals(left, right, $strictEquals),
             name: "nonEmptySet",
           },
           [left, left.nonEmptySet],
@@ -33076,7 +33078,7 @@ export namespace MutablePropertiesStruct {
           {
             equalsFunction: (left, right) =>
               $maybeEquals(left, right, ((left, right) =>
-                $arrayEquals(
+                $Array.equals(
                   left,
                   right,
                   $strictEquals,
@@ -33091,7 +33093,7 @@ export namespace MutablePropertiesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $strictEquals),
+              $Array.equals(left, right, $strictEquals),
             name: "mutableSet",
           },
           [left, left.mutableSet],
@@ -34200,7 +34202,7 @@ export namespace ListsStruct {
           {
             equalsFunction: (left, right) =>
               $maybeEquals(left, right, ((left, right) =>
-                $arrayEquals(
+                $Array.equals(
                   left,
                   right,
                   $booleanEquals,
@@ -34216,7 +34218,7 @@ export namespace ListsStruct {
           {
             equalsFunction: (left, right) =>
               $maybeEquals(left, right, ((left, right) =>
-                $arrayEquals(
+                $Array.equals(
                   left,
                   right,
                   $strictEquals,
@@ -34232,8 +34234,8 @@ export namespace ListsStruct {
           {
             equalsFunction: (left, right) =>
               $maybeEquals(left, right, ((left, right) =>
-                $arrayEquals(left, right, (left, right) =>
-                  $arrayEquals(left, right, $strictEquals),
+                $Array.equals(left, right, (left, right) =>
+                  $Array.equals(left, right, $strictEquals),
                 )) satisfies $EqualsFunction<readonly (readonly string[])[]>),
             name: "stringListList",
           },
@@ -34246,7 +34248,7 @@ export namespace ListsStruct {
           {
             equalsFunction: (left, right) =>
               $maybeEquals(left, right, ((left, right) =>
-                $arrayEquals(
+                $Array.equals(
                   left,
                   right,
                   NonClassStruct.equals,
@@ -35508,11 +35510,11 @@ export namespace ListSetsStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, (left, right) => {
+              $Array.equals(left, right, (left, right) => {
                 if (typeof left === "object" && typeof right === "object") {
                   return (
                     ((left, right) =>
-                      $arrayEquals(
+                      $Array.equals(
                         left,
                         right,
                         $strictEquals,
@@ -35545,9 +35547,9 @@ export namespace ListSetsStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, (left, right) =>
-                $arrayEquals(left, right, (left, right) =>
-                  $arrayEquals(left, right, $strictEquals),
+              $Array.equals(left, right, (left, right) =>
+                $Array.equals(left, right, (left, right) =>
+                  $Array.equals(left, right, $strictEquals),
                 ),
               ),
             name: "listListSet",
@@ -35560,8 +35562,8 @@ export namespace ListSetsStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, (left, right) =>
-                $arrayEquals(left, right, $strictEquals),
+              $Array.equals(left, right, (left, right) =>
+                $Array.equals(left, right, $strictEquals),
               ),
             name: "listSet",
           },
@@ -37356,7 +37358,7 @@ export namespace LazyPropertiesStruct {
             equalsFunction: (left, right) =>
               (
                 ((left, right) =>
-                  $arrayEquals(
+                  $Array.equals(
                     left,
                     right,
                     $DefaultPartial.equals,
@@ -37374,7 +37376,7 @@ export namespace LazyPropertiesStruct {
             equalsFunction: (left, right) =>
               (
                 ((left, right) =>
-                  $arrayEquals(
+                  $Array.equals(
                     left,
                     right,
                     PartialStruct.equals,
@@ -41710,7 +41712,7 @@ export namespace LanguageInStruct {
       $propertyEquals(
         {
           equalsFunction: (left, right) =>
-            $arrayEquals(left, right, $booleanEquals),
+            $Array.equals(left, right, $booleanEquals),
           name: "languageIn",
         },
         [left, left.languageIn],
@@ -59840,7 +59842,7 @@ export namespace ConvertibleTypesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $booleanEquals),
+              $Array.equals(left, right, $booleanEquals),
             name: "convertibleIriNonEmptySet",
           },
           [left, left.convertibleIriNonEmptySet],
@@ -59862,7 +59864,7 @@ export namespace ConvertibleTypesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $booleanEquals),
+              $Array.equals(left, right, $booleanEquals),
             name: "convertibleIriSet",
           },
           [left, left.convertibleIriSet],
@@ -59880,7 +59882,7 @@ export namespace ConvertibleTypesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $booleanEquals),
+              $Array.equals(left, right, $booleanEquals),
             name: "convertibleLiteralNonEmptySet",
           },
           [left, left.convertibleLiteralNonEmptySet],
@@ -59902,7 +59904,7 @@ export namespace ConvertibleTypesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $booleanEquals),
+              $Array.equals(left, right, $booleanEquals),
             name: "convertibleLiteralSet",
           },
           [left, left.convertibleLiteralSet],
@@ -59920,7 +59922,7 @@ export namespace ConvertibleTypesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $booleanEquals),
+              $Array.equals(left, right, $booleanEquals),
             name: "convertibleTermNonEmptySet",
           },
           [left, left.convertibleTermNonEmptySet],
@@ -59942,7 +59944,7 @@ export namespace ConvertibleTypesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $booleanEquals),
+              $Array.equals(left, right, $booleanEquals),
             name: "convertibleTermSet",
           },
           [left, left.convertibleTermSet],
