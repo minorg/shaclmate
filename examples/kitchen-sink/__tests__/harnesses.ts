@@ -187,6 +187,13 @@ export const harnesses = {
     }),
     kitchenSink.DisplayStruct,
   ),
+  explicitFromRdfTypeStruct: new Harness(
+    kitchenSink.ExplicitFromRdfTypeStruct.createUnsafe({
+      $identifier,
+      explicitFromRdfTypeString: "test",
+    }),
+    kitchenSink.ExplicitFromRdfTypeStruct,
+  ),
   explicitFromToRdfTypesStruct: new Harness(
     kitchenSink.ExplicitFromToRdfTypesStruct.createUnsafe({
       $identifier,
@@ -200,6 +207,13 @@ export const harnesses = {
       explicitRdfTypeString: "test",
     }),
     kitchenSink.ExplicitRdfTypeStruct,
+  ),
+  explicitToRdfTypeStruct: new Harness(
+    kitchenSink.ExplicitToRdfTypeStruct.createUnsafe({
+      $identifier,
+      explicitToRdfTypeString: "test",
+    }),
+    kitchenSink.ExplicitToRdfTypeStruct,
   ),
   indirectRecursiveStruct: new Harness(
     kitchenSink.IndirectRecursiveStruct.createUnsafe({
