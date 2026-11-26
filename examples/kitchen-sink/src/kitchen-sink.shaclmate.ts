@@ -48561,15 +48561,6 @@ export namespace ExplicitToRdfTypeStruct {
           schema: ExplicitToRdfTypeStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
-      $rdfType: !options.ignoreRdfType
-        ? $ensureRdfResourceType(
-            resource,
-            [ExplicitToRdfTypeStruct.schema.properties.$rdfType.fromRdfType],
-            {
-              graph: options.graph,
-            },
-          )
-        : Right(true as const),
       explicitToRdfTypeString: $shaclPropertyFromRdf<
         string,
         $StringSchema<string>
@@ -48749,6 +48740,47 @@ export namespace ExplicitToRdfTypeStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $rdf_type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$rdfs_subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.explicitToRdfTypeString,

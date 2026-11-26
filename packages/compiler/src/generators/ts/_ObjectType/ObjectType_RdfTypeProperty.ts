@@ -136,10 +136,11 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
   }: Parameters<
     ObjectType_AbstractProperty["fromRdfResourceValuesInitializer"]
   >[0]): Maybe<Code> {
-    return Maybe.of(
-      code`${this.name}: !${variables.ignoreRdfType} ? ${this.reusables.snippets.ensureRdfResourceType}(${variables.focusResource}, ${arrayOf(
-        code`(${this._schema.expression}).fromRdfType`,
-      )}, ${{ graph: variables.graph }}) : ${this.reusables.imports.Right}(true as const)`,
+    return this.fromRdfType.map(
+      () =>
+        code`${this.name}: !${variables.ignoreRdfType} ? ${this.reusables.snippets.ensureRdfResourceType}(${variables.focusResource}, ${arrayOf(
+          code`(${this._schema.expression}).fromRdfType`,
+        )}, ${{ graph: variables.graph }}) : ${this.reusables.imports.Right}(true as const)`,
     );
   }
 
@@ -174,15 +175,19 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
   >[0]): ReturnType<
     ObjectType_AbstractProperty["sparqlWherePatternsExpression"]
   > {
-    return this.fromRdfType.map((fromRdfType) => {
-      const rdfClassVariable = code`${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
-      const rdfTypeVariable = code`${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
-      return {
-        patterns: code`${variables.ignoreRdfType} ? [] : [${joinCode(
-          [
-            code`${this.reusables.snippets.sparqlInstancesOfPattern}({ rdfType: ${variables.schema.map((schema) => code`${schema}.properties.${this.name}.fromRdfType`).orDefault(this.rdfjsTermExpression(fromRdfType))}, subject: ${variables.focusIdentifier} })`,
-            code`{ triples: [{ subject: ${variables.focusIdentifier}, predicate: ${this.rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} }], type: "bgp" as const }`,
-            code`{
+    const rdfClassVariable = code`${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
+    const rdfTypeVariable = code`${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
+
+    let patterns: Code[] = [];
+    this.fromRdfType.ifJust((fromRdfType) => {
+      patterns.push(
+        code`${this.reusables.snippets.sparqlInstancesOfPattern}({ rdfType: ${variables.schema.map((schema) => code`${schema}.properties.${this.name}.fromRdfType`).orDefault(this.rdfjsTermExpression(fromRdfType))}, subject: ${variables.focusIdentifier} })`,
+      );
+    }); // else if there are only toRdfTypes, still want to pull in rdf:type on the instance so we can recreate it with CONSTRUCT.
+    // Pull in any rdf:type on the instance.
+    patterns = patterns.concat(
+      code`{ triples: [{ subject: ${variables.focusIdentifier}, predicate: ${this.rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} }], type: "bgp" as const }`,
+      code`{
 patterns: [
   {
     triples: [
@@ -201,12 +206,12 @@ patterns: [
 ],
 type: "optional" as const
 }`,
-          ],
-          {
-            on: ",",
-          },
-        )}]`,
-      };
+    );
+
+    return Maybe.of({
+      patterns: code`${variables.ignoreRdfType} ? [] : [${joinCode(patterns, {
+        on: ",",
+      })}]`,
     });
   }
 
