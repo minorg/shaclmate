@@ -2,8 +2,9 @@ import type { NamedNode } from "@rdfjs/types";
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
+import type { CodeThunk } from "../CodeThunk.js";
 import { SchemaObject } from "../SchemaObject.js";
 import {
   arrayOf,
@@ -21,7 +22,7 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
     Maybe.empty();
   override readonly filterProperty: ObjectType_AbstractProperty["filterProperty"] =
     Maybe.empty();
-  readonly fromRdfType: NamedNode;
+  readonly fromRdfType: Maybe<NamedNode>;
   override readonly graphqlField: ObjectType_AbstractProperty["graphqlField"] =
     Maybe.empty();
   override readonly hashFunctionParameter: ObjectType_AbstractProperty["hashFunctionParameter"] =
@@ -37,7 +38,7 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
     toRdfTypes,
     ...superParameters
   }: {
-    fromRdfType: NamedNode;
+    fromRdfType: Maybe<NamedNode>;
     toRdfTypes: readonly NamedNode[];
   } & Omit<
     ConstructorParameters<typeof ObjectType_AbstractProperty>[0],
@@ -50,6 +51,10 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
     });
     this.fromRdfType = fromRdfType;
     this.toRdfTypes = toRdfTypes;
+    invariant(toRdfTypes.length > 0);
+    fromRdfType.ifJust((fromRdfType) => {
+      invariant(toRdfTypes.some((toRdfType) => toRdfType.equals(fromRdfType)));
+    });
   }
 
   @Memoize()
@@ -83,18 +88,25 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
 
   @Memoize()
   private get _schema(): SchemaObject<SchemaObject.UserDefinedType> {
+    const properties: Record<string, CodeThunk> = {
+      kind: code`kind: ${literalOf(this.kind)}`,
+      toRdfTypes: code`toRdfTypes: ${arrayOf(...this.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)))}`,
+    };
+    const typeMembers: Record<string, CodeThunk> = {
+      kind: code`kind: ${literalOf(this.kind)}`,
+      toRdfTypes: code`toRdfTypes: readonly ${this.reusables.imports.NamedNode}[]`,
+    };
+    this.fromRdfType.ifJust((fromRdfType) => {
+      properties["fromRdfType"] =
+        code`fromRdfType: ${this.rdfjsTermExpression(fromRdfType)}`;
+      typeMembers["fromRdfType"] =
+        code`fromRdfType: ${this.reusables.imports.NamedNode}`;
+    });
+
     return new SchemaObject({
-      properties: {
-        fromRdfType: code`fromRdfType: ${this.rdfjsTermExpression(this.fromRdfType)}`,
-        kind: code`kind: ${literalOf(this.kind)}`,
-        toRdfTypes: code`toRdfTypes: ${arrayOf(...this.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)))}`,
-      },
+      properties,
       type: new SchemaObject.UserDefinedType({
-        members: {
-          fromRdfType: code`fromRdfType: ${this.reusables.imports.NamedNode}`,
-          kind: code`kind: ${literalOf(this.kind)}`,
-          toRdfTypes: code`toRdfTypes: readonly ${this.reusables.imports.NamedNode}[]`,
-        },
+        members: typeMembers,
         name: Maybe.empty(),
       }),
       variable: this.schemaVariable,
@@ -162,14 +174,15 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
   >[0]): ReturnType<
     ObjectType_AbstractProperty["sparqlWherePatternsExpression"]
   > {
-    const rdfClassVariable = code`${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
-    const rdfTypeVariable = code`${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
-    return Maybe.of({
-      patterns: code`${variables.ignoreRdfType} ? [] : [${joinCode(
-        [
-          code`${this.reusables.snippets.sparqlInstancesOfPattern}({ rdfType: ${variables.schema.map((schema) => code`${schema}.properties.${this.name}.fromRdfType`).orDefault(this.rdfjsTermExpression(this.fromRdfType))}, subject: ${variables.focusIdentifier} })`,
-          code`{ triples: [{ subject: ${variables.focusIdentifier}, predicate: ${this.rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} }], type: "bgp" as const }`,
-          code`{
+    return this.fromRdfType.map((fromRdfType) => {
+      const rdfClassVariable = code`${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
+      const rdfTypeVariable = code`${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
+      return {
+        patterns: code`${variables.ignoreRdfType} ? [] : [${joinCode(
+          [
+            code`${this.reusables.snippets.sparqlInstancesOfPattern}({ rdfType: ${variables.schema.map((schema) => code`${schema}.properties.${this.name}.fromRdfType`).orDefault(this.rdfjsTermExpression(fromRdfType))}, subject: ${variables.focusIdentifier} })`,
+            code`{ triples: [{ subject: ${variables.focusIdentifier}, predicate: ${this.rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} }], type: "bgp" as const }`,
+            code`{
 patterns: [
   {
     triples: [
@@ -188,11 +201,12 @@ patterns: [
 ],
 type: "optional" as const
 }`,
-        ],
-        {
-          on: ",",
-        },
-      )}]`,
+          ],
+          {
+            on: ",",
+          },
+        )}]`,
+      };
     });
   }
 

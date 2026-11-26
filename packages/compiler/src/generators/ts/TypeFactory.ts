@@ -276,15 +276,17 @@ export class TypeFactory {
         }),
     );
 
-    const rdfTypeProperty = astType.fromRdfType.map(
-      (fromRdfType) =>
-        new ObjectType.RdfTypeProperty({
-          ...this.constructorParameters,
-          fromRdfType,
-          objectType: objectTypeStub,
-          toRdfTypes: astType.toRdfTypes,
-        }),
-    );
+    const rdfTypeProperty =
+      astType.fromRdfType.isJust() || astType.toRdfTypes.length > 0
+        ? Maybe.of(
+            new ObjectType.RdfTypeProperty({
+              ...this.constructorParameters,
+              fromRdfType: astType.fromRdfType,
+              objectType: objectTypeStub,
+              toRdfTypes: astType.toRdfTypes,
+            }),
+          )
+        : Maybe.empty();
 
     const objectType = new ObjectType({
       ...this.constructorParameters,

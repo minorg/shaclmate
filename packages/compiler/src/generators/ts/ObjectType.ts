@@ -268,15 +268,15 @@ export class ObjectType extends AbstractUserDefinedType {
 
   @Memoize()
   get fromRdfTypeVariable(): Maybe<Code> {
-    return this.rdfTypeProperty.map((rdfTypeProperty) =>
-      this.name
-        .map(
-          (name) =>
-            code`${name}.schema.properties.${rdfTypeProperty.name}.fromRdfType`,
-        )
-        .orDefaultLazy(() =>
-          this.rdfjsTermExpression(rdfTypeProperty.fromRdfType),
-        ),
+    return this.rdfTypeProperty.chain((rdfTypeProperty) =>
+      rdfTypeProperty.fromRdfType.map((fromRdfType) =>
+        this.name
+          .map(
+            (name) =>
+              code`${name}.schema.properties.${rdfTypeProperty.name}.fromRdfType`,
+          )
+          .orDefaultLazy(() => this.rdfjsTermExpression(fromRdfType)),
+      ),
     );
   }
 
