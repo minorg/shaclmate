@@ -48561,6 +48561,15 @@ export namespace ExplicitToRdfTypeStruct {
           schema: ExplicitToRdfTypeStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
+      $rdfType: !options.ignoreRdfType
+        ? $ensureRdfResourceType(
+            resource,
+            [ExplicitToRdfTypeStruct.schema.properties.$rdfType.fromRdfType],
+            {
+              graph: options.graph,
+            },
+          )
+        : Right(true as const),
       explicitToRdfTypeString: $shaclPropertyFromRdf<
         string,
         $StringSchema<string>
@@ -48578,6 +48587,13 @@ export namespace ExplicitToRdfTypeStruct {
     ExplicitToRdfTypeStruct.Identifier,
     ExplicitToRdfTypeStruct
   > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $rdf_type,
+        ExplicitToRdfTypeStruct.schema.properties.$rdfType.toRdfTypes,
+        parameters.graph,
+      );
+    }
     parameters.resource.add(
       ExplicitToRdfTypeStruct.schema.properties.explicitToRdfTypeString.path,
       [$literalFactory.string(parameters.object.explicitToRdfTypeString)],
@@ -48679,6 +48695,28 @@ export namespace ExplicitToRdfTypeStruct {
     ExplicitToRdfTypeStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $rdf_type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $rdfs_subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.explicitToRdfTypeString,
@@ -48784,7 +48822,11 @@ export namespace ExplicitToRdfTypeStruct {
   > = (object): object is ExplicitToRdfTypeStruct.Discriminated =>
     object.$type === "ExplicitToRdfTypeStruct";
 
-  export type Json = { "@id": string; explicitToRdfTypeString: string };
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    explicitToRdfTypeString: string;
+  };
 
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
@@ -48801,6 +48843,7 @@ export namespace ExplicitToRdfTypeStruct {
           .string()
           .min(1)
           .default(() => `_:${dataFactory.blankNode().value}`),
+        "@type": z.string().default("http://example.com/ToRdfType"),
         explicitToRdfTypeString: z.string(),
       }) satisfies z.ZodType<Json>;
     }
@@ -48830,6 +48873,10 @@ export namespace ExplicitToRdfTypeStruct {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" } as const,
+      } as const,
+      $rdfType: {
+        kind: "RdfType",
+        toRdfTypes: [dataFactory.namedNode("http://example.com/ToRdfType")],
       } as const,
       explicitToRdfTypeString: {
         kind: "Shacl",
@@ -48902,6 +48949,7 @@ export namespace ExplicitToRdfTypeStruct {
           _explicitToRdfTypeStruct.$identifier().termType === "BlankNode"
             ? `_:${_explicitToRdfTypeStruct.$identifier().value}`
             : _explicitToRdfTypeStruct.$identifier().value,
+        "@type": "http://example.com/ToRdfType",
         explicitToRdfTypeString: $primitiveToJsonValue<string>(
           _explicitToRdfTypeStruct.explicitToRdfTypeString,
         ),
