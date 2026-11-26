@@ -156,9 +156,9 @@ const testShapesGraphsLiteral = {
       namedDiscriminatedUnionTypes: 8,
       namedIntersectionTypes: 3,
       namedStructTypes: 56,
-      nodeShapes: 150,
+      nodeShapes: 152,
       propertyGroups: 0,
-      propertyShapes: 190,
+      propertyShapes: 192,
     },
     description: "Kitchen sink example",
     filePaths: [
