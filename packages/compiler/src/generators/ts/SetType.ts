@@ -106,7 +106,7 @@ export class SetType<
   @Memoize()
   override get fromJsonValueFunction(): AbstractCollectionType<ItemTypeT>["fromJsonValueFunction"] {
     return new BuiltinCallable(
-      code`${this.reusables.snippets.arrayFromJsonArray}(${this.itemType.fromJsonValueFunction.annotatedUsage})`,
+      code`${this.reusables.snippets.Array_fromJson}(${this.itemType.fromJsonValueFunction.annotatedUsage})`,
     );
   }
 
@@ -124,7 +124,7 @@ export class SetType<
   @Memoize()
   override get toJsonValueFunction(): AbstractCollectionType<ItemTypeT>["toJsonValueFunction"] {
     return new BuiltinCallable(
-      code`${this.reusables.snippets.arrayToJsonArray}(${this.itemType.toJsonValueFunction.annotatedUsage})`,
+      code`${this.reusables.snippets.Array_toJson}(${this.itemType.toJsonValueFunction.annotatedUsage})`,
     );
   }
 

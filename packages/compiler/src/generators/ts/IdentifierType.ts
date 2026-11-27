@@ -12,11 +12,11 @@ export class IdentifierType extends AbstractIdentifierType<
   BlankNode | NamedNode
 > {
   protected override readonly inlineExpression =
-    code`(${this.reusables.imports.BlankNode} | ${this.reusables.imports.NamedNode})`;
+    code`${this.reusables.snippets.Identifier}`;
 
   override readonly conversionFunction: Maybe<AbstractIdentifierType.ConversionFunction> =
     Maybe.of({
-      code: code`${this.reusables.snippets.convertToIdentifier}`,
+      code: code`${this.reusables.snippets.Identifier_convert}`,
       sourceTypes: [
         {
           expression: code`${this.reusables.imports.BlankNode}`,
@@ -39,32 +39,32 @@ export class IdentifierType extends AbstractIdentifierType<
       ],
     });
   override readonly filterFunction = new BuiltinCallable(
-    this.reusables.snippets.filterIdentifier,
+    this.reusables.snippets.Identifier_filter_,
   );
   override readonly fromJsonValueFunction = new BuiltinCallable(
-    this.reusables.snippets.identifierFromJsonString,
+    this.reusables.snippets.Identifier_fromJsonString,
   );
   override readonly fromJsonObjectFunction = new BuiltinCallable(
-    this.reusables.snippets.identifierFromJsonObject,
+    this.reusables.snippets.Identifier_fromJsonObject,
   );
   override readonly filterType =
-    code`${this.reusables.snippets.IdentifierFilter}`;
+    code`${this.reusables.snippets.Identifier_Filter}`;
   override readonly fromRdfResourceValuesFunction = new BuiltinCallable(
-    this.reusables.snippets.identifierFromRdfResourceValues,
+    this.reusables.snippets.Identifier_fromRdfResourceValues,
   );
   override readonly kind = "Identifier";
   override readonly nodeKinds = nodeKinds;
   override readonly parseFunction = new BuiltinCallable(
-    this.reusables.snippets.parseIdentifier,
+    this.reusables.snippets.Identifier_parse,
   );
   override readonly toJsonValueFunction = new BuiltinCallable(
-    this.reusables.snippets.identifierToJsonString,
+    this.reusables.snippets.Identifier_toJsonString,
   );
   override readonly toJsonObjectFunction = new BuiltinCallable(
-    this.reusables.snippets.identifierToJsonObject,
+    this.reusables.snippets.Identifier_toJsonObject,
   );
   override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
-    this.reusables.snippets.identifierSparqlWherePatterns,
+    this.reusables.snippets.Identifier_sparqlWherePatterns,
   );
 
   constructor(
@@ -87,7 +87,7 @@ export class IdentifierType extends AbstractIdentifierType<
     return new SchemaObject({
       properties: super.schema.properties,
       type: new SchemaObject.BuiltinType(
-        this.reusables.snippets.IdentifierSchema,
+        this.reusables.snippets.Identifier_Schema,
       ),
       variable: super.schema.variable,
     });

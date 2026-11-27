@@ -9,9 +9,9 @@ export const snippets_TermJsonObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}TermJsonObject`,
     code`\
-type ${syntheticNamePrefix}TermJsonObject = ${snippets.IdentifierJsonObject} | ${snippets.LiteralJsonObject};
+type ${syntheticNamePrefix}TermJsonObject = ${snippets.Identifier_JsonObject} | ${snippets.LiteralJsonObject};
   
 namespace ${syntheticNamePrefix}TermJsonObject {
-  export const schema = ${imports.z}.union([${snippets.IdentifierJsonObject}.schema, ${snippets.LiteralJsonObject}.schema]);
+  export const schema = ${imports.z}.union([${snippets.Identifier_JsonObject}.schema, ${snippets.LiteralJsonObject}.schema]);
 }`,
   );

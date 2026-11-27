@@ -5,13 +5,13 @@ import path from "node:path";
 import url from "node:url";
 import type { CompilerOptions } from "typescript";
 
-const VERSION = "4.0.113";
+const VERSION = "4.0.114";
 
 const rdfxVersion = "0.0.67";
 const vitestVersion = "~4.1.5";
 
 const externalDependencies = {
-  "@biomejs/biome": "2.3.10",
+  "@biomejs/biome": "2.6.9",
   "@hono/zod-validator": "~0.9.1",
   "@jsonforms/core": "3.5.1",
   "@jsonforms/material-renderers": "3.5.1",

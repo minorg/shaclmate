@@ -9,7 +9,7 @@ export const snippets_iriToJsonObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}iriToJsonObject`,
     code`\
-function ${syntheticNamePrefix}iriToJsonObject<IriT extends string = string>(iri: ${imports.NamedNode}<IriT>): ${snippets.IdentifierJsonObject}<IriT> {
+function ${syntheticNamePrefix}iriToJsonObject<IriT extends string = string>(iri: ${imports.NamedNode}<IriT>): ${snippets.Identifier_JsonObject}<IriT> {
   return { "@id": ${snippets.iriToJsonString}(iri) };
 }`,
   );

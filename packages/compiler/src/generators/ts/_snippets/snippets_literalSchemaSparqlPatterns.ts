@@ -31,7 +31,7 @@ function ${syntheticNamePrefix}literalSchemaSparqlPatterns({
     patterns.push(${snippets.sparqlValueInPattern}({ valueVariable, valueIn: schema.in }));
   }
 
-  const languageIn = ${snippets.arrayIntersection}(schema.languageIn ?? [], preferredLanguages ?? []);
+  const languageIn = ${snippets.Array_intersection}(schema.languageIn ?? [], preferredLanguages ?? []);
   if (languageIn.length > 0) {
     patterns.push({
       expression: {

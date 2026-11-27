@@ -18,42 +18,43 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   override readonly conversionFunction: Maybe<AbstractPrimitiveType.ConversionFunction> =
     Maybe.empty();
   override readonly filterFunction = new BuiltinCallable(
-    this.reusables.snippets.filterBoolean,
+    this.reusables.snippets.Boolean_filter_,
   );
-  override readonly filterType = code`${this.reusables.snippets.BooleanFilter}`;
+  override readonly filterType =
+    code`${this.reusables.snippets.Boolean_Filter}`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${this.reusables.imports.GraphQLBoolean}`,
     this.reusables,
   );
   override readonly hashFunction = new BuiltinCallable(
-    this.reusables.snippets.hashBoolean,
+    this.reusables.snippets.Boolean_hash,
   );
   override readonly jsTypes = [{ typeof: "boolean" }] as const;
   override readonly jsonValueType: AbstractPrimitiveType.JsonType =
     this.jsonTypeFactory.createJsonBooleanType({ in_: this.decodedIn });
   override readonly kind = "Boolean";
   override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
-    this.reusables.snippets.booleanSparqlWherePatterns,
+    this.reusables.snippets.Boolean_sparqlWherePatterns,
   );
 
   @Memoize()
   override get fromJsonObjectFunction(): Callable {
     return new BuiltinCallable(
-      code`${this.reusables.snippets.booleanFromJsonObject}<${this.expression}>`,
+      code`${this.reusables.snippets.Boolean_fromJsonObject}<${this.expression}>`,
     );
   }
 
   @Memoize()
   override get fromJsonValueFunction(): Callable {
     return new BuiltinCallable(
-      code`${this.reusables.snippets.booleanFromJsonBoolean}<${this.expression}>`,
+      code`${this.reusables.snippets.Boolean_fromJsonBoolean}<${this.expression}>`,
     );
   }
 
   @Memoize()
   override get fromRdfResourceValuesFunction(): Callable {
     return new BuiltinCallable(
-      code`${this.reusables.snippets.booleanFromRdfResourceValues}<${this.expression}>`,
+      code`${this.reusables.snippets.Boolean_fromRdfResourceValues}<${this.expression}>`,
     );
   }
 
@@ -62,7 +63,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     return new SchemaObject({
       properties: super.schema.properties,
       type: new SchemaObject.BuiltinType(
-        code`${this.reusables.snippets.BooleanSchema}<${this.expression}>`,
+        code`${this.reusables.snippets.Boolean_Schema}<${this.expression}>`,
       ),
       variable: super.schema.variable,
     });

@@ -22,7 +22,7 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
   ] as const;
   override readonly conversionFunction: Maybe<AbstractTypedLiteralType.ConversionFunction> =
     Maybe.of({
-      code: code`${this.reusables.snippets.convertToBigDecimal}`,
+      code: code`${this.reusables.snippets.BigDecimal_convert}`,
       sourceTypes: [
         {
           expression: code`${this.reusables.imports.BigDecimal}`,
@@ -39,37 +39,37 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
       ],
     });
   override readonly filterFunction = new BuiltinCallable(
-    this.reusables.snippets.filterBigDecimal,
+    this.reusables.snippets.BigDecimal_filter,
   );
   override readonly filterType =
     code`${this.reusables.snippets.NumericFilter}<${this.reusables.imports.BigDecimal}>`;
   override readonly fromJsonObjectFunction = new BuiltinCallable(
-    this.reusables.snippets.bigDecimalFromJsonObject,
+    this.reusables.snippets.BigDecimal_fromJsonObject,
   );
   override readonly fromJsonValueFunction = new BuiltinCallable(
-    this.reusables.snippets.bigDecimalFromJsonString,
+    this.reusables.snippets.BigDecimal_fromJsonString,
   );
   override readonly fromRdfResourceValuesFunction = new BuiltinCallable(
-    this.reusables.snippets.bigDecimalFromRdfResourceValues,
+    this.reusables.snippets.BigDecimal_fromRdfResourceValues,
   );
   override readonly graphqlType = new AbstractTypedLiteralType.GraphqlType(
     code`${this.reusables.imports.GraphQLString}`,
     this.reusables,
   );
   override readonly hashFunction = new BuiltinCallable(
-    this.reusables.snippets.hashBigDecimal,
+    this.reusables.snippets.BigDecimal_hash,
   );
   override readonly jsonValueType: AbstractTypedLiteralType.JsonType =
     this.jsonTypeFactory.createJsonStringType({ format: "bigdecimal" });
   override readonly kind = "BigDecimal";
   override readonly toJsonObjectFunction = new BuiltinCallable(
-    code`${this.reusables.snippets.bigDecimalToJsonObject}(${this.rdfjsTermExpression(this.datatype)})`,
+    code`${this.reusables.snippets.BigDecimal_toJsonObject}(${this.rdfjsTermExpression(this.datatype)})`,
   );
   override readonly toJsonValueFunction = new BuiltinCallable(
-    this.reusables.snippets.bigDecimalToJsonString,
+    this.reusables.snippets.BigDecimal_toJsonString,
   );
   override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
-    this.reusables.snippets.bigDecimalSparqlWherePatterns,
+    this.reusables.snippets.BigDecimal_sparqlWherePatterns,
   );
 
   @Memoize()
@@ -104,7 +104,7 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
   }: Parameters<
     AbstractTypedLiteralType<Decimal>["toRdfResourceValuesExpression"]
   >[0]): Code {
-    return code`[${this.reusables.snippets.bigDecimalLiteral}(${variables.value})]`;
+    return code`[${this.reusables.snippets.literalFactory}.bigdecimal(${variables.value})]`;
   }
 
   override valueExpression(literal: Literal): Code {

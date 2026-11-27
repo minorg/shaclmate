@@ -16,7 +16,7 @@ function ${syntheticNamePrefix}termFromJsonObject<TermT extends ${imports.BlankN
     switch (termType) {
       case "BlankNode": {
         if ("@id" in jsonObject && jsonObject["@id"].startsWith("_:")) {
-          return ${snippets.blankNodeFromJsonObject}(jsonObject) as ${imports.Either}<Error, TermT>;
+          return ${snippets.BlankNode_fromJsonObject}(jsonObject) as ${imports.Either}<Error, TermT>;
         }
         break;
       }

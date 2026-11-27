@@ -14,7 +14,7 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
 
   override readonly conversionFunction: Maybe<AbstractIdentifierType.ConversionFunction> =
     Maybe.of({
-      code: code`${this.reusables.snippets.convertToBlankNode}`,
+      code: code`${this.reusables.snippets.BlankNode_convert}`,
       sourceTypes: [
         {
           expression: code`${this.reusables.imports.BlankNode}`,
@@ -27,32 +27,32 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
       ],
     });
   override readonly filterFunction = new BuiltinCallable(
-    this.reusables.snippets.filterBlankNode,
+    this.reusables.snippets.BlankNode_filter_,
   );
   override readonly filterType =
-    code`${this.reusables.snippets.BlankNodeFilter}`;
+    code`${this.reusables.snippets.BlankNode_Filter}`;
   override readonly fromJsonObjectFunction = new BuiltinCallable(
-    this.reusables.snippets.blankNodeFromJsonObject,
+    this.reusables.snippets.BlankNode_fromJsonObject,
   );
   override readonly fromJsonValueFunction = new BuiltinCallable(
-    this.reusables.snippets.blankNodeFromJsonString,
+    this.reusables.snippets.BlankNode_fromJsonString,
   );
   override readonly fromRdfResourceValuesFunction = new BuiltinCallable(
-    this.reusables.snippets.blankNodeFromRdfResourceValues,
+    this.reusables.snippets.BlankNode_fromRdfResourceValues,
   );
   override readonly kind = "BlankNode";
   override readonly nodeKinds = nodeKinds;
   override readonly parseFunction = new BuiltinCallable(
-    this.reusables.snippets.parseBlankNode,
+    this.reusables.snippets.BlankNode_parse,
   );
   override readonly toJsonObjectFunction = new BuiltinCallable(
-    this.reusables.snippets.blankNodeToJsonObject,
+    this.reusables.snippets.BlankNode_toJsonObject,
   );
   override readonly toJsonValueFunction = new BuiltinCallable(
-    this.reusables.snippets.blankNodeToJsonString,
+    this.reusables.snippets.BlankNode_toJsonString,
   );
   override readonly valueSparqlWherePatternsFunction = new BuiltinCallable(
-    this.reusables.snippets.blankNodeSparqlWherePatterns,
+    this.reusables.snippets.BlankNode_sparqlWherePatterns,
   );
 
   constructor(
@@ -73,7 +73,7 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     return new SchemaObject({
       properties: super.schema.properties,
       type: new SchemaObject.BuiltinType(
-        this.reusables.snippets.BlankNodeSchema,
+        this.reusables.snippets.BlankNode_Schema,
       ),
       variable: super.schema.variable,
     });

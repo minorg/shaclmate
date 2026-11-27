@@ -19,7 +19,7 @@ export class BigIntType extends AbstractNumericType<bigint> {
     this.in_.length > 0
       ? Maybe.empty()
       : Maybe.of({
-          code: code`${this.reusables.snippets.convertToBigInt}`,
+          code: code`${this.reusables.snippets.BigInt_convert}`,
           sourceTypes: [
             {
               expression: code`bigint`,
@@ -49,35 +49,35 @@ export class BigIntType extends AbstractNumericType<bigint> {
   @Memoize()
   override get fromJsonObjectFunction(): Callable {
     return new BuiltinCallable(
-      code`${this.reusables.snippets.bigIntFromJsonObject}<${this.expression}>`,
+      code`${this.reusables.snippets.BigInt_fromJsonObject}<${this.expression}>`,
     );
   }
 
   @Memoize()
   override get fromJsonValueFunction(): Callable {
     return new BuiltinCallable(
-      code`${this.reusables.snippets.bigIntFromJsonString}<${this.jsonValueType.expression}, ${this.expression}>`,
+      code`${this.reusables.snippets.BigInt_fromJsonString}<${this.jsonValueType.expression}, ${this.expression}>`,
     );
   }
 
   @Memoize()
   override get fromRdfResourceValuesFunction(): Callable {
     return new BuiltinCallable(
-      code`${this.reusables.snippets.bigIntFromRdfResourceValues}<${this.expression}>`,
+      code`${this.reusables.snippets.BigInt_fromRdfResourceValues}<${this.expression}>`,
     );
   }
 
   @Memoize()
   override get toJsonObjectFunction(): Callable {
     return new BuiltinCallable(
-      code`${this.reusables.snippets.bigIntToJsonObject}(${this.rdfjsTermExpression(this.datatype)})`,
+      code`${this.reusables.snippets.BigInt_toJsonObject}(${this.rdfjsTermExpression(this.datatype)})`,
     );
   }
 
   @Memoize()
   override get toJsonValueFunction(): Callable {
     return new BuiltinCallable(
-      code`${this.reusables.snippets.bigIntToJsonString}`,
+      code`${this.reusables.snippets.BigInt_toJsonString}`,
     );
   }
 

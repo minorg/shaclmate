@@ -1,0 +1,38 @@
+import type { SnippetFactory } from "../SnippetFactory.js";
+import { code, conditionalOutput } from "../ts-poet-wrapper.js";
+
+export const snippets_Array_intersection: SnippetFactory = ({
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}Array.intersection`,
+    code`\
+namespace ${syntheticNamePrefix}Array {
+  export function intersection<T>(left: readonly T[], right: readonly T[]): readonly T[] {
+    if (left.length === 0) {
+      return right;
+    }
+    if (right.length === 0) {
+      return left;
+    }
+
+    const intersection = new Set<T>();
+    if (left.length <= right.length) {
+      const rightSet = new Set(right);
+      for (const leftElement of left) {
+        if (rightSet.has(leftElement)) {
+          intersection.add(leftElement);
+        }
+      }
+    } else {
+      const leftSet = new Set(left);
+      for (const rightElement of right) {
+        if (leftSet.has(rightElement)) {
+          intersection.add(rightElement);
+        }  
+      }
+    }
+    return [...intersection];
+  }
+}`,
+  );

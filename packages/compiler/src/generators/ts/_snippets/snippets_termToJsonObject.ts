@@ -13,7 +13,7 @@ const ${syntheticNamePrefix}termToJsonObject: ${snippets.ToJsonFunction}<${impor
   (term) => {
     switch (term.termType) {
       case "BlankNode":
-        return ${snippets.blankNodeToJsonObject}(term);
+        return ${snippets.BlankNode_toJsonObject}(term);
       case "NamedNode":
         return ${snippets.iriToJsonObject}(term);
       case "Literal":

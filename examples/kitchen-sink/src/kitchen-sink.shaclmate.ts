@@ -1,3 +1,4 @@
+// biome-ignore-all lint/correctness/noUnusedVariables: namespace declaration merging
 import type {
   BlankNode,
   DatasetCore,
@@ -49,181 +50,397 @@ export type $_ToRdfResourceFunction<
   resourceSet: ResourceSet;
 }) => void;
 
-/**
- * Compare two arrays element-wise with the provided elementEquals function.
- */
-function $arrayEquals<T>(
-  leftArray: readonly T[],
-  rightArray: readonly T[],
-  elementEquals: (left: T, right: T) => boolean | $EqualsResult,
-): $EqualsResult {
-  if (leftArray.length !== rightArray.length) {
-    return Left({ left: leftArray, right: rightArray, type: "array-length" });
-  }
+namespace $Array {
+  /**
+   * Compare two arrays element-wise with the provided elementEquals function.
+   */
+  export function equals<T>(
+    leftArray: readonly T[],
+    rightArray: readonly T[],
+    elementEquals: (left: T, right: T) => boolean | $EqualsResult,
+  ): $EqualsResult {
+    if (leftArray.length !== rightArray.length) {
+      return Left({ left: leftArray, right: rightArray, type: "array-length" });
+    }
 
-  for (
-    let leftElementIndex = 0;
-    leftElementIndex < leftArray.length;
-    leftElementIndex++
-  ) {
-    const leftElement = leftArray[leftElementIndex];
-
-    const rightUnequals: $EqualsResult.Unequal[] = [];
     for (
-      let rightElementIndex = 0;
-      rightElementIndex < rightArray.length;
-      rightElementIndex++
+      let leftElementIndex = 0;
+      leftElementIndex < leftArray.length;
+      leftElementIndex++
     ) {
-      const rightElement = rightArray[rightElementIndex];
+      const leftElement = leftArray[leftElementIndex];
 
-      const leftElementEqualsRightElement =
-        $EqualsResult.fromBooleanEqualsResult(
-          leftElement,
-          rightElement,
-          elementEquals(leftElement, rightElement),
+      const rightUnequals: $EqualsResult.Unequal[] = [];
+      for (
+        let rightElementIndex = 0;
+        rightElementIndex < rightArray.length;
+        rightElementIndex++
+      ) {
+        const rightElement = rightArray[rightElementIndex];
+
+        const leftElementEqualsRightElement =
+          $EqualsResult.fromBooleanEqualsResult(
+            leftElement,
+            rightElement,
+            elementEquals(leftElement, rightElement),
+          );
+        if (leftElementEqualsRightElement.isRight()) {
+          break; // left element === right element, break out of the right iteration
+        }
+        rightUnequals.push(
+          leftElementEqualsRightElement.extract() as $EqualsResult.Unequal,
         );
-      if (leftElementEqualsRightElement.isRight()) {
-        break; // left element === right element, break out of the right iteration
       }
-      rightUnequals.push(
-        leftElementEqualsRightElement.extract() as $EqualsResult.Unequal,
-      );
+
+      if (rightUnequals.length === rightArray.length) {
+        // All right elements were unequal to the left element
+        return Left({
+          left: {
+            array: leftArray,
+            element: leftElement,
+            elementIndex: leftElementIndex,
+          },
+          right: { array: rightArray, unequals: rightUnequals },
+          type: "array-element",
+        });
+      }
+      // Else there was a right element equal to the left element, continue to the next left element
     }
 
-    if (rightUnequals.length === rightArray.length) {
-      // All right elements were unequal to the left element
-      return Left({
-        left: {
-          array: leftArray,
-          element: leftElement,
-          elementIndex: leftElementIndex,
-        },
-        right: { array: rightArray, unequals: rightUnequals },
-        type: "array-element",
-      });
-    }
-    // Else there was a right element equal to the left element, continue to the next left element
+    return $EqualsResult.Equal;
   }
-
-  return $EqualsResult.Equal;
 }
 
-function $arrayFromJsonArray<ItemJsonValueT, ItemT, ItemSchemaT>(
-  itemFromJsonValue: $FromJsonFunction<ItemJsonValueT, ItemT, ItemSchemaT>,
-): $FromJsonFunction<
-  ItemJsonValueT[] | undefined,
-  ItemT[],
-  $CollectionSchema<ItemSchemaT>
-> {
-  return (jsonArray, options) => {
-    if (jsonArray === undefined) {
-      return Either.of([]);
-    }
-    const { schema, ...otherOptions } = options;
-    const itemFromJsonValueOptions = {
-      schema: schema.itemType,
-      ...otherOptions,
+namespace $Array {
+  export function filter<ItemT, ItemFilterT>(
+    filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
+  ) {
+    return (
+      filter: $CollectionFilter<ItemFilterT>,
+      values: readonly ItemT[],
+    ): boolean => {
+      for (const value of values) {
+        if (!filterItem(filter, value)) {
+          return false;
+        }
+      }
+
+      if (filter.$maxCount !== undefined && values.length > filter.$maxCount) {
+        return false;
+      }
+
+      if (filter.$minCount !== undefined && values.length < filter.$minCount) {
+        return false;
+      }
+
+      return true;
     };
-    return Either.sequence(
-      jsonArray.map((itemJsonValue) =>
-        itemFromJsonValue(itemJsonValue, itemFromJsonValueOptions),
-      ),
-    );
+  }
+}
+
+namespace $Array {
+  export function fromJson<ItemJsonValueT, ItemT, ItemSchemaT>(
+    itemFromJsonValue: $FromJsonFunction<ItemJsonValueT, ItemT, ItemSchemaT>,
+  ): $FromJsonFunction<
+    ItemJsonValueT[] | undefined,
+    ItemT[],
+    $CollectionSchema<ItemSchemaT>
+  > {
+    return (jsonArray, options) => {
+      if (jsonArray === undefined) {
+        return Either.of([]);
+      }
+      const { schema, ...otherOptions } = options;
+      const itemFromJsonValueOptions = {
+        schema: schema.itemType,
+        ...otherOptions,
+      };
+      return Either.sequence(
+        jsonArray.map((itemJsonValue) =>
+          itemFromJsonValue(itemJsonValue, itemFromJsonValueOptions),
+        ),
+      );
+    };
+  }
+}
+
+namespace $Array {
+  export function hash<ItemT>(
+    hashItem: $HashFunction<ItemT>,
+  ): $HashFunction<readonly ItemT[]> {
+    return (hasher, value) => {
+      for (const item of value) {
+        hashItem(hasher, item);
+      }
+    };
+  }
+}
+
+namespace $Array {
+  export function intersection<T>(
+    left: readonly T[],
+    right: readonly T[],
+  ): readonly T[] {
+    if (left.length === 0) {
+      return right;
+    }
+    if (right.length === 0) {
+      return left;
+    }
+
+    const intersection = new Set<T>();
+    if (left.length <= right.length) {
+      const rightSet = new Set(right);
+      for (const leftElement of left) {
+        if (rightSet.has(leftElement)) {
+          intersection.add(leftElement);
+        }
+      }
+    } else {
+      const leftSet = new Set(left);
+      for (const rightElement of right) {
+        if (leftSet.has(rightElement)) {
+          intersection.add(rightElement);
+        }
+      }
+    }
+    return [...intersection];
+  }
+}
+
+namespace $Array {
+  export function toJson<ItemT, ItemJsonValueT>(
+    itemToJsonValue: $ToJsonFunction<ItemT, ItemJsonValueT>,
+  ): $ToJsonFunction<readonly ItemT[], ItemJsonValueT[]> {
+    return (array) => array.map(itemToJsonValue);
+  }
+}
+
+namespace $Array {
+  export function validate<ItemSchemaT, ItemValueT>(
+    validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
+  ): $ValidationFunction<
+    $CollectionSchema<ItemSchemaT>,
+    readonly ItemValueT[]
+  > {
+    return (schema, valueArray) => {
+      if (
+        schema.minCount !== undefined &&
+        valueArray.length < schema.minCount
+      ) {
+        return Left(
+          new Error(
+            `value array has length (${valueArray.length}) less than minCount (${schema.minCount})`,
+          ),
+        ) as Either<Error, readonly ItemValueT[]>;
+      }
+
+      return Either.sequence(
+        valueArray.map((value) => validateItem(schema.itemType, value)),
+      ) as Either<Error, readonly ItemValueT[]>;
+    };
+  }
+}
+
+namespace $BigDecimal {
+  export const convert: $ConversionFunction<
+    number | string | BigDecimal,
+    BigDecimal
+  > = (value) => Either.encase(() => new BigDecimal(value));
+}
+
+namespace $BigDecimal {
+  export const filter: $FilterFunction<
+    $NumericFilter<BigDecimal>,
+    BigDecimal
+  > = (filter, value) => {
+    if (
+      filter.in !== undefined &&
+      !filter.in.some((inValue) => inValue.equals(value))
+    ) {
+      return false;
+    }
+
+    if (
+      filter.maxExclusive !== undefined &&
+      value.greaterThanOrEqualTo(filter.maxExclusive)
+    ) {
+      return false;
+    }
+
+    if (
+      filter.maxInclusive !== undefined &&
+      value.greaterThan(filter.maxInclusive)
+    ) {
+      return false;
+    }
+
+    if (
+      filter.minExclusive !== undefined &&
+      value.lessThanOrEqualTo(filter.minExclusive)
+    ) {
+      return false;
+    }
+
+    if (
+      filter.minInclusive !== undefined &&
+      value.lessThan(filter.minInclusive)
+    ) {
+      return false;
+    }
+
+    return true;
   };
 }
 
-function $arrayIntersection<T>(
-  left: readonly T[],
-  right: readonly T[],
-): readonly T[] {
-  if (left.length === 0) {
-    return right;
-  }
-  if (right.length === 0) {
-    return left;
-  }
-
-  const intersection = new Set<T>();
-  if (left.length <= right.length) {
-    const rightSet = new Set(right);
-    for (const leftElement of left) {
-      if (rightSet.has(leftElement)) {
-        intersection.add(leftElement);
-      }
-    }
-  } else {
-    const leftSet = new Set(left);
-    for (const rightElement of right) {
-      if (leftSet.has(rightElement)) {
-        intersection.add(rightElement);
-      }
-    }
-  }
-  return [...intersection];
+namespace $BigDecimal {
+  export const fromJsonObject: $FromJsonFunction<
+    $TypedLiteralJsonObject,
+    BigDecimal,
+    $NumericSchema<BigDecimal>
+  > = (jsonObject, options) =>
+    $literalFromJsonObject(jsonObject, options).chain(
+      LiteralDecoder.decodeBigDecimalLiteral,
+    );
 }
 
-function $arrayToJsonArray<ItemT, ItemJsonValueT>(
-  itemToJsonValue: $ToJsonFunction<ItemT, ItemJsonValueT>,
-): $ToJsonFunction<readonly ItemT[], ItemJsonValueT[]> {
-  return (array) => array.map(itemToJsonValue);
+namespace $BigDecimal {
+  export const fromJsonString: $FromJsonFunction<
+    string,
+    BigDecimal,
+    $NumericSchema<BigDecimal>
+  > = (jsonValue) => Either.encase(() => new BigDecimal(jsonValue));
 }
 
-const $bigDecimalFromJsonObject: $FromJsonFunction<
-  $TypedLiteralJsonObject,
-  BigDecimal,
-  $NumericSchema<BigDecimal>
-> = (jsonObject, options) =>
-  $literalFromJsonObject(jsonObject, options).chain(
-    LiteralDecoder.decodeBigDecimalLiteral,
-  );
+namespace $BigDecimal {
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    BigDecimal,
+    $NumericSchema<BigDecimal>
+  > = (values, options) =>
+    $termLikeFromRdfResourceValues(values, options).chain((values) =>
+      values.chainMap((value) => value.toBigDecimal(options.schema.in)),
+    );
+}
 
-const $bigDecimalFromJsonString: $FromJsonFunction<
-  string,
-  BigDecimal,
-  $NumericSchema<BigDecimal>
-> = (jsonValue) => Either.encase(() => new BigDecimal(jsonValue));
+namespace $BigDecimal {
+  export const hash: $HashFunction<BigDecimal> = (hasher, value) => {
+    hasher.update(value.toFixed());
+  };
+}
 
-const $bigDecimalFromRdfResourceValues: $FromRdfResourceValuesFunction<
-  BigDecimal,
-  $NumericSchema<BigDecimal>
-> = (values, options) =>
-  $termLikeFromRdfResourceValues(values, options).chain((values) =>
-    values.chainMap((value) => value.toBigDecimal(options.schema.in)),
-  );
-
-const $bigDecimalJsonSchema = z
-  .union([z.string(), z.number()])
-  .transform((v, ctx) => {
-    try {
-      const d = new BigDecimal(v);
-      if (!d.isFinite()) {
-        throw new Error("not finite");
+namespace $BigDecimal {
+  export const jsonSchema = z
+    .union([z.string(), z.number()])
+    .transform((v, ctx) => {
+      try {
+        const d = new BigDecimal(v);
+        if (!d.isFinite()) {
+          throw new Error("not finite");
+        }
+        return d.toFixed();
+      } catch {
+        ctx.issues.push({
+          code: "custom",
+          message: "Invalid decimal",
+          input: v,
+        });
+        return z.NEVER;
       }
-      return d.toFixed();
-    } catch {
-      ctx.issues.push({ code: "custom", message: "Invalid decimal", input: v });
-      return z.NEVER;
-    }
-  }) as unknown as z.ZodType<string, string>;
-
-/**
- * Create a Literal from a BigDecimal.
- */
-function $bigDecimalLiteral(value: BigDecimal): Literal {
-  return dataFactory.literal(value.toFixed(), $xsd_decimal);
+    }) as unknown as z.ZodType<string, string>;
 }
 
-const $bigDecimalSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-  $NumericFilter<BigDecimal>,
-  $NumericSchema<BigDecimal>
-> = ({ filter, propertyPatterns, schema, valueVariable }) => {
-  const filterPatterns: $SparqlFilterPattern[] = [];
+namespace $BigDecimal {
+  export const sparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    $NumericFilter<BigDecimal>,
+    $NumericSchema<BigDecimal>
+  > = ({ filter, propertyPatterns, schema, valueVariable }) => {
+    const filterPatterns: $SparqlFilterPattern[] = [];
 
-  if (filter) {
-    if (filter.in !== undefined && filter.in.length > 0) {
-      filterPatterns.push({
+    if (filter) {
+      if (filter.in !== undefined && filter.in.length > 0) {
+        filterPatterns.push({
+          expression: {
+            args: [
+              valueVariable,
+              filter.in.map((value) => $literalFactory.bigdecimal(value)),
+            ],
+            operator: "in",
+            type: "operation",
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
+
+      if (filter.maxExclusive !== undefined) {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: "<",
+            args: [
+              valueVariable,
+              $literalFactory.bigdecimal(filter.maxExclusive),
+            ],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
+
+      if (filter.maxInclusive !== undefined) {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: "<=",
+            args: [
+              valueVariable,
+              $literalFactory.bigdecimal(filter.maxInclusive),
+            ],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
+
+      if (filter.minExclusive !== undefined) {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: ">",
+            args: [
+              valueVariable,
+              $literalFactory.bigdecimal(filter.minExclusive),
+            ],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
+
+      if (filter.minInclusive !== undefined) {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: ">=",
+            args: [
+              valueVariable,
+              $literalFactory.bigdecimal(filter.minInclusive),
+            ],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
+    }
+
+    const schemaPatterns: $SparqlPattern[] = [];
+    if (schema.in && schema.in.length > 0) {
+      schemaPatterns.push({
         expression: {
-          args: [valueVariable, filter.in.map($bigDecimalLiteral)],
+          args: [
+            valueVariable,
+            schema.in.map((value) => $literalFactory.bigdecimal(value)),
+          ],
           operator: "in",
           type: "operation",
         },
@@ -232,183 +449,304 @@ const $bigDecimalSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
       });
     }
 
-    if (filter.maxExclusive !== undefined) {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: "<",
-          args: [valueVariable, $bigDecimalLiteral(filter.maxExclusive)],
-        },
-        lift: true,
-        type: "filter",
-      });
-    }
-
-    if (filter.maxInclusive !== undefined) {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: "<=",
-          args: [valueVariable, $bigDecimalLiteral(filter.maxInclusive)],
-        },
-        lift: true,
-        type: "filter",
-      });
-    }
-
-    if (filter.minExclusive !== undefined) {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: ">",
-          args: [valueVariable, $bigDecimalLiteral(filter.minExclusive)],
-        },
-        lift: true,
-        type: "filter",
-      });
-    }
-
-    if (filter.minInclusive !== undefined) {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: ">=",
-          args: [valueVariable, $bigDecimalLiteral(filter.minInclusive)],
-        },
-        lift: true,
-        type: "filter",
-      });
-    }
-  }
-
-  const schemaPatterns: $SparqlPattern[] = [];
-  if (schema.in && schema.in.length > 0) {
-    schemaPatterns.push({
-      expression: {
-        args: [valueVariable, schema.in.map($bigDecimalLiteral)],
-        operator: "in",
-        type: "operation",
-      },
-      lift: true,
-      type: "filter",
-    });
-  }
-
-  return (propertyPatterns as readonly $SparqlPattern[])
-    .concat(schemaPatterns)
-    .concat(filterPatterns);
-};
-
-function $bigDecimalToJsonObject(
-  datatype: NamedNode,
-): $ToJsonFunction<BigDecimal, $TypedLiteralJsonObject> {
-  return (value) =>
-    $typedLiteralToJsonObject($literalFactory.bigdecimal(value, datatype));
+    return (propertyPatterns as readonly $SparqlPattern[])
+      .concat(schemaPatterns)
+      .concat(filterPatterns);
+  };
 }
 
-const $bigDecimalToJsonString: $ToJsonFunction<BigDecimal, string> = (
-  bigDecimal,
-) => bigDecimal.toFixed();
+namespace $BigDecimal {
+  export function toJsonObject(
+    datatype: NamedNode,
+  ): $ToJsonFunction<BigDecimal, $TypedLiteralJsonObject> {
+    return (value) =>
+      $typedLiteralToJsonObject($literalFactory.bigdecimal(value, datatype));
+  }
+}
 
-function $bigIntFromJsonObject<BigIntT extends bigint>(
-  jsonObject: $TypedLiteralJsonObject,
-  options: Parameters<
-    $FromJsonFunction<$TypedLiteralJsonObject, BigIntT, $NumericSchema<BigIntT>>
-  >[1],
-): Either<Error, BigIntT> {
-  const { schema } = options;
-  return $literalFromJsonObject(jsonObject)
-    .chain(LiteralDecoder.decodeBigIntLiteral)
-    .chain((value) =>
+namespace $BigDecimal {
+  export const toJsonString: $ToJsonFunction<BigDecimal, string> = (
+    bigDecimal,
+  ) => bigDecimal.toFixed();
+}
+
+namespace $BigInt {
+  export const convert: $ConversionFunction<
+    bigint | number | string,
+    bigint
+  > = (value) => Either.encase(() => BigInt(value));
+}
+
+namespace $BigInt {
+  export function fromJsonObject<BigIntT extends bigint>(
+    jsonObject: $TypedLiteralJsonObject,
+    options: Parameters<
+      $FromJsonFunction<
+        $TypedLiteralJsonObject,
+        BigIntT,
+        $NumericSchema<BigIntT>
+      >
+    >[1],
+  ): Either<Error, BigIntT> {
+    const { schema } = options;
+    return $literalFromJsonObject(jsonObject)
+      .chain(LiteralDecoder.decodeBigIntLiteral)
+      .chain((value) =>
+        $constrainPrimitive<BigIntT, bigint>(value, schema.in),
+      ) as Either<Error, BigIntT>;
+  }
+}
+
+namespace $BigInt {
+  export function fromJsonString<
+    JsonValueT extends string,
+    BigIntT extends bigint,
+  >(
+    jsonValue: JsonValueT,
+    options: Parameters<
+      $FromJsonFunction<string, BigIntT, $NumericSchema<BigIntT>>
+    >[1],
+  ): Either<Error, BigIntT> {
+    const { schema } = options;
+    return Either.encase(() => BigInt(jsonValue) as BigIntT).chain((value) =>
       $constrainPrimitive<BigIntT, bigint>(value, schema.in),
     ) as Either<Error, BigIntT>;
+  }
 }
 
-function $bigIntFromJsonString<
-  JsonValueT extends string,
-  BigIntT extends bigint,
->(
-  jsonValue: JsonValueT,
-  options: Parameters<
-    $FromJsonFunction<string, BigIntT, $NumericSchema<BigIntT>>
-  >[1],
-): Either<Error, BigIntT> {
-  const { schema } = options;
-  return Either.encase(() => BigInt(jsonValue) as BigIntT).chain((value) =>
-    $constrainPrimitive<BigIntT, bigint>(value, schema.in),
-  ) as Either<Error, BigIntT>;
+namespace $BigInt {
+  export function fromRdfResourceValues<BigIntT extends bigint>(
+    values: Resource.Values,
+    options: Parameters<
+      $FromRdfResourceValuesFunction<BigIntT, $NumericSchema<BigIntT>>
+    >[1],
+  ): Either<Error, Resource.Values<BigIntT>> {
+    return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+      values.chainMap((value) =>
+        options.schema.in
+          ? value.toBigInt(options.schema.in)
+          : (value.toBigInt() as Either<Error, BigIntT>),
+      ),
+    );
+  }
 }
 
-function $bigIntFromRdfResourceValues<BigIntT extends bigint>(
-  values: Resource.Values,
-  options: Parameters<
-    $FromRdfResourceValuesFunction<BigIntT, $NumericSchema<BigIntT>>
-  >[1],
-): Either<Error, Resource.Values<BigIntT>> {
-  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
-    values.chainMap((value) =>
-      options.schema.in
-        ? value.toBigInt(options.schema.in)
-        : (value.toBigInt() as Either<Error, BigIntT>),
-    ),
-  );
+namespace $BigInt {
+  export const jsonSchema = z
+    .union([z.string().regex(/^-?\d+$/), z.number().int()])
+    .transform((v) => BigInt(v).toString()) as unknown as z.ZodType<
+    string,
+    string
+  >;
 }
 
-const $bigIntJsonSchema = z
-  .union([z.string().regex(/^-?\d+$/), z.number().int()])
-  .transform((v) => BigInt(v).toString()) as unknown as z.ZodType<
-  string,
-  string
->;
-
-function $bigIntToJsonObject(
-  datatype: NamedNode,
-): $ToJsonFunction<bigint, $TypedLiteralJsonObject> {
-  return (value) =>
-    $typedLiteralToJsonObject($literalFactory.bigint(value, datatype));
+namespace $BigInt {
+  export function toJsonObject(
+    datatype: NamedNode,
+  ): $ToJsonFunction<bigint, $TypedLiteralJsonObject> {
+    return (value) =>
+      $typedLiteralToJsonObject($literalFactory.bigint(value, datatype));
+  }
 }
 
-const $bigIntToJsonString: $ToJsonFunction<bigint, string> = (bigInt) =>
-  bigInt.toString();
-
-interface $BlankNodeFilter {}
-
-const $blankNodeFromJsonObject: $FromJsonFunction<
-  $IdentifierJsonObject,
-  BlankNode,
-  undefined
-> = (jsonObject) => $blankNodeFromJsonString(jsonObject["@id"]);
-
-const $blankNodeFromJsonString: $FromJsonFunction<
-  string,
-  BlankNode,
-  undefined
-> = (jsonValue) => Right(dataFactory.blankNode(jsonValue.substring(2)));
-
-const $blankNodeFromRdfResourceValues: $FromRdfResourceValuesFunction<
-  BlankNode,
-  $BlankNodeSchema
-> = (values) => values.chainMap((value) => value.toBlankNode());
-
-interface $BlankNodeSchema {
-  readonly kind: "BlankNode";
+namespace $BigInt {
+  export const toJsonString: $ToJsonFunction<bigint, string> = (bigInt) =>
+    bigInt.toString();
 }
 
-const $blankNodeSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-  $BlankNodeFilter,
-  $BlankNodeSchema
-> = ({ propertyPatterns }) => propertyPatterns;
+namespace $BlankNode {
+  export const convert: $ConversionFunction<
+    BlankNode | undefined,
+    BlankNode
+  > = (value) => {
+    switch (typeof value) {
+      case "object":
+        return Either.of(value);
+      case "undefined":
+        return Either.of(dataFactory.blankNode());
+    }
+  };
+}
 
-const $blankNodeToJsonObject: $ToJsonFunction<
-  BlankNode,
-  $IdentifierJsonObject
-> = (blankNode) => ({
-  "@id": $blankNodeToJsonString(blankNode),
-});
+namespace $BlankNode {
+  export const filter: $FilterFunction<$BlankNode.Filter, BlankNode> = () =>
+    true;
+}
 
-const $blankNodeToJsonString: $ToJsonFunction<BlankNode, string> = (
-  blankNode,
-) => `_:${blankNode.value}`;
+namespace $BlankNode {
+  export interface Filter {}
+}
+
+namespace $BlankNode {
+  export const fromJsonObject: $FromJsonFunction<
+    $Identifier.JsonObject,
+    BlankNode,
+    undefined
+  > = (jsonObject) => $BlankNode.fromJsonString(jsonObject["@id"]);
+}
+
+namespace $BlankNode {
+  export const fromJsonString: $FromJsonFunction<
+    string,
+    BlankNode,
+    undefined
+  > = (jsonValue) => Right(dataFactory.blankNode(jsonValue.substring(2)));
+}
+
+namespace $BlankNode {
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    BlankNode,
+    $BlankNode.Schema
+  > = (values) => values.chainMap((value) => value.toBlankNode());
+}
+
+namespace $BlankNode {
+  export function parse(identifier: string): Either<Error, BlankNode> {
+    return $Identifier
+      .parse(identifier)
+      .chain((identifier) =>
+        identifier.termType === "BlankNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be BlankNode")),
+      ) as Either<Error, BlankNode>;
+  }
+}
+
+namespace $BlankNode {
+  export interface Schema {
+    readonly kind: "BlankNode";
+  }
+}
+
+namespace $BlankNode {
+  export const sparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    $BlankNode.Filter,
+    $BlankNode.Schema
+  > = ({ propertyPatterns }) => propertyPatterns;
+}
+
+namespace $BlankNode {
+  export const toJsonObject: $ToJsonFunction<
+    BlankNode,
+    $Identifier.JsonObject
+  > = (blankNode) => ({
+    "@id": $BlankNode.toJsonString(blankNode),
+  });
+}
+
+namespace $BlankNode {
+  export const toJsonString: $ToJsonFunction<BlankNode, string> = (blankNode) =>
+    `_:${blankNode.value}`;
+}
+
+namespace $Boolean {
+  export const filter: $FilterFunction<$Boolean.Filter, boolean> = (
+    filter,
+    value,
+  ) => {
+    if (filter.value !== undefined && value !== filter.value) {
+      return false;
+    }
+
+    return true;
+  };
+}
+
+namespace $Boolean {
+  export interface Filter {
+    readonly value?: boolean;
+  }
+}
+
+namespace $Boolean {
+  export function fromJsonBoolean<BooleanT extends boolean>(
+    jsonBoolean: BooleanT,
+    _options: Parameters<
+      $FromJsonFunction<BooleanT, BooleanT, $Boolean.Schema<BooleanT>>
+    >[1],
+  ): Either<Error, BooleanT> {
+    return Either.of(jsonBoolean);
+  }
+}
+
+namespace $Boolean {
+  export function fromJsonObject<BooleanT extends boolean>(
+    jsonObject: $TypedLiteralJsonObject,
+    options: Parameters<
+      $FromJsonFunction<
+        $TypedLiteralJsonObject,
+        BooleanT,
+        $Boolean.Schema<BooleanT>
+      >
+    >[1],
+  ): Either<Error, BooleanT> {
+    const { schema } = options;
+    return $literalFromJsonObject(jsonObject)
+      .chain(LiteralDecoder.decodeBooleanLiteral)
+      .chain((value) =>
+        $constrainPrimitive<BooleanT, boolean>(value, schema.in),
+      ) as Either<Error, BooleanT>;
+  }
+}
+
+namespace $Boolean {
+  export function fromRdfResourceValues<BooleanT extends boolean>(
+    values: Resource.Values,
+    options: Parameters<
+      $FromRdfResourceValuesFunction<BooleanT, $Boolean.Schema<BooleanT>>
+    >[1],
+  ): Either<Error, Resource.Values<BooleanT>> {
+    return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+      values.chainMap((value) =>
+        options.schema.in
+          ? value.toBoolean(options.schema.in)
+          : (value.toBoolean() as Either<Error, BooleanT>),
+      ),
+    );
+  }
+}
+
+namespace $Boolean {
+  export const hash: $HashFunction<boolean> = (hasher, value) => {
+    hasher.update(value.toString());
+  };
+}
+
+namespace $Boolean {
+  export interface Schema<BooleanT extends boolean> {
+    readonly datatype: NamedNode;
+    readonly hasValues?: readonly Literal[];
+    readonly in?: readonly BooleanT[];
+    readonly kind: "Boolean";
+  }
+}
+
+namespace $Boolean {
+  export const sparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    $Boolean.Filter,
+    $Boolean.Schema<boolean>
+  > = ({ filter, valueVariable, ...otherParameters }) => {
+    const filterPatterns: $SparqlFilterPattern[] = [];
+
+    if (filter) {
+      if (filter.value !== undefined) {
+        filterPatterns.push(
+          $sparqlValueInPattern({
+            lift: true,
+            valueVariable,
+            valueIn: [filter.value],
+          }),
+        );
+      }
+    }
+
+    return $termSchemaSparqlPatterns({
+      ...otherParameters,
+      filterPatterns,
+      valueVariable,
+    });
+  };
+}
 
 /**
  * Compare two objects with equals(other: T): boolean methods and return an $EqualsResult.
@@ -419,84 +757,6 @@ function $booleanEquals<T extends { equals: (other: T) => boolean }>(
 ): $EqualsResult {
   return $EqualsResult.fromBooleanEqualsResult(left, right, left.equals(right));
 }
-
-interface $BooleanFilter {
-  readonly value?: boolean;
-}
-
-function $booleanFromJsonBoolean<BooleanT extends boolean>(
-  jsonBoolean: BooleanT,
-  _options: Parameters<
-    $FromJsonFunction<BooleanT, BooleanT, $BooleanSchema<BooleanT>>
-  >[1],
-): Either<Error, BooleanT> {
-  return Either.of(jsonBoolean);
-}
-
-function $booleanFromJsonObject<BooleanT extends boolean>(
-  jsonObject: $TypedLiteralJsonObject,
-  options: Parameters<
-    $FromJsonFunction<
-      $TypedLiteralJsonObject,
-      BooleanT,
-      $BooleanSchema<BooleanT>
-    >
-  >[1],
-): Either<Error, BooleanT> {
-  const { schema } = options;
-  return $literalFromJsonObject(jsonObject)
-    .chain(LiteralDecoder.decodeBooleanLiteral)
-    .chain((value) =>
-      $constrainPrimitive<BooleanT, boolean>(value, schema.in),
-    ) as Either<Error, BooleanT>;
-}
-
-function $booleanFromRdfResourceValues<BooleanT extends boolean>(
-  values: Resource.Values,
-  options: Parameters<
-    $FromRdfResourceValuesFunction<BooleanT, $BooleanSchema<BooleanT>>
-  >[1],
-): Either<Error, Resource.Values<BooleanT>> {
-  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
-    values.chainMap((value) =>
-      options.schema.in
-        ? value.toBoolean(options.schema.in)
-        : (value.toBoolean() as Either<Error, BooleanT>),
-    ),
-  );
-}
-
-interface $BooleanSchema<BooleanT extends boolean> {
-  readonly datatype: NamedNode;
-  readonly hasValues?: readonly Literal[];
-  readonly in?: readonly BooleanT[];
-  readonly kind: "Boolean";
-}
-
-const $booleanSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-  $BooleanFilter,
-  $BooleanSchema<boolean>
-> = ({ filter, valueVariable, ...otherParameters }) => {
-  const filterPatterns: $SparqlFilterPattern[] = [];
-
-  if (filter) {
-    if (filter.value !== undefined) {
-      filterPatterns.push(
-        $sparqlValueInPattern({
-          lift: true,
-          valueVariable,
-          valueIn: [filter.value],
-        }),
-      );
-    }
-  }
-
-  return $termSchemaSparqlPatterns({
-    ...otherParameters,
-    filterPatterns,
-    valueVariable,
-  });
-};
 
 type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $maxCount?: number;
@@ -575,55 +835,16 @@ function $convertToArraySet<
         )) as Either<Error, readonly ItemTargetT[]>;
 }
 
-const $convertToBigDecimal: $ConversionFunction<
-  number | string | BigDecimal,
-  BigDecimal
-> = (value) => Either.encase(() => new BigDecimal(value));
-
-const $convertToBigInt: $ConversionFunction<
-  bigint | number | string,
-  bigint
-> = (value) => Either.encase(() => BigInt(value));
-
-const $convertToBlankNode: $ConversionFunction<
-  BlankNode | undefined,
-  BlankNode
-> = (value) => {
-  switch (typeof value) {
-    case "object":
-      return Either.of(value);
-    case "undefined":
-      return Either.of(dataFactory.blankNode());
-  }
-};
-
-function $convertToIdentifier<
-  DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
->(
-  value: BlankNode | NamedNode | (keyof DefaultNamespaceT & string) | undefined,
-  { defaultNamespace }: { defaultNamespace: DefaultNamespaceT | undefined },
-): Either<Error, BlankNode | NamedNode> {
-  switch (typeof value) {
-    case "object":
-      return Either.of(value);
-    case "string":
-      return expandIri(value, { dataFactory: dataFactory, defaultNamespace });
-    case "undefined":
-      return Either.of(dataFactory.blankNode());
-  }
-}
-
 function $convertToIdentifierProperty<
   DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
 >(
   identifier:
-    | (() => BlankNode | NamedNode)
-    | BlankNode
-    | NamedNode
+    | (() => $Identifier)
+    | $Identifier
     | (keyof DefaultNamespaceT & string)
     | undefined,
   { defaultNamespace }: { defaultNamespace: DefaultNamespaceT | undefined },
-): Either<Error, () => BlankNode | NamedNode> {
+): Either<Error, () => $Identifier> {
   switch (typeof identifier) {
     case "function":
       return Either.of(identifier);
@@ -1332,87 +1553,6 @@ export namespace $EqualsResult {
     | { readonly left: any; readonly type: "right-null" };
 }
 
-function $filterArray<ItemT, ItemFilterT>(
-  filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
-) {
-  return (
-    filter: $CollectionFilter<ItemFilterT>,
-    values: readonly ItemT[],
-  ): boolean => {
-    for (const value of values) {
-      if (!filterItem(filter, value)) {
-        return false;
-      }
-    }
-
-    if (filter.$maxCount !== undefined && values.length > filter.$maxCount) {
-      return false;
-    }
-
-    if (filter.$minCount !== undefined && values.length < filter.$minCount) {
-      return false;
-    }
-
-    return true;
-  };
-}
-
-const $filterBigDecimal: $FilterFunction<
-  $NumericFilter<BigDecimal>,
-  BigDecimal
-> = (filter, value) => {
-  if (
-    filter.in !== undefined &&
-    !filter.in.some((inValue) => inValue.equals(value))
-  ) {
-    return false;
-  }
-
-  if (
-    filter.maxExclusive !== undefined &&
-    value.greaterThanOrEqualTo(filter.maxExclusive)
-  ) {
-    return false;
-  }
-
-  if (
-    filter.maxInclusive !== undefined &&
-    value.greaterThan(filter.maxInclusive)
-  ) {
-    return false;
-  }
-
-  if (
-    filter.minExclusive !== undefined &&
-    value.lessThanOrEqualTo(filter.minExclusive)
-  ) {
-    return false;
-  }
-
-  if (
-    filter.minInclusive !== undefined &&
-    value.lessThan(filter.minInclusive)
-  ) {
-    return false;
-  }
-
-  return true;
-};
-
-const $filterBlankNode: $FilterFunction<$BlankNodeFilter, BlankNode> = () =>
-  true;
-
-const $filterBoolean: $FilterFunction<$BooleanFilter, boolean> = (
-  filter,
-  value,
-) => {
-  if (filter.value !== undefined && value !== filter.value) {
-    return false;
-  }
-
-  return true;
-};
-
 const $filterDate: $FilterFunction<$DateFilter, Date> = (filter, value) => {
   if (
     filter.in !== undefined &&
@@ -1456,24 +1596,6 @@ export type $FilterFunction<FilterT, ValueT> = (
   filter: FilterT,
   value: ValueT,
 ) => boolean;
-
-const $filterIdentifier: $FilterFunction<
-  $IdentifierFilter,
-  BlankNode | NamedNode
-> = (filter, value) => {
-  if (
-    filter.in !== undefined &&
-    !filter.in.some((inValue) => inValue.equals(value))
-  ) {
-    return false;
-  }
-
-  if (filter.type !== undefined && value.termType !== filter.type) {
-    return false;
-  }
-
-  return true;
-};
 
 const $filterIri: $FilterFunction<$IriFilter, NamedNode> = (filter, value) => {
   if (
@@ -1703,24 +1825,6 @@ export type $FromRdfResourceValuesFunction<ValueT, ValueSchemaT> = (
   },
 ) => Either<Error, Resource.Values<ValueT>>;
 
-function $hashArray<ItemT>(
-  hashItem: $HashFunction<ItemT>,
-): $HashFunction<readonly ItemT[]> {
-  return (hasher, value) => {
-    for (const item of value) {
-      hashItem(hasher, item);
-    }
-  };
-}
-
-const $hashBigDecimal: $HashFunction<BigDecimal> = (hasher, value) => {
-  hasher.update(value.toFixed());
-};
-
-const $hashBoolean: $HashFunction<boolean> = (hasher, value) => {
-  hasher.update(value.toString());
-};
-
 const $hashDate: $HashFunction<Date> = (hasher, value) => {
   hasher.update($toIsoDateString(value));
 };
@@ -1765,59 +1869,167 @@ const $hashTerm: $HashFunction<BlankNode | Literal | NamedNode> = (
   }
 };
 
-interface $IdentifierFilter {
-  readonly in?: readonly (BlankNode | NamedNode)[];
-  readonly type?: "BlankNode" | "NamedNode";
+type $Identifier = BlankNode | NamedNode;
+
+namespace $Identifier {
+  export function convert<
+    DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
+  >(
+    value: $Identifier | (keyof DefaultNamespaceT & string) | undefined,
+    { defaultNamespace }: { defaultNamespace: DefaultNamespaceT | undefined },
+  ): Either<Error, $Identifier> {
+    switch (typeof value) {
+      case "object":
+        return Either.of(value);
+      case "string":
+        return expandIri(value, { dataFactory: dataFactory, defaultNamespace });
+      case "undefined":
+        return Either.of(dataFactory.blankNode());
+    }
+  }
 }
 
-const $identifierFromJsonObject: $FromJsonFunction<
-  $IdentifierJsonObject,
-  BlankNode | NamedNode,
-  $IdentifierSchema
-> = (jsonObject, options) =>
-  $identifierFromJsonString(jsonObject["@id"], options);
+namespace $Identifier {
+  export const filter: $FilterFunction<$Identifier.Filter, $Identifier> = (
+    filter,
+    value,
+  ) => {
+    if (
+      filter.in !== undefined &&
+      !filter.in.some((inValue) => inValue.equals(value))
+    ) {
+      return false;
+    }
 
-const $identifierFromJsonString: $FromJsonFunction<
-  string,
-  BlankNode | NamedNode,
-  $IdentifierSchema
-> = (jsonString, options) =>
-  jsonString.startsWith("_:")
-    ? ($blankNodeFromJsonString(jsonString, options) as Either<
-        Error,
-        BlankNode | NamedNode
-      >)
-    : ($iriFromJsonString(jsonString, options) as Either<
-        Error,
-        BlankNode | NamedNode
-      >);
+    if (filter.type !== undefined && value.termType !== filter.type) {
+      return false;
+    }
 
-const $identifierFromRdfResourceValues: $FromRdfResourceValuesFunction<
-  BlankNode | NamedNode,
-  $IdentifierSchema
-> = (values, options) =>
-  $termLikeFromRdfResourceValues(values, options).chain((values) =>
-    values.chainMap((value) => value.toIdentifier()),
-  );
-
-interface $IdentifierJsonObject<IdT extends string = string> {
-  "@id": IdT;
+    return true;
+  };
 }
 
-namespace $IdentifierJsonObject {
-  export const schema = z.object({ "@id": z.string().min(1) });
+namespace $Identifier {
+  export interface Filter {
+    readonly in?: readonly $Identifier[];
+    readonly type?: "BlankNode" | "NamedNode";
+  }
 }
 
-interface $IdentifierSchema {
-  readonly hasValues?: readonly NamedNode[];
-  readonly kind: "Identifier";
+namespace $Identifier {
+  export const fromJsonObject: $FromJsonFunction<
+    $Identifier.JsonObject,
+    $Identifier,
+    $Identifier.Schema
+  > = (jsonObject, options) =>
+    $Identifier.fromJsonString(jsonObject["@id"], options);
+}
+
+namespace $Identifier {
+  export const fromJsonString: $FromJsonFunction<
+    string,
+    $Identifier,
+    $Identifier.Schema
+  > = (jsonString, options) =>
+    jsonString.startsWith("_:")
+      ? ($BlankNode.fromJsonString(jsonString, options) as Either<
+          Error,
+          $Identifier
+        >)
+      : ($iriFromJsonString(jsonString, options) as Either<Error, $Identifier>);
+}
+
+namespace $Identifier {
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    $Identifier,
+    $Identifier.Schema
+  > = (values, options) =>
+    $termLikeFromRdfResourceValues(values, options).chain((values) =>
+      values.chainMap((value) => value.toIdentifier()),
+    );
+}
+
+namespace $Identifier {
+  export interface JsonObject<IdT extends string = string> {
+    "@id": IdT;
+  }
+
+  export namespace JsonObject {
+    export const schema = z.object({ "@id": z.string().min(1) });
+  }
+}
+
+namespace $Identifier {
+  export const parse = NTriplesIdentifier.parser(dataFactory);
+}
+
+namespace $Identifier {
+  export interface Schema {
+    readonly hasValues?: readonly NamedNode[];
+    readonly kind: "Identifier";
+  }
+}
+
+namespace $Identifier {
+  export const sparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    $Identifier.Filter,
+    $Identifier.Schema
+  > = ({ filter, propertyPatterns, valueVariable }) => {
+    const patterns: $SparqlPattern[] = propertyPatterns.concat();
+
+    if (filter) {
+      if (filter.in !== undefined) {
+        const valueIn = filter.in.filter(
+          (identifier) => identifier.termType === "NamedNode",
+        );
+        if (valueIn.length > 0) {
+          patterns.push(
+            $sparqlValueInPattern({ lift: true, valueVariable, valueIn }),
+          );
+        }
+      }
+
+      if (filter.type !== undefined) {
+        patterns.push({
+          expression: {
+            type: "operation",
+            operator: filter.type === "BlankNode" ? "isBlank" : "isIRI",
+            args: [valueVariable],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
+    }
+
+    return patterns;
+  };
+}
+
+namespace $Identifier {
+  export const toJsonObject: $ToJsonFunction<
+    $Identifier,
+    $Identifier.JsonObject
+  > = (identifier) =>
+    identifier.termType === "BlankNode"
+      ? $BlankNode.toJsonObject(identifier)
+      : $iriToJsonObject(identifier);
+}
+
+namespace $Identifier {
+  export const toJsonString: $ToJsonFunction<$Identifier, string> = (
+    identifier,
+  ) =>
+    identifier.termType === "BlankNode"
+      ? $BlankNode.toJsonString(identifier)
+      : $iriToJsonString(identifier);
 }
 
 class $IdentifierSet {
   private readonly blankNodeValues = new Set<string>();
   private readonly namedNodeValues = new Set<string>();
 
-  add(identifier: BlankNode | NamedNode): this {
+  add(identifier: $Identifier): this {
     switch (identifier.termType) {
       case "BlankNode":
         this.blankNodeValues.add(identifier.value);
@@ -1828,7 +2040,7 @@ class $IdentifierSet {
     }
   }
 
-  has(identifier: BlankNode | NamedNode): boolean {
+  has(identifier: $Identifier): boolean {
     switch (identifier.termType) {
       case "BlankNode":
         return this.blankNodeValues.has(identifier.value);
@@ -1837,56 +2049,6 @@ class $IdentifierSet {
     }
   }
 }
-
-const $identifierSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-  $IdentifierFilter,
-  $IdentifierSchema
-> = ({ filter, propertyPatterns, valueVariable }) => {
-  const patterns: $SparqlPattern[] = propertyPatterns.concat();
-
-  if (filter) {
-    if (filter.in !== undefined) {
-      const valueIn = filter.in.filter(
-        (identifier) => identifier.termType === "NamedNode",
-      );
-      if (valueIn.length > 0) {
-        patterns.push(
-          $sparqlValueInPattern({ lift: true, valueVariable, valueIn }),
-        );
-      }
-    }
-
-    if (filter.type !== undefined) {
-      patterns.push({
-        expression: {
-          type: "operation",
-          operator: filter.type === "BlankNode" ? "isBlank" : "isIRI",
-          args: [valueVariable],
-        },
-        lift: true,
-        type: "filter",
-      });
-    }
-  }
-
-  return patterns;
-};
-
-const $identifierToJsonObject: $ToJsonFunction<
-  BlankNode | NamedNode,
-  $IdentifierJsonObject
-> = (identifier) =>
-  identifier.termType === "BlankNode"
-    ? $blankNodeToJsonObject(identifier)
-    : $iriToJsonObject(identifier);
-
-const $identifierToJsonString: $ToJsonFunction<
-  BlankNode | NamedNode,
-  string
-> = (identifier) =>
-  identifier.termType === "BlankNode"
-    ? $blankNodeToJsonString(identifier)
-    : $iriToJsonString(identifier);
 
 function $identityConversionFunction<T>(
   value: T,
@@ -1929,9 +2091,9 @@ interface $IriFilter {
 }
 
 function $iriFromJsonObject(
-  jsonObject: $IdentifierJsonObject,
+  jsonObject: $Identifier.JsonObject,
   options: Parameters<
-    $FromJsonFunction<$IdentifierJsonObject, NamedNode, $IriSchema>
+    $FromJsonFunction<$Identifier.JsonObject, NamedNode, $IriSchema>
   >[1],
 ): Either<Error, NamedNode> {
   return $iriFromJsonString(jsonObject["@id"], options);
@@ -1993,7 +2155,7 @@ const $iriSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
 
 function $iriToJsonObject<IriT extends string = string>(
   iri: NamedNode<IriT>,
-): $IdentifierJsonObject<IriT> {
+): $Identifier.JsonObject<IriT> {
   return { "@id": $iriToJsonString(iri) };
 }
 
@@ -2572,7 +2734,7 @@ function $literalSchemaSparqlPatterns({
     patterns.push($sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
   }
 
-  const languageIn = $arrayIntersection(
+  const languageIn = $Array.intersection(
     schema.languageIn ?? [],
     preferredLanguages ?? [],
   );
@@ -3037,22 +3199,14 @@ export type $ObjectTypeGuardFunction<ObjectT extends $Object> = (
   object: $Object,
 ) => object is ObjectT;
 
-export function $parseBlankNode(identifier: string): Either<Error, BlankNode> {
-  return $parseIdentifier(identifier).chain((identifier) =>
-    identifier.termType === "BlankNode"
-      ? Right(identifier)
-      : Left(new Error("expected identifier to be BlankNode")),
-  ) as Either<Error, BlankNode>;
-}
-
-const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
-
 export function $parseIri(identifier: string): Either<Error, NamedNode> {
-  return $parseIdentifier(identifier).chain((identifier) =>
-    identifier.termType === "NamedNode"
-      ? Right(identifier)
-      : Left(new Error("expected identifier to be NamedNode")),
-  ) as Either<Error, NamedNode>;
+  return $Identifier
+    .parse(identifier)
+    .chain((identifier) =>
+      identifier.termType === "NamedNode"
+        ? Right(identifier)
+        : Left(new Error("expected identifier to be NamedNode")),
+    ) as Either<Error, NamedNode>;
 }
 
 type $Primitive = bigint | boolean | number | string;
@@ -4026,7 +4180,7 @@ function $termFromJsonObject<TermT extends BlankNode | Literal | NamedNode>(
     switch (termType) {
       case "BlankNode": {
         if ("@id" in jsonObject && jsonObject["@id"].startsWith("_:")) {
-          return $blankNodeFromJsonObject(jsonObject) as Either<Error, TermT>;
+          return $BlankNode.fromJsonObject(jsonObject) as Either<Error, TermT>;
         }
         break;
       }
@@ -4095,11 +4249,11 @@ function $termFromRdfResourceValues<
   );
 }
 
-type $TermJsonObject = $IdentifierJsonObject | $LiteralJsonObject;
+type $TermJsonObject = $Identifier.JsonObject | $LiteralJsonObject;
 
 namespace $TermJsonObject {
   export const schema = z.union([
-    $IdentifierJsonObject.schema,
+    $Identifier.JsonObject.schema,
     $LiteralJsonObject.schema,
   ]);
 }
@@ -4263,7 +4417,7 @@ const $termToJsonObject: $ToJsonFunction<
 > = (term) => {
   switch (term.termType) {
     case "BlankNode":
-      return $blankNodeToJsonObject(term);
+      return $BlankNode.toJsonObject(term);
     case "NamedNode":
       return $iriToJsonObject(term);
     case "Literal":
@@ -4331,24 +4485,6 @@ const $typedLiteralToJsonObject: $ToJsonFunction<
   "@type": literal.datatype.value,
   "@value": literal.value,
 });
-
-function $validateArray<ItemSchemaT, ItemValueT>(
-  validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
-): $ValidationFunction<$CollectionSchema<ItemSchemaT>, readonly ItemValueT[]> {
-  return (schema, valueArray) => {
-    if (schema.minCount !== undefined && valueArray.length < schema.minCount) {
-      return Left(
-        new Error(
-          `value array has length (${valueArray.length}) less than minCount (${schema.minCount})`,
-        ),
-      ) as Either<Error, readonly ItemValueT[]>;
-    }
-
-    return Either.sequence(
-      valueArray.map((value) => validateItem(schema.itemType, value)),
-    ) as Either<Error, readonly ItemValueT[]>;
-  };
-}
 
 function $validateMaybe<ItemSchemaT, ItemValueT>(
   validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
@@ -4590,7 +4726,7 @@ export type UnionDiscriminantsStruct = {
   /**
    * Discriminated union that can be discriminated by an intrinsic discriminant property (termType).
    */
-  readonly optionalTerm: Maybe<(BlankNode | NamedNode) | Literal>;
+  readonly optionalTerm: Maybe<$Identifier | Literal>;
 
   /**
    * Discriminated union that can be discriminated by typeof.
@@ -4624,7 +4760,7 @@ export type UnionDiscriminantsStruct = {
   /**
    * Discriminated union that can be discriminated by an intrinsic discriminant property (termType).
    */
-  readonly requiredTerm: (BlankNode | NamedNode) | Literal;
+  readonly requiredTerm: $Identifier | Literal;
 
   /**
    * Discriminated union that can be discriminated by typeof.
@@ -4660,7 +4796,7 @@ export type UnionDiscriminantsStruct = {
   /**
    * Discriminated union that can be discriminated by an intrinsic discriminant property (termType).
    */
-  readonly setTerm: readonly ((BlankNode | NamedNode) | Literal)[];
+  readonly setTerm: readonly ($Identifier | Literal)[];
 };
 
 export namespace UnionDiscriminantsStruct {
@@ -4668,15 +4804,14 @@ export namespace UnionDiscriminantsStruct {
     UnionDiscriminantsStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: UnionDiscriminantsStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       optionalIriOrString: $shaclPropertyFromRdf<
         Maybe<NamedNode | string>,
         $MaybeSchema<{
@@ -5214,13 +5349,13 @@ export namespace UnionDiscriminantsStruct {
         }),
       }),
       optionalTerm: $shaclPropertyFromRdf<
-        Maybe<(BlankNode | NamedNode) | Literal>,
+        Maybe<$Identifier | Literal>,
         $MaybeSchema<{
           kind: "DiscriminatedUnion";
           members: {
             readonly BlankNode: {
               discriminantValues: readonly (number | string)[];
-              type: $IdentifierSchema;
+              type: $Identifier.Schema;
             };
             readonly Literal: {
               discriminantValues: readonly (number | string)[];
@@ -5234,13 +5369,13 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         propertySchema: UnionDiscriminantsStruct.schema.properties.optionalTerm,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          (BlankNode | NamedNode) | Literal,
+          $Identifier | Literal,
           {
             kind: "DiscriminatedUnion";
             members: {
               readonly BlankNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IdentifierSchema;
+                type: $Identifier.Schema;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -5262,7 +5397,7 @@ export namespace UnionDiscriminantsStruct {
             let memberOutputValuesEither: Either<Error, unknown> | undefined;
             for (let memberI = 0; memberI < 2; memberI++) {
               if (memberI === 0) {
-                memberOutputValuesEither = $identifierFromRdfResourceValues(
+                memberOutputValuesEither = $Identifier.fromRdfResourceValues(
                   inputValueAsValues,
                   {
                     ...options,
@@ -5296,12 +5431,11 @@ export namespace UnionDiscriminantsStruct {
             }
           }
 
-          let collectedOutputValues: Resource.Values<
-            (BlankNode | NamedNode) | Literal
-          > = Resource.Values.empty({
-            focusResource: inputValues.focusResource,
-            propertyPath: inputValues.propertyPath,
-          });
+          let collectedOutputValues: Resource.Values<$Identifier | Literal> =
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            });
           for (let memberI = 0; memberI < 2; memberI++) {
             if (memberInputValues[memberI].length === 0) {
               continue;
@@ -5309,14 +5443,13 @@ export namespace UnionDiscriminantsStruct {
             switch (memberI) {
               case 0:
                 collectedOutputValues = collectedOutputValues.concat(
-                  ...$identifierFromRdfResourceValues(
-                    memberInputValues[memberI],
-                    {
+                  ...$Identifier
+                    .fromRdfResourceValues(memberInputValues[memberI], {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["BlankNode"].type,
-                    },
-                  ).unsafeCoerce(),
+                    })
+                    .unsafeCoerce(),
                 );
                 break;
               case 1:
@@ -5805,13 +5938,13 @@ export namespace UnionDiscriminantsStruct {
         },
       }),
       requiredTerm: $shaclPropertyFromRdf<
-        (BlankNode | NamedNode) | Literal,
+        $Identifier | Literal,
         {
           kind: "DiscriminatedUnion";
           members: {
             readonly BlankNode: {
               discriminantValues: readonly (number | string)[];
-              type: $IdentifierSchema;
+              type: $Identifier.Schema;
             };
             readonly Literal: {
               discriminantValues: readonly (number | string)[];
@@ -5838,7 +5971,7 @@ export namespace UnionDiscriminantsStruct {
             let memberOutputValuesEither: Either<Error, unknown> | undefined;
             for (let memberI = 0; memberI < 2; memberI++) {
               if (memberI === 0) {
-                memberOutputValuesEither = $identifierFromRdfResourceValues(
+                memberOutputValuesEither = $Identifier.fromRdfResourceValues(
                   inputValueAsValues,
                   {
                     ...options,
@@ -5872,12 +6005,11 @@ export namespace UnionDiscriminantsStruct {
             }
           }
 
-          let collectedOutputValues: Resource.Values<
-            (BlankNode | NamedNode) | Literal
-          > = Resource.Values.empty({
-            focusResource: inputValues.focusResource,
-            propertyPath: inputValues.propertyPath,
-          });
+          let collectedOutputValues: Resource.Values<$Identifier | Literal> =
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            });
           for (let memberI = 0; memberI < 2; memberI++) {
             if (memberInputValues[memberI].length === 0) {
               continue;
@@ -5885,14 +6017,13 @@ export namespace UnionDiscriminantsStruct {
             switch (memberI) {
               case 0:
                 collectedOutputValues = collectedOutputValues.concat(
-                  ...$identifierFromRdfResourceValues(
-                    memberInputValues[memberI],
-                    {
+                  ...$Identifier
+                    .fromRdfResourceValues(memberInputValues[memberI], {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["BlankNode"].type,
-                    },
-                  ).unsafeCoerce(),
+                    })
+                    .unsafeCoerce(),
                 );
                 break;
               case 1:
@@ -6446,13 +6577,13 @@ export namespace UnionDiscriminantsStruct {
         }),
       }),
       setTerm: $shaclPropertyFromRdf<
-        readonly ((BlankNode | NamedNode) | Literal)[],
+        readonly ($Identifier | Literal)[],
         $CollectionSchema<{
           kind: "DiscriminatedUnion";
           members: {
             readonly BlankNode: {
               discriminantValues: readonly (number | string)[];
-              type: $IdentifierSchema;
+              type: $Identifier.Schema;
             };
             readonly Literal: {
               discriminantValues: readonly (number | string)[];
@@ -6466,13 +6597,13 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         propertySchema: UnionDiscriminantsStruct.schema.properties.setTerm,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
-          (BlankNode | NamedNode) | Literal,
+          $Identifier | Literal,
           {
             kind: "DiscriminatedUnion";
             members: {
               readonly BlankNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IdentifierSchema;
+                type: $Identifier.Schema;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -6494,7 +6625,7 @@ export namespace UnionDiscriminantsStruct {
             let memberOutputValuesEither: Either<Error, unknown> | undefined;
             for (let memberI = 0; memberI < 2; memberI++) {
               if (memberI === 0) {
-                memberOutputValuesEither = $identifierFromRdfResourceValues(
+                memberOutputValuesEither = $Identifier.fromRdfResourceValues(
                   inputValueAsValues,
                   {
                     ...options,
@@ -6528,12 +6659,11 @@ export namespace UnionDiscriminantsStruct {
             }
           }
 
-          let collectedOutputValues: Resource.Values<
-            (BlankNode | NamedNode) | Literal
-          > = Resource.Values.empty({
-            focusResource: inputValues.focusResource,
-            propertyPath: inputValues.propertyPath,
-          });
+          let collectedOutputValues: Resource.Values<$Identifier | Literal> =
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            });
           for (let memberI = 0; memberI < 2; memberI++) {
             if (memberInputValues[memberI].length === 0) {
               continue;
@@ -6541,14 +6671,13 @@ export namespace UnionDiscriminantsStruct {
             switch (memberI) {
               case 0:
                 collectedOutputValues = collectedOutputValues.concat(
-                  ...$identifierFromRdfResourceValues(
-                    memberInputValues[memberI],
-                    {
+                  ...$Identifier
+                    .fromRdfResourceValues(memberInputValues[memberI], {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["BlankNode"].type,
-                    },
-                  ).unsafeCoerce(),
+                    })
+                    .unsafeCoerce(),
                 );
                 break;
               case 1:
@@ -7014,7 +7143,7 @@ export namespace UnionDiscriminantsStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setIriOrString.type,
           value,
         ),
@@ -7025,7 +7154,7 @@ export namespace UnionDiscriminantsStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setNodeOrLiteral.type,
           value,
         ),
@@ -7036,7 +7165,7 @@ export namespace UnionDiscriminantsStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setNodeOrNodeOrString.type,
           value,
         ),
@@ -7047,7 +7176,7 @@ export namespace UnionDiscriminantsStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setTerm.type,
           value,
         ),
@@ -7111,8 +7240,8 @@ export namespace UnionDiscriminantsStruct {
           | { $type: "string"; value: string }
         >;
     readonly optionalTerm?:
-      | ((BlankNode | NamedNode) | Literal)
-      | Maybe<(BlankNode | NamedNode) | Literal>;
+      | ($Identifier | Literal)
+      | Maybe<$Identifier | Literal>;
     readonly requiredIriOrString: NamedNode | string;
     readonly requiredNodeOrLiteral:
       | {
@@ -7130,7 +7259,7 @@ export namespace UnionDiscriminantsStruct {
           value: StructDiscriminatedUnionMember2;
         }
       | { $type: "string"; value: string };
-    readonly requiredTerm: (BlankNode | NamedNode) | Literal;
+    readonly requiredTerm: $Identifier | Literal;
     readonly setIriOrString?:
       | NamedNode
       | string
@@ -7174,8 +7303,8 @@ export namespace UnionDiscriminantsStruct {
           | { $type: "string"; value: string }
         )[];
     readonly setTerm?:
-      | ((BlankNode | NamedNode) | Literal)
-      | readonly ((BlankNode | NamedNode) | Literal)[];
+      | ($Identifier | Literal)
+      | readonly ($Identifier | Literal)[];
   };
 
   export const createUnsafe: <
@@ -7343,8 +7472,8 @@ export namespace UnionDiscriminantsStruct {
                     right["termType"] === "NamedNode")
                 ) {
                   return $booleanEquals(
-                    left as BlankNode | NamedNode,
-                    right as BlankNode | NamedNode,
+                    left as $Identifier,
+                    right as $Identifier,
                   );
                 }
                 if (
@@ -7365,7 +7494,7 @@ export namespace UnionDiscriminantsStruct {
                   },
                   type: "property" as const,
                 });
-              }) satisfies $EqualsFunction<(BlankNode | NamedNode) | Literal>),
+              }) satisfies $EqualsFunction<$Identifier | Literal>),
             name: "optionalTerm",
           },
           [left, left.optionalTerm],
@@ -7497,8 +7626,8 @@ export namespace UnionDiscriminantsStruct {
                   right["termType"] === "NamedNode")
               ) {
                 return $booleanEquals(
-                  left as BlankNode | NamedNode,
-                  right as BlankNode | NamedNode,
+                  left as $Identifier,
+                  right as $Identifier,
                 );
               }
               if (
@@ -7530,7 +7659,7 @@ export namespace UnionDiscriminantsStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, (left, right) => {
+              $Array.equals(left, right, (left, right) => {
                 if (typeof left === "object" && typeof right === "object") {
                   return $booleanEquals(left as NamedNode, right as NamedNode);
                 }
@@ -7560,7 +7689,7 @@ export namespace UnionDiscriminantsStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, (left, right) => {
+              $Array.equals(left, right, (left, right) => {
                 if (
                   left["termType"] === "StructDiscriminatedUnionMember1" &&
                   right["termType"] === "StructDiscriminatedUnionMember1"
@@ -7599,7 +7728,7 @@ export namespace UnionDiscriminantsStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, (left, right) => {
+              $Array.equals(left, right, (left, right) => {
                 if (
                   left["$type"] === "StructDiscriminatedUnionMember1" &&
                   right["$type"] === "StructDiscriminatedUnionMember1"
@@ -7647,7 +7776,7 @@ export namespace UnionDiscriminantsStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, (left, right) => {
+              $Array.equals(left, right, (left, right) => {
                 if (
                   (left["termType"] === "BlankNode" ||
                     left["termType"] === "NamedNode") &&
@@ -7655,8 +7784,8 @@ export namespace UnionDiscriminantsStruct {
                     right["termType"] === "NamedNode")
                 ) {
                   return $booleanEquals(
-                    left as BlankNode | NamedNode,
-                    right as BlankNode | NamedNode,
+                    left as $Identifier,
+                    right as $Identifier,
                   );
                 }
                 if (
@@ -7691,7 +7820,7 @@ export namespace UnionDiscriminantsStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -7827,10 +7956,10 @@ export namespace UnionDiscriminantsStruct {
     if (
       filter.optionalTerm !== undefined &&
       !$filterMaybe<
-        (BlankNode | NamedNode) | Literal,
+        $Identifier | Literal,
         {
           readonly on?: {
-            readonly BlankNode?: $IdentifierFilter;
+            readonly BlankNode?: $Identifier.Filter;
             readonly Literal?: $LiteralFilter;
           };
         }
@@ -7840,7 +7969,7 @@ export namespace UnionDiscriminantsStruct {
           (value["termType"] === "BlankNode" ||
             value["termType"] === "NamedNode")
         ) {
-          if (!$filterIdentifier(filter.on["BlankNode"], value)) {
+          if (!$Identifier.filter(filter.on["BlankNode"], value)) {
             return false;
           }
         }
@@ -7958,7 +8087,7 @@ export namespace UnionDiscriminantsStruct {
           (value["termType"] === "BlankNode" ||
             value["termType"] === "NamedNode")
         ) {
-          if (!$filterIdentifier(filter.on["BlankNode"], value)) {
+          if (!$Identifier.filter(filter.on["BlankNode"], value)) {
             return false;
           }
         }
@@ -7978,7 +8107,7 @@ export namespace UnionDiscriminantsStruct {
     }
     if (
       filter.setIriOrString !== undefined &&
-      !$filterArray<
+      !$Array.filter<
         NamedNode | string,
         {
           readonly on?: {
@@ -8005,7 +8134,7 @@ export namespace UnionDiscriminantsStruct {
     }
     if (
       filter.setNodeOrLiteral !== undefined &&
-      !$filterArray<
+      !$Array.filter<
         | {
             termType: "StructDiscriminatedUnionMember1";
             value: StructDiscriminatedUnionMember1;
@@ -8047,7 +8176,7 @@ export namespace UnionDiscriminantsStruct {
     }
     if (
       filter.setNodeOrNodeOrString !== undefined &&
-      !$filterArray<
+      !$Array.filter<
         | {
             $type: "StructDiscriminatedUnionMember1";
             value: StructDiscriminatedUnionMember1;
@@ -8107,11 +8236,11 @@ export namespace UnionDiscriminantsStruct {
     }
     if (
       filter.setTerm !== undefined &&
-      !$filterArray<
-        (BlankNode | NamedNode) | Literal,
+      !$Array.filter<
+        $Identifier | Literal,
         {
           readonly on?: {
-            readonly BlankNode?: $IdentifierFilter;
+            readonly BlankNode?: $Identifier.Filter;
             readonly Literal?: $LiteralFilter;
           };
         }
@@ -8121,7 +8250,7 @@ export namespace UnionDiscriminantsStruct {
           (value["termType"] === "BlankNode" ||
             value["termType"] === "NamedNode")
         ) {
-          if (!$filterIdentifier(filter.on["BlankNode"], value)) {
+          if (!$Identifier.filter(filter.on["BlankNode"], value)) {
             return false;
           }
         }
@@ -8143,7 +8272,7 @@ export namespace UnionDiscriminantsStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly optionalIriOrString?: $MaybeFilter<{
       readonly on?: {
         readonly object?: $IriFilter;
@@ -8165,7 +8294,7 @@ export namespace UnionDiscriminantsStruct {
     }>;
     readonly optionalTerm?: $MaybeFilter<{
       readonly on?: {
-        readonly BlankNode?: $IdentifierFilter;
+        readonly BlankNode?: $Identifier.Filter;
         readonly Literal?: $LiteralFilter;
       };
     }>;
@@ -8190,7 +8319,7 @@ export namespace UnionDiscriminantsStruct {
     };
     readonly requiredTerm?: {
       readonly on?: {
-        readonly BlankNode?: $IdentifierFilter;
+        readonly BlankNode?: $Identifier.Filter;
         readonly Literal?: $LiteralFilter;
       };
     };
@@ -8215,7 +8344,7 @@ export namespace UnionDiscriminantsStruct {
     }>;
     readonly setTerm?: $CollectionFilter<{
       readonly on?: {
-        readonly BlankNode?: $IdentifierFilter;
+        readonly BlankNode?: $Identifier.Filter;
         readonly Literal?: $LiteralFilter;
       };
     }>;
@@ -8407,7 +8536,7 @@ export namespace UnionDiscriminantsStruct {
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           {
             readonly on?: {
-              readonly BlankNode?: $IdentifierFilter;
+              readonly BlankNode?: $Identifier.Filter;
               readonly Literal?: $LiteralFilter;
             };
           },
@@ -8416,7 +8545,7 @@ export namespace UnionDiscriminantsStruct {
             members: {
               readonly BlankNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IdentifierSchema;
+                type: $Identifier.Schema;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -8790,7 +8919,7 @@ export namespace UnionDiscriminantsStruct {
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           {
             readonly on?: {
-              readonly BlankNode?: $IdentifierFilter;
+              readonly BlankNode?: $Identifier.Filter;
               readonly Literal?: $LiteralFilter;
             };
           },
@@ -8799,7 +8928,7 @@ export namespace UnionDiscriminantsStruct {
             members: {
               readonly BlankNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IdentifierSchema;
+                type: $Identifier.Schema;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -8841,7 +8970,7 @@ export namespace UnionDiscriminantsStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -9045,7 +9174,7 @@ export namespace UnionDiscriminantsStruct {
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           {
             readonly on?: {
-              readonly BlankNode?: $IdentifierFilter;
+              readonly BlankNode?: $Identifier.Filter;
               readonly Literal?: $LiteralFilter;
             };
           },
@@ -9054,7 +9183,7 @@ export namespace UnionDiscriminantsStruct {
             members: {
               readonly BlankNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IdentifierSchema;
+                type: $Identifier.Schema;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -9066,12 +9195,14 @@ export namespace UnionDiscriminantsStruct {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
-            patterns: $identifierSparqlWherePatterns({
-              ...otherParameters,
-              filter: filter?.on?.["BlankNode"],
-              ignoreRdfType: false,
-              schema: schema.members["BlankNode"].type,
-            }).concat(),
+            patterns: $Identifier
+              .sparqlWherePatterns({
+                ...otherParameters,
+                filter: filter?.on?.["BlankNode"],
+                ignoreRdfType: false,
+                schema: schema.members["BlankNode"].type,
+              })
+              .concat(),
             type: "group",
           });
           unionPatterns.push({
@@ -9218,12 +9349,14 @@ export namespace UnionDiscriminantsStruct {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
-            patterns: $identifierSparqlWherePatterns({
-              ...otherParameters,
-              filter: filter?.on?.["BlankNode"],
-              ignoreRdfType: false,
-              schema: schema.members["BlankNode"].type,
-            }).concat(),
+            patterns: $Identifier
+              .sparqlWherePatterns({
+                ...otherParameters,
+                filter: filter?.on?.["BlankNode"],
+                ignoreRdfType: false,
+                schema: schema.members["BlankNode"].type,
+              })
+              .concat(),
             type: "group",
           });
           unionPatterns.push({
@@ -9434,7 +9567,7 @@ export namespace UnionDiscriminantsStruct {
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           {
             readonly on?: {
-              readonly BlankNode?: $IdentifierFilter;
+              readonly BlankNode?: $Identifier.Filter;
               readonly Literal?: $LiteralFilter;
             };
           },
@@ -9443,7 +9576,7 @@ export namespace UnionDiscriminantsStruct {
             members: {
               readonly BlankNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IdentifierSchema;
+                type: $Identifier.Schema;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -9455,12 +9588,14 @@ export namespace UnionDiscriminantsStruct {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
-            patterns: $identifierSparqlWherePatterns({
-              ...otherParameters,
-              filter: filter?.on?.["BlankNode"],
-              ignoreRdfType: false,
-              schema: schema.members["BlankNode"].type,
-            }).concat(),
+            patterns: $Identifier
+              .sparqlWherePatterns({
+                ...otherParameters,
+                filter: filter?.on?.["BlankNode"],
+                ignoreRdfType: false,
+                schema: schema.members["BlankNode"].type,
+              })
+              .concat(),
             type: "group",
           });
           unionPatterns.push({
@@ -9487,7 +9622,7 @@ export namespace UnionDiscriminantsStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: UnionDiscriminantsStruct.schema.properties.$identifier.type,
       }),
@@ -9507,7 +9642,7 @@ export namespace UnionDiscriminantsStruct {
 
         throw new Error("unable to deserialize JSON");
       }) satisfies $FromJsonFunction<
-        | ($IdentifierJsonObject & { $type: "object" })
+        | ($Identifier.JsonObject & { $type: "object" })
         | ($TypedLiteralJsonObject & { $type: "string" }),
         NamedNode | string,
         undefined
@@ -9653,23 +9788,23 @@ export namespace UnionDiscriminantsStruct {
       }),
       optionalTerm: $maybeFromJsonValue(((value, options) => {
         if (value.$type === "BlankNode") {
-          return $identifierFromJsonObject(value, {
+          return $Identifier.fromJsonObject(value, {
             ...options,
             schema: { kind: "Identifier" } as const,
-          }) as Either<Error, (BlankNode | NamedNode) | Literal>;
+          }) as Either<Error, $Identifier | Literal>;
         }
         if (value.$type === "Literal") {
           return $literalFromJsonObject(value, {
             ...options,
             schema: { kind: "Literal" } as const,
-          }) as Either<Error, (BlankNode | NamedNode) | Literal>;
+          }) as Either<Error, $Identifier | Literal>;
         }
 
         throw new Error("unable to deserialize JSON");
       }) satisfies $FromJsonFunction<
-        | ($IdentifierJsonObject & { $type: "BlankNode" })
+        | ($Identifier.JsonObject & { $type: "BlankNode" })
         | ($LiteralJsonObject & { $type: "Literal" }),
-        (BlankNode | NamedNode) | Literal,
+        $Identifier | Literal,
         undefined
       >)(jsonObject["optionalTerm"], {
         ...options,
@@ -9803,16 +9938,16 @@ export namespace UnionDiscriminantsStruct {
       }),
       requiredTerm: ((value, options) => {
         if (value.$type === "BlankNode") {
-          return $identifierFromJsonObject(value, {
+          return $Identifier.fromJsonObject(value, {
             ...options,
             schema: { kind: "Identifier" } as const,
-          }) as Either<Error, (BlankNode | NamedNode) | Literal>;
+          }) as Either<Error, $Identifier | Literal>;
         }
         if (value.$type === "Literal") {
           return $literalFromJsonObject(value, {
             ...options,
             schema: { kind: "Literal" } as const,
-          }) as Either<Error, (BlankNode | NamedNode) | Literal>;
+          }) as Either<Error, $Identifier | Literal>;
         }
 
         throw new Error("unable to deserialize JSON");
@@ -9820,7 +9955,7 @@ export namespace UnionDiscriminantsStruct {
         ...options,
         schema: UnionDiscriminantsStruct.schema.properties.requiredTerm.type,
       }),
-      setIriOrString: $arrayFromJsonArray(((value, options) => {
+      setIriOrString: $Array.fromJson(((value, options) => {
         if (value.$type === "object") {
           return $iriFromJsonObject(value, {
             ...options,
@@ -9836,7 +9971,7 @@ export namespace UnionDiscriminantsStruct {
 
         throw new Error("unable to deserialize JSON");
       }) satisfies $FromJsonFunction<
-        | ($IdentifierJsonObject & { $type: "object" })
+        | ($Identifier.JsonObject & { $type: "object" })
         | ($TypedLiteralJsonObject & { $type: "string" }),
         NamedNode | string,
         undefined
@@ -9844,7 +9979,7 @@ export namespace UnionDiscriminantsStruct {
         ...options,
         schema: UnionDiscriminantsStruct.schema.properties.setIriOrString.type,
       }),
-      setNodeOrLiteral: $arrayFromJsonArray(((value, options) => {
+      setNodeOrLiteral: $Array.fromJson(((value, options) => {
         if (value.$type === "StructDiscriminatedUnionMember1") {
           return StructDiscriminatedUnionMember1.fromJson(value, {
             ...options,
@@ -9892,7 +10027,7 @@ export namespace UnionDiscriminantsStruct {
         schema:
           UnionDiscriminantsStruct.schema.properties.setNodeOrLiteral.type,
       }),
-      setNodeOrNodeOrString: $arrayFromJsonArray(((value, options) => {
+      setNodeOrNodeOrString: $Array.fromJson(((value, options) => {
         if (value.$type === "StructDiscriminatedUnionMember1") {
           return StructDiscriminatedUnionMember1.fromJson(value, {
             ...options,
@@ -9978,25 +10113,25 @@ export namespace UnionDiscriminantsStruct {
         schema:
           UnionDiscriminantsStruct.schema.properties.setNodeOrNodeOrString.type,
       }),
-      setTerm: $arrayFromJsonArray(((value, options) => {
+      setTerm: $Array.fromJson(((value, options) => {
         if (value.$type === "BlankNode") {
-          return $identifierFromJsonObject(value, {
+          return $Identifier.fromJsonObject(value, {
             ...options,
             schema: { kind: "Identifier" } as const,
-          }) as Either<Error, (BlankNode | NamedNode) | Literal>;
+          }) as Either<Error, $Identifier | Literal>;
         }
         if (value.$type === "Literal") {
           return $literalFromJsonObject(value, {
             ...options,
             schema: { kind: "Literal" } as const,
-          }) as Either<Error, (BlankNode | NamedNode) | Literal>;
+          }) as Either<Error, $Identifier | Literal>;
         }
 
         throw new Error("unable to deserialize JSON");
       }) satisfies $FromJsonFunction<
-        | ($IdentifierJsonObject & { $type: "BlankNode" })
+        | ($Identifier.JsonObject & { $type: "BlankNode" })
         | ($LiteralJsonObject & { $type: "Literal" }),
-        (BlankNode | NamedNode) | Literal,
+        $Identifier | Literal,
         undefined
       >)(jsonObject["setTerm"], {
         ...options,
@@ -10092,7 +10227,7 @@ export namespace UnionDiscriminantsStruct {
         $hashTerm(hasher, value);
         return;
       }
-    }) satisfies $HashFunction<(BlankNode | NamedNode) | Literal>)(
+    }) satisfies $HashFunction<$Identifier | Literal>)(
       hasher,
       _unionDiscriminantsStruct.optionalTerm,
     );
@@ -10165,9 +10300,9 @@ export namespace UnionDiscriminantsStruct {
           $hashTerm(hasher, value);
           return;
         }
-      }) satisfies $HashFunction<(BlankNode | NamedNode) | Literal>
+      }) satisfies $HashFunction<$Identifier | Literal>
     )(hasher, _unionDiscriminantsStruct.requiredTerm);
-    $hashArray(((hasher, value) => {
+    $Array.hash(((hasher, value) => {
       if (typeof value === "object") {
         $hashTerm(hasher, value);
         return;
@@ -10180,7 +10315,7 @@ export namespace UnionDiscriminantsStruct {
       hasher,
       _unionDiscriminantsStruct.setIriOrString,
     );
-    $hashArray(((hasher, value) => {
+    $Array.hash(((hasher, value) => {
       if (value["termType"] === "StructDiscriminatedUnionMember1") {
         StructDiscriminatedUnionMember1.hash(hasher, value.value);
         return;
@@ -10196,7 +10331,7 @@ export namespace UnionDiscriminantsStruct {
         }
       | Literal
     >)(hasher, _unionDiscriminantsStruct.setNodeOrLiteral);
-    $hashArray(((hasher, value) => {
+    $Array.hash(((hasher, value) => {
       if (value["$type"] === "StructDiscriminatedUnionMember1") {
         StructDiscriminatedUnionMember1.hash(hasher, value.value);
         return;
@@ -10220,7 +10355,7 @@ export namespace UnionDiscriminantsStruct {
         }
       | { $type: "string"; value: string }
     >)(hasher, _unionDiscriminantsStruct.setNodeOrNodeOrString);
-    $hashArray(((hasher, value) => {
+    $Array.hash(((hasher, value) => {
       if (
         value["termType"] === "BlankNode" ||
         value["termType"] === "NamedNode"
@@ -10232,15 +10367,15 @@ export namespace UnionDiscriminantsStruct {
         $hashTerm(hasher, value);
         return;
       }
-    }) satisfies $HashFunction<(BlankNode | NamedNode) | Literal>)(
+    }) satisfies $HashFunction<$Identifier | Literal>)(
       hasher,
       _unionDiscriminantsStruct.setTerm,
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isUnionDiscriminantsStruct: $ObjectTypeGuardFunction<
@@ -10251,7 +10386,7 @@ export namespace UnionDiscriminantsStruct {
   export type Json = {
     "@id": string;
     optionalIriOrString?:
-      | ($IdentifierJsonObject & { $type: "object" })
+      | ($Identifier.JsonObject & { $type: "object" })
       | ($TypedLiteralJsonObject & { $type: "string" });
     optionalNodeOrLiteral?:
       | (StructDiscriminatedUnionMember1.Json & {
@@ -10267,10 +10402,10 @@ export namespace UnionDiscriminantsStruct {
         })
       | ($TypedLiteralJsonObject & { $type: "string" });
     optionalTerm?:
-      | ($IdentifierJsonObject & { $type: "BlankNode" })
+      | ($Identifier.JsonObject & { $type: "BlankNode" })
       | ($LiteralJsonObject & { $type: "Literal" });
     requiredIriOrString:
-      | ($IdentifierJsonObject & { $type: "object" })
+      | ($Identifier.JsonObject & { $type: "object" })
       | ($TypedLiteralJsonObject & { $type: "string" });
     requiredNodeOrLiteral:
       | (StructDiscriminatedUnionMember1.Json & {
@@ -10286,10 +10421,10 @@ export namespace UnionDiscriminantsStruct {
         })
       | ($TypedLiteralJsonObject & { $type: "string" });
     requiredTerm:
-      | ($IdentifierJsonObject & { $type: "BlankNode" })
+      | ($Identifier.JsonObject & { $type: "BlankNode" })
       | ($LiteralJsonObject & { $type: "Literal" });
     setIriOrString?: (
-      | ($IdentifierJsonObject & { $type: "object" })
+      | ($Identifier.JsonObject & { $type: "object" })
       | ($TypedLiteralJsonObject & { $type: "string" })
     )[];
     setNodeOrLiteral?: (
@@ -10308,7 +10443,7 @@ export namespace UnionDiscriminantsStruct {
       | ($TypedLiteralJsonObject & { $type: "string" })
     )[];
     setTerm?: (
-      | ($IdentifierJsonObject & { $type: "BlankNode" })
+      | ($Identifier.JsonObject & { $type: "BlankNode" })
       | ($LiteralJsonObject & { $type: "Literal" })
     )[];
   };
@@ -10330,7 +10465,9 @@ export namespace UnionDiscriminantsStruct {
           .default(() => `_:${dataFactory.blankNode().value}`),
         optionalIriOrString: z
           .discriminatedUnion("$type", [
-            $IdentifierJsonObject.schema.extend({ $type: z.literal("object") }),
+            $Identifier.JsonObject.schema.extend({
+              $type: z.literal("object"),
+            }),
             $TypedLiteralJsonObject.schema.extend({
               $type: z.literal("string"),
             }),
@@ -10371,7 +10508,7 @@ export namespace UnionDiscriminantsStruct {
           }),
         optionalTerm: z
           .discriminatedUnion("$type", [
-            $IdentifierJsonObject.schema.extend({
+            $Identifier.JsonObject.schema.extend({
               $type: z.literal("BlankNode"),
             }),
             $LiteralJsonObject.schema.extend({ $type: z.literal("Literal") }),
@@ -10383,7 +10520,9 @@ export namespace UnionDiscriminantsStruct {
           }),
         requiredIriOrString: z
           .discriminatedUnion("$type", [
-            $IdentifierJsonObject.schema.extend({ $type: z.literal("object") }),
+            $Identifier.JsonObject.schema.extend({
+              $type: z.literal("object"),
+            }),
             $TypedLiteralJsonObject.schema.extend({
               $type: z.literal("string"),
             }),
@@ -10421,7 +10560,7 @@ export namespace UnionDiscriminantsStruct {
           }),
         requiredTerm: z
           .discriminatedUnion("$type", [
-            $IdentifierJsonObject.schema.extend({
+            $Identifier.JsonObject.schema.extend({
               $type: z.literal("BlankNode"),
             }),
             $LiteralJsonObject.schema.extend({ $type: z.literal("Literal") }),
@@ -10435,7 +10574,7 @@ export namespace UnionDiscriminantsStruct {
             (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
             z.array(
               z.discriminatedUnion("$type", [
-                $IdentifierJsonObject.schema.extend({
+                $Identifier.JsonObject.schema.extend({
                   $type: z.literal("object"),
                 }),
                 $TypedLiteralJsonObject.schema.extend({
@@ -10495,7 +10634,7 @@ export namespace UnionDiscriminantsStruct {
             (v) => (v === undefined ? v : Array.isArray(v) ? v : [v]),
             z.array(
               z.discriminatedUnion("$type", [
-                $IdentifierJsonObject.schema.extend({
+                $Identifier.JsonObject.schema.extend({
                   $type: z.literal("BlankNode"),
                 }),
                 $LiteralJsonObject.schema.extend({
@@ -10924,7 +11063,7 @@ export namespace UnionDiscriminantsStruct {
           throw new Error("unable to serialize to JSON");
         }) satisfies $ToJsonFunction<
           NamedNode | string,
-          | ($IdentifierJsonObject & { $type: "object" })
+          | ($Identifier.JsonObject & { $type: "object" })
           | ($TypedLiteralJsonObject & { $type: "string" })
         >)(_unionDiscriminantsStruct.optionalIriOrString),
         optionalNodeOrLiteral: $maybeToJsonValue(((value) => {
@@ -10994,7 +11133,7 @@ export namespace UnionDiscriminantsStruct {
             value["termType"] === "BlankNode" ||
             value["termType"] === "NamedNode"
           ) {
-            return { ...$identifierToJsonObject(value), $type: "BlankNode" };
+            return { ...$Identifier.toJsonObject(value), $type: "BlankNode" };
           }
           if (value["termType"] === "Literal") {
             return { ...$literalToJsonObject(value), $type: "Literal" };
@@ -11002,8 +11141,8 @@ export namespace UnionDiscriminantsStruct {
 
           throw new Error("unable to serialize to JSON");
         }) satisfies $ToJsonFunction<
-          (BlankNode | NamedNode) | Literal,
-          | ($IdentifierJsonObject & { $type: "BlankNode" })
+          $Identifier | Literal,
+          | ($Identifier.JsonObject & { $type: "BlankNode" })
           | ($LiteralJsonObject & { $type: "Literal" })
         >)(_unionDiscriminantsStruct.optionalTerm),
         requiredIriOrString: ((value) => {
@@ -11059,7 +11198,7 @@ export namespace UnionDiscriminantsStruct {
             value["termType"] === "BlankNode" ||
             value["termType"] === "NamedNode"
           ) {
-            return { ...$identifierToJsonObject(value), $type: "BlankNode" };
+            return { ...$Identifier.toJsonObject(value), $type: "BlankNode" };
           }
           if (value["termType"] === "Literal") {
             return { ...$literalToJsonObject(value), $type: "Literal" };
@@ -11067,7 +11206,7 @@ export namespace UnionDiscriminantsStruct {
 
           throw new Error("unable to serialize to JSON");
         })(_unionDiscriminantsStruct.requiredTerm),
-        setIriOrString: $arrayToJsonArray(((value) => {
+        setIriOrString: $Array.toJson(((value) => {
           if (typeof value === "object") {
             return { ...$iriToJsonObject<string>(value), $type: "object" };
           }
@@ -11081,10 +11220,10 @@ export namespace UnionDiscriminantsStruct {
           throw new Error("unable to serialize to JSON");
         }) satisfies $ToJsonFunction<
           NamedNode | string,
-          | ($IdentifierJsonObject & { $type: "object" })
+          | ($Identifier.JsonObject & { $type: "object" })
           | ($TypedLiteralJsonObject & { $type: "string" })
         >)(_unionDiscriminantsStruct.setIriOrString),
-        setNodeOrLiteral: $arrayToJsonArray(((value) => {
+        setNodeOrLiteral: $Array.toJson(((value) => {
           if (value["termType"] === "StructDiscriminatedUnionMember1") {
             return {
               ...StructDiscriminatedUnionMember1.toJson(value.value),
@@ -11107,7 +11246,7 @@ export namespace UnionDiscriminantsStruct {
             })
           | ($LiteralJsonObject & { $type: "Literal" })
         >)(_unionDiscriminantsStruct.setNodeOrLiteral),
-        setNodeOrNodeOrString: $arrayToJsonArray(((value) => {
+        setNodeOrNodeOrString: $Array.toJson(((value) => {
           if (value["$type"] === "StructDiscriminatedUnionMember1") {
             return {
               ...StructDiscriminatedUnionMember1.toJson(value.value),
@@ -11146,12 +11285,12 @@ export namespace UnionDiscriminantsStruct {
             })
           | ($TypedLiteralJsonObject & { $type: "string" })
         >)(_unionDiscriminantsStruct.setNodeOrNodeOrString),
-        setTerm: $arrayToJsonArray(((value) => {
+        setTerm: $Array.toJson(((value) => {
           if (
             value["termType"] === "BlankNode" ||
             value["termType"] === "NamedNode"
           ) {
-            return { ...$identifierToJsonObject(value), $type: "BlankNode" };
+            return { ...$Identifier.toJsonObject(value), $type: "BlankNode" };
           }
           if (value["termType"] === "Literal") {
             return { ...$literalToJsonObject(value), $type: "Literal" };
@@ -11159,8 +11298,8 @@ export namespace UnionDiscriminantsStruct {
 
           throw new Error("unable to serialize to JSON");
         }) satisfies $ToJsonFunction<
-          (BlankNode | NamedNode) | Literal,
-          | ($IdentifierJsonObject & { $type: "BlankNode" })
+          $Identifier | Literal,
+          | ($Identifier.JsonObject & { $type: "BlankNode" })
           | ($LiteralJsonObject & { $type: "Literal" })
         >)(_unionDiscriminantsStruct.setTerm),
       }),
@@ -11437,7 +11576,7 @@ export type TermsStruct = {
 
   readonly doubleTerm: Maybe<number>;
 
-  readonly identifierTerm: Maybe<BlankNode | NamedNode>;
+  readonly identifierTerm: Maybe<$Identifier>;
 
   readonly iriTerm: Maybe<NamedNode>;
 
@@ -11455,15 +11594,14 @@ export namespace TermsStruct {
     TermsStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: TermsStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -11475,7 +11613,7 @@ export namespace TermsStruct {
         : Right(true as const),
       blankNodeTerm: $shaclPropertyFromRdf<
         Maybe<BlankNode>,
-        $MaybeSchema<$BlankNodeSchema>
+        $MaybeSchema<$BlankNode.Schema>
       >({
         ...options,
         focusResource: resource,
@@ -11483,12 +11621,12 @@ export namespace TermsStruct {
         propertySchema: TermsStruct.schema.properties.blankNodeTerm,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           BlankNode,
-          $BlankNodeSchema
-        >($blankNodeFromRdfResourceValues),
+          $BlankNode.Schema
+        >($BlankNode.fromRdfResourceValues),
       }),
       booleanTerm: $shaclPropertyFromRdf<
         Maybe<boolean>,
-        $MaybeSchema<$BooleanSchema<boolean>>
+        $MaybeSchema<$Boolean.Schema<boolean>>
       >({
         ...options,
         focusResource: resource,
@@ -11496,8 +11634,8 @@ export namespace TermsStruct {
         propertySchema: TermsStruct.schema.properties.booleanTerm,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           boolean,
-          $BooleanSchema<boolean>
-        >($booleanFromRdfResourceValues<boolean>),
+          $Boolean.Schema<boolean>
+        >($Boolean.fromRdfResourceValues<boolean>),
       }),
       dateTerm: $shaclPropertyFromRdf<Maybe<Date>, $MaybeSchema<$DateSchema>>({
         ...options,
@@ -11536,17 +11674,17 @@ export namespace TermsStruct {
         >($floatFromRdfResourceValues<number>),
       }),
       identifierTerm: $shaclPropertyFromRdf<
-        Maybe<BlankNode | NamedNode>,
-        $MaybeSchema<$IdentifierSchema>
+        Maybe<$Identifier>,
+        $MaybeSchema<$Identifier.Schema>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: TermsStruct.schema.properties.identifierTerm,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          BlankNode | NamedNode,
-          $IdentifierSchema
-        >($identifierFromRdfResourceValues),
+          $Identifier,
+          $Identifier.Schema
+        >($Identifier.fromRdfResourceValues),
       }),
       iriTerm: $shaclPropertyFromRdf<
         Maybe<NamedNode>,
@@ -11709,7 +11847,7 @@ export namespace TermsStruct {
         defaultNamespace: parameters.$defaultNamespace,
       }),
       $type: Right("TermsStruct" as const),
-      blankNodeTerm: $convertToMaybe($convertToBlankNode)(
+      blankNodeTerm: $convertToMaybe($BlankNode.convert)(
         parameters.blankNodeTerm,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -11764,7 +11902,7 @@ export namespace TermsStruct {
           value,
         ),
       ),
-      identifierTerm: $convertToMaybe($convertToIdentifier)(
+      identifierTerm: $convertToMaybe($Identifier.convert)(
         parameters.identifierTerm,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -11846,7 +11984,7 @@ export namespace TermsStruct {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
+      | Maybe<$Identifier>;
     readonly iriTerm?:
       | (keyof $DefaultNamespaceT & string)
       | NamedNode
@@ -12009,13 +12147,13 @@ export namespace TermsStruct {
   ) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
     if (
       filter.blankNodeTerm !== undefined &&
-      !$filterMaybe<BlankNode, $BlankNodeFilter>($filterBlankNode)(
+      !$filterMaybe<BlankNode, $BlankNode.Filter>($BlankNode.filter)(
         filter.blankNodeTerm,
         value.blankNodeTerm,
       )
@@ -12024,7 +12162,7 @@ export namespace TermsStruct {
     }
     if (
       filter.booleanTerm !== undefined &&
-      !$filterMaybe<boolean, $BooleanFilter>($filterBoolean)(
+      !$filterMaybe<boolean, $Boolean.Filter>($Boolean.filter)(
         filter.booleanTerm,
         value.booleanTerm,
       )
@@ -12060,9 +12198,10 @@ export namespace TermsStruct {
     }
     if (
       filter.identifierTerm !== undefined &&
-      !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
-        $filterIdentifier,
-      )(filter.identifierTerm, value.identifierTerm)
+      !$filterMaybe<$Identifier, $Identifier.Filter>($Identifier.filter)(
+        filter.identifierTerm,
+        value.identifierTerm,
+      )
     ) {
       return false;
     }
@@ -12115,13 +12254,13 @@ export namespace TermsStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly blankNodeTerm?: $MaybeFilter<$BlankNodeFilter>;
-    readonly booleanTerm?: $MaybeFilter<$BooleanFilter>;
+    readonly $identifier?: $Identifier.Filter;
+    readonly blankNodeTerm?: $MaybeFilter<$BlankNode.Filter>;
+    readonly booleanTerm?: $MaybeFilter<$Boolean.Filter>;
     readonly dateTerm?: $MaybeFilter<$DateFilter>;
     readonly dateTimeTerm?: $MaybeFilter<$DateFilter>;
     readonly doubleTerm?: $MaybeFilter<$NumericFilter<number>>;
-    readonly identifierTerm?: $MaybeFilter<$IdentifierFilter>;
+    readonly identifierTerm?: $MaybeFilter<$Identifier.Filter>;
     readonly iriTerm?: $MaybeFilter<$IriFilter>;
     readonly langStringTerm?: $MaybeFilter<$LiteralFilter>;
     readonly literalTerm?: $MaybeFilter<$LiteralFilter>;
@@ -12163,8 +12302,8 @@ export namespace TermsStruct {
         propertyName: "blankNodeTerm",
         propertySchema: TermsStruct.schema.properties.blankNodeTerm,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $BlankNodeFilter,
-          $BlankNodeSchema
+          $BlankNode.Filter,
+          $BlankNode.Schema
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -12177,8 +12316,8 @@ export namespace TermsStruct {
         propertyName: "booleanTerm",
         propertySchema: TermsStruct.schema.properties.booleanTerm,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $BooleanFilter,
-          $BooleanSchema<boolean>
+          $Boolean.Filter,
+          $Boolean.Schema<boolean>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -12233,8 +12372,8 @@ export namespace TermsStruct {
         propertyName: "identifierTerm",
         propertySchema: TermsStruct.schema.properties.identifierTerm,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $IdentifierFilter,
-          $IdentifierSchema
+          $Identifier.Filter,
+          $Identifier.Schema
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -12318,7 +12457,7 @@ export namespace TermsStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -12383,9 +12522,9 @@ export namespace TermsStruct {
         propertyName: "blankNodeTerm",
         propertySchema: TermsStruct.schema.properties.blankNodeTerm,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $BlankNodeFilter,
-          $BlankNodeSchema
-        >($blankNodeSparqlWherePatterns),
+          $BlankNode.Filter,
+          $BlankNode.Schema
+        >($BlankNode.sparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -12398,9 +12537,9 @@ export namespace TermsStruct {
         propertyName: "booleanTerm",
         propertySchema: TermsStruct.schema.properties.booleanTerm,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $BooleanFilter,
-          $BooleanSchema<boolean>
-        >($booleanSparqlWherePatterns),
+          $Boolean.Filter,
+          $Boolean.Schema<boolean>
+        >($Boolean.sparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -12458,9 +12597,9 @@ export namespace TermsStruct {
         propertyName: "identifierTerm",
         propertySchema: TermsStruct.schema.properties.identifierTerm,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $IdentifierFilter,
-          $IdentifierSchema
-        >($identifierSparqlWherePatterns),
+          $Identifier.Filter,
+          $Identifier.Schema
+        >($Identifier.sparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -12548,18 +12687,18 @@ export namespace TermsStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: TermsStruct.schema.properties.$identifier.type,
       }),
-      blankNodeTerm: $maybeFromJsonValue($blankNodeFromJsonString)(
+      blankNodeTerm: $maybeFromJsonValue($BlankNode.fromJsonString)(
         jsonObject["blankNodeTerm"],
         {
           ...options,
           schema: TermsStruct.schema.properties.blankNodeTerm.type,
         },
       ),
-      booleanTerm: $maybeFromJsonValue($booleanFromJsonBoolean<boolean>)(
+      booleanTerm: $maybeFromJsonValue($Boolean.fromJsonBoolean<boolean>)(
         jsonObject["booleanTerm"],
         {
           ...options,
@@ -12587,7 +12726,7 @@ export namespace TermsStruct {
           schema: TermsStruct.schema.properties.doubleTerm.type,
         },
       ),
-      identifierTerm: $maybeFromJsonValue($identifierFromJsonString)(
+      identifierTerm: $maybeFromJsonValue($Identifier.fromJsonString)(
         jsonObject["identifierTerm"],
         {
           ...options,
@@ -12649,7 +12788,7 @@ export namespace TermsStruct {
       hasher.update(_termsStruct.$identifier().value);
     }
     $hashMaybe($hashTerm)(hasher, _termsStruct.blankNodeTerm);
-    $hashMaybe($hashBoolean)(hasher, _termsStruct.booleanTerm);
+    $hashMaybe($Boolean.hash)(hasher, _termsStruct.booleanTerm);
     $hashMaybe($hashDate)(hasher, _termsStruct.dateTerm);
     $hashMaybe($hashDateTime)(hasher, _termsStruct.dateTimeTerm);
     $hashMaybe($hashNumeric)(hasher, _termsStruct.doubleTerm);
@@ -12661,9 +12800,9 @@ export namespace TermsStruct {
     $hashMaybe($hashTerm)(hasher, _termsStruct.term);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isTermsStruct: $ObjectTypeGuardFunction<
@@ -12943,7 +13082,7 @@ export namespace TermsStruct {
             ? `_:${_termsStruct.$identifier().value}`
             : _termsStruct.$identifier().value,
         "@type": "http://example.com/TermsStruct",
-        blankNodeTerm: $maybeToJsonValue($blankNodeToJsonString)(
+        blankNodeTerm: $maybeToJsonValue($BlankNode.toJsonString)(
           _termsStruct.blankNodeTerm,
         ),
         booleanTerm: $maybeToJsonValue($primitiveToJsonValue<boolean>)(
@@ -12956,7 +13095,7 @@ export namespace TermsStruct {
         doubleTerm: $maybeToJsonValue($primitiveToJsonValue<number>)(
           _termsStruct.doubleTerm,
         ),
-        identifierTerm: $maybeToJsonValue($identifierToJsonString)(
+        identifierTerm: $maybeToJsonValue($Identifier.toJsonString)(
           _termsStruct.identifierTerm,
         ),
         iriTerm: $maybeToJsonValue($iriToJsonString<string>)(
@@ -13078,15 +13217,14 @@ export namespace TargetClassStruct {
     TargetClassStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: TargetClassStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -13189,7 +13327,7 @@ export namespace TargetClassStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -13203,7 +13341,7 @@ export namespace TargetClassStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly targetClassString?: $StringFilter;
   };
 
@@ -13253,7 +13391,7 @@ export namespace TargetClassStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -13330,7 +13468,7 @@ export namespace TargetClassStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: TargetClassStruct.schema.properties.$identifier.type,
       }),
@@ -13369,9 +13507,9 @@ export namespace TargetClassStruct {
     $hashString(hasher, _targetClassStruct.targetClassString);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isTargetClassStruct: $ObjectTypeGuardFunction<
@@ -13589,15 +13727,14 @@ export namespace StructIntersectionMember2 {
     StructIntersectionMember2.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: StructIntersectionMember2.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -13757,7 +13894,7 @@ export namespace StructIntersectionMember2 {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -13783,7 +13920,7 @@ export namespace StructIntersectionMember2 {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly structIntersectionMember2Distinct?: $StringFilter;
     readonly structIntersectionMemberCommon?: $StringFilter;
   };
@@ -13849,7 +13986,7 @@ export namespace StructIntersectionMember2 {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -13944,7 +14081,7 @@ export namespace StructIntersectionMember2 {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: StructIntersectionMember2.schema.properties.$identifier.type,
       }),
@@ -14001,9 +14138,9 @@ export namespace StructIntersectionMember2 {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isStructIntersectionMember2: $ObjectTypeGuardFunction<
@@ -14250,15 +14387,14 @@ export namespace StructIntersectionMember1 {
     StructIntersectionMember1.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: StructIntersectionMember1.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -14418,7 +14554,7 @@ export namespace StructIntersectionMember1 {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -14444,7 +14580,7 @@ export namespace StructIntersectionMember1 {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly structIntersectionMember1Distinct?: $StringFilter;
     readonly structIntersectionMemberCommon?: $StringFilter;
   };
@@ -14510,7 +14646,7 @@ export namespace StructIntersectionMember1 {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -14605,7 +14741,7 @@ export namespace StructIntersectionMember1 {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: StructIntersectionMember1.schema.properties.$identifier.type,
       }),
@@ -14662,9 +14798,9 @@ export namespace StructIntersectionMember1 {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isStructIntersectionMember1: $ObjectTypeGuardFunction<
@@ -15042,9 +15178,9 @@ export namespace StructIntersection {
     StructIntersectionMember2.hash(hasher, value);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isStructIntersection: $ObjectTypeGuardFunction<
@@ -15227,16 +15363,15 @@ export namespace StructDiscriminatedUnionMember2 {
     StructDiscriminatedUnionMember2.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             StructDiscriminatedUnionMember2.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -15405,7 +15540,7 @@ export namespace StructDiscriminatedUnionMember2 {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -15431,7 +15566,7 @@ export namespace StructDiscriminatedUnionMember2 {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly structDiscriminatedUnionMember2Distinct?: $StringFilter;
     readonly structDiscriminatedUnionMemberCommon?: $StringFilter;
   };
@@ -15497,7 +15632,7 @@ export namespace StructDiscriminatedUnionMember2 {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -15593,7 +15728,7 @@ export namespace StructDiscriminatedUnionMember2 {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           StructDiscriminatedUnionMember2.schema.properties.$identifier.type,
@@ -15653,9 +15788,9 @@ export namespace StructDiscriminatedUnionMember2 {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isStructDiscriminatedUnionMember2: $ObjectTypeGuardFunction<
@@ -15905,16 +16040,15 @@ export namespace StructDiscriminatedUnionMember1 {
     StructDiscriminatedUnionMember1.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             StructDiscriminatedUnionMember1.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -16083,7 +16217,7 @@ export namespace StructDiscriminatedUnionMember1 {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -16109,7 +16243,7 @@ export namespace StructDiscriminatedUnionMember1 {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly structDiscriminatedUnionMember1Distinct?: $StringFilter;
     readonly structDiscriminatedUnionMemberCommon?: $StringFilter;
   };
@@ -16175,7 +16309,7 @@ export namespace StructDiscriminatedUnionMember1 {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -16271,7 +16405,7 @@ export namespace StructDiscriminatedUnionMember1 {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           StructDiscriminatedUnionMember1.schema.properties.$identifier.type,
@@ -16331,9 +16465,9 @@ export namespace StructDiscriminatedUnionMember1 {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isStructDiscriminatedUnionMember1: $ObjectTypeGuardFunction<
@@ -16646,7 +16780,7 @@ export namespace StructIntersectionDiscriminatedUnion {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -16689,7 +16823,7 @@ export namespace StructIntersectionDiscriminatedUnion {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly on?: {
       readonly StructDiscriminatedUnionMember1?: StructDiscriminatedUnionMember1.Filter;
       readonly StructDiscriminatedUnionMember2?: StructDiscriminatedUnionMember2.Filter;
@@ -16726,7 +16860,7 @@ export namespace StructIntersectionDiscriminatedUnion {
     let patterns: $SparqlPattern[] = [];
     if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: filter?.$identifier,
           ignoreRdfType: false,
           preferredLanguages,
@@ -16978,9 +17112,9 @@ export namespace StructIntersectionDiscriminatedUnion {
     }
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isStructIntersectionDiscriminatedUnion: $ObjectTypeGuardFunction<
@@ -17274,15 +17408,14 @@ export namespace StructInheritance1 {
     StructInheritance1.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: StructInheritance1.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       structInheritance1: $shaclPropertyFromRdf<string, $StringSchema<string>>({
         ...options,
         focusResource: resource,
@@ -17369,7 +17502,7 @@ export namespace StructInheritance1 {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -17383,7 +17516,7 @@ export namespace StructInheritance1 {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly structInheritance1?: $StringFilter;
   };
 
@@ -17411,7 +17544,7 @@ export namespace StructInheritance1 {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -17443,7 +17576,7 @@ export namespace StructInheritance1 {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: StructInheritance1.schema.properties.$identifier.type,
       }),
@@ -17482,9 +17615,9 @@ export namespace StructInheritance1 {
     $hashString(hasher, _structInheritance1.structInheritance1);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isStructInheritance1: $ObjectTypeGuardFunction<
@@ -17682,7 +17815,7 @@ export namespace StructInheritance1 {
  * Struct 'inheritance' through sh:and (level 2 struct)
  */
 export type StructInheritance2 = StructInheritance1 & {
-  readonly $identifier: () => BlankNode | NamedNode;
+  readonly $identifier: () => $Identifier;
 
   readonly structInheritance2: string;
 };
@@ -17694,15 +17827,14 @@ export namespace StructInheritance2 {
     StructInheritance1.fromRdfResource(resource, options).chain((member0) =>
       $wrap_FromRdfResourceFunction(((resource, options) =>
         $sequenceRecord({
-          $identifier: $identifierFromRdfResourceValues(
-            $rdfResourceIdentifierValues(resource),
-            {
+          $identifier: $Identifier
+            .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
               ...options,
               focusResource: resource,
               propertyPath: $rdf_subject,
               schema: { kind: "Identifier" } as const,
-            },
-          ).chain((values) => values.head()),
+            })
+            .chain((values) => values.head()),
           structInheritance2: $shaclPropertyFromRdf<
             string,
             $StringSchema<string>
@@ -17745,7 +17877,7 @@ export namespace StructInheritance2 {
                       }),
                     )) satisfies $ToJsonFunction<
                     {
-                      readonly $identifier: () => BlankNode | NamedNode;
+                      readonly $identifier: () => $Identifier;
                       readonly structInheritance2: string;
                     },
                     { "@id": string; structInheritance2: string }
@@ -17757,7 +17889,7 @@ export namespace StructInheritance2 {
                           $identifier: _object.$identifier().toString(),
                         }))(_object),
                     )) satisfies $ToStringFunction<{
-                    readonly $identifier: () => BlankNode | NamedNode;
+                    readonly $identifier: () => $Identifier;
                   }>,
                 }),
               )) satisfies <
@@ -17765,7 +17897,7 @@ export namespace StructInheritance2 {
             >(parameters: {
               readonly $defaultNamespace?: $DefaultNamespaceT;
               readonly $identifier?:
-                | (() => BlankNode | NamedNode)
+                | (() => $Identifier)
                 | BlankNode
                 | NamedNode
                 | (keyof $DefaultNamespaceT & string);
@@ -17773,13 +17905,13 @@ export namespace StructInheritance2 {
             }) => Either<
               Error,
               {
-                readonly $identifier: () => BlankNode | NamedNode;
+                readonly $identifier: () => $Identifier;
                 readonly structInheritance2: string;
               }
             >
           )(properties),
         )) satisfies $_FromRdfResourceFunction<{
-        readonly $identifier: () => BlankNode | NamedNode;
+        readonly $identifier: () => $Identifier;
         readonly structInheritance2: string;
       }>)(resource, options).map((member1) => ({
         ...member0,
@@ -17843,7 +17975,7 @@ export namespace StructInheritance2 {
                   }),
                 )) satisfies $ToJsonFunction<
                 {
-                  readonly $identifier: () => BlankNode | NamedNode;
+                  readonly $identifier: () => $Identifier;
                   readonly structInheritance2: string;
                 },
                 { "@id": string; structInheritance2: string }
@@ -17855,7 +17987,7 @@ export namespace StructInheritance2 {
                       $identifier: _object.$identifier().toString(),
                     }))(_object),
                 )) satisfies $ToStringFunction<{
-                readonly $identifier: () => BlankNode | NamedNode;
+                readonly $identifier: () => $Identifier;
               }>,
             }),
           ))(parameters).map((member1) => ({
@@ -17876,7 +18008,7 @@ export namespace StructInheritance2 {
   > = StructInheritance1.CreateParameters<$DefaultNamespaceT> & {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
-      | (() => BlankNode | NamedNode)
+      | (() => $Identifier)
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
@@ -17909,7 +18041,7 @@ export namespace StructInheritance2 {
             [right, right.structInheritance2],
           ),
         )) satisfies $EqualsFunction<{
-        readonly $identifier: () => BlankNode | NamedNode;
+        readonly $identifier: () => $Identifier;
         readonly structInheritance2: string;
       }>
     )(left, right);
@@ -17923,7 +18055,7 @@ export namespace StructInheritance2 {
       ((filter, value) => {
         if (
           filter.$identifier !== undefined &&
-          !$filterIdentifier(filter.$identifier, value.$identifier())
+          !$Identifier.filter(filter.$identifier, value.$identifier())
         ) {
           return false;
         }
@@ -17936,18 +18068,18 @@ export namespace StructInheritance2 {
         return true;
       }) satisfies $FilterFunction<
         {
-          readonly $identifier?: $IdentifierFilter;
+          readonly $identifier?: $Identifier.Filter;
           readonly structInheritance2?: $StringFilter;
         },
         {
-          readonly $identifier: () => BlankNode | NamedNode;
+          readonly $identifier: () => $Identifier;
           readonly structInheritance2: string;
         }
       >
     )(filter, value);
 
   export type Filter = StructInheritance1.Filter & {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly structInheritance2?: $StringFilter;
   };
 
@@ -17996,7 +18128,7 @@ export namespace StructInheritance2 {
         let patterns: $SparqlPattern[] = [];
         if (parameters.focusIdentifier.termType === "Variable") {
           patterns = patterns.concat(
-            $identifierSparqlWherePatterns({
+            $Identifier.sparqlWherePatterns({
               filter: parameters.filter?.$identifier,
               ignoreRdfType: true,
               preferredLanguages: parameters.preferredLanguages,
@@ -18043,7 +18175,7 @@ export namespace StructInheritance2 {
           $FromJsonFunction<
             { "@id": string; structInheritance2: string },
             {
-              readonly $identifier: () => BlankNode | NamedNode;
+              readonly $identifier: () => $Identifier;
               readonly structInheritance2: string;
             },
             undefined
@@ -18051,7 +18183,7 @@ export namespace StructInheritance2 {
         >[1] = {},
       ) =>
         $sequenceRecord({
-          $identifier: $identifierFromJsonString(jsonObject["@id"], {
+          $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
             ...options,
             schema: { kind: "Identifier" } as const,
           }),
@@ -18083,7 +18215,7 @@ export namespace StructInheritance2 {
                   }),
                 )) satisfies $ToJsonFunction<
                 {
-                  readonly $identifier: () => BlankNode | NamedNode;
+                  readonly $identifier: () => $Identifier;
                   readonly structInheritance2: string;
                 },
                 { "@id": string; structInheritance2: string }
@@ -18095,7 +18227,7 @@ export namespace StructInheritance2 {
                       $identifier: _object.$identifier().toString(),
                     }))(_object),
                 )) satisfies $ToStringFunction<{
-                readonly $identifier: () => BlankNode | NamedNode;
+                readonly $identifier: () => $Identifier;
               }>,
             }),
           )) satisfies <
@@ -18103,7 +18235,7 @@ export namespace StructInheritance2 {
         >(parameters: {
           readonly $defaultNamespace?: $DefaultNamespaceT;
           readonly $identifier?:
-            | (() => BlankNode | NamedNode)
+            | (() => $Identifier)
             | BlankNode
             | NamedNode
             | (keyof $DefaultNamespaceT & string);
@@ -18111,7 +18243,7 @@ export namespace StructInheritance2 {
         }) => Either<
           Error,
           {
-            readonly $identifier: () => BlankNode | NamedNode;
+            readonly $identifier: () => $Identifier;
             readonly structInheritance2: string;
           }
         >))(jsonObject).map((member1) => ({
@@ -18147,18 +18279,20 @@ export namespace StructInheritance2 {
       }) satisfies $HashFunction<
         Omit<
           {
-            readonly $identifier: () => BlankNode | NamedNode;
+            readonly $identifier: () => $Identifier;
             readonly structInheritance2: string;
           },
           "$identifier"
-        > & { readonly $identifier?: () => BlankNode | NamedNode }
+        > & {
+          readonly $identifier?: () => $Identifier;
+        }
       >
     )(hasher, value);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isStructInheritance2: $ObjectTypeGuardFunction<
@@ -18357,7 +18491,7 @@ export namespace StructInheritance2 {
             variablePrefix,
           })) satisfies $ValueSparqlConstructTriplesFunction<
           {
-            readonly $identifier?: $IdentifierFilter;
+            readonly $identifier?: $Identifier.Filter;
             readonly structInheritance2?: $StringFilter;
           },
           {
@@ -18365,7 +18499,7 @@ export namespace StructInheritance2 {
             properties: {
               $identifier: {
                 readonly kind: "Identifier";
-                readonly type: $IdentifierSchema;
+                readonly type: $Identifier.Schema;
               };
               structInheritance2: {
                 readonly kind: "Shacl";
@@ -18415,7 +18549,7 @@ export namespace StructInheritance2 {
               let patterns: $SparqlPattern[] = [];
               if (parameters.focusIdentifier.termType === "Variable") {
                 patterns = patterns.concat(
-                  $identifierSparqlWherePatterns({
+                  $Identifier.sparqlWherePatterns({
                     filter: parameters.filter?.$identifier,
                     ignoreRdfType: true,
                     preferredLanguages: parameters.preferredLanguages,
@@ -18454,7 +18588,7 @@ export namespace StructInheritance2 {
             }),
           )) satisfies $ValueSparqlWherePatternsFunction<
           {
-            readonly $identifier?: $IdentifierFilter;
+            readonly $identifier?: $Identifier.Filter;
             readonly structInheritance2?: $StringFilter;
           },
           {
@@ -18462,7 +18596,7 @@ export namespace StructInheritance2 {
             properties: {
               $identifier: {
                 readonly kind: "Identifier";
-                readonly type: $IdentifierSchema;
+                readonly type: $Identifier.Schema;
               };
               structInheritance2: {
                 readonly kind: "Shacl";
@@ -18488,7 +18622,7 @@ export namespace StructInheritance2 {
  * Struct 'inheritance' through sh:and (level 3 struct)
  */
 export type StructInheritance3 = StructInheritance2 & {
-  readonly $identifier: () => BlankNode | NamedNode;
+  readonly $identifier: () => $Identifier;
 
   readonly structInheritance3: string;
 };
@@ -18500,15 +18634,14 @@ export namespace StructInheritance3 {
     StructInheritance2.fromRdfResource(resource, options).chain((member0) =>
       $wrap_FromRdfResourceFunction(((resource, options) =>
         $sequenceRecord({
-          $identifier: $identifierFromRdfResourceValues(
-            $rdfResourceIdentifierValues(resource),
-            {
+          $identifier: $Identifier
+            .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
               ...options,
               focusResource: resource,
               propertyPath: $rdf_subject,
               schema: { kind: "Identifier" } as const,
-            },
-          ).chain((values) => values.head()),
+            })
+            .chain((values) => values.head()),
           structInheritance3: $shaclPropertyFromRdf<
             string,
             $StringSchema<string>
@@ -18551,7 +18684,7 @@ export namespace StructInheritance3 {
                       }),
                     )) satisfies $ToJsonFunction<
                     {
-                      readonly $identifier: () => BlankNode | NamedNode;
+                      readonly $identifier: () => $Identifier;
                       readonly structInheritance3: string;
                     },
                     { "@id": string; structInheritance3: string }
@@ -18563,7 +18696,7 @@ export namespace StructInheritance3 {
                           $identifier: _object.$identifier().toString(),
                         }))(_object),
                     )) satisfies $ToStringFunction<{
-                    readonly $identifier: () => BlankNode | NamedNode;
+                    readonly $identifier: () => $Identifier;
                   }>,
                 }),
               )) satisfies <
@@ -18571,7 +18704,7 @@ export namespace StructInheritance3 {
             >(parameters: {
               readonly $defaultNamespace?: $DefaultNamespaceT;
               readonly $identifier?:
-                | (() => BlankNode | NamedNode)
+                | (() => $Identifier)
                 | BlankNode
                 | NamedNode
                 | (keyof $DefaultNamespaceT & string);
@@ -18579,13 +18712,13 @@ export namespace StructInheritance3 {
             }) => Either<
               Error,
               {
-                readonly $identifier: () => BlankNode | NamedNode;
+                readonly $identifier: () => $Identifier;
                 readonly structInheritance3: string;
               }
             >
           )(properties),
         )) satisfies $_FromRdfResourceFunction<{
-        readonly $identifier: () => BlankNode | NamedNode;
+        readonly $identifier: () => $Identifier;
         readonly structInheritance3: string;
       }>)(resource, options).map((member1) => ({
         ...member0,
@@ -18649,7 +18782,7 @@ export namespace StructInheritance3 {
                   }),
                 )) satisfies $ToJsonFunction<
                 {
-                  readonly $identifier: () => BlankNode | NamedNode;
+                  readonly $identifier: () => $Identifier;
                   readonly structInheritance3: string;
                 },
                 { "@id": string; structInheritance3: string }
@@ -18661,7 +18794,7 @@ export namespace StructInheritance3 {
                       $identifier: _object.$identifier().toString(),
                     }))(_object),
                 )) satisfies $ToStringFunction<{
-                readonly $identifier: () => BlankNode | NamedNode;
+                readonly $identifier: () => $Identifier;
               }>,
             }),
           ))(parameters).map((member1) => ({
@@ -18682,7 +18815,7 @@ export namespace StructInheritance3 {
   > = StructInheritance2.CreateParameters<$DefaultNamespaceT> & {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
-      | (() => BlankNode | NamedNode)
+      | (() => $Identifier)
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
@@ -18715,7 +18848,7 @@ export namespace StructInheritance3 {
             [right, right.structInheritance3],
           ),
         )) satisfies $EqualsFunction<{
-        readonly $identifier: () => BlankNode | NamedNode;
+        readonly $identifier: () => $Identifier;
         readonly structInheritance3: string;
       }>
     )(left, right);
@@ -18729,7 +18862,7 @@ export namespace StructInheritance3 {
       ((filter, value) => {
         if (
           filter.$identifier !== undefined &&
-          !$filterIdentifier(filter.$identifier, value.$identifier())
+          !$Identifier.filter(filter.$identifier, value.$identifier())
         ) {
           return false;
         }
@@ -18742,18 +18875,18 @@ export namespace StructInheritance3 {
         return true;
       }) satisfies $FilterFunction<
         {
-          readonly $identifier?: $IdentifierFilter;
+          readonly $identifier?: $Identifier.Filter;
           readonly structInheritance3?: $StringFilter;
         },
         {
-          readonly $identifier: () => BlankNode | NamedNode;
+          readonly $identifier: () => $Identifier;
           readonly structInheritance3: string;
         }
       >
     )(filter, value);
 
   export type Filter = StructInheritance2.Filter & {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly structInheritance3?: $StringFilter;
   };
 
@@ -18802,7 +18935,7 @@ export namespace StructInheritance3 {
         let patterns: $SparqlPattern[] = [];
         if (parameters.focusIdentifier.termType === "Variable") {
           patterns = patterns.concat(
-            $identifierSparqlWherePatterns({
+            $Identifier.sparqlWherePatterns({
               filter: parameters.filter?.$identifier,
               ignoreRdfType: true,
               preferredLanguages: parameters.preferredLanguages,
@@ -18849,7 +18982,7 @@ export namespace StructInheritance3 {
           $FromJsonFunction<
             { "@id": string; structInheritance3: string },
             {
-              readonly $identifier: () => BlankNode | NamedNode;
+              readonly $identifier: () => $Identifier;
               readonly structInheritance3: string;
             },
             undefined
@@ -18857,7 +18990,7 @@ export namespace StructInheritance3 {
         >[1] = {},
       ) =>
         $sequenceRecord({
-          $identifier: $identifierFromJsonString(jsonObject["@id"], {
+          $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
             ...options,
             schema: { kind: "Identifier" } as const,
           }),
@@ -18889,7 +19022,7 @@ export namespace StructInheritance3 {
                   }),
                 )) satisfies $ToJsonFunction<
                 {
-                  readonly $identifier: () => BlankNode | NamedNode;
+                  readonly $identifier: () => $Identifier;
                   readonly structInheritance3: string;
                 },
                 { "@id": string; structInheritance3: string }
@@ -18901,7 +19034,7 @@ export namespace StructInheritance3 {
                       $identifier: _object.$identifier().toString(),
                     }))(_object),
                 )) satisfies $ToStringFunction<{
-                readonly $identifier: () => BlankNode | NamedNode;
+                readonly $identifier: () => $Identifier;
               }>,
             }),
           )) satisfies <
@@ -18909,7 +19042,7 @@ export namespace StructInheritance3 {
         >(parameters: {
           readonly $defaultNamespace?: $DefaultNamespaceT;
           readonly $identifier?:
-            | (() => BlankNode | NamedNode)
+            | (() => $Identifier)
             | BlankNode
             | NamedNode
             | (keyof $DefaultNamespaceT & string);
@@ -18917,7 +19050,7 @@ export namespace StructInheritance3 {
         }) => Either<
           Error,
           {
-            readonly $identifier: () => BlankNode | NamedNode;
+            readonly $identifier: () => $Identifier;
             readonly structInheritance3: string;
           }
         >))(jsonObject).map((member1) => ({
@@ -18953,18 +19086,20 @@ export namespace StructInheritance3 {
       }) satisfies $HashFunction<
         Omit<
           {
-            readonly $identifier: () => BlankNode | NamedNode;
+            readonly $identifier: () => $Identifier;
             readonly structInheritance3: string;
           },
           "$identifier"
-        > & { readonly $identifier?: () => BlankNode | NamedNode }
+        > & {
+          readonly $identifier?: () => $Identifier;
+        }
       >
     )(hasher, value);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isStructInheritance3: $ObjectTypeGuardFunction<
@@ -19163,7 +19298,7 @@ export namespace StructInheritance3 {
             variablePrefix,
           })) satisfies $ValueSparqlConstructTriplesFunction<
           {
-            readonly $identifier?: $IdentifierFilter;
+            readonly $identifier?: $Identifier.Filter;
             readonly structInheritance3?: $StringFilter;
           },
           {
@@ -19171,7 +19306,7 @@ export namespace StructInheritance3 {
             properties: {
               $identifier: {
                 readonly kind: "Identifier";
-                readonly type: $IdentifierSchema;
+                readonly type: $Identifier.Schema;
               };
               structInheritance3: {
                 readonly kind: "Shacl";
@@ -19221,7 +19356,7 @@ export namespace StructInheritance3 {
               let patterns: $SparqlPattern[] = [];
               if (parameters.focusIdentifier.termType === "Variable") {
                 patterns = patterns.concat(
-                  $identifierSparqlWherePatterns({
+                  $Identifier.sparqlWherePatterns({
                     filter: parameters.filter?.$identifier,
                     ignoreRdfType: true,
                     preferredLanguages: parameters.preferredLanguages,
@@ -19260,7 +19395,7 @@ export namespace StructInheritance3 {
             }),
           )) satisfies $ValueSparqlWherePatternsFunction<
           {
-            readonly $identifier?: $IdentifierFilter;
+            readonly $identifier?: $Identifier.Filter;
             readonly structInheritance3?: $StringFilter;
           },
           {
@@ -19268,7 +19403,7 @@ export namespace StructInheritance3 {
             properties: {
               $identifier: {
                 readonly kind: "Identifier";
-                readonly type: $IdentifierSchema;
+                readonly type: $Identifier.Schema;
               };
               structInheritance3: {
                 readonly kind: "Shacl";
@@ -19353,7 +19488,7 @@ export namespace StructDiscriminatedUnion {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -19388,7 +19523,7 @@ export namespace StructDiscriminatedUnion {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly on?: {
       readonly StructDiscriminatedUnionMember1?: StructDiscriminatedUnionMember1.Filter;
       readonly StructDiscriminatedUnionMember2?: StructDiscriminatedUnionMember2.Filter;
@@ -19418,7 +19553,7 @@ export namespace StructDiscriminatedUnion {
     let patterns: $SparqlPattern[] = [];
     if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: filter?.$identifier,
           ignoreRdfType: false,
           preferredLanguages,
@@ -19613,9 +19748,9 @@ export namespace StructDiscriminatedUnion {
     }
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isStructDiscriminatedUnion: $ObjectTypeGuardFunction<
@@ -19858,17 +19993,16 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     RecursiveDiscriminatedUnionMember2.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             RecursiveDiscriminatedUnionMember2.schema.properties.$identifier
               .type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -20021,7 +20155,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -20041,7 +20175,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly recursiveDiscriminatedUnionMember2Property?: $MaybeFilter<RecursiveDiscriminatedUnion.Filter>;
   };
 
@@ -20080,7 +20214,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -20149,7 +20283,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           RecursiveDiscriminatedUnionMember2.schema.properties.$identifier.type,
@@ -20195,9 +20329,9 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isRecursiveDiscriminatedUnionMember2: $ObjectTypeGuardFunction<
@@ -20443,17 +20577,16 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     RecursiveDiscriminatedUnionMember1.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             RecursiveDiscriminatedUnionMember1.schema.properties.$identifier
               .type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -20606,7 +20739,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -20626,7 +20759,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly recursiveDiscriminatedUnionMember1Property?: $MaybeFilter<RecursiveDiscriminatedUnion.Filter>;
   };
 
@@ -20665,7 +20798,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -20734,7 +20867,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           RecursiveDiscriminatedUnionMember1.schema.properties.$identifier.type,
@@ -20780,9 +20913,9 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isRecursiveDiscriminatedUnionMember1: $ObjectTypeGuardFunction<
@@ -21080,7 +21213,7 @@ export namespace RecursiveDiscriminatedUnion {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -21115,7 +21248,7 @@ export namespace RecursiveDiscriminatedUnion {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly on?: {
       readonly RecursiveDiscriminatedUnionMember1?: RecursiveDiscriminatedUnionMember1.Filter;
       readonly RecursiveDiscriminatedUnionMember2?: RecursiveDiscriminatedUnionMember2.Filter;
@@ -21145,7 +21278,7 @@ export namespace RecursiveDiscriminatedUnion {
     let patterns: $SparqlPattern[] = [];
     if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: filter?.$identifier,
           ignoreRdfType: false,
           preferredLanguages,
@@ -21344,9 +21477,9 @@ export namespace RecursiveDiscriminatedUnion {
     }
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isRecursiveDiscriminatedUnion: $ObjectTypeGuardFunction<
@@ -21602,15 +21735,14 @@ export namespace PropertyPathsStruct {
     PropertyPathsStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: PropertyPathsStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -21777,7 +21909,7 @@ export namespace PropertyPathsStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -21803,7 +21935,7 @@ export namespace PropertyPathsStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly inversePath?: $MaybeFilter<$IriFilter>;
     readonly predicatePath?: $MaybeFilter<$StringFilter>;
   };
@@ -21871,7 +22003,7 @@ export namespace PropertyPathsStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -21967,7 +22099,7 @@ export namespace PropertyPathsStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: PropertyPathsStruct.schema.properties.$identifier.type,
       }),
@@ -22014,9 +22146,9 @@ export namespace PropertyPathsStruct {
     $hashMaybe($hashString)(hasher, _propertyPathsStruct.predicatePath);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isPropertyPathsStruct: $ObjectTypeGuardFunction<
@@ -22287,15 +22419,14 @@ export namespace PropertyNamesStruct {
     PropertyNamesStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: PropertyNamesStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -22483,7 +22614,7 @@ export namespace PropertyNamesStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -22521,7 +22652,7 @@ export namespace PropertyNamesStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly actualName1?: $StringFilter;
     readonly actualName2?: $StringFilter;
     readonly actualName3?: $StringFilter;
@@ -22619,7 +22750,7 @@ export namespace PropertyNamesStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -22745,7 +22876,7 @@ export namespace PropertyNamesStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: PropertyNamesStruct.schema.properties.$identifier.type,
       }),
@@ -22801,9 +22932,9 @@ export namespace PropertyNamesStruct {
     $hashString(hasher, _propertyNamesStruct.actualName5);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isPropertyNamesStruct: $ObjectTypeGuardFunction<
@@ -23120,16 +23251,15 @@ export namespace PropertyCardinalitiesStruct {
     PropertyCardinalitiesStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             PropertyCardinalitiesStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       emptySet: $shaclPropertyFromRdf<
         readonly string[],
         $CollectionSchema<$StringSchema<string>>
@@ -23237,7 +23367,7 @@ export namespace PropertyCardinalitiesStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           PropertyCardinalitiesStruct.schema.properties.emptySet.type,
           value,
         ),
@@ -23248,7 +23378,7 @@ export namespace PropertyCardinalitiesStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           PropertyCardinalitiesStruct.schema.properties.nonEmptySet.type,
           value,
         ),
@@ -23311,7 +23441,7 @@ export namespace PropertyCardinalitiesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $strictEquals),
+              $Array.equals(left, right, $strictEquals),
             name: "emptySet",
           },
           [left, left.emptySet],
@@ -23322,7 +23452,7 @@ export namespace PropertyCardinalitiesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $strictEquals),
+              $Array.equals(left, right, $strictEquals),
             name: "nonEmptySet",
           },
           [left, left.nonEmptySet],
@@ -23354,13 +23484,13 @@ export namespace PropertyCardinalitiesStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
     if (
       filter.emptySet !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
+      !$Array.filter<string, $StringFilter>($filterString)(
         filter.emptySet,
         value.emptySet,
       )
@@ -23369,7 +23499,7 @@ export namespace PropertyCardinalitiesStruct {
     }
     if (
       filter.nonEmptySet !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
+      !$Array.filter<string, $StringFilter>($filterString)(
         filter.nonEmptySet,
         value.nonEmptySet,
       )
@@ -23395,7 +23525,7 @@ export namespace PropertyCardinalitiesStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly emptySet?: $CollectionFilter<$StringFilter>;
     readonly nonEmptySet?: $CollectionFilter<$StringFilter>;
     readonly optional?: $MaybeFilter<$StringFilter>;
@@ -23469,7 +23599,7 @@ export namespace PropertyCardinalitiesStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -23548,18 +23678,18 @@ export namespace PropertyCardinalitiesStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: PropertyCardinalitiesStruct.schema.properties.$identifier.type,
       }),
-      emptySet: $arrayFromJsonArray($stringFromJsonString<string>)(
+      emptySet: $Array.fromJson($stringFromJsonString<string>)(
         jsonObject["emptySet"],
         {
           ...options,
           schema: PropertyCardinalitiesStruct.schema.properties.emptySet.type,
         },
       ),
-      nonEmptySet: $arrayFromJsonArray($stringFromJsonString<string>)(
+      nonEmptySet: $Array.fromJson($stringFromJsonString<string>)(
         jsonObject["nonEmptySet"],
         {
           ...options,
@@ -23603,15 +23733,15 @@ export namespace PropertyCardinalitiesStruct {
     if (_propertyCardinalitiesStruct.$identifier) {
       hasher.update(_propertyCardinalitiesStruct.$identifier().value);
     }
-    $hashArray($hashString)(hasher, _propertyCardinalitiesStruct.emptySet);
-    $hashArray($hashString)(hasher, _propertyCardinalitiesStruct.nonEmptySet);
+    $Array.hash($hashString)(hasher, _propertyCardinalitiesStruct.emptySet);
+    $Array.hash($hashString)(hasher, _propertyCardinalitiesStruct.nonEmptySet);
     $hashMaybe($hashString)(hasher, _propertyCardinalitiesStruct.optional);
     $hashString(hasher, _propertyCardinalitiesStruct.required);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isPropertyCardinalitiesStruct: $ObjectTypeGuardFunction<
@@ -23797,10 +23927,10 @@ export namespace PropertyCardinalitiesStruct {
           _propertyCardinalitiesStruct.$identifier().termType === "BlankNode"
             ? `_:${_propertyCardinalitiesStruct.$identifier().value}`
             : _propertyCardinalitiesStruct.$identifier().value,
-        emptySet: $arrayToJsonArray($primitiveToJsonValue<string>)(
+        emptySet: $Array.toJson($primitiveToJsonValue<string>)(
           _propertyCardinalitiesStruct.emptySet,
         ),
-        nonEmptySet: $arrayToJsonArray($primitiveToJsonValue<string>)(
+        nonEmptySet: $Array.toJson($primitiveToJsonValue<string>)(
           _propertyCardinalitiesStruct.nonEmptySet,
         ),
         optional: $maybeToJsonValue($primitiveToJsonValue<string>)(
@@ -23896,15 +24026,14 @@ export namespace PartialStruct {
     PartialStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: PartialStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
         ...options,
         focusResource: resource,
@@ -23991,7 +24120,7 @@ export namespace PartialStruct {
   ) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -24005,7 +24134,7 @@ export namespace PartialStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly lazilyResolved?: $StringFilter;
   };
 
@@ -24033,7 +24162,7 @@ export namespace PartialStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -24065,7 +24194,7 @@ export namespace PartialStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: PartialStruct.schema.properties.$identifier.type,
       }),
@@ -24102,9 +24231,9 @@ export namespace PartialStruct {
     $hashString(hasher, _partialStruct.lazilyResolved);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isPartialStruct: $ObjectTypeGuardFunction<
@@ -24305,16 +24434,15 @@ export namespace PartialDiscriminatedUnionMember2 {
     PartialDiscriminatedUnionMember2.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             PartialDiscriminatedUnionMember2.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -24432,7 +24560,7 @@ export namespace PartialDiscriminatedUnionMember2 {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -24446,7 +24574,7 @@ export namespace PartialDiscriminatedUnionMember2 {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly lazilyResolved?: $StringFilter;
   };
 
@@ -24497,7 +24625,7 @@ export namespace PartialDiscriminatedUnionMember2 {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -24578,7 +24706,7 @@ export namespace PartialDiscriminatedUnionMember2 {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           PartialDiscriminatedUnionMember2.schema.properties.$identifier.type,
@@ -24622,9 +24750,9 @@ export namespace PartialDiscriminatedUnionMember2 {
     $hashString(hasher, _partialDiscriminatedUnionMember2.lazilyResolved);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isPartialDiscriminatedUnionMember2: $ObjectTypeGuardFunction<
@@ -24847,16 +24975,15 @@ export namespace PartialDiscriminatedUnionMember1 {
     PartialDiscriminatedUnionMember1.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             PartialDiscriminatedUnionMember1.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -24974,7 +25101,7 @@ export namespace PartialDiscriminatedUnionMember1 {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -24988,7 +25115,7 @@ export namespace PartialDiscriminatedUnionMember1 {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly lazilyResolved?: $StringFilter;
   };
 
@@ -25039,7 +25166,7 @@ export namespace PartialDiscriminatedUnionMember1 {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -25120,7 +25247,7 @@ export namespace PartialDiscriminatedUnionMember1 {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           PartialDiscriminatedUnionMember1.schema.properties.$identifier.type,
@@ -25164,9 +25291,9 @@ export namespace PartialDiscriminatedUnionMember1 {
     $hashString(hasher, _partialDiscriminatedUnionMember1.lazilyResolved);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isPartialDiscriminatedUnionMember1: $ObjectTypeGuardFunction<
@@ -25441,7 +25568,7 @@ export namespace PartialDiscriminatedUnion {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -25476,7 +25603,7 @@ export namespace PartialDiscriminatedUnion {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly on?: {
       readonly PartialDiscriminatedUnionMember1?: PartialDiscriminatedUnionMember1.Filter;
       readonly PartialDiscriminatedUnionMember2?: PartialDiscriminatedUnionMember2.Filter;
@@ -25506,7 +25633,7 @@ export namespace PartialDiscriminatedUnion {
     let patterns: $SparqlPattern[] = [];
     if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: filter?.$identifier,
           ignoreRdfType: false,
           preferredLanguages,
@@ -25701,9 +25828,9 @@ export namespace PartialDiscriminatedUnion {
     }
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isPartialDiscriminatedUnion: $ObjectTypeGuardFunction<
@@ -25959,15 +26086,14 @@ export namespace OrderedStruct {
     OrderedStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: OrderedStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       orderedC: $shaclPropertyFromRdf<string, $StringSchema<string>>({
         ...options,
         focusResource: resource,
@@ -26097,7 +26223,7 @@ export namespace OrderedStruct {
   ) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -26123,7 +26249,7 @@ export namespace OrderedStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly orderedC?: $StringFilter;
     readonly orderedB?: $StringFilter;
     readonly orderedA?: $StringFilter;
@@ -26175,7 +26301,7 @@ export namespace OrderedStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -26231,7 +26357,7 @@ export namespace OrderedStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: OrderedStruct.schema.properties.$identifier.type,
       }),
@@ -26275,9 +26401,9 @@ export namespace OrderedStruct {
     $hashString(hasher, _orderedStruct.orderedA);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isOrderedStruct: $ObjectTypeGuardFunction<
@@ -26538,15 +26664,14 @@ export namespace NumericsStruct {
     NumericsStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: NumericsStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -26580,7 +26705,7 @@ export namespace NumericsStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           BigDecimal,
           $NumericSchema<BigDecimal>
-        >($bigDecimalFromRdfResourceValues),
+        >($BigDecimal.fromRdfResourceValues),
       }),
       doubleNumeric: $shaclPropertyFromRdf<
         Maybe<number>,
@@ -26619,7 +26744,7 @@ export namespace NumericsStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       intNumeric: $shaclPropertyFromRdf<
         Maybe<number>,
@@ -26645,7 +26770,7 @@ export namespace NumericsStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       negativeIntegerNumeric: $shaclPropertyFromRdf<
         Maybe<bigint>,
@@ -26658,7 +26783,7 @@ export namespace NumericsStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       nonNegativeIntegerNumeric: $shaclPropertyFromRdf<
         Maybe<bigint>,
@@ -26672,7 +26797,7 @@ export namespace NumericsStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       nonPositiveIntegerNumeric: $shaclPropertyFromRdf<
         Maybe<bigint>,
@@ -26686,7 +26811,7 @@ export namespace NumericsStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       positiveIntegerNumeric: $shaclPropertyFromRdf<
         Maybe<bigint>,
@@ -26699,7 +26824,7 @@ export namespace NumericsStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       shortNumeric: $shaclPropertyFromRdf<
         Maybe<number>,
@@ -26751,7 +26876,7 @@ export namespace NumericsStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       unsignedShortNumeric: $shaclPropertyFromRdf<
         Maybe<number>,
@@ -26790,7 +26915,7 @@ export namespace NumericsStruct {
       NumericsStruct.schema.properties.decimalNumeric.path,
       parameters.object.decimalNumeric
         .toList()
-        .flatMap((value) => [$bigDecimalLiteral(value)]),
+        .flatMap((value) => [$literalFactory.bigdecimal(value)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -26930,7 +27055,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      decimalNumeric: $convertToMaybe($convertToBigDecimal)(
+      decimalNumeric: $convertToMaybe($BigDecimal.convert)(
         parameters.decimalNumeric,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -26963,7 +27088,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      integerNumeric: $convertToMaybe($convertToBigInt)(
+      integerNumeric: $convertToMaybe($BigInt.convert)(
         parameters.integerNumeric,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -26985,7 +27110,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      longNumeric: $convertToMaybe($convertToBigInt)(parameters.longNumeric, {
+      longNumeric: $convertToMaybe($BigInt.convert)(parameters.longNumeric, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
@@ -26993,7 +27118,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      negativeIntegerNumeric: $convertToMaybe($convertToBigInt)(
+      negativeIntegerNumeric: $convertToMaybe($BigInt.convert)(
         parameters.negativeIntegerNumeric,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -27004,7 +27129,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      nonNegativeIntegerNumeric: $convertToMaybe($convertToBigInt)(
+      nonNegativeIntegerNumeric: $convertToMaybe($BigInt.convert)(
         parameters.nonNegativeIntegerNumeric,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -27015,7 +27140,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      nonPositiveIntegerNumeric: $convertToMaybe($convertToBigInt)(
+      nonPositiveIntegerNumeric: $convertToMaybe($BigInt.convert)(
         parameters.nonPositiveIntegerNumeric,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -27026,7 +27151,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      positiveIntegerNumeric: $convertToMaybe($convertToBigInt)(
+      positiveIntegerNumeric: $convertToMaybe($BigInt.convert)(
         parameters.positiveIntegerNumeric,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -27070,7 +27195,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      unsignedLongNumeric: $convertToMaybe($convertToBigInt)(
+      unsignedLongNumeric: $convertToMaybe($BigInt.convert)(
         parameters.unsignedLongNumeric,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -27334,7 +27459,7 @@ export namespace NumericsStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -27349,7 +27474,7 @@ export namespace NumericsStruct {
     }
     if (
       filter.decimalNumeric !== undefined &&
-      !$filterMaybe<BigDecimal, $NumericFilter<BigDecimal>>($filterBigDecimal)(
+      !$filterMaybe<BigDecimal, $NumericFilter<BigDecimal>>($BigDecimal.filter)(
         filter.decimalNumeric,
         value.decimalNumeric,
       )
@@ -27486,7 +27611,7 @@ export namespace NumericsStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly byteNumeric?: $MaybeFilter<$NumericFilter<number>>;
     readonly decimalNumeric?: $MaybeFilter<$NumericFilter<BigDecimal>>;
     readonly doubleNumeric?: $MaybeFilter<$NumericFilter<number>>;
@@ -27766,7 +27891,7 @@ export namespace NumericsStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -27848,7 +27973,7 @@ export namespace NumericsStruct {
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<BigDecimal>,
           $NumericSchema<BigDecimal>
-        >($bigDecimalSparqlWherePatterns),
+        >($BigDecimal.sparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -28073,7 +28198,7 @@ export namespace NumericsStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: NumericsStruct.schema.properties.$identifier.type,
       }),
@@ -28084,7 +28209,7 @@ export namespace NumericsStruct {
           schema: NumericsStruct.schema.properties.byteNumeric.type,
         },
       ),
-      decimalNumeric: $maybeFromJsonValue($bigDecimalFromJsonString)(
+      decimalNumeric: $maybeFromJsonValue($BigDecimal.fromJsonString)(
         jsonObject["decimalNumeric"],
         {
           ...options,
@@ -28106,7 +28231,7 @@ export namespace NumericsStruct {
         },
       ),
       integerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<string, bigint>,
+        $BigInt.fromJsonString<string, bigint>,
       )(jsonObject["integerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.integerNumeric.type,
@@ -28118,7 +28243,7 @@ export namespace NumericsStruct {
           schema: NumericsStruct.schema.properties.intNumeric.type,
         },
       ),
-      longNumeric: $maybeFromJsonValue($bigIntFromJsonString<string, bigint>)(
+      longNumeric: $maybeFromJsonValue($BigInt.fromJsonString<string, bigint>)(
         jsonObject["longNumeric"],
         {
           ...options,
@@ -28126,25 +28251,25 @@ export namespace NumericsStruct {
         },
       ),
       negativeIntegerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<string, bigint>,
+        $BigInt.fromJsonString<string, bigint>,
       )(jsonObject["negativeIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.negativeIntegerNumeric.type,
       }),
       nonNegativeIntegerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<string, bigint>,
+        $BigInt.fromJsonString<string, bigint>,
       )(jsonObject["nonNegativeIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.nonNegativeIntegerNumeric.type,
       }),
       nonPositiveIntegerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<string, bigint>,
+        $BigInt.fromJsonString<string, bigint>,
       )(jsonObject["nonPositiveIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.nonPositiveIntegerNumeric.type,
       }),
       positiveIntegerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<string, bigint>,
+        $BigInt.fromJsonString<string, bigint>,
       )(jsonObject["positiveIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.positiveIntegerNumeric.type,
@@ -28171,7 +28296,7 @@ export namespace NumericsStruct {
         },
       ),
       unsignedLongNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<string, bigint>,
+        $BigInt.fromJsonString<string, bigint>,
       )(jsonObject["unsignedLongNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.unsignedLongNumeric.type,
@@ -28207,7 +28332,7 @@ export namespace NumericsStruct {
       hasher.update(_numericsStruct.$identifier().value);
     }
     $hashMaybe($hashNumeric)(hasher, _numericsStruct.byteNumeric);
-    $hashMaybe($hashBigDecimal)(hasher, _numericsStruct.decimalNumeric);
+    $hashMaybe($BigDecimal.hash)(hasher, _numericsStruct.decimalNumeric);
     $hashMaybe($hashNumeric)(hasher, _numericsStruct.doubleNumeric);
     $hashMaybe($hashNumeric)(hasher, _numericsStruct.floatNumeric);
     $hashMaybe($hashNumeric)(hasher, _numericsStruct.integerNumeric);
@@ -28224,9 +28349,9 @@ export namespace NumericsStruct {
     $hashMaybe($hashNumeric)(hasher, _numericsStruct.unsignedShortNumeric);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isNumericsStruct: $ObjectTypeGuardFunction<
@@ -28272,20 +28397,20 @@ export namespace NumericsStruct {
           .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/NumericsStruct"),
         byteNumeric: z.number().optional(),
-        decimalNumeric: $bigDecimalJsonSchema.optional(),
+        decimalNumeric: $BigDecimal.jsonSchema.optional(),
         doubleNumeric: z.number().optional(),
         floatNumeric: z.number().optional(),
-        integerNumeric: $bigIntJsonSchema.optional(),
+        integerNumeric: $BigInt.jsonSchema.optional(),
         intNumeric: z.number().optional(),
-        longNumeric: $bigIntJsonSchema.optional(),
-        negativeIntegerNumeric: $bigIntJsonSchema.optional(),
-        nonNegativeIntegerNumeric: $bigIntJsonSchema.optional(),
-        nonPositiveIntegerNumeric: $bigIntJsonSchema.optional(),
-        positiveIntegerNumeric: $bigIntJsonSchema.optional(),
+        longNumeric: $BigInt.jsonSchema.optional(),
+        negativeIntegerNumeric: $BigInt.jsonSchema.optional(),
+        nonNegativeIntegerNumeric: $BigInt.jsonSchema.optional(),
+        nonPositiveIntegerNumeric: $BigInt.jsonSchema.optional(),
+        positiveIntegerNumeric: $BigInt.jsonSchema.optional(),
         shortNumeric: z.number().optional(),
         unsignedByteNumeric: z.number().optional(),
         unsignedIntNumeric: z.number().optional(),
-        unsignedLongNumeric: $bigIntJsonSchema.optional(),
+        unsignedLongNumeric: $BigInt.jsonSchema.optional(),
         unsignedShortNumeric: z.number().optional(),
       }) satisfies z.ZodType<Json>;
     }
@@ -28590,7 +28715,7 @@ export namespace NumericsStruct {
         byteNumeric: $maybeToJsonValue($primitiveToJsonValue<number>)(
           _numericsStruct.byteNumeric,
         ),
-        decimalNumeric: $maybeToJsonValue($bigDecimalToJsonString)(
+        decimalNumeric: $maybeToJsonValue($BigDecimal.toJsonString)(
           _numericsStruct.decimalNumeric,
         ),
         doubleNumeric: $maybeToJsonValue($primitiveToJsonValue<number>)(
@@ -28599,25 +28724,25 @@ export namespace NumericsStruct {
         floatNumeric: $maybeToJsonValue($primitiveToJsonValue<number>)(
           _numericsStruct.floatNumeric,
         ),
-        integerNumeric: $maybeToJsonValue($bigIntToJsonString)(
+        integerNumeric: $maybeToJsonValue($BigInt.toJsonString)(
           _numericsStruct.integerNumeric,
         ),
         intNumeric: $maybeToJsonValue($primitiveToJsonValue<number>)(
           _numericsStruct.intNumeric,
         ),
-        longNumeric: $maybeToJsonValue($bigIntToJsonString)(
+        longNumeric: $maybeToJsonValue($BigInt.toJsonString)(
           _numericsStruct.longNumeric,
         ),
-        negativeIntegerNumeric: $maybeToJsonValue($bigIntToJsonString)(
+        negativeIntegerNumeric: $maybeToJsonValue($BigInt.toJsonString)(
           _numericsStruct.negativeIntegerNumeric,
         ),
-        nonNegativeIntegerNumeric: $maybeToJsonValue($bigIntToJsonString)(
+        nonNegativeIntegerNumeric: $maybeToJsonValue($BigInt.toJsonString)(
           _numericsStruct.nonNegativeIntegerNumeric,
         ),
-        nonPositiveIntegerNumeric: $maybeToJsonValue($bigIntToJsonString)(
+        nonPositiveIntegerNumeric: $maybeToJsonValue($BigInt.toJsonString)(
           _numericsStruct.nonPositiveIntegerNumeric,
         ),
-        positiveIntegerNumeric: $maybeToJsonValue($bigIntToJsonString)(
+        positiveIntegerNumeric: $maybeToJsonValue($BigInt.toJsonString)(
           _numericsStruct.positiveIntegerNumeric,
         ),
         shortNumeric: $maybeToJsonValue($primitiveToJsonValue<number>)(
@@ -28629,7 +28754,7 @@ export namespace NumericsStruct {
         unsignedIntNumeric: $maybeToJsonValue($primitiveToJsonValue<number>)(
           _numericsStruct.unsignedIntNumeric,
         ),
-        unsignedLongNumeric: $maybeToJsonValue($bigIntToJsonString)(
+        unsignedLongNumeric: $maybeToJsonValue($BigInt.toJsonString)(
           _numericsStruct.unsignedLongNumeric,
         ),
         unsignedShortNumeric: $maybeToJsonValue($primitiveToJsonValue<number>)(
@@ -28751,15 +28876,14 @@ export namespace NonClassStruct {
     NonClassStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: NonClassStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       nonClassString: $shaclPropertyFromRdf<string, $StringSchema<string>>({
         ...options,
         focusResource: resource,
@@ -28846,7 +28970,7 @@ export namespace NonClassStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -28860,7 +28984,7 @@ export namespace NonClassStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly nonClassString?: $StringFilter;
   };
 
@@ -28888,7 +29012,7 @@ export namespace NonClassStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -28920,7 +29044,7 @@ export namespace NonClassStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: NonClassStruct.schema.properties.$identifier.type,
       }),
@@ -28957,9 +29081,9 @@ export namespace NonClassStruct {
     $hashString(hasher, _nonClassStruct.nonClassString);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isNonClassStruct: $ObjectTypeGuardFunction<
@@ -29157,7 +29281,7 @@ export type NodeKindsStruct = {
 
   readonly blankNodeKind: BlankNode;
 
-  readonly blankNodeOrIriNodeKind: BlankNode | NamedNode;
+  readonly blankNodeOrIriNodeKind: $Identifier;
 
   readonly blankNodeOrLiteralNodeKind: BlankNode | Literal;
 
@@ -29173,15 +29297,14 @@ export namespace NodeKindsStruct {
     NodeKindsStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: NodeKindsStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -29191,23 +29314,23 @@ export namespace NodeKindsStruct {
             },
           )
         : Right(true as const),
-      blankNodeKind: $shaclPropertyFromRdf<BlankNode, $BlankNodeSchema>({
+      blankNodeKind: $shaclPropertyFromRdf<BlankNode, $BlankNode.Schema>({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: NodeKindsStruct.schema.properties.blankNodeKind,
-        typeFromRdfResourceValues: $blankNodeFromRdfResourceValues,
+        typeFromRdfResourceValues: $BlankNode.fromRdfResourceValues,
       }),
       blankNodeOrIriNodeKind: $shaclPropertyFromRdf<
-        BlankNode | NamedNode,
-        $IdentifierSchema
+        $Identifier,
+        $Identifier.Schema
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema:
           NodeKindsStruct.schema.properties.blankNodeOrIriNodeKind,
-        typeFromRdfResourceValues: $identifierFromRdfResourceValues,
+        typeFromRdfResourceValues: $Identifier.fromRdfResourceValues,
       }),
       blankNodeOrLiteralNodeKind: $shaclPropertyFromRdf<
         BlankNode | Literal,
@@ -29309,10 +29432,10 @@ export namespace NodeKindsStruct {
         defaultNamespace: parameters.$defaultNamespace,
       }),
       $type: Right("NodeKindsStruct" as const),
-      blankNodeKind: $convertToBlankNode(parameters.blankNodeKind, {
+      blankNodeKind: $BlankNode.convert(parameters.blankNodeKind, {
         defaultNamespace: parameters.$defaultNamespace,
       }),
-      blankNodeOrIriNodeKind: $convertToIdentifier(
+      blankNodeOrIriNodeKind: $Identifier.convert(
         parameters.blankNodeOrIriNodeKind,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -29430,19 +29553,19 @@ export namespace NodeKindsStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
     if (
       filter.blankNodeKind !== undefined &&
-      !$filterBlankNode(filter.blankNodeKind, value.blankNodeKind)
+      !$BlankNode.filter(filter.blankNodeKind, value.blankNodeKind)
     ) {
       return false;
     }
     if (
       filter.blankNodeOrIriNodeKind !== undefined &&
-      !$filterIdentifier(
+      !$Identifier.filter(
         filter.blankNodeOrIriNodeKind,
         value.blankNodeOrIriNodeKind,
       )
@@ -29480,9 +29603,9 @@ export namespace NodeKindsStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly blankNodeKind?: $BlankNodeFilter;
-    readonly blankNodeOrIriNodeKind?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
+    readonly blankNodeKind?: $BlankNode.Filter;
+    readonly blankNodeOrIriNodeKind?: $Identifier.Filter;
     readonly blankNodeOrLiteralNodeKind?: $TermFilter<BlankNode | Literal>;
     readonly iriNodeKind?: $IriFilter;
     readonly iriOrLiteralNodeKind?: $TermFilter<NamedNode | Literal>;
@@ -29592,7 +29715,7 @@ export namespace NodeKindsStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -29656,7 +29779,7 @@ export namespace NodeKindsStruct {
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "blankNodeKind",
         propertySchema: NodeKindsStruct.schema.properties.blankNodeKind,
-        typeSparqlWherePatterns: $blankNodeSparqlWherePatterns,
+        typeSparqlWherePatterns: $BlankNode.sparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -29669,7 +29792,7 @@ export namespace NodeKindsStruct {
         propertyName: "blankNodeOrIriNodeKind",
         propertySchema:
           NodeKindsStruct.schema.properties.blankNodeOrIriNodeKind,
-        typeSparqlWherePatterns: $identifierSparqlWherePatterns,
+        typeSparqlWherePatterns: $Identifier.sparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -29731,15 +29854,15 @@ export namespace NodeKindsStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: NodeKindsStruct.schema.properties.$identifier.type,
       }),
-      blankNodeKind: $blankNodeFromJsonString(jsonObject["blankNodeKind"], {
+      blankNodeKind: $BlankNode.fromJsonString(jsonObject["blankNodeKind"], {
         ...options,
         schema: NodeKindsStruct.schema.properties.blankNodeKind.type,
       }),
-      blankNodeOrIriNodeKind: $identifierFromJsonString(
+      blankNodeOrIriNodeKind: $Identifier.fromJsonString(
         jsonObject["blankNodeOrIriNodeKind"],
         {
           ...options,
@@ -29802,9 +29925,9 @@ export namespace NodeKindsStruct {
     $hashTerm(hasher, _nodeKindsStruct.literalNodeKind);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isNodeKindsStruct: $ObjectTypeGuardFunction<
@@ -30003,8 +30126,8 @@ export namespace NodeKindsStruct {
             ? `_:${_nodeKindsStruct.$identifier().value}`
             : _nodeKindsStruct.$identifier().value,
         "@type": "http://example.com/NodeKindsStruct",
-        blankNodeKind: $blankNodeToJsonString(_nodeKindsStruct.blankNodeKind),
-        blankNodeOrIriNodeKind: $identifierToJsonString(
+        blankNodeKind: $BlankNode.toJsonString(_nodeKindsStruct.blankNodeKind),
+        blankNodeOrIriNodeKind: $Identifier.toJsonString(
           _nodeKindsStruct.blankNodeOrIriNodeKind,
         ),
         blankNodeOrLiteralNodeKind: $termToJsonObject(
@@ -30108,17 +30231,16 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
     NoRdfTypeDiscriminatedUnionMember2.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             NoRdfTypeDiscriminatedUnionMember2.schema.properties.$identifier
               .type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       noRdfTypeDiscriminatedUnionMember2String: $shaclPropertyFromRdf<
         string,
         $StringSchema<string>
@@ -30231,7 +30353,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -30248,7 +30370,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly noRdfTypeDiscriminatedUnionMember2String?: $StringFilter;
   };
 
@@ -30278,7 +30400,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -30314,7 +30436,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           NoRdfTypeDiscriminatedUnionMember2.schema.properties.$identifier.type,
@@ -30361,9 +30483,9 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isNoRdfTypeDiscriminatedUnionMember2: $ObjectTypeGuardFunction<
@@ -30577,17 +30699,16 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
     NoRdfTypeDiscriminatedUnionMember1.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             NoRdfTypeDiscriminatedUnionMember1.schema.properties.$identifier
               .type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       noRdfTypeDiscriminatedUnionMember1String: $shaclPropertyFromRdf<
         string,
         $StringSchema<string>
@@ -30700,7 +30821,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -30717,7 +30838,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly noRdfTypeDiscriminatedUnionMember1String?: $StringFilter;
   };
 
@@ -30747,7 +30868,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -30783,7 +30904,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           NoRdfTypeDiscriminatedUnionMember1.schema.properties.$identifier.type,
@@ -30830,9 +30951,9 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isNoRdfTypeDiscriminatedUnionMember1: $ObjectTypeGuardFunction<
@@ -31098,7 +31219,7 @@ export namespace NoRdfTypeDiscriminatedUnion {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -31133,7 +31254,7 @@ export namespace NoRdfTypeDiscriminatedUnion {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly on?: {
       readonly NoRdfTypeDiscriminatedUnionMember1?: NoRdfTypeDiscriminatedUnionMember1.Filter;
       readonly NoRdfTypeDiscriminatedUnionMember2?: NoRdfTypeDiscriminatedUnionMember2.Filter;
@@ -31163,7 +31284,7 @@ export namespace NoRdfTypeDiscriminatedUnion {
     let patterns: $SparqlPattern[] = [];
     if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: filter?.$identifier,
           ignoreRdfType: false,
           preferredLanguages,
@@ -31362,9 +31483,9 @@ export namespace NoRdfTypeDiscriminatedUnion {
     }
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isNoRdfTypeDiscriminatedUnion: $ObjectTypeGuardFunction<
@@ -31617,15 +31738,14 @@ export namespace NewName {
     NewName.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: NewName.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -31745,7 +31865,7 @@ export namespace NewName {
   ) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -31762,7 +31882,7 @@ export namespace NewName {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly newNameString?: $MaybeFilter<$StringFilter>;
   };
 
@@ -31815,7 +31935,7 @@ export namespace NewName {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -31895,7 +32015,7 @@ export namespace NewName {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: NewName.schema.properties.$identifier.type,
       }),
@@ -31932,9 +32052,9 @@ export namespace NewName {
     $hashMaybe($hashString)(hasher, _newName.newNameString);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isNewName: $ObjectTypeGuardFunction<NewName.Discriminated> = (
@@ -32151,15 +32271,14 @@ export namespace NamedTypesStruct {
     NamedTypesStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: NamedTypesStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -32310,7 +32429,7 @@ export namespace NamedTypesStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -32333,7 +32452,7 @@ export namespace NamedTypesStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly inIri?: $IriFilter;
     readonly inLiteral?: $StringFilter;
     readonly namedDatatype?: $StringFilter;
@@ -32407,7 +32526,7 @@ export namespace NamedTypesStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -32508,7 +32627,7 @@ export namespace NamedTypesStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: NamedTypesStruct.schema.properties.$identifier.type,
       }),
@@ -32557,9 +32676,9 @@ export namespace NamedTypesStruct {
     $hashString(hasher, _namedTypesStruct.namedDatatype);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isNamedTypesStruct: $ObjectTypeGuardFunction<
@@ -32835,15 +32954,14 @@ export namespace MutablePropertiesStruct {
     MutablePropertiesStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: MutablePropertiesStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -33076,7 +33194,7 @@ export namespace MutablePropertiesStruct {
           {
             equalsFunction: (left, right) =>
               $maybeEquals(left, right, ((left, right) =>
-                $arrayEquals(
+                $Array.equals(
                   left,
                   right,
                   $strictEquals,
@@ -33091,7 +33209,7 @@ export namespace MutablePropertiesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $strictEquals),
+              $Array.equals(left, right, $strictEquals),
             name: "mutableSet",
           },
           [left, left.mutableSet],
@@ -33116,21 +33234,21 @@ export namespace MutablePropertiesStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
     if (
       filter.mutableList !== undefined &&
       !$filterMaybe<string[], $CollectionFilter<$StringFilter>>(
-        $filterArray<string, $StringFilter>($filterString),
+        $Array.filter<string, $StringFilter>($filterString),
       )(filter.mutableList, value.mutableList)
     ) {
       return false;
     }
     if (
       filter.mutableSet !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
+      !$Array.filter<string, $StringFilter>($filterString)(
         filter.mutableSet,
         value.mutableSet,
       )
@@ -33150,7 +33268,7 @@ export namespace MutablePropertiesStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly mutableList?: $MaybeFilter<$CollectionFilter<$StringFilter>>;
     readonly mutableSet?: $CollectionFilter<$StringFilter>;
     readonly mutableString?: $MaybeFilter<$StringFilter>;
@@ -33237,7 +33355,7 @@ export namespace MutablePropertiesStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -33352,17 +33470,17 @@ export namespace MutablePropertiesStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: MutablePropertiesStruct.schema.properties.$identifier.type,
       }),
       mutableList: $maybeFromJsonValue(
-        $arrayFromJsonArray($stringFromJsonString<string>),
+        $Array.fromJson($stringFromJsonString<string>),
       )(jsonObject["mutableList"], {
         ...options,
         schema: MutablePropertiesStruct.schema.properties.mutableList.type,
       }),
-      mutableSet: $arrayFromJsonArray($stringFromJsonString<string>)(
+      mutableSet: $Array.fromJson($stringFromJsonString<string>)(
         jsonObject["mutableSet"],
         {
           ...options,
@@ -33401,17 +33519,17 @@ export namespace MutablePropertiesStruct {
     if (_mutablePropertiesStruct.$identifier) {
       hasher.update(_mutablePropertiesStruct.$identifier().value);
     }
-    $hashMaybe($hashArray($hashString))(
+    $hashMaybe($Array.hash($hashString))(
       hasher,
       _mutablePropertiesStruct.mutableList,
     );
-    $hashArray($hashString)(hasher, _mutablePropertiesStruct.mutableSet);
+    $Array.hash($hashString)(hasher, _mutablePropertiesStruct.mutableSet);
     $hashMaybe($hashString)(hasher, _mutablePropertiesStruct.mutableString);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isMutablePropertiesStruct: $ObjectTypeGuardFunction<
@@ -33607,9 +33725,9 @@ export namespace MutablePropertiesStruct {
             : _mutablePropertiesStruct.$identifier().value,
         "@type": "http://example.com/MutablePropertiesStruct",
         mutableList: $maybeToJsonValue(
-          $arrayToJsonArray($primitiveToJsonValue<string>),
+          $Array.toJson($primitiveToJsonValue<string>),
         )(_mutablePropertiesStruct.mutableList),
-        mutableSet: $arrayToJsonArray($primitiveToJsonValue<string>)(
+        mutableSet: $Array.toJson($primitiveToJsonValue<string>)(
           _mutablePropertiesStruct.mutableSet,
         ),
         mutableString: $maybeToJsonValue($primitiveToJsonValue<string>)(
@@ -33710,15 +33828,14 @@ export namespace ListsStruct {
     ListsStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: ListsStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -34116,7 +34233,7 @@ export namespace ListsStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction))(
+        $validateMaybe($Array.validate($identityValidationFunction))(
           ListsStruct.schema.properties.iriList.type,
           value,
         ),
@@ -34127,7 +34244,7 @@ export namespace ListsStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction))(
+        $validateMaybe($Array.validate($identityValidationFunction))(
           ListsStruct.schema.properties.stringList.type,
           value,
         ),
@@ -34138,7 +34255,7 @@ export namespace ListsStruct {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
         $validateMaybe(
-          $validateArray($validateArray($identityValidationFunction)),
+          $Array.validate($Array.validate($identityValidationFunction)),
         )(ListsStruct.schema.properties.stringListList.type, value),
       ),
       structList: $convertToMaybe($convertToList($identityConversionFunction))(
@@ -34147,7 +34264,7 @@ export namespace ListsStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction))(
+        $validateMaybe($Array.validate($identityValidationFunction))(
           ListsStruct.schema.properties.structList.type,
           value,
         ),
@@ -34200,7 +34317,7 @@ export namespace ListsStruct {
           {
             equalsFunction: (left, right) =>
               $maybeEquals(left, right, ((left, right) =>
-                $arrayEquals(
+                $Array.equals(
                   left,
                   right,
                   $booleanEquals,
@@ -34216,7 +34333,7 @@ export namespace ListsStruct {
           {
             equalsFunction: (left, right) =>
               $maybeEquals(left, right, ((left, right) =>
-                $arrayEquals(
+                $Array.equals(
                   left,
                   right,
                   $strictEquals,
@@ -34232,8 +34349,8 @@ export namespace ListsStruct {
           {
             equalsFunction: (left, right) =>
               $maybeEquals(left, right, ((left, right) =>
-                $arrayEquals(left, right, (left, right) =>
-                  $arrayEquals(left, right, $strictEquals),
+                $Array.equals(left, right, (left, right) =>
+                  $Array.equals(left, right, $strictEquals),
                 )) satisfies $EqualsFunction<readonly (readonly string[])[]>),
             name: "stringListList",
           },
@@ -34246,7 +34363,7 @@ export namespace ListsStruct {
           {
             equalsFunction: (left, right) =>
               $maybeEquals(left, right, ((left, right) =>
-                $arrayEquals(
+                $Array.equals(
                   left,
                   right,
                   NonClassStruct.equals,
@@ -34264,14 +34381,14 @@ export namespace ListsStruct {
   ) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
     if (
       filter.iriList !== undefined &&
       !$filterMaybe<readonly NamedNode[], $CollectionFilter<$IriFilter>>(
-        $filterArray<NamedNode, $IriFilter>($filterIri),
+        $Array.filter<NamedNode, $IriFilter>($filterIri),
       )(filter.iriList, value.iriList)
     ) {
       return false;
@@ -34279,7 +34396,7 @@ export namespace ListsStruct {
     if (
       filter.stringList !== undefined &&
       !$filterMaybe<readonly string[], $CollectionFilter<$StringFilter>>(
-        $filterArray<string, $StringFilter>($filterString),
+        $Array.filter<string, $StringFilter>($filterString),
       )(filter.stringList, value.stringList)
     ) {
       return false;
@@ -34290,8 +34407,8 @@ export namespace ListsStruct {
         readonly (readonly string[])[],
         $CollectionFilter<$CollectionFilter<$StringFilter>>
       >(
-        $filterArray<readonly string[], $CollectionFilter<$StringFilter>>(
-          $filterArray<string, $StringFilter>($filterString),
+        $Array.filter<readonly string[], $CollectionFilter<$StringFilter>>(
+          $Array.filter<string, $StringFilter>($filterString),
         ),
       )(filter.stringListList, value.stringListList)
     ) {
@@ -34303,7 +34420,7 @@ export namespace ListsStruct {
         readonly NonClassStruct[],
         $CollectionFilter<NonClassStruct.Filter>
       >(
-        $filterArray<NonClassStruct, NonClassStruct.Filter>(
+        $Array.filter<NonClassStruct, NonClassStruct.Filter>(
           NonClassStruct.filter,
         ),
       )(filter.structList, value.structList)
@@ -34314,7 +34431,7 @@ export namespace ListsStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly iriList?: $MaybeFilter<$CollectionFilter<$IriFilter>>;
     readonly stringList?: $MaybeFilter<$CollectionFilter<$StringFilter>>;
     readonly stringListList?: $MaybeFilter<
@@ -34438,7 +34555,7 @@ export namespace ListsStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -34585,11 +34702,11 @@ export namespace ListsStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: ListsStruct.schema.properties.$identifier.type,
       }),
-      iriList: $maybeFromJsonValue($arrayFromJsonArray($iriFromJsonString))(
+      iriList: $maybeFromJsonValue($Array.fromJson($iriFromJsonString))(
         jsonObject["iriList"],
         {
           ...options,
@@ -34597,23 +34714,24 @@ export namespace ListsStruct {
         },
       ),
       stringList: $maybeFromJsonValue(
-        $arrayFromJsonArray($stringFromJsonString<string>),
+        $Array.fromJson($stringFromJsonString<string>),
       )(jsonObject["stringList"], {
         ...options,
         schema: ListsStruct.schema.properties.stringList.type,
       }),
       stringListList: $maybeFromJsonValue(
-        $arrayFromJsonArray($arrayFromJsonArray($stringFromJsonString<string>)),
+        $Array.fromJson($Array.fromJson($stringFromJsonString<string>)),
       )(jsonObject["stringListList"], {
         ...options,
         schema: ListsStruct.schema.properties.stringListList.type,
       }),
-      structList: $maybeFromJsonValue(
-        $arrayFromJsonArray(NonClassStruct.fromJson),
-      )(jsonObject["structList"], {
-        ...options,
-        schema: ListsStruct.schema.properties.structList.type,
-      }),
+      structList: $maybeFromJsonValue($Array.fromJson(NonClassStruct.fromJson))(
+        jsonObject["structList"],
+        {
+          ...options,
+          schema: ListsStruct.schema.properties.structList.type,
+        },
+      ),
     }).chain(ListsStruct.create);
 
   export const fromRdfResource: $FromRdfResourceFunction<ListsStruct.Discriminated> =
@@ -34637,21 +34755,21 @@ export namespace ListsStruct {
     if (_listsStruct.$identifier) {
       hasher.update(_listsStruct.$identifier().value);
     }
-    $hashMaybe($hashArray($hashTerm))(hasher, _listsStruct.iriList);
-    $hashMaybe($hashArray($hashString))(hasher, _listsStruct.stringList);
-    $hashMaybe($hashArray($hashArray($hashString)))(
+    $hashMaybe($Array.hash($hashTerm))(hasher, _listsStruct.iriList);
+    $hashMaybe($Array.hash($hashString))(hasher, _listsStruct.stringList);
+    $hashMaybe($Array.hash($Array.hash($hashString)))(
       hasher,
       _listsStruct.stringListList,
     );
-    $hashMaybe($hashArray(NonClassStruct.hash))(
+    $hashMaybe($Array.hash(NonClassStruct.hash))(
       hasher,
       _listsStruct.structList,
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isListsStruct: $ObjectTypeGuardFunction<
@@ -34874,16 +34992,16 @@ export namespace ListsStruct {
             ? `_:${_listsStruct.$identifier().value}`
             : _listsStruct.$identifier().value,
         "@type": "http://example.com/ListsStruct",
-        iriList: $maybeToJsonValue($arrayToJsonArray($iriToJsonString<string>))(
+        iriList: $maybeToJsonValue($Array.toJson($iriToJsonString<string>))(
           _listsStruct.iriList,
         ),
         stringList: $maybeToJsonValue(
-          $arrayToJsonArray($primitiveToJsonValue<string>),
+          $Array.toJson($primitiveToJsonValue<string>),
         )(_listsStruct.stringList),
         stringListList: $maybeToJsonValue(
-          $arrayToJsonArray($arrayToJsonArray($primitiveToJsonValue<string>)),
+          $Array.toJson($Array.toJson($primitiveToJsonValue<string>)),
         )(_listsStruct.stringListList),
-        structList: $maybeToJsonValue($arrayToJsonArray(NonClassStruct.toJson))(
+        structList: $maybeToJsonValue($Array.toJson(NonClassStruct.toJson))(
           _listsStruct.structList,
         ),
       }),
@@ -34985,15 +35103,14 @@ export namespace ListSetsStruct {
     ListSetsStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: ListSetsStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -35438,7 +35555,7 @@ export namespace ListSetsStruct {
       )(parameters.listDiscriminatedUnionSet, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           ListSetsStruct.schema.properties.listDiscriminatedUnionSet.type,
           value,
         ),
@@ -35448,8 +35565,8 @@ export namespace ListSetsStruct {
       )(parameters.listListSet, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
-        $validateArray(
-          $validateArray($validateArray($identityValidationFunction)),
+        $Array.validate(
+          $Array.validate($Array.validate($identityValidationFunction)),
         )(ListSetsStruct.schema.properties.listListSet.type, value),
       ),
       listSet: $convertToArraySet($convertToList($identityConversionFunction))(
@@ -35458,7 +35575,7 @@ export namespace ListSetsStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($validateArray($identityValidationFunction))(
+        $Array.validate($Array.validate($identityValidationFunction))(
           ListSetsStruct.schema.properties.listSet.type,
           value,
         ),
@@ -35508,11 +35625,11 @@ export namespace ListSetsStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, (left, right) => {
+              $Array.equals(left, right, (left, right) => {
                 if (typeof left === "object" && typeof right === "object") {
                   return (
                     ((left, right) =>
-                      $arrayEquals(
+                      $Array.equals(
                         left,
                         right,
                         $strictEquals,
@@ -35545,9 +35662,9 @@ export namespace ListSetsStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, (left, right) =>
-                $arrayEquals(left, right, (left, right) =>
-                  $arrayEquals(left, right, $strictEquals),
+              $Array.equals(left, right, (left, right) =>
+                $Array.equals(left, right, (left, right) =>
+                  $Array.equals(left, right, $strictEquals),
                 ),
               ),
             name: "listListSet",
@@ -35560,8 +35677,8 @@ export namespace ListSetsStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, (left, right) =>
-                $arrayEquals(left, right, $strictEquals),
+              $Array.equals(left, right, (left, right) =>
+                $Array.equals(left, right, $strictEquals),
               ),
             name: "listSet",
           },
@@ -35576,13 +35693,13 @@ export namespace ListSetsStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
     if (
       filter.listDiscriminatedUnionSet !== undefined &&
-      !$filterArray<
+      !$Array.filter<
         readonly string[] | string,
         {
           readonly on?: {
@@ -35593,7 +35710,7 @@ export namespace ListSetsStruct {
       >((filter, value) => {
         if (filter.on?.["object"] !== undefined && typeof value === "object") {
           if (
-            !$filterArray<string, $StringFilter>($filterString)(
+            !$Array.filter<string, $StringFilter>($filterString)(
               filter.on["object"],
               value,
             )
@@ -35614,12 +35731,12 @@ export namespace ListSetsStruct {
     }
     if (
       filter.listListSet !== undefined &&
-      !$filterArray<
+      !$Array.filter<
         readonly (readonly string[])[],
         $CollectionFilter<$CollectionFilter<$StringFilter>>
       >(
-        $filterArray<readonly string[], $CollectionFilter<$StringFilter>>(
-          $filterArray<string, $StringFilter>($filterString),
+        $Array.filter<readonly string[], $CollectionFilter<$StringFilter>>(
+          $Array.filter<string, $StringFilter>($filterString),
         ),
       )(filter.listListSet, value.listListSet)
     ) {
@@ -35627,8 +35744,8 @@ export namespace ListSetsStruct {
     }
     if (
       filter.listSet !== undefined &&
-      !$filterArray<readonly string[], $CollectionFilter<$StringFilter>>(
-        $filterArray<string, $StringFilter>($filterString),
+      !$Array.filter<readonly string[], $CollectionFilter<$StringFilter>>(
+        $Array.filter<string, $StringFilter>($filterString),
       )(filter.listSet, value.listSet)
     ) {
       return false;
@@ -35637,7 +35754,7 @@ export namespace ListSetsStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly listDiscriminatedUnionSet?: $CollectionFilter<{
       readonly on?: {
         readonly object?: $CollectionFilter<$StringFilter>;
@@ -35781,7 +35898,7 @@ export namespace ListSetsStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -35948,11 +36065,11 @@ export namespace ListSetsStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: ListSetsStruct.schema.properties.$identifier.type,
       }),
-      listDiscriminatedUnionSet: $arrayFromJsonArray(((value, options) => {
+      listDiscriminatedUnionSet: $Array.fromJson(((value, options) => {
         if (value.$type === "object") {
           return $listFromJsonObject($stringFromJsonString<string>)(value, {
             ...options,
@@ -35979,18 +36096,19 @@ export namespace ListSetsStruct {
         ...options,
         schema: ListSetsStruct.schema.properties.listDiscriminatedUnionSet.type,
       }),
-      listListSet: $arrayFromJsonArray(
-        $arrayFromJsonArray($arrayFromJsonArray($stringFromJsonString<string>)),
+      listListSet: $Array.fromJson(
+        $Array.fromJson($Array.fromJson($stringFromJsonString<string>)),
       )(jsonObject["listListSet"], {
         ...options,
         schema: ListSetsStruct.schema.properties.listListSet.type,
       }),
-      listSet: $arrayFromJsonArray(
-        $arrayFromJsonArray($stringFromJsonString<string>),
-      )(jsonObject["listSet"], {
-        ...options,
-        schema: ListSetsStruct.schema.properties.listSet.type,
-      }),
+      listSet: $Array.fromJson($Array.fromJson($stringFromJsonString<string>))(
+        jsonObject["listSet"],
+        {
+          ...options,
+          schema: ListSetsStruct.schema.properties.listSet.type,
+        },
+      ),
     }).chain(ListSetsStruct.create);
 
   export const fromRdfResource: $FromRdfResourceFunction<ListSetsStruct.Discriminated> =
@@ -36014,9 +36132,9 @@ export namespace ListSetsStruct {
     if (_listSetsStruct.$identifier) {
       hasher.update(_listSetsStruct.$identifier().value);
     }
-    $hashArray(((hasher, value) => {
+    $Array.hash(((hasher, value) => {
       if (typeof value === "object") {
-        $hashArray($hashString)(hasher, value);
+        $Array.hash($hashString)(hasher, value);
         return;
       }
       if (typeof value === "string") {
@@ -36027,16 +36145,16 @@ export namespace ListSetsStruct {
       hasher,
       _listSetsStruct.listDiscriminatedUnionSet,
     );
-    $hashArray($hashArray($hashArray($hashString)))(
+    $Array.hash($Array.hash($Array.hash($hashString)))(
       hasher,
       _listSetsStruct.listListSet,
     );
-    $hashArray($hashArray($hashString))(hasher, _listSetsStruct.listSet);
+    $Array.hash($Array.hash($hashString))(hasher, _listSetsStruct.listSet);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isListSetsStruct: $ObjectTypeGuardFunction<
@@ -36277,7 +36395,7 @@ export namespace ListSetsStruct {
             ? `_:${_listSetsStruct.$identifier().value}`
             : _listSetsStruct.$identifier().value,
         "@type": "http://example.com/ListSetsStruct",
-        listDiscriminatedUnionSet: $arrayToJsonArray(((value) => {
+        listDiscriminatedUnionSet: $Array.toJson(((value) => {
           if (typeof value === "object") {
             return {
               ...$listToJsonObject($primitiveToJsonValue<string>)(value),
@@ -36297,12 +36415,12 @@ export namespace ListSetsStruct {
           | ({ "@list": string[] } & { $type: "object" })
           | ($TypedLiteralJsonObject & { $type: "string" })
         >)(_listSetsStruct.listDiscriminatedUnionSet),
-        listListSet: $arrayToJsonArray(
-          $arrayToJsonArray($arrayToJsonArray($primitiveToJsonValue<string>)),
+        listListSet: $Array.toJson(
+          $Array.toJson($Array.toJson($primitiveToJsonValue<string>)),
         )(_listSetsStruct.listListSet),
-        listSet: $arrayToJsonArray(
-          $arrayToJsonArray($primitiveToJsonValue<string>),
-        )(_listSetsStruct.listSet),
+        listSet: $Array.toJson($Array.toJson($primitiveToJsonValue<string>))(
+          _listSetsStruct.listSet,
+        ),
       }),
     );
 
@@ -36447,15 +36565,14 @@ export namespace LazyPropertiesStruct {
     LazyPropertiesStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: LazyPropertiesStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       optionalLazyToResolvedBlankNodeOrIriIdentifier: $shaclPropertyFromRdf<
         $LazyOption<
           $DefaultPartial,
@@ -37356,7 +37473,7 @@ export namespace LazyPropertiesStruct {
             equalsFunction: (left, right) =>
               (
                 ((left, right) =>
-                  $arrayEquals(
+                  $Array.equals(
                     left,
                     right,
                     $DefaultPartial.equals,
@@ -37374,7 +37491,7 @@ export namespace LazyPropertiesStruct {
             equalsFunction: (left, right) =>
               (
                 ((left, right) =>
-                  $arrayEquals(
+                  $Array.equals(
                     left,
                     right,
                     PartialStruct.equals,
@@ -37393,7 +37510,7 @@ export namespace LazyPropertiesStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -37494,7 +37611,7 @@ export namespace LazyPropertiesStruct {
     if (
       filter.setLazyToResolvedBlankNodeOrIriIdentifier !== undefined &&
       !((filter, value) =>
-        $filterArray<$DefaultPartial, $DefaultPartial.Filter>(
+        $Array.filter<$DefaultPartial, $DefaultPartial.Filter>(
           $DefaultPartial.filter,
         )(filter, value.partials))(
         filter.setLazyToResolvedBlankNodeOrIriIdentifier,
@@ -37506,10 +37623,9 @@ export namespace LazyPropertiesStruct {
     if (
       filter.setPartialToResolvedBlankNodeOrIriIdentifier !== undefined &&
       !((filter, value) =>
-        $filterArray<PartialStruct, PartialStruct.Filter>(PartialStruct.filter)(
-          filter,
-          value.partials,
-        ))(
+        $Array.filter<PartialStruct, PartialStruct.Filter>(
+          PartialStruct.filter,
+        )(filter, value.partials))(
         filter.setPartialToResolvedBlankNodeOrIriIdentifier,
         value.setPartialToResolvedBlankNodeOrIriIdentifier,
       )
@@ -37520,7 +37636,7 @@ export namespace LazyPropertiesStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly optionalLazyToResolvedBlankNodeOrIriIdentifier?: $MaybeFilter<$DefaultPartial.Filter>;
     readonly optionalLazyToResolvedDiscriminatedUnion?: $MaybeFilter<$DefaultPartial.Filter>;
     readonly optionalLazyToResolvedIriIdentifier?: $MaybeFilter<$NamedDefaultPartial.Filter>;
@@ -37747,7 +37863,7 @@ export namespace LazyPropertiesStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -37969,7 +38085,7 @@ export namespace LazyPropertiesStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: LazyPropertiesStruct.schema.properties.$identifier.type,
       }),
@@ -38224,28 +38340,34 @@ export namespace LazyPropertiesStruct {
         jsonValue,
         fromJsonValueOptions,
       ) =>
-        $arrayFromJsonArray($DefaultPartial.fromJson)(jsonValue, {
-          ...fromJsonValueOptions,
-          schema: fromJsonValueOptions.schema.partialType,
-        }).map(
-          (partials) =>
-            new $LazySet<
-              $DefaultPartial,
-              LazilyResolvedBlankNodeOrIriIdentifierStruct
-            >({
-              partials,
-              resolver: (partial, resolverOptions) => {
-                const objectSet = fromJsonValueOptions?.objectSet;
-                if (!objectSet) {
-                  return $missingResolver();
-                }
-                return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs({
-                  identifiers: partial.map((partial) => partial.$identifier()),
-                  ...resolverOptions,
-                });
-              },
-            }),
-        ))(jsonObject["setLazyToResolvedBlankNodeOrIriIdentifier"], {
+        $Array
+          .fromJson($DefaultPartial.fromJson)(jsonValue, {
+            ...fromJsonValueOptions,
+            schema: fromJsonValueOptions.schema.partialType,
+          })
+          .map(
+            (partials) =>
+              new $LazySet<
+                $DefaultPartial,
+                LazilyResolvedBlankNodeOrIriIdentifierStruct
+              >({
+                partials,
+                resolver: (partial, resolverOptions) => {
+                  const objectSet = fromJsonValueOptions?.objectSet;
+                  if (!objectSet) {
+                    return $missingResolver();
+                  }
+                  return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs(
+                    {
+                      identifiers: partial.map((partial) =>
+                        partial.$identifier(),
+                      ),
+                      ...resolverOptions,
+                    },
+                  );
+                },
+              }),
+          ))(jsonObject["setLazyToResolvedBlankNodeOrIriIdentifier"], {
         ...options,
         schema:
           LazyPropertiesStruct.schema.properties
@@ -38255,28 +38377,34 @@ export namespace LazyPropertiesStruct {
         jsonValue,
         fromJsonValueOptions,
       ) =>
-        $arrayFromJsonArray(PartialStruct.fromJson)(jsonValue, {
-          ...fromJsonValueOptions,
-          schema: fromJsonValueOptions.schema.partialType,
-        }).map(
-          (partials) =>
-            new $LazySet<
-              PartialStruct,
-              LazilyResolvedBlankNodeOrIriIdentifierStruct
-            >({
-              partials,
-              resolver: (partial, resolverOptions) => {
-                const objectSet = fromJsonValueOptions?.objectSet;
-                if (!objectSet) {
-                  return $missingResolver();
-                }
-                return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs({
-                  identifiers: partial.map((partial) => partial.$identifier()),
-                  ...resolverOptions,
-                });
-              },
-            }),
-        ))(jsonObject["setPartialToResolvedBlankNodeOrIriIdentifier"], {
+        $Array
+          .fromJson(PartialStruct.fromJson)(jsonValue, {
+            ...fromJsonValueOptions,
+            schema: fromJsonValueOptions.schema.partialType,
+          })
+          .map(
+            (partials) =>
+              new $LazySet<
+                PartialStruct,
+                LazilyResolvedBlankNodeOrIriIdentifierStruct
+              >({
+                partials,
+                resolver: (partial, resolverOptions) => {
+                  const objectSet = fromJsonValueOptions?.objectSet;
+                  if (!objectSet) {
+                    return $missingResolver();
+                  }
+                  return objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs(
+                    {
+                      identifiers: partial.map((partial) =>
+                        partial.$identifier(),
+                      ),
+                      ...resolverOptions,
+                    },
+                  );
+                },
+              }),
+          ))(jsonObject["setPartialToResolvedBlankNodeOrIriIdentifier"], {
         ...options,
         schema:
           LazyPropertiesStruct.schema.properties
@@ -38344,19 +38472,20 @@ export namespace LazyPropertiesStruct {
       _lazyPropertiesStruct.requiredPartialToResolvedBlankNodeOrIriIdentifier,
     );
     ((hasher, value) =>
-      $hashArray($DefaultPartial.hash)(hasher, value.partials))(
+      $Array.hash($DefaultPartial.hash)(hasher, value.partials))(
       hasher,
       _lazyPropertiesStruct.setLazyToResolvedBlankNodeOrIriIdentifier,
     );
-    ((hasher, value) => $hashArray(PartialStruct.hash)(hasher, value.partials))(
+    ((hasher, value) =>
+      $Array.hash(PartialStruct.hash)(hasher, value.partials))(
       hasher,
       _lazyPropertiesStruct.setPartialToResolvedBlankNodeOrIriIdentifier,
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isLazyPropertiesStruct: $ObjectTypeGuardFunction<
@@ -38758,11 +38887,11 @@ export namespace LazyPropertiesStruct {
           _lazyPropertiesStruct.requiredPartialToResolvedBlankNodeOrIriIdentifier,
         ),
         setLazyToResolvedBlankNodeOrIriIdentifier: ((value) =>
-          $arrayToJsonArray($DefaultPartial.toJson)(value.partials))(
+          $Array.toJson($DefaultPartial.toJson)(value.partials))(
           _lazyPropertiesStruct.setLazyToResolvedBlankNodeOrIriIdentifier,
         ),
         setPartialToResolvedBlankNodeOrIriIdentifier: ((value) =>
-          $arrayToJsonArray(PartialStruct.toJson)(value.partials))(
+          $Array.toJson(PartialStruct.toJson)(value.partials))(
           _lazyPropertiesStruct.setPartialToResolvedBlankNodeOrIriIdentifier,
         ),
       }),
@@ -39322,17 +39451,16 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     LazilyResolvedDiscriminatedUnionMember2.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             LazilyResolvedDiscriminatedUnionMember2.schema.properties
               .$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -39450,7 +39578,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -39464,7 +39592,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly lazilyResolved?: $StringFilter;
   };
 
@@ -39516,7 +39644,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -39599,7 +39727,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           LazilyResolvedDiscriminatedUnionMember2.schema.properties.$identifier
@@ -39652,9 +39780,9 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isLazilyResolvedDiscriminatedUnionMember2: $ObjectTypeGuardFunction<
@@ -39883,17 +40011,16 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     LazilyResolvedDiscriminatedUnionMember1.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             LazilyResolvedDiscriminatedUnionMember1.schema.properties
               .$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -40011,7 +40138,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -40025,7 +40152,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly lazilyResolved?: $StringFilter;
   };
 
@@ -40077,7 +40204,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -40160,7 +40287,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           LazilyResolvedDiscriminatedUnionMember1.schema.properties.$identifier
@@ -40213,9 +40340,9 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isLazilyResolvedDiscriminatedUnionMember1: $ObjectTypeGuardFunction<
@@ -40496,7 +40623,7 @@ export namespace LazilyResolvedDiscriminatedUnion {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -40531,7 +40658,7 @@ export namespace LazilyResolvedDiscriminatedUnion {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly on?: {
       readonly LazilyResolvedDiscriminatedUnionMember1?: LazilyResolvedDiscriminatedUnionMember1.Filter;
       readonly LazilyResolvedDiscriminatedUnionMember2?: LazilyResolvedDiscriminatedUnionMember2.Filter;
@@ -40561,7 +40688,7 @@ export namespace LazilyResolvedDiscriminatedUnion {
     let patterns: $SparqlPattern[] = [];
     if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: filter?.$identifier,
           ignoreRdfType: false,
           preferredLanguages,
@@ -40762,9 +40889,9 @@ export namespace LazilyResolvedDiscriminatedUnion {
     }
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isLazilyResolvedDiscriminatedUnion: $ObjectTypeGuardFunction<
@@ -41034,17 +41161,16 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     LazilyResolvedBlankNodeOrIriIdentifierStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
               .$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -41164,7 +41290,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -41178,7 +41304,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly lazilyResolved?: $StringFilter;
   };
 
@@ -41230,7 +41356,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -41313,7 +41439,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
@@ -41366,9 +41492,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isLazilyResolvedBlankNodeOrIriIdentifierStruct: $ObjectTypeGuardFunction<
@@ -41609,15 +41735,14 @@ export namespace LanguageInStruct {
     LanguageInStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: LanguageInStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       languageIn: $shaclPropertyFromRdf<
         readonly Literal[],
         $CollectionSchema<$LangStringSchema>
@@ -41666,7 +41791,7 @@ export namespace LanguageInStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           LanguageInStruct.schema.properties.languageIn.type,
           value,
         ),
@@ -41710,7 +41835,7 @@ export namespace LanguageInStruct {
       $propertyEquals(
         {
           equalsFunction: (left, right) =>
-            $arrayEquals(left, right, $booleanEquals),
+            $Array.equals(left, right, $booleanEquals),
           name: "languageIn",
         },
         [left, left.languageIn],
@@ -41724,13 +41849,13 @@ export namespace LanguageInStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
     if (
       filter.languageIn !== undefined &&
-      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
+      !$Array.filter<Literal, $LiteralFilter>($filterLiteral)(
         filter.languageIn,
         value.languageIn,
       )
@@ -41741,7 +41866,7 @@ export namespace LanguageInStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly languageIn?: $CollectionFilter<$LiteralFilter>;
   };
 
@@ -41772,7 +41897,7 @@ export namespace LanguageInStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -41807,11 +41932,11 @@ export namespace LanguageInStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: LanguageInStruct.schema.properties.$identifier.type,
       }),
-      languageIn: $arrayFromJsonArray($langStringFromJsonObject)(
+      languageIn: $Array.fromJson($langStringFromJsonObject)(
         jsonObject["languageIn"],
         {
           ...options,
@@ -41843,12 +41968,12 @@ export namespace LanguageInStruct {
     if (_languageInStruct.$identifier) {
       hasher.update(_languageInStruct.$identifier().value);
     }
-    $hashArray($hashTerm)(hasher, _languageInStruct.languageIn);
+    $Array.hash($hashTerm)(hasher, _languageInStruct.languageIn);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isLanguageInStruct: $ObjectTypeGuardFunction<
@@ -41977,7 +42102,7 @@ export namespace LanguageInStruct {
           _languageInStruct.$identifier().termType === "BlankNode"
             ? `_:${_languageInStruct.$identifier().value}`
             : _languageInStruct.$identifier().value,
-        languageIn: $arrayToJsonArray($langStringToJsonObject)(
+        languageIn: $Array.toJson($langStringToJsonObject)(
           _languageInStruct.languageIn,
         ),
       }),
@@ -42067,15 +42192,14 @@ export namespace LangStringStruct {
     LangStringStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: LangStringStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -42570,7 +42694,7 @@ export namespace LangStringStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -42641,7 +42765,7 @@ export namespace LangStringStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly langString?: $MaybeFilter<$LiteralFilter>;
     readonly langStringOrString?: $MaybeFilter<{
       readonly on?: {
@@ -42810,7 +42934,7 @@ export namespace LangStringStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -43000,7 +43124,7 @@ export namespace LangStringStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: LangStringStruct.schema.properties.$identifier.type,
       }),
@@ -43113,9 +43237,9 @@ export namespace LangStringStruct {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isLangStringStruct: $ObjectTypeGuardFunction<
@@ -44019,16 +44143,15 @@ export namespace IntersectionPropertiesStruct {
     IntersectionPropertiesStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             IntersectionPropertiesStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       namedStructIntersection: $shaclPropertyFromRdf<
         StructIntersection,
         StructIntersection.Schema
@@ -44144,7 +44267,7 @@ export namespace IntersectionPropertiesStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -44161,7 +44284,7 @@ export namespace IntersectionPropertiesStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly namedStructIntersection?: StructIntersection.Filter;
   };
 
@@ -44192,7 +44315,7 @@ export namespace IntersectionPropertiesStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -44227,7 +44350,7 @@ export namespace IntersectionPropertiesStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: IntersectionPropertiesStruct.schema.properties.$identifier.type,
       }),
@@ -44273,9 +44396,9 @@ export namespace IntersectionPropertiesStruct {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isIntersectionPropertiesStruct: $ObjectTypeGuardFunction<
@@ -44491,16 +44614,15 @@ export namespace IndirectRecursiveStructHelper {
     IndirectRecursiveStructHelper.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             IndirectRecursiveStructHelper.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -44649,7 +44771,7 @@ export namespace IndirectRecursiveStructHelper {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -44665,7 +44787,7 @@ export namespace IndirectRecursiveStructHelper {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly indirectRecursive?: $MaybeFilter<IndirectRecursiveStruct.Filter>;
   };
 
@@ -44704,7 +44826,7 @@ export namespace IndirectRecursiveStructHelper {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -44772,7 +44894,7 @@ export namespace IndirectRecursiveStructHelper {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           IndirectRecursiveStructHelper.schema.properties.$identifier.type,
@@ -44819,9 +44941,9 @@ export namespace IndirectRecursiveStructHelper {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isIndirectRecursiveStructHelper: $ObjectTypeGuardFunction<
@@ -45060,15 +45182,14 @@ export namespace IndirectRecursiveStruct {
     IndirectRecursiveStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: IndirectRecursiveStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -45210,7 +45331,7 @@ export namespace IndirectRecursiveStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -45230,7 +45351,7 @@ export namespace IndirectRecursiveStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly indirectRecursiveHelper?: $MaybeFilter<IndirectRecursiveStructHelper.Filter>;
   };
 
@@ -45269,7 +45390,7 @@ export namespace IndirectRecursiveStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -45335,7 +45456,7 @@ export namespace IndirectRecursiveStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: IndirectRecursiveStruct.schema.properties.$identifier.type,
       }),
@@ -45378,9 +45499,9 @@ export namespace IndirectRecursiveStruct {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isIndirectRecursiveStruct: $ObjectTypeGuardFunction<
@@ -45634,15 +45755,14 @@ export namespace InPropertiesStruct {
     InPropertiesStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: InPropertiesStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -45654,7 +45774,7 @@ export namespace InPropertiesStruct {
         : Right(true as const),
       inBooleans: $shaclPropertyFromRdf<
         Maybe<true>,
-        $MaybeSchema<$BooleanSchema<true>>
+        $MaybeSchema<$Boolean.Schema<true>>
       >({
         ...options,
         focusResource: resource,
@@ -45662,8 +45782,8 @@ export namespace InPropertiesStruct {
         propertySchema: InPropertiesStruct.schema.properties.inBooleans,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           true,
-          $BooleanSchema<true>
-        >($booleanFromRdfResourceValues<true>),
+          $Boolean.Schema<true>
+        >($Boolean.fromRdfResourceValues<true>),
       }),
       inDateTimes: $shaclPropertyFromRdf<
         Maybe<Date>,
@@ -45702,7 +45822,7 @@ export namespace InPropertiesStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           1n | 2n,
           $NumericSchema<1n | 2n>
-        >($bigIntFromRdfResourceValues<1n | 2n>),
+        >($BigInt.fromRdfResourceValues<1n | 2n>),
       }),
       inIris: $shaclPropertyFromRdf<
         Maybe<
@@ -45995,13 +46115,13 @@ export namespace InPropertiesStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
     if (
       filter.inBooleans !== undefined &&
-      !$filterMaybe<true, $BooleanFilter>($filterBoolean)(
+      !$filterMaybe<true, $Boolean.Filter>($Boolean.filter)(
         filter.inBooleans,
         value.inBooleans,
       )
@@ -46057,8 +46177,8 @@ export namespace InPropertiesStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly inBooleans?: $MaybeFilter<$BooleanFilter>;
+    readonly $identifier?: $Identifier.Filter;
+    readonly inBooleans?: $MaybeFilter<$Boolean.Filter>;
     readonly inDateTimes?: $MaybeFilter<$DateFilter>;
     readonly inDoubles?: $MaybeFilter<$NumericFilter<1 | 2>>;
     readonly inIntegers?: $MaybeFilter<$NumericFilter<1n | 2n>>;
@@ -46100,8 +46220,8 @@ export namespace InPropertiesStruct {
         propertyName: "inBooleans",
         propertySchema: InPropertiesStruct.schema.properties.inBooleans,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $BooleanFilter,
-          $BooleanSchema<true>
+          $Boolean.Filter,
+          $Boolean.Schema<true>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -46185,7 +46305,7 @@ export namespace InPropertiesStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -46251,9 +46371,9 @@ export namespace InPropertiesStruct {
         propertyName: "inBooleans",
         propertySchema: InPropertiesStruct.schema.properties.inBooleans,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $BooleanFilter,
-          $BooleanSchema<true>
-        >($booleanSparqlWherePatterns),
+          $Boolean.Filter,
+          $Boolean.Schema<true>
+        >($Boolean.sparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -46341,11 +46461,11 @@ export namespace InPropertiesStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: InPropertiesStruct.schema.properties.$identifier.type,
       }),
-      inBooleans: $maybeFromJsonValue($booleanFromJsonBoolean<true>)(
+      inBooleans: $maybeFromJsonValue($Boolean.fromJsonBoolean<true>)(
         jsonObject["inBooleans"],
         {
           ...options,
@@ -46367,7 +46487,7 @@ export namespace InPropertiesStruct {
         },
       ),
       inIntegers: $maybeFromJsonValue(
-        $bigIntFromJsonString<"1" | "2", 1n | 2n>,
+        $BigInt.fromJsonString<"1" | "2", 1n | 2n>,
       )(jsonObject["inIntegers"], {
         ...options,
         schema: InPropertiesStruct.schema.properties.inIntegers.type,
@@ -46412,7 +46532,7 @@ export namespace InPropertiesStruct {
     if (_inPropertiesStruct.$identifier) {
       hasher.update(_inPropertiesStruct.$identifier().value);
     }
-    $hashMaybe($hashBoolean)(hasher, _inPropertiesStruct.inBooleans);
+    $hashMaybe($Boolean.hash)(hasher, _inPropertiesStruct.inBooleans);
     $hashMaybe($hashDateTime)(hasher, _inPropertiesStruct.inDateTimes);
     $hashMaybe($hashNumeric)(hasher, _inPropertiesStruct.inDoubles);
     $hashMaybe($hashNumeric)(hasher, _inPropertiesStruct.inIntegers);
@@ -46420,9 +46540,9 @@ export namespace InPropertiesStruct {
     $hashMaybe($hashString)(hasher, _inPropertiesStruct.inStrings);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isInPropertiesStruct: $ObjectTypeGuardFunction<
@@ -46669,7 +46789,7 @@ export namespace InPropertiesStruct {
         inDoubles: $maybeToJsonValue($primitiveToJsonValue<1 | 2>)(
           _inPropertiesStruct.inDoubles,
         ),
-        inIntegers: $maybeToJsonValue($bigIntToJsonString)(
+        inIntegers: $maybeToJsonValue($BigInt.toJsonString)(
           _inPropertiesStruct.inIntegers,
         ),
         inIris: $maybeToJsonValue(
@@ -47412,15 +47532,14 @@ export namespace IgnoredPropertiesStruct {
     IgnoredPropertiesStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: IgnoredPropertiesStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       severityDefaultProperty: $shaclPropertyFromRdf<
         string,
         $StringSchema<string>
@@ -47574,7 +47693,7 @@ export namespace IgnoredPropertiesStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -47609,7 +47728,7 @@ export namespace IgnoredPropertiesStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly severityDefaultProperty?: $StringFilter;
     readonly severityViolationProperty?: $StringFilter;
     readonly shaclmateIgnoreFalseProperty?: $StringFilter;
@@ -47665,7 +47784,7 @@ export namespace IgnoredPropertiesStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -47725,7 +47844,7 @@ export namespace IgnoredPropertiesStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: IgnoredPropertiesStruct.schema.properties.$identifier.type,
       }),
@@ -47786,9 +47905,9 @@ export namespace IgnoredPropertiesStruct {
     $hashString(hasher, _ignoredPropertiesStruct.shaclmateIgnoreFalseProperty);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isIgnoredPropertiesStruct: $ObjectTypeGuardFunction<
@@ -48050,15 +48169,14 @@ export namespace HasValuesStruct {
     HasValuesStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: HasValuesStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       hasIriValue: $shaclPropertyFromRdf<NamedNode, $IriSchema<string>>({
         ...options,
         focusResource: resource,
@@ -48169,7 +48287,7 @@ export namespace HasValuesStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -48189,7 +48307,7 @@ export namespace HasValuesStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly hasIriValue?: $IriFilter;
     readonly hasLiteralValue?: $StringFilter;
   };
@@ -48229,7 +48347,7 @@ export namespace HasValuesStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -48273,7 +48391,7 @@ export namespace HasValuesStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: HasValuesStruct.schema.properties.$identifier.type,
       }),
@@ -48317,9 +48435,9 @@ export namespace HasValuesStruct {
     $hashString(hasher, _hasValuesStruct.hasLiteralValue);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isHasValuesStruct: $ObjectTypeGuardFunction<
@@ -48552,15 +48670,14 @@ export namespace ExplicitToRdfTypeStruct {
     ExplicitToRdfTypeStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: ExplicitToRdfTypeStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       explicitToRdfTypeString: $shaclPropertyFromRdf<
         string,
         $StringSchema<string>
@@ -48661,7 +48778,7 @@ export namespace ExplicitToRdfTypeStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -48678,7 +48795,7 @@ export namespace ExplicitToRdfTypeStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly explicitToRdfTypeString?: $StringFilter;
   };
 
@@ -48729,7 +48846,7 @@ export namespace ExplicitToRdfTypeStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -48803,7 +48920,7 @@ export namespace ExplicitToRdfTypeStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: ExplicitToRdfTypeStruct.schema.properties.$identifier.type,
       }),
@@ -48844,9 +48961,9 @@ export namespace ExplicitToRdfTypeStruct {
     $hashString(hasher, _explicitToRdfTypeStruct.explicitToRdfTypeString);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isExplicitToRdfTypeStruct: $ObjectTypeGuardFunction<
@@ -49071,15 +49188,14 @@ export namespace ExplicitRdfTypeStruct {
     ExplicitRdfTypeStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: ExplicitRdfTypeStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -49186,7 +49302,7 @@ export namespace ExplicitRdfTypeStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -49200,7 +49316,7 @@ export namespace ExplicitRdfTypeStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly explicitRdfTypeString?: $StringFilter;
   };
 
@@ -49251,7 +49367,7 @@ export namespace ExplicitRdfTypeStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -49330,7 +49446,7 @@ export namespace ExplicitRdfTypeStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: ExplicitRdfTypeStruct.schema.properties.$identifier.type,
       }),
@@ -49370,9 +49486,9 @@ export namespace ExplicitRdfTypeStruct {
     $hashString(hasher, _explicitRdfTypeStruct.explicitRdfTypeString);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isExplicitRdfTypeStruct: $ObjectTypeGuardFunction<
@@ -49595,16 +49711,15 @@ export namespace ExplicitFromToRdfTypesStruct {
     ExplicitFromToRdfTypesStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             ExplicitFromToRdfTypesStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -49727,7 +49842,7 @@ export namespace ExplicitFromToRdfTypesStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -49744,7 +49859,7 @@ export namespace ExplicitFromToRdfTypesStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly explicitFromToRdfTypesString?: $StringFilter;
   };
 
@@ -49796,7 +49911,7 @@ export namespace ExplicitFromToRdfTypesStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -49878,7 +49993,7 @@ export namespace ExplicitFromToRdfTypesStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: ExplicitFromToRdfTypesStruct.schema.properties.$identifier.type,
       }),
@@ -49924,9 +50039,9 @@ export namespace ExplicitFromToRdfTypesStruct {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isExplicitFromToRdfTypesStruct: $ObjectTypeGuardFunction<
@@ -50166,15 +50281,14 @@ export namespace ExplicitFromRdfTypeStruct {
     ExplicitFromRdfTypeStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: ExplicitFromRdfTypeStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -50289,7 +50403,7 @@ export namespace ExplicitFromRdfTypeStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -50306,7 +50420,7 @@ export namespace ExplicitFromRdfTypeStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly explicitFromRdfTypeString?: $StringFilter;
   };
 
@@ -50357,7 +50471,7 @@ export namespace ExplicitFromRdfTypeStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -50437,7 +50551,7 @@ export namespace ExplicitFromRdfTypeStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: ExplicitFromRdfTypeStruct.schema.properties.$identifier.type,
       }),
@@ -50478,9 +50592,9 @@ export namespace ExplicitFromRdfTypeStruct {
     $hashString(hasher, _explicitFromRdfTypeStruct.explicitFromRdfTypeString);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isExplicitFromRdfTypeStruct: $ObjectTypeGuardFunction<
@@ -50717,15 +50831,14 @@ export namespace DisplayStruct {
     DisplayStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: DisplayStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -50879,7 +50992,7 @@ export namespace DisplayStruct {
   ) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -50905,7 +51018,7 @@ export namespace DisplayStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly explicitFalseDisplay?: $StringFilter;
     readonly explicitTrueDisplay?: $StringFilter;
     readonly implicitFalseDisplay?: $StringFilter;
@@ -50979,7 +51092,7 @@ export namespace DisplayStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -51080,7 +51193,7 @@ export namespace DisplayStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: DisplayStruct.schema.properties.$identifier.type,
       }),
@@ -51133,9 +51246,9 @@ export namespace DisplayStruct {
     $hashString(hasher, _displayStruct.implicitFalseDisplay);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isDisplayStruct: $ObjectTypeGuardFunction<
@@ -51386,15 +51499,14 @@ export namespace DirectRecursiveStruct {
     DirectRecursiveStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: DirectRecursiveStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -51528,7 +51640,7 @@ export namespace DirectRecursiveStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -51544,7 +51656,7 @@ export namespace DirectRecursiveStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly directRecursive?: $MaybeFilter<DirectRecursiveStruct.Filter>;
   };
 
@@ -51583,7 +51695,7 @@ export namespace DirectRecursiveStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -51649,7 +51761,7 @@ export namespace DirectRecursiveStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: DirectRecursiveStruct.schema.properties.$identifier.type,
       }),
@@ -51691,9 +51803,9 @@ export namespace DirectRecursiveStruct {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isDirectRecursiveStruct: $ObjectTypeGuardFunction<
@@ -51939,15 +52051,14 @@ export namespace DefaultValuesStruct {
     DefaultValuesStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: DefaultValuesStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -51986,7 +52097,7 @@ export namespace DefaultValuesStruct {
       }),
       falseBooleanDefaultValue: $shaclPropertyFromRdf<
         boolean,
-        $DefaultValueSchema<$BooleanSchema<boolean>>
+        $DefaultValueSchema<$Boolean.Schema<boolean>>
       >({
         ...options,
         focusResource: resource,
@@ -51995,8 +52106,8 @@ export namespace DefaultValuesStruct {
           DefaultValuesStruct.schema.properties.falseBooleanDefaultValue,
         typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
           boolean,
-          $BooleanSchema<boolean>
-        >($booleanFromRdfResourceValues<boolean>),
+          $Boolean.Schema<boolean>
+        >($Boolean.fromRdfResourceValues<boolean>),
       }),
       numberDefaultValue: $shaclPropertyFromRdf<
         number,
@@ -52028,7 +52139,7 @@ export namespace DefaultValuesStruct {
       }),
       trueBooleanDefaultValue: $shaclPropertyFromRdf<
         boolean,
-        $DefaultValueSchema<$BooleanSchema<boolean>>
+        $DefaultValueSchema<$Boolean.Schema<boolean>>
       >({
         ...options,
         focusResource: resource,
@@ -52037,8 +52148,8 @@ export namespace DefaultValuesStruct {
           DefaultValuesStruct.schema.properties.trueBooleanDefaultValue,
         typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
           boolean,
-          $BooleanSchema<boolean>
-        >($booleanFromRdfResourceValues<boolean>),
+          $Boolean.Schema<boolean>
+        >($Boolean.fromRdfResourceValues<boolean>),
       }),
     }).chain((properties) => DefaultValuesStruct.create(properties));
 
@@ -52265,7 +52376,7 @@ export namespace DefaultValuesStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -52283,7 +52394,7 @@ export namespace DefaultValuesStruct {
     }
     if (
       filter.falseBooleanDefaultValue !== undefined &&
-      !$filterBoolean(
+      !$Boolean.filter(
         filter.falseBooleanDefaultValue,
         value.falseBooleanDefaultValue,
       )
@@ -52307,7 +52418,7 @@ export namespace DefaultValuesStruct {
     }
     if (
       filter.trueBooleanDefaultValue !== undefined &&
-      !$filterBoolean(
+      !$Boolean.filter(
         filter.trueBooleanDefaultValue,
         value.trueBooleanDefaultValue,
       )
@@ -52318,13 +52429,13 @@ export namespace DefaultValuesStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly dateDefaultValue?: $DateFilter;
     readonly dateTimeDefaultValue?: $DateFilter;
-    readonly falseBooleanDefaultValue?: $BooleanFilter;
+    readonly falseBooleanDefaultValue?: $Boolean.Filter;
     readonly numberDefaultValue?: $NumericFilter<number>;
     readonly stringDefaultValue?: $StringFilter;
-    readonly trueBooleanDefaultValue?: $BooleanFilter;
+    readonly trueBooleanDefaultValue?: $Boolean.Filter;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -52433,7 +52544,7 @@ export namespace DefaultValuesStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -52531,9 +52642,9 @@ export namespace DefaultValuesStruct {
         propertySchema:
           DefaultValuesStruct.schema.properties.falseBooleanDefaultValue,
         typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
-          $BooleanFilter,
-          $BooleanSchema<boolean>
-        >($booleanSparqlWherePatterns),
+          $Boolean.Filter,
+          $Boolean.Schema<boolean>
+        >($Boolean.sparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -52579,9 +52690,9 @@ export namespace DefaultValuesStruct {
         propertySchema:
           DefaultValuesStruct.schema.properties.trueBooleanDefaultValue,
         typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
-          $BooleanFilter,
-          $BooleanSchema<boolean>
-        >($booleanSparqlWherePatterns),
+          $Boolean.Filter,
+          $Boolean.Schema<boolean>
+        >($Boolean.sparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -52594,7 +52705,7 @@ export namespace DefaultValuesStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: DefaultValuesStruct.schema.properties.$identifier.type,
       }),
@@ -52614,7 +52725,7 @@ export namespace DefaultValuesStruct {
         },
       ),
       falseBooleanDefaultValue: $defaultValueFromJsonValue(
-        $booleanFromJsonBoolean<boolean>,
+        $Boolean.fromJsonBoolean<boolean>,
       )(jsonObject["falseBooleanDefaultValue"], {
         ...options,
         schema:
@@ -52633,7 +52744,7 @@ export namespace DefaultValuesStruct {
         schema: DefaultValuesStruct.schema.properties.stringDefaultValue.type,
       }),
       trueBooleanDefaultValue: $defaultValueFromJsonValue(
-        $booleanFromJsonBoolean<boolean>,
+        $Boolean.fromJsonBoolean<boolean>,
       )(jsonObject["trueBooleanDefaultValue"], {
         ...options,
         schema:
@@ -52666,15 +52777,15 @@ export namespace DefaultValuesStruct {
     }
     $hashDate(hasher, _defaultValuesStruct.dateDefaultValue);
     $hashDateTime(hasher, _defaultValuesStruct.dateTimeDefaultValue);
-    $hashBoolean(hasher, _defaultValuesStruct.falseBooleanDefaultValue);
+    $Boolean.hash(hasher, _defaultValuesStruct.falseBooleanDefaultValue);
     $hashNumeric(hasher, _defaultValuesStruct.numberDefaultValue);
     $hashString(hasher, _defaultValuesStruct.stringDefaultValue);
-    $hashBoolean(hasher, _defaultValuesStruct.trueBooleanDefaultValue);
+    $Boolean.hash(hasher, _defaultValuesStruct.trueBooleanDefaultValue);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isDefaultValuesStruct: $ObjectTypeGuardFunction<
@@ -53008,15 +53119,14 @@ export namespace DatesStruct {
     DatesStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: DatesStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -53217,7 +53327,7 @@ export namespace DatesStruct {
   ) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -53249,7 +53359,7 @@ export namespace DatesStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly date?: $MaybeFilter<$DateFilter>;
     readonly dateTime?: $MaybeFilter<$DateFilter>;
     readonly dateTimeStamp?: $MaybeFilter<$DateFilter>;
@@ -53332,7 +53442,7 @@ export namespace DatesStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -53442,7 +53552,7 @@ export namespace DatesStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: DatesStruct.schema.properties.$identifier.type,
       }),
@@ -53492,9 +53602,9 @@ export namespace DatesStruct {
     $hashMaybe($hashDateTime)(hasher, _datesStruct.dateTimeStamp);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isDatesStruct: $ObjectTypeGuardFunction<
@@ -53815,17 +53925,16 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     DatatypeDiscriminatedUnionsStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             DatatypeDiscriminatedUnionsStruct.schema.properties.$identifier
               .type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -54238,7 +54347,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             let memberOutputValuesEither: Either<Error, unknown> | undefined;
             for (let memberI = 0; memberI < 2; memberI++) {
               if (memberI === 0) {
-                memberOutputValuesEither = $bigDecimalFromRdfResourceValues(
+                memberOutputValuesEither = $BigDecimal.fromRdfResourceValues(
                   inputValueAsValues,
                   {
                     ...options,
@@ -54284,14 +54393,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             switch (memberI) {
               case 0:
                 collectedOutputValues = collectedOutputValues.concat(
-                  ...$bigDecimalFromRdfResourceValues(
-                    memberInputValues[memberI],
-                    {
+                  ...$BigDecimal
+                    .fromRdfResourceValues(memberInputValues[memberI], {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["object"].type,
-                    },
-                  ).unsafeCoerce(),
+                    })
+                    .unsafeCoerce(),
                 );
                 break;
               case 1:
@@ -54346,14 +54454,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             let memberOutputValuesEither: Either<Error, unknown> | undefined;
             for (let memberI = 0; memberI < 2; memberI++) {
               if (memberI === 0) {
-                memberOutputValuesEither = $bigIntFromRdfResourceValues<bigint>(
-                  inputValueAsValues,
-                  {
+                memberOutputValuesEither =
+                  $BigInt.fromRdfResourceValues<bigint>(inputValueAsValues, {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["bigint"].type,
-                  },
-                );
+                  });
                 if (memberOutputValuesEither.isRight()) {
                   memberInputValues[memberI] =
                     memberInputValues[memberI].concat(inputValue);
@@ -54392,14 +54498,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             switch (memberI) {
               case 0:
                 collectedOutputValues = collectedOutputValues.concat(
-                  ...$bigIntFromRdfResourceValues<bigint>(
-                    memberInputValues[memberI],
-                    {
+                  ...$BigInt
+                    .fromRdfResourceValues<bigint>(memberInputValues[memberI], {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["bigint"].type,
-                    },
-                  ).unsafeCoerce(),
+                    })
+                    .unsafeCoerce(),
                 );
                 break;
               case 1:
@@ -54426,7 +54531,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           members: {
             readonly boolean: {
               discriminantValues: readonly (number | string)[];
-              type: $BooleanSchema<boolean>;
+              type: $Boolean.Schema<boolean>;
             };
             readonly number: {
               discriminantValues: readonly (number | string)[];
@@ -54463,7 +54568,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             for (let memberI = 0; memberI < 4; memberI++) {
               if (memberI === 0) {
                 memberOutputValuesEither =
-                  $booleanFromRdfResourceValues<boolean>(inputValueAsValues, {
+                  $Boolean.fromRdfResourceValues<boolean>(inputValueAsValues, {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["boolean"].type,
@@ -54488,14 +54593,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                   break;
                 }
               } else if (memberI === 2) {
-                memberOutputValuesEither = $bigIntFromRdfResourceValues<bigint>(
-                  inputValueAsValues,
-                  {
+                memberOutputValuesEither =
+                  $BigInt.fromRdfResourceValues<bigint>(inputValueAsValues, {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["bigint"].type,
-                  },
-                );
+                  });
                 if (memberOutputValuesEither.isRight()) {
                   memberInputValues[memberI] =
                     memberInputValues[memberI].concat(inputValue);
@@ -54535,14 +54638,16 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             switch (memberI) {
               case 0:
                 collectedOutputValues = collectedOutputValues.concat(
-                  ...$booleanFromRdfResourceValues<boolean>(
-                    memberInputValues[memberI],
-                    {
-                      ...options,
-                      ignoreRdfType: false,
-                      schema: options.schema.members["boolean"].type,
-                    },
-                  ).unsafeCoerce(),
+                  ...$Boolean
+                    .fromRdfResourceValues<boolean>(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["boolean"].type,
+                      },
+                    )
+                    .unsafeCoerce(),
                 );
                 break;
               case 1:
@@ -54559,14 +54664,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 break;
               case 2:
                 collectedOutputValues = collectedOutputValues.concat(
-                  ...$bigIntFromRdfResourceValues<bigint>(
-                    memberInputValues[memberI],
-                    {
+                  ...$BigInt
+                    .fromRdfResourceValues<bigint>(memberInputValues[memberI], {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["bigint"].type,
-                    },
-                  ).unsafeCoerce(),
+                    })
+                    .unsafeCoerce(),
                 );
                 break;
               case 3:
@@ -54875,7 +54979,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                   break;
                 }
               } else if (memberI === 1) {
-                memberOutputValuesEither = $bigDecimalFromRdfResourceValues(
+                memberOutputValuesEither = $BigDecimal.fromRdfResourceValues(
                   inputValueAsValues,
                   {
                     ...options,
@@ -54919,14 +55023,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 break;
               case 1:
                 collectedOutputValues = collectedOutputValues.concat(
-                  ...$bigDecimalFromRdfResourceValues(
-                    memberInputValues[memberI],
-                    {
+                  ...$BigDecimal
+                    .fromRdfResourceValues(memberInputValues[memberI], {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["object"].type,
-                    },
-                  ).unsafeCoerce(),
+                    })
+                    .unsafeCoerce(),
                 );
                 break;
             }
@@ -54983,14 +55086,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                   break;
                 }
               } else if (memberI === 1) {
-                memberOutputValuesEither = $bigIntFromRdfResourceValues<bigint>(
-                  inputValueAsValues,
-                  {
+                memberOutputValuesEither =
+                  $BigInt.fromRdfResourceValues<bigint>(inputValueAsValues, {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["bigint"].type,
-                  },
-                );
+                  });
                 if (memberOutputValuesEither.isRight()) {
                   memberInputValues[memberI] =
                     memberInputValues[memberI].concat(inputValue);
@@ -55027,14 +55128,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 break;
               case 1:
                 collectedOutputValues = collectedOutputValues.concat(
-                  ...$bigIntFromRdfResourceValues<bigint>(
-                    memberInputValues[memberI],
-                    {
+                  ...$BigInt
+                    .fromRdfResourceValues<bigint>(memberInputValues[memberI], {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["bigint"].type,
-                    },
-                  ).unsafeCoerce(),
+                    })
+                    .unsafeCoerce(),
                 );
                 break;
             }
@@ -55235,7 +55335,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       DatatypeDiscriminatedUnionsStruct.schema.properties.decimalOrString.path,
       ((value, _options): Literal[] => {
         if (typeof value === "object") {
-          return [$bigDecimalLiteral(value)];
+          return [$literalFactory.bigdecimal(value)];
         }
         if (typeof value === "string") {
           return [$literalFactory.string(value)];
@@ -55387,7 +55487,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           return [$literalFactory.string(value)];
         }
         if (typeof value === "object") {
-          return [$bigDecimalLiteral(value)];
+          return [$literalFactory.bigdecimal(value)];
         }
 
         throw new Error("unable to serialize to RDF");
@@ -55926,7 +56026,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -55997,7 +56097,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       filter.decimalOrString !== undefined &&
       !((filter, value) => {
         if (filter.on?.["object"] !== undefined && typeof value === "object") {
-          if (!$filterBigDecimal(filter.on["object"], value)) {
+          if (!$BigDecimal.filter(filter.on["object"], value)) {
             return false;
           }
         }
@@ -56038,7 +56138,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           filter.on?.["boolean"] !== undefined &&
           typeof value === "boolean"
         ) {
-          if (!$filterBoolean(filter.on["boolean"], value)) {
+          if (!$Boolean.filter(filter.on["boolean"], value)) {
             return false;
           }
         }
@@ -56128,7 +56228,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }
         }
         if (filter.on?.["object"] !== undefined && typeof value === "object") {
-          if (!$filterBigDecimal(filter.on["object"], value)) {
+          if (!$BigDecimal.filter(filter.on["object"], value)) {
             return false;
           }
         }
@@ -56180,7 +56280,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly dateOrDateTime?: {
       readonly on?: {
         readonly date?: $DateFilter;
@@ -56213,7 +56313,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     };
     readonly jsPrimitive?: {
       readonly on?: {
-        readonly boolean?: $BooleanFilter;
+        readonly boolean?: $Boolean.Filter;
         readonly number?: $NumericFilter<number>;
         readonly bigint?: $NumericFilter<bigint>;
         readonly string?: $StringFilter;
@@ -56752,7 +56852,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -56933,12 +57033,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
-            patterns: $bigDecimalSparqlWherePatterns({
-              ...otherParameters,
-              filter: filter?.on?.["object"],
-              ignoreRdfType: false,
-              schema: schema.members["object"].type,
-            }).concat(),
+            patterns: $BigDecimal
+              .sparqlWherePatterns({
+                ...otherParameters,
+                filter: filter?.on?.["object"],
+                ignoreRdfType: false,
+                schema: schema.members["object"].type,
+              })
+              .concat(),
             type: "group",
           });
           unionPatterns.push({
@@ -57005,12 +57107,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
-            patterns: $booleanSparqlWherePatterns({
-              ...otherParameters,
-              filter: filter?.on?.["boolean"],
-              ignoreRdfType: false,
-              schema: schema.members["boolean"].type,
-            }).concat(),
+            patterns: $Boolean
+              .sparqlWherePatterns({
+                ...otherParameters,
+                filter: filter?.on?.["boolean"],
+                ignoreRdfType: false,
+                schema: schema.members["boolean"].type,
+              })
+              .concat(),
             type: "group",
           });
           unionPatterns.push({
@@ -57171,12 +57275,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             type: "group",
           });
           unionPatterns.push({
-            patterns: $bigDecimalSparqlWherePatterns({
-              ...otherParameters,
-              filter: filter?.on?.["object"],
-              ignoreRdfType: false,
-              schema: schema.members["object"].type,
-            }).concat(),
+            patterns: $BigDecimal
+              .sparqlWherePatterns({
+                ...otherParameters,
+                filter: filter?.on?.["object"],
+                ignoreRdfType: false,
+                schema: schema.members["object"].type,
+              })
+              .concat(),
             type: "group",
           });
 
@@ -57267,7 +57373,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.$identifier.type,
@@ -57360,7 +57466,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       }),
       decimalOrString: ((value, options) => {
         if (value.$type === "object") {
-          return $bigDecimalFromJsonObject(value, {
+          return $BigDecimal.fromJsonObject(value, {
             ...options,
             schema: { datatype: $xsd_decimal, kind: "BigDecimal" } as const,
           }) as Either<Error, BigDecimal | string>;
@@ -57381,7 +57487,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       }),
       integerOrString: ((value, options) => {
         if (value.$type === "bigint") {
-          return $bigIntFromJsonObject<bigint>(value, {
+          return $BigInt.fromJsonObject<bigint>(value, {
             ...options,
             schema: { datatype: $xsd_integer, kind: "BigInt" } as const,
           }) as Either<Error, bigint | string>;
@@ -57402,7 +57508,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       }),
       jsPrimitive: ((value, options) => {
         if (value.$type === "boolean") {
-          return $booleanFromJsonObject<boolean>(value, {
+          return $Boolean.fromJsonObject<boolean>(value, {
             ...options,
             schema: { datatype: $xsd_boolean, kind: "Boolean" } as const,
           }) as Either<Error, boolean | number | bigint | string>;
@@ -57414,7 +57520,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }) as Either<Error, boolean | number | bigint | string>;
         }
         if (value.$type === "bigint") {
-          return $bigIntFromJsonObject<bigint>(value, {
+          return $BigInt.fromJsonObject<bigint>(value, {
             ...options,
             schema: { datatype: $xsd_integer, kind: "BigInt" } as const,
           }) as Either<Error, boolean | number | bigint | string>;
@@ -57499,7 +57605,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }) as Either<Error, string | BigDecimal>;
         }
         if (value.$type === "object") {
-          return $bigDecimalFromJsonObject(value, {
+          return $BigDecimal.fromJsonObject(value, {
             ...options,
             schema: { datatype: $xsd_decimal, kind: "BigDecimal" } as const,
           }) as Either<Error, string | BigDecimal>;
@@ -57520,7 +57626,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }) as Either<Error, string | bigint>;
         }
         if (value.$type === "bigint") {
-          return $bigIntFromJsonObject<bigint>(value, {
+          return $BigInt.fromJsonObject<bigint>(value, {
             ...options,
             schema: { datatype: $xsd_integer, kind: "BigInt" } as const,
           }) as Either<Error, string | bigint>;
@@ -57624,7 +57730,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     (
       ((hasher, value) => {
         if (typeof value === "object") {
-          $hashBigDecimal(hasher, value);
+          $BigDecimal.hash(hasher, value);
           return;
         }
         if (typeof value === "string") {
@@ -57648,7 +57754,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     (
       ((hasher, value) => {
         if (typeof value === "boolean") {
-          $hashBoolean(hasher, value);
+          $Boolean.hash(hasher, value);
           return;
         }
         if (typeof value === "number") {
@@ -57704,7 +57810,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           return;
         }
         if (typeof value === "object") {
-          $hashBigDecimal(hasher, value);
+          $BigDecimal.hash(hasher, value);
           return;
         }
       }) satisfies $HashFunction<string | BigDecimal>
@@ -57735,9 +57841,9 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     )(hasher, _datatypeDiscriminatedUnionsStruct.stringOrLangString);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isDatatypeDiscriminatedUnionsStruct: $ObjectTypeGuardFunction<
@@ -58369,7 +58475,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         decimalOrString: ((value) => {
           if (typeof value === "object") {
             return {
-              ...$bigDecimalToJsonObject($xsd_decimal)(value),
+              ...$BigDecimal.toJsonObject($xsd_decimal)(value),
               $type: "object",
             };
           }
@@ -58385,7 +58491,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         integerOrString: ((value) => {
           if (typeof value === "bigint") {
             return {
-              ...$bigIntToJsonObject($xsd_integer)(value),
+              ...$BigInt.toJsonObject($xsd_integer)(value),
               $type: "bigint",
             };
           }
@@ -58413,7 +58519,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }
           if (typeof value === "bigint") {
             return {
-              ...$bigIntToJsonObject($xsd_integer)(value),
+              ...$BigInt.toJsonObject($xsd_integer)(value),
               $type: "bigint",
             };
           }
@@ -58467,7 +58573,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }
           if (typeof value === "object") {
             return {
-              ...$bigDecimalToJsonObject($xsd_decimal)(value),
+              ...$BigDecimal.toJsonObject($xsd_decimal)(value),
               $type: "object",
             };
           }
@@ -58483,7 +58589,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }
           if (typeof value === "bigint") {
             return {
-              ...$bigIntToJsonObject($xsd_integer)(value),
+              ...$BigInt.toJsonObject($xsd_integer)(value),
               $type: "bigint",
             };
           }
@@ -59188,7 +59294,7 @@ export namespace DatatypeDiscriminatedUnion1 {
   };
 
   export type Json =
-    | ($IdentifierJsonObject & { $type: "object" })
+    | ($Identifier.JsonObject & { $type: "object" })
     | ($TypedLiteralJsonObject & { $type: "string" });
 
   export namespace Json {
@@ -59202,7 +59308,7 @@ export namespace DatatypeDiscriminatedUnion1 {
 
     export function schema() {
       return z.discriminatedUnion("$type", [
-        $IdentifierJsonObject.schema.extend({ $type: z.literal("object") }),
+        $Identifier.JsonObject.schema.extend({ $type: z.literal("object") }),
         $TypedLiteralJsonObject.schema.extend({ $type: z.literal("string") }),
       ]) satisfies z.ZodType<Json>;
     }
@@ -59363,15 +59469,14 @@ export namespace ConvertibleTypesStruct {
     ConvertibleTypesStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: ConvertibleTypesStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -59637,7 +59742,7 @@ export namespace ConvertibleTypesStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleIriNonEmptySet
             .type,
           value,
@@ -59660,7 +59765,7 @@ export namespace ConvertibleTypesStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleIriSet.type,
           value,
         ),
@@ -59674,7 +59779,7 @@ export namespace ConvertibleTypesStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleLiteralNonEmptySet
             .type,
           value,
@@ -59698,7 +59803,7 @@ export namespace ConvertibleTypesStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleLiteralSet.type,
           value,
         ),
@@ -59709,7 +59814,7 @@ export namespace ConvertibleTypesStruct {
       )(parameters.convertibleTermNonEmptySet, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleTermNonEmptySet
             .type,
           value,
@@ -59732,7 +59837,7 @@ export namespace ConvertibleTypesStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleTermSet.type,
           value,
         ),
@@ -59840,7 +59945,7 @@ export namespace ConvertibleTypesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $booleanEquals),
+              $Array.equals(left, right, $booleanEquals),
             name: "convertibleIriNonEmptySet",
           },
           [left, left.convertibleIriNonEmptySet],
@@ -59862,7 +59967,7 @@ export namespace ConvertibleTypesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $booleanEquals),
+              $Array.equals(left, right, $booleanEquals),
             name: "convertibleIriSet",
           },
           [left, left.convertibleIriSet],
@@ -59880,7 +59985,7 @@ export namespace ConvertibleTypesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $booleanEquals),
+              $Array.equals(left, right, $booleanEquals),
             name: "convertibleLiteralNonEmptySet",
           },
           [left, left.convertibleLiteralNonEmptySet],
@@ -59902,7 +60007,7 @@ export namespace ConvertibleTypesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $booleanEquals),
+              $Array.equals(left, right, $booleanEquals),
             name: "convertibleLiteralSet",
           },
           [left, left.convertibleLiteralSet],
@@ -59920,7 +60025,7 @@ export namespace ConvertibleTypesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $booleanEquals),
+              $Array.equals(left, right, $booleanEquals),
             name: "convertibleTermNonEmptySet",
           },
           [left, left.convertibleTermNonEmptySet],
@@ -59942,7 +60047,7 @@ export namespace ConvertibleTypesStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
-              $arrayEquals(left, right, $booleanEquals),
+              $Array.equals(left, right, $booleanEquals),
             name: "convertibleTermSet",
           },
           [left, left.convertibleTermSet],
@@ -59956,7 +60061,7 @@ export namespace ConvertibleTypesStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -59968,7 +60073,7 @@ export namespace ConvertibleTypesStruct {
     }
     if (
       filter.convertibleIriNonEmptySet !== undefined &&
-      !$filterArray<NamedNode, $IriFilter>($filterIri)(
+      !$Array.filter<NamedNode, $IriFilter>($filterIri)(
         filter.convertibleIriNonEmptySet,
         value.convertibleIriNonEmptySet,
       )
@@ -59986,7 +60091,7 @@ export namespace ConvertibleTypesStruct {
     }
     if (
       filter.convertibleIriSet !== undefined &&
-      !$filterArray<NamedNode, $IriFilter>($filterIri)(
+      !$Array.filter<NamedNode, $IriFilter>($filterIri)(
         filter.convertibleIriSet,
         value.convertibleIriSet,
       )
@@ -60001,7 +60106,7 @@ export namespace ConvertibleTypesStruct {
     }
     if (
       filter.convertibleLiteralNonEmptySet !== undefined &&
-      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
+      !$Array.filter<Literal, $LiteralFilter>($filterLiteral)(
         filter.convertibleLiteralNonEmptySet,
         value.convertibleLiteralNonEmptySet,
       )
@@ -60019,7 +60124,7 @@ export namespace ConvertibleTypesStruct {
     }
     if (
       filter.convertibleLiteralSet !== undefined &&
-      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
+      !$Array.filter<Literal, $LiteralFilter>($filterLiteral)(
         filter.convertibleLiteralSet,
         value.convertibleLiteralSet,
       )
@@ -60034,7 +60139,7 @@ export namespace ConvertibleTypesStruct {
     }
     if (
       filter.convertibleTermNonEmptySet !== undefined &&
-      !$filterArray<
+      !$Array.filter<
         BlankNode | NamedNode | Literal,
         $TermFilter<BlankNode | NamedNode | Literal>
       >($filterTerm)(
@@ -60055,7 +60160,7 @@ export namespace ConvertibleTypesStruct {
     }
     if (
       filter.convertibleTermSet !== undefined &&
-      !$filterArray<
+      !$Array.filter<
         BlankNode | NamedNode | Literal,
         $TermFilter<BlankNode | NamedNode | Literal>
       >($filterTerm)(filter.convertibleTermSet, value.convertibleTermSet)
@@ -60066,7 +60171,7 @@ export namespace ConvertibleTypesStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly convertibleIri?: $IriFilter;
     readonly convertibleIriNonEmptySet?: $CollectionFilter<$IriFilter>;
     readonly convertibleIriOption?: $MaybeFilter<$IriFilter>;
@@ -60293,7 +60398,7 @@ export namespace ConvertibleTypesStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -60542,7 +60647,7 @@ export namespace ConvertibleTypesStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: ConvertibleTypesStruct.schema.properties.$identifier.type,
       }),
@@ -60550,7 +60655,7 @@ export namespace ConvertibleTypesStruct {
         ...options,
         schema: ConvertibleTypesStruct.schema.properties.convertibleIri.type,
       }),
-      convertibleIriNonEmptySet: $arrayFromJsonArray($iriFromJsonString)(
+      convertibleIriNonEmptySet: $Array.fromJson($iriFromJsonString)(
         jsonObject["convertibleIriNonEmptySet"],
         {
           ...options,
@@ -60567,7 +60672,7 @@ export namespace ConvertibleTypesStruct {
             ConvertibleTypesStruct.schema.properties.convertibleIriOption.type,
         },
       ),
-      convertibleIriSet: $arrayFromJsonArray($iriFromJsonString)(
+      convertibleIriSet: $Array.fromJson($iriFromJsonString)(
         jsonObject["convertibleIriSet"],
         {
           ...options,
@@ -60583,14 +60688,15 @@ export namespace ConvertibleTypesStruct {
             ConvertibleTypesStruct.schema.properties.convertibleLiteral.type,
         },
       ),
-      convertibleLiteralNonEmptySet: $arrayFromJsonArray(
-        $literalFromJsonObject,
-      )(jsonObject["convertibleLiteralNonEmptySet"], {
-        ...options,
-        schema:
-          ConvertibleTypesStruct.schema.properties.convertibleLiteralNonEmptySet
-            .type,
-      }),
+      convertibleLiteralNonEmptySet: $Array.fromJson($literalFromJsonObject)(
+        jsonObject["convertibleLiteralNonEmptySet"],
+        {
+          ...options,
+          schema:
+            ConvertibleTypesStruct.schema.properties
+              .convertibleLiteralNonEmptySet.type,
+        },
+      ),
       convertibleLiteralOption: $maybeFromJsonValue($literalFromJsonObject)(
         jsonObject["convertibleLiteralOption"],
         {
@@ -60600,7 +60706,7 @@ export namespace ConvertibleTypesStruct {
               .type,
         },
       ),
-      convertibleLiteralSet: $arrayFromJsonArray($literalFromJsonObject)(
+      convertibleLiteralSet: $Array.fromJson($literalFromJsonObject)(
         jsonObject["convertibleLiteralSet"],
         {
           ...options,
@@ -60615,7 +60721,7 @@ export namespace ConvertibleTypesStruct {
           schema: ConvertibleTypesStruct.schema.properties.convertibleTerm.type,
         },
       ),
-      convertibleTermNonEmptySet: $arrayFromJsonArray(
+      convertibleTermNonEmptySet: $Array.fromJson(
         $termFromJsonObject<BlankNode | NamedNode | Literal>,
       )(jsonObject["convertibleTermNonEmptySet"], {
         ...options,
@@ -60630,7 +60736,7 @@ export namespace ConvertibleTypesStruct {
         schema:
           ConvertibleTypesStruct.schema.properties.convertibleTermOption.type,
       }),
-      convertibleTermSet: $arrayFromJsonArray(
+      convertibleTermSet: $Array.fromJson(
         $termFromJsonObject<BlankNode | NamedNode | Literal>,
       )(jsonObject["convertibleTermSet"], {
         ...options,
@@ -60663,14 +60769,14 @@ export namespace ConvertibleTypesStruct {
       hasher.update(_convertibleTypesStruct.$identifier().value);
     }
     $hashTerm(hasher, _convertibleTypesStruct.convertibleIri);
-    $hashArray($hashTerm)(
+    $Array.hash($hashTerm)(
       hasher,
       _convertibleTypesStruct.convertibleIriNonEmptySet,
     );
     $hashMaybe($hashTerm)(hasher, _convertibleTypesStruct.convertibleIriOption);
-    $hashArray($hashTerm)(hasher, _convertibleTypesStruct.convertibleIriSet);
+    $Array.hash($hashTerm)(hasher, _convertibleTypesStruct.convertibleIriSet);
     $hashTerm(hasher, _convertibleTypesStruct.convertibleLiteral);
-    $hashArray($hashTerm)(
+    $Array.hash($hashTerm)(
       hasher,
       _convertibleTypesStruct.convertibleLiteralNonEmptySet,
     );
@@ -60678,12 +60784,12 @@ export namespace ConvertibleTypesStruct {
       hasher,
       _convertibleTypesStruct.convertibleLiteralOption,
     );
-    $hashArray($hashTerm)(
+    $Array.hash($hashTerm)(
       hasher,
       _convertibleTypesStruct.convertibleLiteralSet,
     );
     $hashTerm(hasher, _convertibleTypesStruct.convertibleTerm);
-    $hashArray($hashTerm)(
+    $Array.hash($hashTerm)(
       hasher,
       _convertibleTypesStruct.convertibleTermNonEmptySet,
     );
@@ -60691,12 +60797,12 @@ export namespace ConvertibleTypesStruct {
       hasher,
       _convertibleTypesStruct.convertibleTermOption,
     );
-    $hashArray($hashTerm)(hasher, _convertibleTypesStruct.convertibleTermSet);
+    $Array.hash($hashTerm)(hasher, _convertibleTypesStruct.convertibleTermSet);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isConvertibleTypesStruct: $ObjectTypeGuardFunction<
@@ -61022,37 +61128,37 @@ export namespace ConvertibleTypesStruct {
         convertibleIri: $iriToJsonString<string>(
           _convertibleTypesStruct.convertibleIri,
         ),
-        convertibleIriNonEmptySet: $arrayToJsonArray($iriToJsonString<string>)(
+        convertibleIriNonEmptySet: $Array.toJson($iriToJsonString<string>)(
           _convertibleTypesStruct.convertibleIriNonEmptySet,
         ),
         convertibleIriOption: $maybeToJsonValue($iriToJsonString<string>)(
           _convertibleTypesStruct.convertibleIriOption,
         ),
-        convertibleIriSet: $arrayToJsonArray($iriToJsonString<string>)(
+        convertibleIriSet: $Array.toJson($iriToJsonString<string>)(
           _convertibleTypesStruct.convertibleIriSet,
         ),
         convertibleLiteral: $literalToJsonObject(
           _convertibleTypesStruct.convertibleLiteral,
         ),
-        convertibleLiteralNonEmptySet: $arrayToJsonArray($literalToJsonObject)(
+        convertibleLiteralNonEmptySet: $Array.toJson($literalToJsonObject)(
           _convertibleTypesStruct.convertibleLiteralNonEmptySet,
         ),
         convertibleLiteralOption: $maybeToJsonValue($literalToJsonObject)(
           _convertibleTypesStruct.convertibleLiteralOption,
         ),
-        convertibleLiteralSet: $arrayToJsonArray($literalToJsonObject)(
+        convertibleLiteralSet: $Array.toJson($literalToJsonObject)(
           _convertibleTypesStruct.convertibleLiteralSet,
         ),
         convertibleTerm: $termToJsonObject(
           _convertibleTypesStruct.convertibleTerm,
         ),
-        convertibleTermNonEmptySet: $arrayToJsonArray($termToJsonObject)(
+        convertibleTermNonEmptySet: $Array.toJson($termToJsonObject)(
           _convertibleTypesStruct.convertibleTermNonEmptySet,
         ),
         convertibleTermOption: $maybeToJsonValue($termToJsonObject)(
           _convertibleTypesStruct.convertibleTermOption,
         ),
-        convertibleTermSet: $arrayToJsonArray($termToJsonObject)(
+        convertibleTermSet: $Array.toJson($termToJsonObject)(
           _convertibleTypesStruct.convertibleTermSet,
         ),
       }),
@@ -61189,7 +61295,7 @@ export type ClassConstraintsStruct = {
   /**
    * Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI
    */
-  readonly multiClass: Maybe<BlankNode | NamedNode>;
+  readonly multiClass: Maybe<$Identifier>;
 
   /**
    * Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target
@@ -61204,7 +61310,7 @@ export type ClassConstraintsStruct = {
   /**
    * Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI
    */
-  readonly singleClass: Maybe<BlankNode | NamedNode>;
+  readonly singleClass: Maybe<$Identifier>;
 };
 
 export namespace ClassConstraintsStruct {
@@ -61212,15 +61318,14 @@ export namespace ClassConstraintsStruct {
     ClassConstraintsStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: ClassConstraintsStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -61244,17 +61349,17 @@ export namespace ClassConstraintsStruct {
         >($iriFromRdfResourceValues<string>),
       }),
       multiClass: $shaclPropertyFromRdf<
-        Maybe<BlankNode | NamedNode>,
-        $MaybeSchema<$IdentifierSchema>
+        Maybe<$Identifier>,
+        $MaybeSchema<$Identifier.Schema>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: ClassConstraintsStruct.schema.properties.multiClass,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          BlankNode | NamedNode,
-          $IdentifierSchema
-        >($identifierFromRdfResourceValues),
+          $Identifier,
+          $Identifier.Schema
+        >($Identifier.fromRdfResourceValues),
       }),
       nodeClass1: $shaclPropertyFromRdf<
         Maybe<NonClassStruct>,
@@ -61283,17 +61388,17 @@ export namespace ClassConstraintsStruct {
         >(PartialStruct.fromRdfResourceValues),
       }),
       singleClass: $shaclPropertyFromRdf<
-        Maybe<BlankNode | NamedNode>,
-        $MaybeSchema<$IdentifierSchema>
+        Maybe<$Identifier>,
+        $MaybeSchema<$Identifier.Schema>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: ClassConstraintsStruct.schema.properties.singleClass,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          BlankNode | NamedNode,
-          $IdentifierSchema
-        >($identifierFromRdfResourceValues),
+          $Identifier,
+          $Identifier.Schema
+        >($Identifier.fromRdfResourceValues),
       }),
     }).chain((properties) => ClassConstraintsStruct.create(properties));
 
@@ -61379,7 +61484,7 @@ export namespace ClassConstraintsStruct {
           value,
         ),
       ),
-      multiClass: $convertToMaybe($convertToIdentifier)(parameters.multiClass, {
+      multiClass: $convertToMaybe($Identifier.convert)(parameters.multiClass, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
@@ -61409,7 +61514,7 @@ export namespace ClassConstraintsStruct {
           value,
         ),
       ),
-      singleClass: $convertToMaybe($convertToIdentifier)(
+      singleClass: $convertToMaybe($Identifier.convert)(
         parameters.singleClass,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -61444,14 +61549,14 @@ export namespace ClassConstraintsStruct {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
+      | Maybe<$Identifier>;
     readonly nodeClass1?: NonClassStruct | Maybe<NonClassStruct>;
     readonly nodeClass2?: PartialStruct | Maybe<PartialStruct>;
     readonly singleClass?:
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
+      | Maybe<$Identifier>;
   };
 
   export const createUnsafe: <
@@ -61536,7 +61641,7 @@ export namespace ClassConstraintsStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -61551,9 +61656,10 @@ export namespace ClassConstraintsStruct {
     }
     if (
       filter.multiClass !== undefined &&
-      !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
-        $filterIdentifier,
-      )(filter.multiClass, value.multiClass)
+      !$filterMaybe<$Identifier, $Identifier.Filter>($Identifier.filter)(
+        filter.multiClass,
+        value.multiClass,
+      )
     ) {
       return false;
     }
@@ -61576,9 +61682,10 @@ export namespace ClassConstraintsStruct {
     }
     if (
       filter.singleClass !== undefined &&
-      !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
-        $filterIdentifier,
-      )(filter.singleClass, value.singleClass)
+      !$filterMaybe<$Identifier, $Identifier.Filter>($Identifier.filter)(
+        filter.singleClass,
+        value.singleClass,
+      )
     ) {
       return false;
     }
@@ -61586,12 +61693,12 @@ export namespace ClassConstraintsStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly iriClass?: $MaybeFilter<$IriFilter>;
-    readonly multiClass?: $MaybeFilter<$IdentifierFilter>;
+    readonly multiClass?: $MaybeFilter<$Identifier.Filter>;
     readonly nodeClass1?: $MaybeFilter<NonClassStruct.Filter>;
     readonly nodeClass2?: $MaybeFilter<PartialStruct.Filter>;
-    readonly singleClass?: $MaybeFilter<$IdentifierFilter>;
+    readonly singleClass?: $MaybeFilter<$Identifier.Filter>;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -61642,8 +61749,8 @@ export namespace ClassConstraintsStruct {
         propertyName: "multiClass",
         propertySchema: ClassConstraintsStruct.schema.properties.multiClass,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $IdentifierFilter,
-          $IdentifierSchema
+          $Identifier.Filter,
+          $Identifier.Schema
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -61684,8 +61791,8 @@ export namespace ClassConstraintsStruct {
         propertyName: "singleClass",
         propertySchema: ClassConstraintsStruct.schema.properties.singleClass,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $IdentifierFilter,
-          $IdentifierSchema
+          $Identifier.Filter,
+          $Identifier.Schema
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -61699,7 +61806,7 @@ export namespace ClassConstraintsStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -61780,9 +61887,9 @@ export namespace ClassConstraintsStruct {
         propertyName: "multiClass",
         propertySchema: ClassConstraintsStruct.schema.properties.multiClass,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $IdentifierFilter,
-          $IdentifierSchema
-        >($identifierSparqlWherePatterns),
+          $Identifier.Filter,
+          $Identifier.Schema
+        >($Identifier.sparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -61825,9 +61932,9 @@ export namespace ClassConstraintsStruct {
         propertyName: "singleClass",
         propertySchema: ClassConstraintsStruct.schema.properties.singleClass,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $IdentifierFilter,
-          $IdentifierSchema
-        >($identifierSparqlWherePatterns),
+          $Identifier.Filter,
+          $Identifier.Schema
+        >($Identifier.sparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -61840,7 +61947,7 @@ export namespace ClassConstraintsStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: ClassConstraintsStruct.schema.properties.$identifier.type,
       }),
@@ -61851,7 +61958,7 @@ export namespace ClassConstraintsStruct {
           schema: ClassConstraintsStruct.schema.properties.iriClass.type,
         },
       ),
-      multiClass: $maybeFromJsonValue($identifierFromJsonString)(
+      multiClass: $maybeFromJsonValue($Identifier.fromJsonString)(
         jsonObject["multiClass"],
         {
           ...options,
@@ -61872,7 +61979,7 @@ export namespace ClassConstraintsStruct {
           schema: ClassConstraintsStruct.schema.properties.nodeClass2.type,
         },
       ),
-      singleClass: $maybeFromJsonValue($identifierFromJsonString)(
+      singleClass: $maybeFromJsonValue($Identifier.fromJsonString)(
         jsonObject["singleClass"],
         {
           ...options,
@@ -61911,9 +62018,9 @@ export namespace ClassConstraintsStruct {
     $hashMaybe($hashTerm)(hasher, _classConstraintsStruct.singleClass);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isClassConstraintsStruct: $ObjectTypeGuardFunction<
@@ -62144,7 +62251,7 @@ export namespace ClassConstraintsStruct {
         iriClass: $maybeToJsonValue($iriToJsonString<string>)(
           _classConstraintsStruct.iriClass,
         ),
-        multiClass: $maybeToJsonValue($identifierToJsonString)(
+        multiClass: $maybeToJsonValue($Identifier.toJsonString)(
           _classConstraintsStruct.multiClass,
         ),
         nodeClass1: $maybeToJsonValue(NonClassStruct.toJson)(
@@ -62153,7 +62260,7 @@ export namespace ClassConstraintsStruct {
         nodeClass2: $maybeToJsonValue(PartialStruct.toJson)(
           _classConstraintsStruct.nodeClass2,
         ),
-        singleClass: $maybeToJsonValue($identifierToJsonString)(
+        singleClass: $maybeToJsonValue($Identifier.toJsonString)(
           _classConstraintsStruct.singleClass,
         ),
       }),
@@ -62253,16 +62360,15 @@ export namespace BlankNodeOrIriIdentifierStruct {
     BlankNodeOrIriIdentifierStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             BlankNodeOrIriIdentifierStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -62402,7 +62508,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -62419,7 +62525,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly blankNodeOrIriIdentifierString?: $MaybeFilter<$StringFilter>;
   };
 
@@ -62474,7 +62580,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -62559,7 +62665,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema:
           BlankNodeOrIriIdentifierStruct.schema.properties.$identifier.type,
@@ -62605,9 +62711,9 @@ export namespace BlankNodeOrIriIdentifierStruct {
     );
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isBlankNodeOrIriIdentifierStruct: $ObjectTypeGuardFunction<
@@ -63133,7 +63239,7 @@ export namespace BlankNodeIdentifierStruct {
 
   export type Identifier = BlankNode;
   export namespace Identifier {
-    export const parse = $parseBlankNode;
+    export const parse = $BlankNode.parse;
   }
 
   export const isBlankNodeIdentifierStruct: $ObjectTypeGuardFunction<
@@ -63339,7 +63445,7 @@ export type AnonymousTypesStruct = {
    * Anonymous struct node shape
    */
   readonly anonymousStruct: Maybe<{
-    readonly $identifier: () => BlankNode | NamedNode;
+    readonly $identifier: () => $Identifier;
     readonly anonymousStructString: string;
   }>;
 };
@@ -63349,15 +63455,14 @@ export namespace AnonymousTypesStruct {
     AnonymousTypesStruct.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: AnonymousTypesStruct.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -63369,7 +63474,7 @@ export namespace AnonymousTypesStruct {
         : Right(true as const),
       anonymousStruct: $shaclPropertyFromRdf<
         Maybe<{
-          readonly $identifier: () => BlankNode | NamedNode;
+          readonly $identifier: () => $Identifier;
           readonly anonymousStructString: string;
         }>,
         $MaybeSchema<{
@@ -63377,7 +63482,7 @@ export namespace AnonymousTypesStruct {
           properties: {
             $identifier: {
               readonly kind: "Identifier";
-              readonly type: $IdentifierSchema;
+              readonly type: $Identifier.Schema;
             };
             anonymousStructString: {
               readonly kind: "Shacl";
@@ -63393,7 +63498,7 @@ export namespace AnonymousTypesStruct {
         propertySchema: AnonymousTypesStruct.schema.properties.anonymousStruct,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           {
-            readonly $identifier: () => BlankNode | NamedNode;
+            readonly $identifier: () => $Identifier;
             readonly anonymousStructString: string;
           },
           {
@@ -63401,7 +63506,7 @@ export namespace AnonymousTypesStruct {
             properties: {
               $identifier: {
                 readonly kind: "Identifier";
-                readonly type: $IdentifierSchema;
+                readonly type: $Identifier.Schema;
               };
               anonymousStructString: {
                 readonly kind: "Shacl";
@@ -63416,15 +63521,17 @@ export namespace AnonymousTypesStruct {
               (
                 $wrap_FromRdfResourceFunction(((resource, options) =>
                   $sequenceRecord({
-                    $identifier: $identifierFromRdfResourceValues(
-                      $rdfResourceIdentifierValues(resource),
-                      {
-                        ...options,
-                        focusResource: resource,
-                        propertyPath: $rdf_subject,
-                        schema: { kind: "Identifier" } as const,
-                      },
-                    ).chain((values) => values.head()),
+                    $identifier: $Identifier
+                      .fromRdfResourceValues(
+                        $rdfResourceIdentifierValues(resource),
+                        {
+                          ...options,
+                          focusResource: resource,
+                          propertyPath: $rdf_subject,
+                          schema: { kind: "Identifier" } as const,
+                        },
+                      )
+                      .chain((values) => values.head()),
                     anonymousStructString: $shaclPropertyFromRdf<
                       string,
                       $StringSchema<string>
@@ -63475,10 +63582,7 @@ export namespace AnonymousTypesStruct {
                                 }),
                               )) satisfies $ToJsonFunction<
                               {
-                                readonly $identifier: () =>
-                                  | BlankNode
-                                  | NamedNode;
-
+                                readonly $identifier: () => $Identifier;
                                 readonly anonymousStructString: string;
                               },
                               { "@id": string; anonymousStructString: string }
@@ -63492,7 +63596,7 @@ export namespace AnonymousTypesStruct {
                                       .toString(),
                                   }))(_object),
                               )) satisfies $ToStringFunction<{
-                              readonly $identifier: () => BlankNode | NamedNode;
+                              readonly $identifier: () => $Identifier;
                             }>,
                           }),
                         )) satisfies <
@@ -63501,7 +63605,7 @@ export namespace AnonymousTypesStruct {
                       >(parameters: {
                         readonly $defaultNamespace?: $DefaultNamespaceT;
                         readonly $identifier?:
-                          | (() => BlankNode | NamedNode)
+                          | (() => $Identifier)
                           | BlankNode
                           | NamedNode
                           | (keyof $DefaultNamespaceT & string);
@@ -63509,16 +63613,16 @@ export namespace AnonymousTypesStruct {
                       }) => Either<
                         Error,
                         {
-                          readonly $identifier: () => BlankNode | NamedNode;
+                          readonly $identifier: () => $Identifier;
                           readonly anonymousStructString: string;
                         }
                       >
                     )(properties),
                   )) satisfies $_FromRdfResourceFunction<{
-                  readonly $identifier: () => BlankNode | NamedNode;
+                  readonly $identifier: () => $Identifier;
                   readonly anonymousStructString: string;
                 }>) satisfies $FromRdfResourceFunction<{
-                  readonly $identifier: () => BlankNode | NamedNode;
+                  readonly $identifier: () => $Identifier;
                   readonly anonymousStructString: string;
                 }>
               )(resource, options),
@@ -63544,9 +63648,9 @@ export namespace AnonymousTypesStruct {
       parameters.object.anonymousStruct.toList().flatMap((value) =>
         ((value, options) => [
           $wrap_ToRdfResourceFunction<
-            BlankNode | NamedNode,
+            $Identifier,
             {
-              readonly $identifier: () => BlankNode | NamedNode;
+              readonly $identifier: () => $Identifier;
               readonly anonymousStructString: string;
             }
           >(((parameters) => {
@@ -63557,9 +63661,9 @@ export namespace AnonymousTypesStruct {
             );
             return parameters.resource;
           }) satisfies $_ToRdfResourceFunction<
-            BlankNode | NamedNode,
+            $Identifier,
             {
-              readonly $identifier: () => BlankNode | NamedNode;
+              readonly $identifier: () => $Identifier;
               readonly anonymousStructString: string;
             }
           >)(value, { graph: options.graph, resourceSet: options.resourceSet })
@@ -63597,7 +63701,7 @@ export namespace AnonymousTypesStruct {
         <$DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder>(
           value: {
             readonly $identifier?:
-              | (() => BlankNode | NamedNode)
+              | (() => $Identifier)
               | BlankNode
               | NamedNode
               | (keyof $DefaultNamespaceT & string);
@@ -63633,7 +63737,7 @@ export namespace AnonymousTypesStruct {
                     }),
                   )) satisfies $ToJsonFunction<
                   {
-                    readonly $identifier: () => BlankNode | NamedNode;
+                    readonly $identifier: () => $Identifier;
                     readonly anonymousStructString: string;
                   },
                   { "@id": string; anonymousStructString: string }
@@ -63645,7 +63749,7 @@ export namespace AnonymousTypesStruct {
                         $identifier: _object.$identifier().toString(),
                       }))(_object),
                   )) satisfies $ToStringFunction<{
-                  readonly $identifier: () => BlankNode | NamedNode;
+                  readonly $identifier: () => $Identifier;
                 }>,
               }),
             ))({ ...value, $defaultNamespace: defaultNamespace }),
@@ -63676,14 +63780,14 @@ export namespace AnonymousTypesStruct {
     readonly anonymousStruct?:
       | {
           readonly $identifier?:
-            | (() => BlankNode | NamedNode)
+            | (() => $Identifier)
             | BlankNode
             | NamedNode
             | (keyof $DefaultNamespaceT & string);
           readonly anonymousStructString: string;
         }
       | Maybe<{
-          readonly $identifier: () => BlankNode | NamedNode;
+          readonly $identifier: () => $Identifier;
           readonly anonymousStructString: string;
         }>;
   };
@@ -63723,7 +63827,7 @@ export namespace AnonymousTypesStruct {
                   [right, right.anonymousStructString],
                 ),
               )) satisfies $EqualsFunction<{
-              readonly $identifier: () => BlankNode | NamedNode;
+              readonly $identifier: () => $Identifier;
               readonly anonymousStructString: string;
             }>),
           name: "anonymousStruct",
@@ -63739,7 +63843,7 @@ export namespace AnonymousTypesStruct {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -63747,17 +63851,17 @@ export namespace AnonymousTypesStruct {
       filter.anonymousStruct !== undefined &&
       !$filterMaybe<
         {
-          readonly $identifier: () => BlankNode | NamedNode;
+          readonly $identifier: () => $Identifier;
           readonly anonymousStructString: string;
         },
         {
-          readonly $identifier?: $IdentifierFilter;
+          readonly $identifier?: $Identifier.Filter;
           readonly anonymousStructString?: $StringFilter;
         }
       >((filter, value) => {
         if (
           filter.$identifier !== undefined &&
-          !$filterIdentifier(filter.$identifier, value.$identifier())
+          !$Identifier.filter(filter.$identifier, value.$identifier())
         ) {
           return false;
         }
@@ -63779,9 +63883,9 @@ export namespace AnonymousTypesStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
+    readonly $identifier?: $Identifier.Filter;
     readonly anonymousStruct?: $MaybeFilter<{
-      readonly $identifier?: $IdentifierFilter;
+      readonly $identifier?: $Identifier.Filter;
       readonly anonymousStructString?: $StringFilter;
     }>;
   };
@@ -63821,7 +63925,7 @@ export namespace AnonymousTypesStruct {
         propertySchema: AnonymousTypesStruct.schema.properties.anonymousStruct,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           {
-            readonly $identifier?: $IdentifierFilter;
+            readonly $identifier?: $Identifier.Filter;
             readonly anonymousStructString?: $StringFilter;
           },
           {
@@ -63829,7 +63933,7 @@ export namespace AnonymousTypesStruct {
             properties: {
               $identifier: {
                 readonly kind: "Identifier";
-                readonly type: $IdentifierSchema;
+                readonly type: $Identifier.Schema;
               };
               anonymousStructString: {
                 readonly kind: "Shacl";
@@ -63878,7 +63982,7 @@ export namespace AnonymousTypesStruct {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -63945,7 +64049,7 @@ export namespace AnonymousTypesStruct {
         propertySchema: AnonymousTypesStruct.schema.properties.anonymousStruct,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           {
-            readonly $identifier?: $IdentifierFilter;
+            readonly $identifier?: $Identifier.Filter;
             readonly anonymousStructString?: $StringFilter;
           },
           {
@@ -63953,7 +64057,7 @@ export namespace AnonymousTypesStruct {
             properties: {
               $identifier: {
                 readonly kind: "Identifier";
-                readonly type: $IdentifierSchema;
+                readonly type: $Identifier.Schema;
               };
               anonymousStructString: {
                 readonly kind: "Shacl";
@@ -63976,7 +64080,7 @@ export namespace AnonymousTypesStruct {
                 let patterns: $SparqlPattern[] = [];
                 if (parameters.focusIdentifier.termType === "Variable") {
                   patterns = patterns.concat(
-                    $identifierSparqlWherePatterns({
+                    $Identifier.sparqlWherePatterns({
                       filter: parameters.filter?.$identifier,
                       ignoreRdfType: true,
                       preferredLanguages: parameters.preferredLanguages,
@@ -64027,7 +64131,7 @@ export namespace AnonymousTypesStruct {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: AnonymousTypesStruct.schema.properties.$identifier.type,
       }),
@@ -64037,7 +64141,7 @@ export namespace AnonymousTypesStruct {
           $FromJsonFunction<
             { "@id": string; anonymousStructString: string },
             {
-              readonly $identifier: () => BlankNode | NamedNode;
+              readonly $identifier: () => $Identifier;
               readonly anonymousStructString: string;
             },
             undefined
@@ -64045,7 +64149,7 @@ export namespace AnonymousTypesStruct {
         >[1] = {},
       ) =>
         $sequenceRecord({
-          $identifier: $identifierFromJsonString(jsonObject["@id"], {
+          $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
             ...options,
             schema: { kind: "Identifier" } as const,
           }),
@@ -64077,7 +64181,7 @@ export namespace AnonymousTypesStruct {
                   }),
                 )) satisfies $ToJsonFunction<
                 {
-                  readonly $identifier: () => BlankNode | NamedNode;
+                  readonly $identifier: () => $Identifier;
                   readonly anonymousStructString: string;
                 },
                 { "@id": string; anonymousStructString: string }
@@ -64089,7 +64193,7 @@ export namespace AnonymousTypesStruct {
                       $identifier: _object.$identifier().toString(),
                     }))(_object),
                 )) satisfies $ToStringFunction<{
-                readonly $identifier: () => BlankNode | NamedNode;
+                readonly $identifier: () => $Identifier;
               }>,
             }),
           )) satisfies <
@@ -64097,7 +64201,7 @@ export namespace AnonymousTypesStruct {
         >(parameters: {
           readonly $defaultNamespace?: $DefaultNamespaceT;
           readonly $identifier?:
-            | (() => BlankNode | NamedNode)
+            | (() => $Identifier)
             | BlankNode
             | NamedNode
             | (keyof $DefaultNamespaceT & string);
@@ -64105,13 +64209,13 @@ export namespace AnonymousTypesStruct {
         }) => Either<
           Error,
           {
-            readonly $identifier: () => BlankNode | NamedNode;
+            readonly $identifier: () => $Identifier;
             readonly anonymousStructString: string;
           }
         >)) satisfies $FromJsonFunction<
         { "@id": string; anonymousStructString: string },
         {
-          readonly $identifier: () => BlankNode | NamedNode;
+          readonly $identifier: () => $Identifier;
           readonly anonymousStructString: string;
         },
         undefined
@@ -64152,17 +64256,19 @@ export namespace AnonymousTypesStruct {
     }) satisfies $HashFunction<
       Omit<
         {
-          readonly $identifier: () => BlankNode | NamedNode;
+          readonly $identifier: () => $Identifier;
           readonly anonymousStructString: string;
         },
         "$identifier"
-      > & { readonly $identifier?: () => BlankNode | NamedNode }
+      > & {
+        readonly $identifier?: () => $Identifier;
+      }
     >)(hasher, _anonymousTypesStruct.anonymousStruct);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isAnonymousTypesStruct: $ObjectTypeGuardFunction<
@@ -64351,7 +64457,7 @@ export namespace AnonymousTypesStruct {
             }),
           )) satisfies $ToJsonFunction<
           {
-            readonly $identifier: () => BlankNode | NamedNode;
+            readonly $identifier: () => $Identifier;
             readonly anonymousStructString: string;
           },
           { "@id": string; anonymousStructString: string }
@@ -64773,15 +64879,14 @@ export namespace $DefaultPartial {
     $DefaultPartial.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: $DefaultPartial.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
     }).chain((properties) => $DefaultPartial.create(properties));
 
   export const _toRdfResource: $_ToRdfResourceFunction<
@@ -64848,14 +64953,14 @@ export namespace $DefaultPartial {
   > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
+      !$Identifier.filter(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
     return true;
   };
 
-  export type Filter = { readonly $identifier?: $IdentifierFilter };
+  export type Filter = { readonly $identifier?: $Identifier.Filter };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
     $DefaultPartial.Filter
@@ -64869,7 +64974,7 @@ export namespace $DefaultPartial {
     let patterns: $SparqlPattern[] = [];
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
+        $Identifier.sparqlWherePatterns({
           filter: parameters.filter?.$identifier,
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
@@ -64889,7 +64994,7 @@ export namespace $DefaultPartial {
     undefined
   > = (jsonObject, options = {}) =>
     $sequenceRecord({
-      $identifier: $identifierFromJsonString(jsonObject["@id"], {
+      $identifier: $Identifier.fromJsonString(jsonObject["@id"], {
         ...options,
         schema: $DefaultPartial.schema.properties.$identifier.type,
       }),
@@ -64920,9 +65025,9 @@ export namespace $DefaultPartial {
     }
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const is$DefaultPartial: $ObjectTypeGuardFunction<
@@ -68020,10 +68125,7 @@ export interface $ObjectSet {
 }
 
 export namespace $ObjectSet {
-  export interface Query<
-    ObjectFilterT,
-    ObjectIdentifierT extends BlankNode | NamedNode,
-  > {
+  export interface Query<ObjectFilterT, ObjectIdentifierT extends $Identifier> {
     readonly filter?: ObjectFilterT;
     readonly graph?: Exclude<Quad_Graph, Variable>;
     readonly identifiers?: readonly ObjectIdentifierT[];
@@ -73984,7 +74086,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       $type: string;
     },
     ObjectFilterT,
-    ObjectIdentifierT extends BlankNode | NamedNode,
+    ObjectIdentifierT extends $Identifier,
   >(
     namedObjectType: {
       filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
@@ -74109,7 +74211,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       $type: string;
     },
     ObjectFilterT,
-    ObjectIdentifierT extends BlankNode | NamedNode,
+    ObjectIdentifierT extends $Identifier,
   >(
     namedObjectTypes: readonly {
       filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
@@ -77705,7 +77807,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async #objectIdentifiers<
     ObjectFilterT,
-    ObjectIdentifierT extends BlankNode | NamedNode,
+    ObjectIdentifierT extends $Identifier,
   >(
     namedObjectType: {
       focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<ObjectFilterT>;
@@ -77760,7 +77862,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       $type: string;
     },
     ObjectFilterT,
-    ObjectIdentifierT extends BlankNode | NamedNode,
+    ObjectIdentifierT extends $Identifier,
   >(
     namedObjectType: {
       focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<ObjectFilterT>;
@@ -77825,10 +77927,7 @@ export class $SparqlObjectSet implements $ObjectSet {
     });
   }
 
-  async #objectCount<
-    ObjectFilterT,
-    ObjectIdentifierT extends BlankNode | NamedNode,
-  >(
+  async #objectCount<ObjectFilterT, ObjectIdentifierT extends $Identifier>(
     namedObjectType: {
       focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<ObjectFilterT>;
     },
@@ -77867,10 +77966,7 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
-  #wherePatterns<
-    ObjectFilterT,
-    ObjectIdentifierT extends BlankNode | NamedNode,
-  >(
+  #wherePatterns<ObjectFilterT, ObjectIdentifierT extends $Identifier>(
     namedObjectType: {
       focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<ObjectFilterT>;
     },
@@ -77920,7 +78016,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 export namespace $SparqlObjectSet {
   export type Query<
     ObjectFilterT,
-    ObjectIdentifierT extends BlankNode | NamedNode,
+    ObjectIdentifierT extends $Identifier,
   > = $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT> & {
     readonly order?: (objectVariable: Variable) => readonly sparqljs.Ordering[];
     readonly where?: (objectVariable: Variable) => readonly sparqljs.Pattern[];
