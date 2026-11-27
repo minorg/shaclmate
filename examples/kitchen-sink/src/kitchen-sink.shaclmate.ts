@@ -425,44 +425,88 @@ namespace $BigInt {
     bigInt.toString();
 }
 
-interface $BlankNodeFilter {}
-
-const $blankNodeFromJsonObject: $FromJsonFunction<
-  $IdentifierJsonObject,
-  BlankNode,
-  undefined
-> = (jsonObject) => $blankNodeFromJsonString(jsonObject["@id"]);
-
-const $blankNodeFromJsonString: $FromJsonFunction<
-  string,
-  BlankNode,
-  undefined
-> = (jsonValue) => Right(dataFactory.blankNode(jsonValue.substring(2)));
-
-const $blankNodeFromRdfResourceValues: $FromRdfResourceValuesFunction<
-  BlankNode,
-  $BlankNodeSchema
-> = (values) => values.chainMap((value) => value.toBlankNode());
-
-interface $BlankNodeSchema {
-  readonly kind: "BlankNode";
+namespace $BlankNode {
+  export const convert: $ConversionFunction<
+    BlankNode | undefined,
+    BlankNode
+  > = (value) => {
+    switch (typeof value) {
+      case "object":
+        return Either.of(value);
+      case "undefined":
+        return Either.of(dataFactory.blankNode());
+    }
+  };
 }
 
-const $blankNodeSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-  $BlankNodeFilter,
-  $BlankNodeSchema
-> = ({ propertyPatterns }) => propertyPatterns;
+namespace $BlankNode {
+  export const filter: $FilterFunction<$BlankNode.Filter, BlankNode> = () =>
+    true;
+}
 
-const $blankNodeToJsonObject: $ToJsonFunction<
-  BlankNode,
-  $IdentifierJsonObject
-> = (blankNode) => ({
-  "@id": $blankNodeToJsonString(blankNode),
-});
+namespace $BlankNode {
+  export interface Filter {}
+}
 
-const $blankNodeToJsonString: $ToJsonFunction<BlankNode, string> = (
-  blankNode,
-) => `_:${blankNode.value}`;
+namespace $BlankNode {
+  export const fromJsonObject: $FromJsonFunction<
+    $IdentifierJsonObject,
+    BlankNode,
+    undefined
+  > = (jsonObject) => $BlankNode.fromJsonString(jsonObject["@id"]);
+}
+
+namespace $BlankNode {
+  export const fromJsonString: $FromJsonFunction<
+    string,
+    BlankNode,
+    undefined
+  > = (jsonValue) => Right(dataFactory.blankNode(jsonValue.substring(2)));
+}
+
+namespace $BlankNode {
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    BlankNode,
+    $BlankNode.Schema
+  > = (values) => values.chainMap((value) => value.toBlankNode());
+}
+
+namespace $BlankNode {
+  export function parse(identifier: string): Either<Error, BlankNode> {
+    return $parseIdentifier(identifier).chain((identifier) =>
+      identifier.termType === "BlankNode"
+        ? Right(identifier)
+        : Left(new Error("expected identifier to be BlankNode")),
+    ) as Either<Error, BlankNode>;
+  }
+}
+
+namespace $BlankNode {
+  export interface Schema {
+    readonly kind: "BlankNode";
+  }
+}
+
+namespace $BlankNode {
+  export const sparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    $BlankNode.Filter,
+    $BlankNode.Schema
+  > = ({ propertyPatterns }) => propertyPatterns;
+}
+
+namespace $BlankNode {
+  export const toJsonObject: $ToJsonFunction<
+    BlankNode,
+    $IdentifierJsonObject
+  > = (blankNode) => ({
+    "@id": $BlankNode.toJsonString(blankNode),
+  });
+}
+
+namespace $BlankNode {
+  export const toJsonString: $ToJsonFunction<BlankNode, string> = (blankNode) =>
+    `_:${blankNode.value}`;
+}
 
 /**
  * Compare two objects with equals(other: T): boolean methods and return an $EqualsResult.
@@ -638,18 +682,6 @@ const $convertToBigInt: $ConversionFunction<
   bigint | number | string,
   bigint
 > = (value) => Either.encase(() => BigInt(value));
-
-const $convertToBlankNode: $ConversionFunction<
-  BlankNode | undefined,
-  BlankNode
-> = (value) => {
-  switch (typeof value) {
-    case "object":
-      return Either.of(value);
-    case "undefined":
-      return Either.of(dataFactory.blankNode());
-  }
-};
 
 function $convertToIdentifier<
   DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
@@ -1453,9 +1485,6 @@ const $filterBigDecimal: $FilterFunction<
   return true;
 };
 
-const $filterBlankNode: $FilterFunction<$BlankNodeFilter, BlankNode> = () =>
-  true;
-
 const $filterBoolean: $FilterFunction<$BooleanFilter, boolean> = (
   filter,
   value,
@@ -1837,7 +1866,7 @@ const $identifierFromJsonString: $FromJsonFunction<
   $IdentifierSchema
 > = (jsonString, options) =>
   jsonString.startsWith("_:")
-    ? ($blankNodeFromJsonString(jsonString, options) as Either<
+    ? ($BlankNode.fromJsonString(jsonString, options) as Either<
         Error,
         BlankNode | NamedNode
       >)
@@ -1931,7 +1960,7 @@ const $identifierToJsonObject: $ToJsonFunction<
   $IdentifierJsonObject
 > = (identifier) =>
   identifier.termType === "BlankNode"
-    ? $blankNodeToJsonObject(identifier)
+    ? $BlankNode.toJsonObject(identifier)
     : $iriToJsonObject(identifier);
 
 const $identifierToJsonString: $ToJsonFunction<
@@ -1939,7 +1968,7 @@ const $identifierToJsonString: $ToJsonFunction<
   string
 > = (identifier) =>
   identifier.termType === "BlankNode"
-    ? $blankNodeToJsonString(identifier)
+    ? $BlankNode.toJsonString(identifier)
     : $iriToJsonString(identifier);
 
 function $identityConversionFunction<T>(
@@ -3091,14 +3120,6 @@ export type $ObjectTypeGuardFunction<ObjectT extends $Object> = (
   object: $Object,
 ) => object is ObjectT;
 
-export function $parseBlankNode(identifier: string): Either<Error, BlankNode> {
-  return $parseIdentifier(identifier).chain((identifier) =>
-    identifier.termType === "BlankNode"
-      ? Right(identifier)
-      : Left(new Error("expected identifier to be BlankNode")),
-  ) as Either<Error, BlankNode>;
-}
-
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
 export function $parseIri(identifier: string): Either<Error, NamedNode> {
@@ -4080,7 +4101,7 @@ function $termFromJsonObject<TermT extends BlankNode | Literal | NamedNode>(
     switch (termType) {
       case "BlankNode": {
         if ("@id" in jsonObject && jsonObject["@id"].startsWith("_:")) {
-          return $blankNodeFromJsonObject(jsonObject) as Either<Error, TermT>;
+          return $BlankNode.fromJsonObject(jsonObject) as Either<Error, TermT>;
         }
         break;
       }
@@ -4317,7 +4338,7 @@ const $termToJsonObject: $ToJsonFunction<
 > = (term) => {
   switch (term.termType) {
     case "BlankNode":
-      return $blankNodeToJsonObject(term);
+      return $BlankNode.toJsonObject(term);
     case "NamedNode":
       return $iriToJsonObject(term);
     case "Literal":
@@ -11529,7 +11550,7 @@ export namespace TermsStruct {
         : Right(true as const),
       blankNodeTerm: $shaclPropertyFromRdf<
         Maybe<BlankNode>,
-        $MaybeSchema<$BlankNodeSchema>
+        $MaybeSchema<$BlankNode.Schema>
       >({
         ...options,
         focusResource: resource,
@@ -11537,8 +11558,8 @@ export namespace TermsStruct {
         propertySchema: TermsStruct.schema.properties.blankNodeTerm,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           BlankNode,
-          $BlankNodeSchema
-        >($blankNodeFromRdfResourceValues),
+          $BlankNode.Schema
+        >($BlankNode.fromRdfResourceValues),
       }),
       booleanTerm: $shaclPropertyFromRdf<
         Maybe<boolean>,
@@ -11763,7 +11784,7 @@ export namespace TermsStruct {
         defaultNamespace: parameters.$defaultNamespace,
       }),
       $type: Right("TermsStruct" as const),
-      blankNodeTerm: $convertToMaybe($convertToBlankNode)(
+      blankNodeTerm: $convertToMaybe($BlankNode.convert)(
         parameters.blankNodeTerm,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -12069,7 +12090,7 @@ export namespace TermsStruct {
     }
     if (
       filter.blankNodeTerm !== undefined &&
-      !$filterMaybe<BlankNode, $BlankNodeFilter>($filterBlankNode)(
+      !$filterMaybe<BlankNode, $BlankNode.Filter>($BlankNode.filter)(
         filter.blankNodeTerm,
         value.blankNodeTerm,
       )
@@ -12170,7 +12191,7 @@ export namespace TermsStruct {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly blankNodeTerm?: $MaybeFilter<$BlankNodeFilter>;
+    readonly blankNodeTerm?: $MaybeFilter<$BlankNode.Filter>;
     readonly booleanTerm?: $MaybeFilter<$BooleanFilter>;
     readonly dateTerm?: $MaybeFilter<$DateFilter>;
     readonly dateTimeTerm?: $MaybeFilter<$DateFilter>;
@@ -12217,8 +12238,8 @@ export namespace TermsStruct {
         propertyName: "blankNodeTerm",
         propertySchema: TermsStruct.schema.properties.blankNodeTerm,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $BlankNodeFilter,
-          $BlankNodeSchema
+          $BlankNode.Filter,
+          $BlankNode.Schema
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -12437,9 +12458,9 @@ export namespace TermsStruct {
         propertyName: "blankNodeTerm",
         propertySchema: TermsStruct.schema.properties.blankNodeTerm,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $BlankNodeFilter,
-          $BlankNodeSchema
-        >($blankNodeSparqlWherePatterns),
+          $BlankNode.Filter,
+          $BlankNode.Schema
+        >($BlankNode.sparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -12606,7 +12627,7 @@ export namespace TermsStruct {
         ...options,
         schema: TermsStruct.schema.properties.$identifier.type,
       }),
-      blankNodeTerm: $maybeFromJsonValue($blankNodeFromJsonString)(
+      blankNodeTerm: $maybeFromJsonValue($BlankNode.fromJsonString)(
         jsonObject["blankNodeTerm"],
         {
           ...options,
@@ -12997,7 +13018,7 @@ export namespace TermsStruct {
             ? `_:${_termsStruct.$identifier().value}`
             : _termsStruct.$identifier().value,
         "@type": "http://example.com/TermsStruct",
-        blankNodeTerm: $maybeToJsonValue($blankNodeToJsonString)(
+        blankNodeTerm: $maybeToJsonValue($BlankNode.toJsonString)(
           _termsStruct.blankNodeTerm,
         ),
         booleanTerm: $maybeToJsonValue($primitiveToJsonValue<boolean>)(
@@ -29245,12 +29266,12 @@ export namespace NodeKindsStruct {
             },
           )
         : Right(true as const),
-      blankNodeKind: $shaclPropertyFromRdf<BlankNode, $BlankNodeSchema>({
+      blankNodeKind: $shaclPropertyFromRdf<BlankNode, $BlankNode.Schema>({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: NodeKindsStruct.schema.properties.blankNodeKind,
-        typeFromRdfResourceValues: $blankNodeFromRdfResourceValues,
+        typeFromRdfResourceValues: $BlankNode.fromRdfResourceValues,
       }),
       blankNodeOrIriNodeKind: $shaclPropertyFromRdf<
         BlankNode | NamedNode,
@@ -29363,7 +29384,7 @@ export namespace NodeKindsStruct {
         defaultNamespace: parameters.$defaultNamespace,
       }),
       $type: Right("NodeKindsStruct" as const),
-      blankNodeKind: $convertToBlankNode(parameters.blankNodeKind, {
+      blankNodeKind: $BlankNode.convert(parameters.blankNodeKind, {
         defaultNamespace: parameters.$defaultNamespace,
       }),
       blankNodeOrIriNodeKind: $convertToIdentifier(
@@ -29490,7 +29511,7 @@ export namespace NodeKindsStruct {
     }
     if (
       filter.blankNodeKind !== undefined &&
-      !$filterBlankNode(filter.blankNodeKind, value.blankNodeKind)
+      !$BlankNode.filter(filter.blankNodeKind, value.blankNodeKind)
     ) {
       return false;
     }
@@ -29535,7 +29556,7 @@ export namespace NodeKindsStruct {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly blankNodeKind?: $BlankNodeFilter;
+    readonly blankNodeKind?: $BlankNode.Filter;
     readonly blankNodeOrIriNodeKind?: $IdentifierFilter;
     readonly blankNodeOrLiteralNodeKind?: $TermFilter<BlankNode | Literal>;
     readonly iriNodeKind?: $IriFilter;
@@ -29710,7 +29731,7 @@ export namespace NodeKindsStruct {
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "blankNodeKind",
         propertySchema: NodeKindsStruct.schema.properties.blankNodeKind,
-        typeSparqlWherePatterns: $blankNodeSparqlWherePatterns,
+        typeSparqlWherePatterns: $BlankNode.sparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -29789,7 +29810,7 @@ export namespace NodeKindsStruct {
         ...options,
         schema: NodeKindsStruct.schema.properties.$identifier.type,
       }),
-      blankNodeKind: $blankNodeFromJsonString(jsonObject["blankNodeKind"], {
+      blankNodeKind: $BlankNode.fromJsonString(jsonObject["blankNodeKind"], {
         ...options,
         schema: NodeKindsStruct.schema.properties.blankNodeKind.type,
       }),
@@ -30057,7 +30078,7 @@ export namespace NodeKindsStruct {
             ? `_:${_nodeKindsStruct.$identifier().value}`
             : _nodeKindsStruct.$identifier().value,
         "@type": "http://example.com/NodeKindsStruct",
-        blankNodeKind: $blankNodeToJsonString(_nodeKindsStruct.blankNodeKind),
+        blankNodeKind: $BlankNode.toJsonString(_nodeKindsStruct.blankNodeKind),
         blankNodeOrIriNodeKind: $identifierToJsonString(
           _nodeKindsStruct.blankNodeOrIriNodeKind,
         ),
@@ -63195,7 +63216,7 @@ export namespace BlankNodeIdentifierStruct {
 
   export type Identifier = BlankNode;
   export namespace Identifier {
-    export const parse = $parseBlankNode;
+    export const parse = $BlankNode.parse;
   }
 
   export const isBlankNodeIdentifierStruct: $ObjectTypeGuardFunction<

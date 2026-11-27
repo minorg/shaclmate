@@ -1,13 +1,14 @@
 import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-export const snippets_BlankNodeSchema: SnippetFactory = ({
+export const snippets_BlankNode_Filter: SnippetFactory = ({
   syntheticNamePrefix,
 }) =>
   conditionalOutput(
-    `${syntheticNamePrefix}BlankNodeSchema`,
+    `${syntheticNamePrefix}BlankNode.Filter`,
     code`\
-interface ${syntheticNamePrefix}BlankNodeSchema {
-  readonly kind: "BlankNode";
+namespace ${syntheticNamePrefix}BlankNode {
+  export interface Filter {
+  }
 }`,
   );

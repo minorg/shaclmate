@@ -23,8 +23,17 @@ import { snippets_BigInt_fromRdfResourceValues } from "./_snippets/snippets_BigI
 import { snippets_BigInt_jsonSchema } from "./_snippets/snippets_BigInt_jsonSchema.js";
 import { snippets_BigInt_toJsonObject } from "./_snippets/snippets_BigInt_toJsonObject.js";
 import { snippets_BigInt_toJsonString } from "./_snippets/snippets_BigInt_toJsonString.js";
-import { snippets_BlankNodeFilter } from "./_snippets/snippets_BlankNodeFilter.js";
-import { snippets_BlankNodeSchema } from "./_snippets/snippets_BlankNodeSchema.js";
+import { snippets_BlankNode_Filter } from "./_snippets/snippets_BlankNode_Filter.js";
+import { snippets_BlankNode_Schema } from "./_snippets/snippets_BlankNode_Schema.js";
+import { snippets_BlankNode_convert } from "./_snippets/snippets_BlankNode_convert.js";
+import { snippets_BlankNode_filter_ } from "./_snippets/snippets_BlankNode_filter_.js";
+import { snippets_BlankNode_fromJsonObject } from "./_snippets/snippets_BlankNode_fromJsonObject.js";
+import { snippets_BlankNode_fromJsonString } from "./_snippets/snippets_BlankNode_fromJsonString.js";
+import { snippets_BlankNode_fromRdfResourceValues } from "./_snippets/snippets_BlankNode_fromRdfResourceValues.js";
+import { snippets_BlankNode_parse } from "./_snippets/snippets_BlankNode_parse.js";
+import { snippets_BlankNode_sparqlWherePatterns } from "./_snippets/snippets_BlankNode_sparqlWherePatterns.js";
+import { snippets_BlankNode_toJsonObject } from "./_snippets/snippets_BlankNode_toJsonObject.js";
+import { snippets_BlankNode_toJsonString } from "./_snippets/snippets_BlankNode_toJsonString.js";
 import { snippets_BooleanFilter } from "./_snippets/snippets_BooleanFilter.js";
 import { snippets_BooleanSchema } from "./_snippets/snippets_BooleanSchema.js";
 import { snippets_CollectionFilter } from "./_snippets/snippets_CollectionFilter.js";
@@ -91,12 +100,6 @@ import { snippets_ValueSparqlConstructTriplesFunction } from "./_snippets/snippe
 import { snippets_ValueSparqlWherePatternsFunction } from "./_snippets/snippets_ValueSparqlWherePatternsFunction.js";
 import { snippets__FromRdfResourceFunction } from "./_snippets/snippets__FromRdfResourceFunction.js";
 import { snippets__ToRdfResourceFunction } from "./_snippets/snippets__ToRdfResourceFunction.js";
-import { snippets_blankNodeFromJsonObject } from "./_snippets/snippets_blankNodeFromJsonObject.js";
-import { snippets_blankNodeFromJsonString } from "./_snippets/snippets_blankNodeFromJsonString.js";
-import { snippets_blankNodeFromRdfResourceValues } from "./_snippets/snippets_blankNodeFromRdfResourceValues.js";
-import { snippets_blankNodeSparqlWherePatterns } from "./_snippets/snippets_blankNodeSparqlWherePatterns.js";
-import { snippets_blankNodeToJsonObject } from "./_snippets/snippets_blankNodeToJsonObject.js";
-import { snippets_blankNodeToJsonString } from "./_snippets/snippets_blankNodeToJsonString.js";
 import { snippets_booleanEquals } from "./_snippets/snippets_booleanEquals.js";
 import { snippets_booleanFromJsonBoolean } from "./_snippets/snippets_booleanFromJsonBoolean.js";
 import { snippets_booleanFromJsonObject } from "./_snippets/snippets_booleanFromJsonObject.js";
@@ -107,7 +110,6 @@ import { snippets_constrainPrimitive } from "./_snippets/snippets_constrainPrimi
 import { snippets_convertToArraySet } from "./_snippets/snippets_convertToArraySet.js";
 import { snippets_convertToBigDecimal } from "./_snippets/snippets_convertToBigDecimal.js";
 import { snippets_convertToBigInt } from "./_snippets/snippets_convertToBigInt.js";
-import { snippets_convertToBlankNode } from "./_snippets/snippets_convertToBlankNode.js";
 import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty.js";
 import { snippets_convertToIdentifier } from "./_snippets/snippets_convertToIdentifier.js";
 import { snippets_convertToIdentifierProperty } from "./_snippets/snippets_convertToIdentifierProperty.js";
@@ -148,7 +150,6 @@ import { snippets_ensureRdfResourceType } from "./_snippets/snippets_ensureRdfRe
 import { snippets_errorToProblemDetailsJson } from "./_snippets/snippets_errorToProblemDetailsJson.js";
 import { snippets_filterArray } from "./_snippets/snippets_filterArray.js";
 import { snippets_filterBigDecimal } from "./_snippets/snippets_filterBigDecimal.js";
-import { snippets_filterBlankNode } from "./_snippets/snippets_filterBlankNode.js";
 import { snippets_filterBoolean } from "./_snippets/snippets_filterBoolean.js";
 import { snippets_filterDate } from "./_snippets/snippets_filterDate.js";
 import { snippets_filterIdentifier } from "./_snippets/snippets_filterIdentifier.js";
@@ -220,7 +221,6 @@ import { snippets_mutableListFromRdfResourceValues } from "./_snippets/snippets_
 import { snippets_mutableSetFromRdfResourceValues } from "./_snippets/snippets_mutableSetFromRdfResourceValues.js";
 import { snippets_normalizeSparqlWherePatterns } from "./_snippets/snippets_normalizeSparqlWherePatterns.js";
 import { snippets_numericSparqlWherePatterns } from "./_snippets/snippets_numericSparqlWherePatterns.js";
-import { snippets_parseBlankNode } from "./_snippets/snippets_parseBlankNode.js";
 import { snippets_parseIdentifier } from "./_snippets/snippets_parseIdentifier.js";
 import { snippets_parseIri } from "./_snippets/snippets_parseIri.js";
 import { snippets_primitiveToJsonObject } from "./_snippets/snippets_primitiveToJsonObject.js";
@@ -380,13 +380,58 @@ export class Snippets {
   }
 
   @Memoize()
-  get BlankNodeFilter(): Snippet {
-    return this.snippet(snippets_BlankNodeFilter);
+  get BlankNode_Filter(): Snippet {
+    return this.snippet(snippets_BlankNode_Filter);
   }
 
   @Memoize()
-  get BlankNodeSchema(): Snippet {
-    return this.snippet(snippets_BlankNodeSchema);
+  get BlankNode_Schema(): Snippet {
+    return this.snippet(snippets_BlankNode_Schema);
+  }
+
+  @Memoize()
+  get BlankNode_convert(): Snippet {
+    return this.snippet(snippets_BlankNode_convert);
+  }
+
+  @Memoize()
+  get BlankNode_filter_(): Snippet {
+    return this.snippet(snippets_BlankNode_filter_);
+  }
+
+  @Memoize()
+  get BlankNode_fromJsonObject(): Snippet {
+    return this.snippet(snippets_BlankNode_fromJsonObject);
+  }
+
+  @Memoize()
+  get BlankNode_fromJsonString(): Snippet {
+    return this.snippet(snippets_BlankNode_fromJsonString);
+  }
+
+  @Memoize()
+  get BlankNode_fromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_BlankNode_fromRdfResourceValues);
+  }
+
+  @Memoize()
+  get BlankNode_parse(): Snippet {
+    return this.snippet(snippets_BlankNode_parse);
+  }
+
+  @Memoize()
+  get BlankNode_sparqlWherePatterns(): Snippet {
+    return this.snippet(snippets_BlankNode_sparqlWherePatterns);
+  }
+
+  @Memoize()
+  get BlankNode_toJsonObject(): Snippet {
+    return this.snippet(snippets_BlankNode_toJsonObject);
+  }
+
+  @Memoize()
+  get BlankNode_toJsonString(): Snippet {
+    return this.snippet(snippets_BlankNode_toJsonString);
   }
 
   @Memoize()
@@ -720,36 +765,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get blankNodeFromJsonObject(): Snippet {
-    return this.snippet(snippets_blankNodeFromJsonObject);
-  }
-
-  @Memoize()
-  get blankNodeFromJsonString(): Snippet {
-    return this.snippet(snippets_blankNodeFromJsonString);
-  }
-
-  @Memoize()
-  get blankNodeFromRdfResourceValues(): Snippet {
-    return this.snippet(snippets_blankNodeFromRdfResourceValues);
-  }
-
-  @Memoize()
-  get blankNodeSparqlWherePatterns(): Snippet {
-    return this.snippet(snippets_blankNodeSparqlWherePatterns);
-  }
-
-  @Memoize()
-  get blankNodeToJsonObject(): Snippet {
-    return this.snippet(snippets_blankNodeToJsonObject);
-  }
-
-  @Memoize()
-  get blankNodeToJsonString(): Snippet {
-    return this.snippet(snippets_blankNodeToJsonString);
-  }
-
-  @Memoize()
   get booleanEquals(): Snippet {
     return this.snippet(snippets_booleanEquals);
   }
@@ -797,11 +812,6 @@ export class Snippets {
   @Memoize()
   get convertToBigInt(): Snippet {
     return this.snippet(snippets_convertToBigInt);
-  }
-
-  @Memoize()
-  get convertToBlankNode(): Snippet {
-    return this.snippet(snippets_convertToBlankNode);
   }
 
   @Memoize()
@@ -1002,11 +1012,6 @@ export class Snippets {
   @Memoize()
   get filterBigDecimal(): Snippet {
     return this.snippet(snippets_filterBigDecimal);
-  }
-
-  @Memoize()
-  get filterBlankNode(): Snippet {
-    return this.snippet(snippets_filterBlankNode);
   }
 
   @Memoize()
@@ -1362,11 +1367,6 @@ export class Snippets {
   @Memoize()
   get numericSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_numericSparqlWherePatterns);
-  }
-
-  @Memoize()
-  get parseBlankNode(): Snippet {
-    return this.snippet(snippets_parseBlankNode);
   }
 
   @Memoize()

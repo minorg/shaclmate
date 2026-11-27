@@ -10,5 +10,5 @@ export const snippets_identifierToJsonString: SnippetFactory = ({
     `${syntheticNamePrefix}identifierToJsonString`,
     code`\
 const ${syntheticNamePrefix}identifierToJsonString: ${snippets.ToJsonFunction}<${imports.BlankNode} | ${imports.NamedNode}, string> =
-  (identifier) => identifier.termType === "BlankNode" ? ${snippets.blankNodeToJsonString}(identifier) : ${snippets.iriToJsonString}(identifier);`,
+  (identifier) => identifier.termType === "BlankNode" ? ${snippets.BlankNode_toJsonString}(identifier) : ${snippets.iriToJsonString}(identifier);`,
   );
