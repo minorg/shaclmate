@@ -34,16 +34,19 @@ const testShapesGraphsLiteral = {
         "src",
         "shacl-ast.shaclmate.ttl",
       ),
-      path.join(
-        thisDirectoryPath,
-        "..",
-        "packages",
-        "compiler",
-        "src",
-        "input",
-        "input.shaclmate.ttl",
+    ].concat(
+      ["http", "service", "shape"].map((id) =>
+        path.join(
+          thisDirectoryPath,
+          "..",
+          "packages",
+          "compiler",
+          "src",
+          "input",
+          `${id}-input.shaclmate.ttl`,
+        ),
       ),
-    ],
+    ),
     kind: "dogfood",
   },
 
