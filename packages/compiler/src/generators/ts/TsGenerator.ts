@@ -207,7 +207,7 @@ export class TsGenerator implements Generator {
     );
 
     return `\
-// biome-ignore-all lint/correctness/noUnusedVariables: declaration merging
+// biome-ignore-all lint/correctness/noUnusedVariables: namespace declaration merging
 ${joinCode(declarations, { on: "\n\n" }).toString({})}`;
   }
 

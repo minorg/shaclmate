@@ -490,7 +490,7 @@ class JsonStringType extends AbstractJsonPrimitiveType<string> {
             invariant(this.minLength.isNothing());
             switch (format) {
               case "bigdecimal":
-                return code`${this.reusables.snippets.bigDecimalJsonSchema}`;
+                return code`${this.reusables.snippets.BigDecimal_jsonSchema}`;
               case "bigint":
                 return code`${this.reusables.snippets.bigIntJsonSchema}`;
               case "date":

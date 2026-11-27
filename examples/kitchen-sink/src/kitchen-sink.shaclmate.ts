@@ -1,4 +1,4 @@
-// biome-ignore-all lint/correctness/noUnusedVariables: declaration merging
+// biome-ignore-all lint/correctness/noUnusedVariables: namespace declaration merging
 import type {
   BlankNode,
   DatasetCore,
@@ -177,62 +177,148 @@ namespace $Array {
   }
 }
 
-const $bigDecimalFromJsonObject: $FromJsonFunction<
-  $TypedLiteralJsonObject,
-  BigDecimal,
-  $NumericSchema<BigDecimal>
-> = (jsonObject, options) =>
-  $literalFromJsonObject(jsonObject, options).chain(
-    LiteralDecoder.decodeBigDecimalLiteral,
-  );
-
-const $bigDecimalFromJsonString: $FromJsonFunction<
-  string,
-  BigDecimal,
-  $NumericSchema<BigDecimal>
-> = (jsonValue) => Either.encase(() => new BigDecimal(jsonValue));
-
-const $bigDecimalFromRdfResourceValues: $FromRdfResourceValuesFunction<
-  BigDecimal,
-  $NumericSchema<BigDecimal>
-> = (values, options) =>
-  $termLikeFromRdfResourceValues(values, options).chain((values) =>
-    values.chainMap((value) => value.toBigDecimal(options.schema.in)),
-  );
-
-const $bigDecimalJsonSchema = z
-  .union([z.string(), z.number()])
-  .transform((v, ctx) => {
-    try {
-      const d = new BigDecimal(v);
-      if (!d.isFinite()) {
-        throw new Error("not finite");
-      }
-      return d.toFixed();
-    } catch {
-      ctx.issues.push({ code: "custom", message: "Invalid decimal", input: v });
-      return z.NEVER;
-    }
-  }) as unknown as z.ZodType<string, string>;
-
-/**
- * Create a Literal from a BigDecimal.
- */
-function $bigDecimalLiteral(value: BigDecimal): Literal {
-  return dataFactory.literal(value.toFixed(), $xsd_decimal);
+namespace $BigDecimal {
+  export const fromJsonObject: $FromJsonFunction<
+    $TypedLiteralJsonObject,
+    BigDecimal,
+    $NumericSchema<BigDecimal>
+  > = (jsonObject, options) =>
+    $literalFromJsonObject(jsonObject, options).chain(
+      LiteralDecoder.decodeBigDecimalLiteral,
+    );
 }
 
-const $bigDecimalSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-  $NumericFilter<BigDecimal>,
-  $NumericSchema<BigDecimal>
-> = ({ filter, propertyPatterns, schema, valueVariable }) => {
-  const filterPatterns: $SparqlFilterPattern[] = [];
+namespace $BigDecimal {
+  export const fromJsonString: $FromJsonFunction<
+    string,
+    BigDecimal,
+    $NumericSchema<BigDecimal>
+  > = (jsonValue) => Either.encase(() => new BigDecimal(jsonValue));
+}
 
-  if (filter) {
-    if (filter.in !== undefined && filter.in.length > 0) {
-      filterPatterns.push({
+namespace $BigDecimal {
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    BigDecimal,
+    $NumericSchema<BigDecimal>
+  > = (values, options) =>
+    $termLikeFromRdfResourceValues(values, options).chain((values) =>
+      values.chainMap((value) => value.toBigDecimal(options.schema.in)),
+    );
+}
+
+namespace $BigDecimal {
+  export const jsonSchema = z
+    .union([z.string(), z.number()])
+    .transform((v, ctx) => {
+      try {
+        const d = new BigDecimal(v);
+        if (!d.isFinite()) {
+          throw new Error("not finite");
+        }
+        return d.toFixed();
+      } catch {
+        ctx.issues.push({
+          code: "custom",
+          message: "Invalid decimal",
+          input: v,
+        });
+        return z.NEVER;
+      }
+    }) as unknown as z.ZodType<string, string>;
+}
+
+namespace $BigDecimal {
+  export const sparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    $NumericFilter<BigDecimal>,
+    $NumericSchema<BigDecimal>
+  > = ({ filter, propertyPatterns, schema, valueVariable }) => {
+    const filterPatterns: $SparqlFilterPattern[] = [];
+
+    if (filter) {
+      if (filter.in !== undefined && filter.in.length > 0) {
+        filterPatterns.push({
+          expression: {
+            args: [
+              valueVariable,
+              filter.in.map((value) => $literalFactory.bigdecimal(value)),
+            ],
+            operator: "in",
+            type: "operation",
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
+
+      if (filter.maxExclusive !== undefined) {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: "<",
+            args: [
+              valueVariable,
+              $literalFactory.bigdecimal(filter.maxExclusive),
+            ],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
+
+      if (filter.maxInclusive !== undefined) {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: "<=",
+            args: [
+              valueVariable,
+              $literalFactory.bigdecimal(filter.maxInclusive),
+            ],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
+
+      if (filter.minExclusive !== undefined) {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: ">",
+            args: [
+              valueVariable,
+              $literalFactory.bigdecimal(filter.minExclusive),
+            ],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
+
+      if (filter.minInclusive !== undefined) {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: ">=",
+            args: [
+              valueVariable,
+              $literalFactory.bigdecimal(filter.minInclusive),
+            ],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
+    }
+
+    const schemaPatterns: $SparqlPattern[] = [];
+    if (schema.in && schema.in.length > 0) {
+      schemaPatterns.push({
         expression: {
-          args: [valueVariable, filter.in.map($bigDecimalLiteral)],
+          args: [
+            valueVariable,
+            schema.in.map((value) => $literalFactory.bigdecimal(value)),
+          ],
           operator: "in",
           type: "operation",
         },
@@ -241,83 +327,26 @@ const $bigDecimalSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
       });
     }
 
-    if (filter.maxExclusive !== undefined) {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: "<",
-          args: [valueVariable, $bigDecimalLiteral(filter.maxExclusive)],
-        },
-        lift: true,
-        type: "filter",
-      });
-    }
-
-    if (filter.maxInclusive !== undefined) {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: "<=",
-          args: [valueVariable, $bigDecimalLiteral(filter.maxInclusive)],
-        },
-        lift: true,
-        type: "filter",
-      });
-    }
-
-    if (filter.minExclusive !== undefined) {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: ">",
-          args: [valueVariable, $bigDecimalLiteral(filter.minExclusive)],
-        },
-        lift: true,
-        type: "filter",
-      });
-    }
-
-    if (filter.minInclusive !== undefined) {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: ">=",
-          args: [valueVariable, $bigDecimalLiteral(filter.minInclusive)],
-        },
-        lift: true,
-        type: "filter",
-      });
-    }
-  }
-
-  const schemaPatterns: $SparqlPattern[] = [];
-  if (schema.in && schema.in.length > 0) {
-    schemaPatterns.push({
-      expression: {
-        args: [valueVariable, schema.in.map($bigDecimalLiteral)],
-        operator: "in",
-        type: "operation",
-      },
-      lift: true,
-      type: "filter",
-    });
-  }
-
-  return (propertyPatterns as readonly $SparqlPattern[])
-    .concat(schemaPatterns)
-    .concat(filterPatterns);
-};
-
-function $bigDecimalToJsonObject(
-  datatype: NamedNode,
-): $ToJsonFunction<BigDecimal, $TypedLiteralJsonObject> {
-  return (value) =>
-    $typedLiteralToJsonObject($literalFactory.bigdecimal(value, datatype));
+    return (propertyPatterns as readonly $SparqlPattern[])
+      .concat(schemaPatterns)
+      .concat(filterPatterns);
+  };
 }
 
-const $bigDecimalToJsonString: $ToJsonFunction<BigDecimal, string> = (
-  bigDecimal,
-) => bigDecimal.toFixed();
+namespace $BigDecimal {
+  export function toJsonObject(
+    datatype: NamedNode,
+  ): $ToJsonFunction<BigDecimal, $TypedLiteralJsonObject> {
+    return (value) =>
+      $typedLiteralToJsonObject($literalFactory.bigdecimal(value, datatype));
+  }
+}
+
+namespace $BigDecimal {
+  export const toJsonString: $ToJsonFunction<BigDecimal, string> = (
+    bigDecimal,
+  ) => bigDecimal.toFixed();
+}
 
 function $bigIntFromJsonObject<BigIntT extends bigint>(
   jsonObject: $TypedLiteralJsonObject,
@@ -26589,7 +26618,7 @@ export namespace NumericsStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           BigDecimal,
           $NumericSchema<BigDecimal>
-        >($bigDecimalFromRdfResourceValues),
+        >($BigDecimal.fromRdfResourceValues),
       }),
       doubleNumeric: $shaclPropertyFromRdf<
         Maybe<number>,
@@ -26799,7 +26828,7 @@ export namespace NumericsStruct {
       NumericsStruct.schema.properties.decimalNumeric.path,
       parameters.object.decimalNumeric
         .toList()
-        .flatMap((value) => [$bigDecimalLiteral(value)]),
+        .flatMap((value) => [$literalFactory.bigdecimal(value)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -27857,7 +27886,7 @@ export namespace NumericsStruct {
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<BigDecimal>,
           $NumericSchema<BigDecimal>
-        >($bigDecimalSparqlWherePatterns),
+        >($BigDecimal.sparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -28093,7 +28122,7 @@ export namespace NumericsStruct {
           schema: NumericsStruct.schema.properties.byteNumeric.type,
         },
       ),
-      decimalNumeric: $maybeFromJsonValue($bigDecimalFromJsonString)(
+      decimalNumeric: $maybeFromJsonValue($BigDecimal.fromJsonString)(
         jsonObject["decimalNumeric"],
         {
           ...options,
@@ -28281,7 +28310,7 @@ export namespace NumericsStruct {
           .default(() => `_:${dataFactory.blankNode().value}`),
         "@type": z.string().default("http://example.com/NumericsStruct"),
         byteNumeric: z.number().optional(),
-        decimalNumeric: $bigDecimalJsonSchema.optional(),
+        decimalNumeric: $BigDecimal.jsonSchema.optional(),
         doubleNumeric: z.number().optional(),
         floatNumeric: z.number().optional(),
         integerNumeric: $bigIntJsonSchema.optional(),
@@ -28599,7 +28628,7 @@ export namespace NumericsStruct {
         byteNumeric: $maybeToJsonValue($primitiveToJsonValue<number>)(
           _numericsStruct.byteNumeric,
         ),
-        decimalNumeric: $maybeToJsonValue($bigDecimalToJsonString)(
+        decimalNumeric: $maybeToJsonValue($BigDecimal.toJsonString)(
           _numericsStruct.decimalNumeric,
         ),
         doubleNumeric: $maybeToJsonValue($primitiveToJsonValue<number>)(
@@ -54261,7 +54290,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             let memberOutputValuesEither: Either<Error, unknown> | undefined;
             for (let memberI = 0; memberI < 2; memberI++) {
               if (memberI === 0) {
-                memberOutputValuesEither = $bigDecimalFromRdfResourceValues(
+                memberOutputValuesEither = $BigDecimal.fromRdfResourceValues(
                   inputValueAsValues,
                   {
                     ...options,
@@ -54307,14 +54336,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             switch (memberI) {
               case 0:
                 collectedOutputValues = collectedOutputValues.concat(
-                  ...$bigDecimalFromRdfResourceValues(
-                    memberInputValues[memberI],
-                    {
+                  ...$BigDecimal
+                    .fromRdfResourceValues(memberInputValues[memberI], {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["object"].type,
-                    },
-                  ).unsafeCoerce(),
+                    })
+                    .unsafeCoerce(),
                 );
                 break;
               case 1:
@@ -54898,7 +54926,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                   break;
                 }
               } else if (memberI === 1) {
-                memberOutputValuesEither = $bigDecimalFromRdfResourceValues(
+                memberOutputValuesEither = $BigDecimal.fromRdfResourceValues(
                   inputValueAsValues,
                   {
                     ...options,
@@ -54942,14 +54970,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 break;
               case 1:
                 collectedOutputValues = collectedOutputValues.concat(
-                  ...$bigDecimalFromRdfResourceValues(
-                    memberInputValues[memberI],
-                    {
+                  ...$BigDecimal
+                    .fromRdfResourceValues(memberInputValues[memberI], {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["object"].type,
-                    },
-                  ).unsafeCoerce(),
+                    })
+                    .unsafeCoerce(),
                 );
                 break;
             }
@@ -55258,7 +55285,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       DatatypeDiscriminatedUnionsStruct.schema.properties.decimalOrString.path,
       ((value, _options): Literal[] => {
         if (typeof value === "object") {
-          return [$bigDecimalLiteral(value)];
+          return [$literalFactory.bigdecimal(value)];
         }
         if (typeof value === "string") {
           return [$literalFactory.string(value)];
@@ -55410,7 +55437,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           return [$literalFactory.string(value)];
         }
         if (typeof value === "object") {
-          return [$bigDecimalLiteral(value)];
+          return [$literalFactory.bigdecimal(value)];
         }
 
         throw new Error("unable to serialize to RDF");
@@ -56956,12 +56983,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
-            patterns: $bigDecimalSparqlWherePatterns({
-              ...otherParameters,
-              filter: filter?.on?.["object"],
-              ignoreRdfType: false,
-              schema: schema.members["object"].type,
-            }).concat(),
+            patterns: $BigDecimal
+              .sparqlWherePatterns({
+                ...otherParameters,
+                filter: filter?.on?.["object"],
+                ignoreRdfType: false,
+                schema: schema.members["object"].type,
+              })
+              .concat(),
             type: "group",
           });
           unionPatterns.push({
@@ -57194,12 +57223,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             type: "group",
           });
           unionPatterns.push({
-            patterns: $bigDecimalSparqlWherePatterns({
-              ...otherParameters,
-              filter: filter?.on?.["object"],
-              ignoreRdfType: false,
-              schema: schema.members["object"].type,
-            }).concat(),
+            patterns: $BigDecimal
+              .sparqlWherePatterns({
+                ...otherParameters,
+                filter: filter?.on?.["object"],
+                ignoreRdfType: false,
+                schema: schema.members["object"].type,
+              })
+              .concat(),
             type: "group",
           });
 
@@ -57383,7 +57414,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       }),
       decimalOrString: ((value, options) => {
         if (value.$type === "object") {
-          return $bigDecimalFromJsonObject(value, {
+          return $BigDecimal.fromJsonObject(value, {
             ...options,
             schema: { datatype: $xsd_decimal, kind: "BigDecimal" } as const,
           }) as Either<Error, BigDecimal | string>;
@@ -57522,7 +57553,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }) as Either<Error, string | BigDecimal>;
         }
         if (value.$type === "object") {
-          return $bigDecimalFromJsonObject(value, {
+          return $BigDecimal.fromJsonObject(value, {
             ...options,
             schema: { datatype: $xsd_decimal, kind: "BigDecimal" } as const,
           }) as Either<Error, string | BigDecimal>;
@@ -58392,7 +58423,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         decimalOrString: ((value) => {
           if (typeof value === "object") {
             return {
-              ...$bigDecimalToJsonObject($xsd_decimal)(value),
+              ...$BigDecimal.toJsonObject($xsd_decimal)(value),
               $type: "object",
             };
           }
@@ -58490,7 +58521,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }
           if (typeof value === "object") {
             return {
-              ...$bigDecimalToJsonObject($xsd_decimal)(value),
+              ...$BigDecimal.toJsonObject($xsd_decimal)(value),
               $type: "object",
             };
           }

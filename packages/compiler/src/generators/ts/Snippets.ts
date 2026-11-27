@@ -10,6 +10,13 @@ import { snippets_Array_equals } from "./_snippets/snippets_Array_equals.js";
 import { snippets_Array_fromJson } from "./_snippets/snippets_Array_fromJson.js";
 import { snippets_Array_intersection } from "./_snippets/snippets_Array_intersection.js";
 import { snippets_Array_toJson } from "./_snippets/snippets_Array_toJson.js";
+import { snippets_BigDecimal_fromJsonObject } from "./_snippets/snippets_BigDecimal_fromJsonObject.js";
+import { snippets_BigDecimal_fromJsonString } from "./_snippets/snippets_BigDecimal_fromJsonString.js";
+import { snippets_BigDecimal_fromRdfResourceValues } from "./_snippets/snippets_BigDecimal_fromRdfResourceValues.js";
+import { snippets_BigDecimal_jsonSchema } from "./_snippets/snippets_BigDecimal_jsonSchema.js";
+import { snippets_BigDecimal_sparqlWherePatterns } from "./_snippets/snippets_BigDecimal_sparqlWherePatterns.js";
+import { snippets_BigDecimal_toJsonObject } from "./_snippets/snippets_BigDecimal_toJsonObject.js";
+import { snippets_BigDecimal_toJsonString } from "./_snippets/snippets_BigDecimal_toJsonString.js";
 import { snippets_BlankNodeFilter } from "./_snippets/snippets_BlankNodeFilter.js";
 import { snippets_BlankNodeSchema } from "./_snippets/snippets_BlankNodeSchema.js";
 import { snippets_BooleanFilter } from "./_snippets/snippets_BooleanFilter.js";
@@ -78,14 +85,6 @@ import { snippets_ValueSparqlConstructTriplesFunction } from "./_snippets/snippe
 import { snippets_ValueSparqlWherePatternsFunction } from "./_snippets/snippets_ValueSparqlWherePatternsFunction.js";
 import { snippets__FromRdfResourceFunction } from "./_snippets/snippets__FromRdfResourceFunction.js";
 import { snippets__ToRdfResourceFunction } from "./_snippets/snippets__ToRdfResourceFunction.js";
-import { snippets_bigDecimalFromJsonObject } from "./_snippets/snippets_bigDecimalFromJsonObject.js";
-import { snippets_bigDecimalFromJsonString } from "./_snippets/snippets_bigDecimalFromJsonString.js";
-import { snippets_bigDecimalFromRdfResourceValues } from "./_snippets/snippets_bigDecimalFromRdfResourceValues.js";
-import { snippets_bigDecimalJsonSchema } from "./_snippets/snippets_bigDecimalJsonSchema.js";
-import { snippets_bigDecimalLiteral } from "./_snippets/snippets_bigDecimalLiteral.js";
-import { snippets_bigDecimalSparqlWherePatterns } from "./_snippets/snippets_bigDecimalSparqlWherePatterns.js";
-import { snippets_bigDecimalToJsonObject } from "./_snippets/snippets_bigDecimalToJsonObject.js";
-import { snippets_bigDecimalToJsonString } from "./_snippets/snippets_bigDecimalToJsonString.js";
 import { snippets_bigIntFromJsonObject } from "./_snippets/snippets_bigIntFromJsonObject.js";
 import { snippets_bigIntFromJsonString } from "./_snippets/snippets_bigIntFromJsonString.js";
 import { snippets_bigIntFromRdfResourceValues } from "./_snippets/snippets_bigIntFromRdfResourceValues.js";
@@ -313,6 +312,41 @@ export class Snippets {
   @Memoize()
   get Array_toJson(): Snippet {
     return this.snippet(snippets_Array_toJson);
+  }
+
+  @Memoize()
+  get BigDecimal_fromJsonObject(): Snippet {
+    return this.snippet(snippets_BigDecimal_fromJsonObject);
+  }
+
+  @Memoize()
+  get BigDecimal_fromJsonString(): Snippet {
+    return this.snippet(snippets_BigDecimal_fromJsonString);
+  }
+
+  @Memoize()
+  get BigDecimal_fromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_BigDecimal_fromRdfResourceValues);
+  }
+
+  @Memoize()
+  get BigDecimal_jsonSchema(): Snippet {
+    return this.snippet(snippets_BigDecimal_jsonSchema);
+  }
+
+  @Memoize()
+  get BigDecimal_sparqlWherePatterns(): Snippet {
+    return this.snippet(snippets_BigDecimal_sparqlWherePatterns);
+  }
+
+  @Memoize()
+  get BigDecimal_toJsonObject(): Snippet {
+    return this.snippet(snippets_BigDecimal_toJsonObject);
+  }
+
+  @Memoize()
+  get BigDecimal_toJsonString(): Snippet {
+    return this.snippet(snippets_BigDecimal_toJsonString);
   }
 
   @Memoize()
@@ -653,46 +687,6 @@ export class Snippets {
   @Memoize()
   get _ToRdfResourceFunction(): Snippet {
     return this.snippet(snippets__ToRdfResourceFunction);
-  }
-
-  @Memoize()
-  get bigDecimalFromJsonObject(): Snippet {
-    return this.snippet(snippets_bigDecimalFromJsonObject);
-  }
-
-  @Memoize()
-  get bigDecimalFromJsonString(): Snippet {
-    return this.snippet(snippets_bigDecimalFromJsonString);
-  }
-
-  @Memoize()
-  get bigDecimalFromRdfResourceValues(): Snippet {
-    return this.snippet(snippets_bigDecimalFromRdfResourceValues);
-  }
-
-  @Memoize()
-  get bigDecimalJsonSchema(): Snippet {
-    return this.snippet(snippets_bigDecimalJsonSchema);
-  }
-
-  @Memoize()
-  get bigDecimalLiteral(): Snippet {
-    return this.snippet(snippets_bigDecimalLiteral);
-  }
-
-  @Memoize()
-  get bigDecimalSparqlWherePatterns(): Snippet {
-    return this.snippet(snippets_bigDecimalSparqlWherePatterns);
-  }
-
-  @Memoize()
-  get bigDecimalToJsonObject(): Snippet {
-    return this.snippet(snippets_bigDecimalToJsonObject);
-  }
-
-  @Memoize()
-  get bigDecimalToJsonString(): Snippet {
-    return this.snippet(snippets_bigDecimalToJsonString);
   }
 
   @Memoize()
