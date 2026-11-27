@@ -1,3 +1,4 @@
+// biome-ignore-all lint/correctness/noUnusedVariables: declaration merging
 import type {
   BlankNode,
   DatasetCore,

@@ -206,7 +206,9 @@ export class TsGenerator implements Generator {
       joinCode(reusables.snippets.ifUsed, { on: "\n\n" }),
     );
 
-    return joinCode(declarations, { on: "\n\n" }).toString({});
+    return `\
+// biome-ignore-all lint/correctness/noUnusedVariables: declaration merging
+${joinCode(declarations, { on: "\n\n" }).toString({})}`;
   }
 
   private objectSetTypeDeclarations({
