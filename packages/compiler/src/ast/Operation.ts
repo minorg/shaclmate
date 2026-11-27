@@ -1,8 +1,8 @@
 import type { Maybe } from "purify-ts";
 import type * as uriTemplate from "uri-template";
 import type {
-  OperationErrorHttpBindingStatusCode,
-  OperationHttpBindingStatusCode,
+  HttpErrorStatusCode,
+  HttpSuccessStatusCode,
 } from "../input/input.shaclmate.js";
 import { AbstractConstruct } from "./AbstractConstruct.js";
 import type { OptionType } from "./OptionType.js";
@@ -66,13 +66,13 @@ export namespace Operation {
   export namespace Error {
     export interface HttpBinding {
       readonly contentType: "application/problem+json";
-      readonly statusCode: OperationErrorHttpBindingStatusCode;
+      readonly statusCode: HttpErrorStatusCode;
     }
   }
 
   export interface HttpBinding {
     readonly method: string;
-    readonly statusCode: OperationHttpBindingStatusCode;
+    readonly statusCode: HttpSuccessStatusCode;
     readonly uriTemplate: ReturnType<typeof uriTemplate.parse>["ast"];
   }
 

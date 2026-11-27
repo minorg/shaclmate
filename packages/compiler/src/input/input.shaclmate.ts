@@ -1,3 +1,4 @@
+// biome-ignore-all lint/correctness/noUnusedVariables: namespace declaration merging
 import type {
   BlankNode,
   Literal,
@@ -26,41 +27,80 @@ type $_FromRdfResourceFunction<T> = (
   },
 ) => Either<Error, T>;
 
-function $bigIntFromRdfResourceValues<BigIntT extends bigint>(
-  values: Resource.Values,
-  options: Parameters<
-    $FromRdfResourceValuesFunction<BigIntT, $NumericSchema<BigIntT>>
-  >[1],
-): Either<Error, Resource.Values<BigIntT>> {
-  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
-    values.chainMap((value) =>
-      options.schema.in
-        ? value.toBigInt(options.schema.in)
-        : (value.toBigInt() as Either<Error, BigIntT>),
-    ),
-  );
+namespace $Array {
+  export function validate<ItemSchemaT, ItemValueT>(
+    validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
+  ): $ValidationFunction<
+    $CollectionSchema<ItemSchemaT>,
+    readonly ItemValueT[]
+  > {
+    return (schema, valueArray) => {
+      if (
+        schema.minCount !== undefined &&
+        valueArray.length < schema.minCount
+      ) {
+        return Left(
+          new Error(
+            `value array has length (${valueArray.length}) less than minCount (${schema.minCount})`,
+          ),
+        ) as Either<Error, readonly ItemValueT[]>;
+      }
+
+      return Either.sequence(
+        valueArray.map((value) => validateItem(schema.itemType, value)),
+      ) as Either<Error, readonly ItemValueT[]>;
+    };
+  }
 }
 
-function $booleanFromRdfResourceValues<BooleanT extends boolean>(
-  values: Resource.Values,
-  options: Parameters<
-    $FromRdfResourceValuesFunction<BooleanT, $BooleanSchema<BooleanT>>
-  >[1],
-): Either<Error, Resource.Values<BooleanT>> {
-  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
-    values.chainMap((value) =>
-      options.schema.in
-        ? value.toBoolean(options.schema.in)
-        : (value.toBoolean() as Either<Error, BooleanT>),
-    ),
-  );
+namespace $BigInt {
+  export const convert: $ConversionFunction<
+    bigint | number | string,
+    bigint
+  > = (value) => Either.encase(() => BigInt(value));
 }
 
-interface $BooleanSchema<BooleanT extends boolean> {
-  readonly datatype: NamedNode;
-  readonly hasValues?: readonly Literal[];
-  readonly in?: readonly BooleanT[];
-  readonly kind: "Boolean";
+namespace $BigInt {
+  export function fromRdfResourceValues<BigIntT extends bigint>(
+    values: Resource.Values,
+    options: Parameters<
+      $FromRdfResourceValuesFunction<BigIntT, $NumericSchema<BigIntT>>
+    >[1],
+  ): Either<Error, Resource.Values<BigIntT>> {
+    return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+      values.chainMap((value) =>
+        options.schema.in
+          ? value.toBigInt(options.schema.in)
+          : (value.toBigInt() as Either<Error, BigIntT>),
+      ),
+    );
+  }
+}
+
+namespace $Boolean {
+  export function fromRdfResourceValues<BooleanT extends boolean>(
+    values: Resource.Values,
+    options: Parameters<
+      $FromRdfResourceValuesFunction<BooleanT, $Boolean.Schema<BooleanT>>
+    >[1],
+  ): Either<Error, Resource.Values<BooleanT>> {
+    return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+      values.chainMap((value) =>
+        options.schema.in
+          ? value.toBoolean(options.schema.in)
+          : (value.toBoolean() as Either<Error, BooleanT>),
+      ),
+    );
+  }
+}
+
+namespace $Boolean {
+  export interface Schema<BooleanT extends boolean> {
+    readonly datatype: NamedNode;
+    readonly hasValues?: readonly Literal[];
+    readonly in?: readonly BooleanT[];
+    readonly kind: "Boolean";
+  }
 }
 
 interface $CollectionSchema<ItemSchemaT> {
@@ -95,38 +135,16 @@ type $ConversionFunction<
   options: { defaultNamespace: DefaultNamespaceT | undefined },
 ) => Either<Error, TargetT>;
 
-const $convertToBigInt: $ConversionFunction<
-  bigint | number | string,
-  bigint
-> = (value) => Either.encase(() => BigInt(value));
-
-function $convertToIdentifier<
-  DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
->(
-  value: BlankNode | NamedNode | (keyof DefaultNamespaceT & string) | undefined,
-  { defaultNamespace }: { defaultNamespace: DefaultNamespaceT | undefined },
-): Either<Error, BlankNode | NamedNode> {
-  switch (typeof value) {
-    case "object":
-      return Either.of(value);
-    case "string":
-      return expandIri(value, { dataFactory: dataFactory, defaultNamespace });
-    case "undefined":
-      return Either.of(dataFactory.blankNode());
-  }
-}
-
 function $convertToIdentifierProperty<
   DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
 >(
   identifier:
-    | (() => BlankNode | NamedNode)
-    | BlankNode
-    | NamedNode
+    | (() => $Identifier)
+    | $Identifier
     | (keyof DefaultNamespaceT & string)
     | undefined,
   { defaultNamespace }: { defaultNamespace: DefaultNamespaceT | undefined },
-): Either<Error, () => BlankNode | NamedNode> {
+): Either<Error, () => $Identifier> {
   switch (typeof identifier) {
     case "function":
       return Either.of(identifier);
@@ -369,17 +387,45 @@ export type $FromRdfResourceValuesFunction<ValueT, ValueSchemaT> = (
   },
 ) => Either<Error, Resource.Values<ValueT>>;
 
-const $identifierFromRdfResourceValues: $FromRdfResourceValuesFunction<
-  BlankNode | NamedNode,
-  $IdentifierSchema
-> = (values, options) =>
-  $termLikeFromRdfResourceValues(values, options).chain((values) =>
-    values.chainMap((value) => value.toIdentifier()),
-  );
+type $Identifier = BlankNode | NamedNode;
 
-interface $IdentifierSchema {
-  readonly hasValues?: readonly NamedNode[];
-  readonly kind: "Identifier";
+namespace $Identifier {
+  export function convert<
+    DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
+  >(
+    value: $Identifier | (keyof DefaultNamespaceT & string) | undefined,
+    { defaultNamespace }: { defaultNamespace: DefaultNamespaceT | undefined },
+  ): Either<Error, $Identifier> {
+    switch (typeof value) {
+      case "object":
+        return Either.of(value);
+      case "string":
+        return expandIri(value, { dataFactory: dataFactory, defaultNamespace });
+      case "undefined":
+        return Either.of(dataFactory.blankNode());
+    }
+  }
+}
+
+namespace $Identifier {
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    $Identifier,
+    $Identifier.Schema
+  > = (values, options) =>
+    $termLikeFromRdfResourceValues(values, options).chain((values) =>
+      values.chainMap((value) => value.toIdentifier()),
+    );
+}
+
+namespace $Identifier {
+  export const parse = NTriplesIdentifier.parser(dataFactory);
+}
+
+namespace $Identifier {
+  export interface Schema {
+    readonly hasValues?: readonly NamedNode[];
+    readonly kind: "Identifier";
+  }
 }
 
 function $identityConversionFunction<T>(
@@ -535,8 +581,6 @@ interface $NumericSchema<T> {
 export type $ObjectTypeGuardFunction<ObjectT extends $Object> = (
   object: $Object,
 ) => object is ObjectT;
-
-const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
 export type $PropertyPath = RdfxResourcePropertyPath;
 
@@ -818,24 +862,6 @@ export type $ToStringFunction<T> = (value: T) => string;
 
 export type $ToStringRecordFunction<T> = (value: T) => Record<string, string>;
 
-function $validateArray<ItemSchemaT, ItemValueT>(
-  validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
-): $ValidationFunction<$CollectionSchema<ItemSchemaT>, readonly ItemValueT[]> {
-  return (schema, valueArray) => {
-    if (schema.minCount !== undefined && valueArray.length < schema.minCount) {
-      return Left(
-        new Error(
-          `value array has length (${valueArray.length}) less than minCount (${schema.minCount})`,
-        ),
-      ) as Either<Error, readonly ItemValueT[]>;
-    }
-
-    return Either.sequence(
-      valueArray.map((value) => validateItem(schema.itemType, value)),
-    ) as Either<Error, readonly ItemValueT[]>;
-  };
-}
-
 function $validateMaybe<ItemSchemaT, ItemValueT>(
   validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
 ) {
@@ -907,7 +933,7 @@ export type ValidationResult = {
 
   readonly sourceConstraintComponent: NamedNode;
 
-  readonly sourceShape: Maybe<BlankNode | NamedNode>;
+  readonly sourceShape: Maybe<$Identifier>;
 
   readonly value: Maybe<BlankNode | NamedNode | Literal>;
 };
@@ -917,15 +943,14 @@ export namespace ValidationResult {
     ValidationResult.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: ValidationResult.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -1005,17 +1030,17 @@ export namespace ValidationResult {
         typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
       }),
       sourceShape: $shaclPropertyFromRdf<
-        Maybe<BlankNode | NamedNode>,
-        $MaybeSchema<$IdentifierSchema>
+        Maybe<$Identifier>,
+        $MaybeSchema<$Identifier.Schema>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: ValidationResult.schema.properties.sourceShape,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          BlankNode | NamedNode,
-          $IdentifierSchema
-        >($identifierFromRdfResourceValues),
+          $Identifier,
+          $Identifier.Schema
+        >($Identifier.fromRdfResourceValues),
       }),
       value: $shaclPropertyFromRdf<
         Maybe<BlankNode | NamedNode | Literal>,
@@ -1053,7 +1078,7 @@ export namespace ValidationResult {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           ValidationResult.schema.properties.details.type,
           value,
         ),
@@ -1087,7 +1112,7 @@ export namespace ValidationResult {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ),
-      sourceShape: $convertToMaybe($convertToIdentifier)(
+      sourceShape: $convertToMaybe($Identifier.convert)(
         parameters.sourceShape,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -1133,7 +1158,7 @@ export namespace ValidationResult {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
+      | Maybe<$Identifier>;
     readonly value?:
       | (BlankNode | NamedNode | Literal)
       | Maybe<BlankNode | NamedNode | Literal>;
@@ -1165,9 +1190,9 @@ export namespace ValidationResult {
         ),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isValidationResult: $ObjectTypeGuardFunction<
@@ -1291,15 +1316,14 @@ export namespace ValidationReport {
     ValidationReport.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: ValidationReport.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -1309,12 +1333,12 @@ export namespace ValidationReport {
             },
           )
         : Right(true as const),
-      conforms: $shaclPropertyFromRdf<boolean, $BooleanSchema<boolean>>({
+      conforms: $shaclPropertyFromRdf<boolean, $Boolean.Schema<boolean>>({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: ValidationReport.schema.properties.conforms,
-        typeFromRdfResourceValues: $booleanFromRdfResourceValues<boolean>,
+        typeFromRdfResourceValues: $Boolean.fromRdfResourceValues<boolean>,
       }),
       results: $shaclPropertyFromRdf<
         readonly ValidationResult[],
@@ -1331,7 +1355,7 @@ export namespace ValidationReport {
       }),
       shapesGraphWellFormed: $shaclPropertyFromRdf<
         Maybe<boolean>,
-        $MaybeSchema<$BooleanSchema<boolean>>
+        $MaybeSchema<$Boolean.Schema<boolean>>
       >({
         ...options,
         focusResource: resource,
@@ -1340,8 +1364,8 @@ export namespace ValidationReport {
           ValidationReport.schema.properties.shapesGraphWellFormed,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           boolean,
-          $BooleanSchema<boolean>
-        >($booleanFromRdfResourceValues<boolean>),
+          $Boolean.Schema<boolean>
+        >($Boolean.fromRdfResourceValues<boolean>),
       }),
     }).chain((properties) => ValidationReport.create(properties));
 
@@ -1367,7 +1391,7 @@ export namespace ValidationReport {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           ValidationReport.schema.properties.results.type,
           value,
         ),
@@ -1427,9 +1451,9 @@ export namespace ValidationReport {
         ),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isValidationReport: $ObjectTypeGuardFunction<
@@ -1507,7 +1531,7 @@ export type PropertyShapeSpecificProperties = {
 
   readonly equals: readonly NamedNode[];
 
-  readonly groups: readonly (BlankNode | NamedNode)[];
+  readonly groups: readonly $Identifier[];
 
   readonly lessThan: readonly NamedNode[];
 
@@ -1527,11 +1551,11 @@ export type PropertyShapeSpecificProperties = {
 
   readonly qualifiedMinCount: Maybe<bigint>;
 
-  readonly qualifiedValueShape: Maybe<BlankNode | NamedNode>;
+  readonly qualifiedValueShape: Maybe<$Identifier>;
 
   readonly qualifiedValueShapesDisjoint: Maybe<boolean>;
 
-  readonly resolve: Maybe<BlankNode | NamedNode>;
+  readonly resolve: Maybe<$Identifier>;
 
   readonly uniqueLang: Maybe<boolean>;
 };
@@ -1541,16 +1565,15 @@ export namespace PropertyShapeSpecificProperties {
     PropertyShapeSpecificProperties.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             PropertyShapeSpecificProperties.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       defaultValue: $shaclPropertyFromRdf<
         Maybe<NamedNode | Literal>,
         $MaybeSchema<$TermSchema<NamedNode | Literal>>
@@ -1595,7 +1618,7 @@ export namespace PropertyShapeSpecificProperties {
       }),
       display: $shaclPropertyFromRdf<
         boolean,
-        $DefaultValueSchema<$BooleanSchema<boolean>>
+        $DefaultValueSchema<$Boolean.Schema<boolean>>
       >({
         ...options,
         focusResource: resource,
@@ -1604,8 +1627,8 @@ export namespace PropertyShapeSpecificProperties {
           PropertyShapeSpecificProperties.schema.properties.display,
         typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
           boolean,
-          $BooleanSchema<boolean>
-        >($booleanFromRdfResourceValues<boolean>),
+          $Boolean.Schema<boolean>
+        >($Boolean.fromRdfResourceValues<boolean>),
       }),
       equals: $shaclPropertyFromRdf<
         readonly NamedNode[],
@@ -1622,8 +1645,8 @@ export namespace PropertyShapeSpecificProperties {
         >($iriFromRdfResourceValues<string>),
       }),
       groups: $shaclPropertyFromRdf<
-        readonly (BlankNode | NamedNode)[],
-        $CollectionSchema<$IdentifierSchema>
+        readonly $Identifier[],
+        $CollectionSchema<$Identifier.Schema>
       >({
         ...options,
         focusResource: resource,
@@ -1631,9 +1654,9 @@ export namespace PropertyShapeSpecificProperties {
         propertySchema:
           PropertyShapeSpecificProperties.schema.properties.groups,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
-          BlankNode | NamedNode,
-          $IdentifierSchema
-        >($identifierFromRdfResourceValues),
+          $Identifier,
+          $Identifier.Schema
+        >($Identifier.fromRdfResourceValues),
       }),
       lessThan: $shaclPropertyFromRdf<
         readonly NamedNode[],
@@ -1675,7 +1698,7 @@ export namespace PropertyShapeSpecificProperties {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       minCount: $shaclPropertyFromRdf<
         Maybe<bigint>,
@@ -1689,7 +1712,7 @@ export namespace PropertyShapeSpecificProperties {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       name: $shaclPropertyFromRdf<
         Maybe<string>,
@@ -1736,7 +1759,7 @@ export namespace PropertyShapeSpecificProperties {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       qualifiedMinCount: $shaclPropertyFromRdf<
         Maybe<bigint>,
@@ -1750,11 +1773,11 @@ export namespace PropertyShapeSpecificProperties {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       qualifiedValueShape: $shaclPropertyFromRdf<
-        Maybe<BlankNode | NamedNode>,
-        $MaybeSchema<$IdentifierSchema>
+        Maybe<$Identifier>,
+        $MaybeSchema<$Identifier.Schema>
       >({
         ...options,
         focusResource: resource,
@@ -1762,13 +1785,13 @@ export namespace PropertyShapeSpecificProperties {
         propertySchema:
           PropertyShapeSpecificProperties.schema.properties.qualifiedValueShape,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          BlankNode | NamedNode,
-          $IdentifierSchema
-        >($identifierFromRdfResourceValues),
+          $Identifier,
+          $Identifier.Schema
+        >($Identifier.fromRdfResourceValues),
       }),
       qualifiedValueShapesDisjoint: $shaclPropertyFromRdf<
         Maybe<boolean>,
-        $MaybeSchema<$BooleanSchema<boolean>>
+        $MaybeSchema<$Boolean.Schema<boolean>>
       >({
         ...options,
         focusResource: resource,
@@ -1778,12 +1801,12 @@ export namespace PropertyShapeSpecificProperties {
             .qualifiedValueShapesDisjoint,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           boolean,
-          $BooleanSchema<boolean>
-        >($booleanFromRdfResourceValues<boolean>),
+          $Boolean.Schema<boolean>
+        >($Boolean.fromRdfResourceValues<boolean>),
       }),
       resolve: $shaclPropertyFromRdf<
-        Maybe<BlankNode | NamedNode>,
-        $MaybeSchema<$IdentifierSchema>
+        Maybe<$Identifier>,
+        $MaybeSchema<$Identifier.Schema>
       >({
         ...options,
         focusResource: resource,
@@ -1791,13 +1814,13 @@ export namespace PropertyShapeSpecificProperties {
         propertySchema:
           PropertyShapeSpecificProperties.schema.properties.resolve,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          BlankNode | NamedNode,
-          $IdentifierSchema
-        >($identifierFromRdfResourceValues),
+          $Identifier,
+          $Identifier.Schema
+        >($Identifier.fromRdfResourceValues),
       }),
       uniqueLang: $shaclPropertyFromRdf<
         Maybe<boolean>,
-        $MaybeSchema<$BooleanSchema<boolean>>
+        $MaybeSchema<$Boolean.Schema<boolean>>
       >({
         ...options,
         focusResource: resource,
@@ -1806,8 +1829,8 @@ export namespace PropertyShapeSpecificProperties {
           PropertyShapeSpecificProperties.schema.properties.uniqueLang,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           boolean,
-          $BooleanSchema<boolean>
-        >($booleanFromRdfResourceValues<boolean>),
+          $Boolean.Schema<boolean>
+        >($Boolean.fromRdfResourceValues<boolean>),
       }),
     }).chain((properties) =>
       PropertyShapeSpecificProperties.create(properties),
@@ -1859,7 +1882,7 @@ export namespace PropertyShapeSpecificProperties {
       disjoint: $convertToScalarSet($convertToIri)(parameters.disjoint, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           PropertyShapeSpecificProperties.schema.properties.disjoint.type,
           value,
         ),
@@ -1873,15 +1896,15 @@ export namespace PropertyShapeSpecificProperties {
       equals: $convertToScalarSet($convertToIri)(parameters.equals, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           PropertyShapeSpecificProperties.schema.properties.equals.type,
           value,
         ),
       ),
-      groups: $convertToScalarSet($convertToIdentifier)(parameters.groups, {
+      groups: $convertToScalarSet($Identifier.convert)(parameters.groups, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           PropertyShapeSpecificProperties.schema.properties.groups.type,
           value,
         ),
@@ -1889,7 +1912,7 @@ export namespace PropertyShapeSpecificProperties {
       lessThan: $convertToScalarSet($convertToIri)(parameters.lessThan, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           PropertyShapeSpecificProperties.schema.properties.lessThan.type,
           value,
         ),
@@ -1900,13 +1923,13 @@ export namespace PropertyShapeSpecificProperties {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           PropertyShapeSpecificProperties.schema.properties.lessThanOrEquals
             .type,
           value,
         ),
       ),
-      maxCount: $convertToMaybe($convertToBigInt)(parameters.maxCount, {
+      maxCount: $convertToMaybe($BigInt.convert)(parameters.maxCount, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
@@ -1914,7 +1937,7 @@ export namespace PropertyShapeSpecificProperties {
           value,
         ),
       ),
-      minCount: $convertToMaybe($convertToBigInt)(parameters.minCount, {
+      minCount: $convertToMaybe($BigInt.convert)(parameters.minCount, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
@@ -1939,7 +1962,7 @@ export namespace PropertyShapeSpecificProperties {
         ),
       ),
       path: Either.of(parameters.path),
-      qualifiedMaxCount: $convertToMaybe($convertToBigInt)(
+      qualifiedMaxCount: $convertToMaybe($BigInt.convert)(
         parameters.qualifiedMaxCount,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -1951,7 +1974,7 @@ export namespace PropertyShapeSpecificProperties {
           value,
         ),
       ),
-      qualifiedMinCount: $convertToMaybe($convertToBigInt)(
+      qualifiedMinCount: $convertToMaybe($BigInt.convert)(
         parameters.qualifiedMinCount,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -1963,7 +1986,7 @@ export namespace PropertyShapeSpecificProperties {
           value,
         ),
       ),
-      qualifiedValueShape: $convertToMaybe($convertToIdentifier)(
+      qualifiedValueShape: $convertToMaybe($Identifier.convert)(
         parameters.qualifiedValueShape,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -1986,7 +2009,7 @@ export namespace PropertyShapeSpecificProperties {
           value,
         ),
       ),
-      resolve: $convertToMaybe($convertToIdentifier)(parameters.resolve, {
+      resolve: $convertToMaybe($Identifier.convert)(parameters.resolve, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
@@ -2060,13 +2083,13 @@ export namespace PropertyShapeSpecificProperties {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
+      | Maybe<$Identifier>;
     readonly qualifiedValueShapesDisjoint?: boolean | Maybe<boolean>;
     readonly resolve?:
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
+      | Maybe<$Identifier>;
     readonly uniqueLang?: boolean | Maybe<boolean>;
   };
 
@@ -2098,9 +2121,9 @@ export namespace PropertyShapeSpecificProperties {
         ),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isPropertyShapeSpecificProperties: $ObjectTypeGuardFunction<
@@ -2289,7 +2312,7 @@ export namespace PropertyShapeSpecificProperties {
 export type BaseShape = {
   readonly $identifier: () => BaseShape.Identifier;
 
-  readonly and: Maybe<readonly (BlankNode | NamedNode)[]>;
+  readonly and: Maybe<readonly $Identifier[]>;
 
   readonly classes: readonly NamedNode[];
 
@@ -2310,7 +2333,7 @@ export type BaseShape = {
 
   readonly in_: Maybe<readonly (NamedNode | Literal)[]>;
 
-  readonly isDefinedBy: Maybe<BlankNode | NamedNode>;
+  readonly isDefinedBy: Maybe<$Identifier>;
 
   readonly label: Maybe<string>;
 
@@ -2335,7 +2358,7 @@ export type BaseShape = {
    */
   readonly mutable: Maybe<boolean>;
 
-  readonly node: Maybe<BlankNode | NamedNode>;
+  readonly node: Maybe<$Identifier>;
 
   readonly nodeKind: Maybe<
     NamedNode<
@@ -2348,9 +2371,9 @@ export type BaseShape = {
     >
   >;
 
-  readonly not: readonly (BlankNode | NamedNode)[];
+  readonly not: readonly $Identifier[];
 
-  readonly or: Maybe<readonly (BlankNode | NamedNode)[]>;
+  readonly or: Maybe<readonly $Identifier[]>;
 
   readonly pattern: Maybe<string>;
 
@@ -2371,7 +2394,7 @@ export type BaseShape = {
 
   readonly types: readonly NamedNode[];
 
-  readonly xone: Maybe<readonly (BlankNode | NamedNode)[]>;
+  readonly xone: Maybe<readonly $Identifier[]>;
 };
 
 export namespace BaseShape {
@@ -2379,29 +2402,28 @@ export namespace BaseShape {
     BaseShape.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: BaseShape.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       and: $shaclPropertyFromRdf<
-        Maybe<readonly (BlankNode | NamedNode)[]>,
-        $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
+        Maybe<readonly $Identifier[]>,
+        $MaybeSchema<$CollectionSchema<$Identifier.Schema>>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: BaseShape.schema.properties.and,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          readonly (BlankNode | NamedNode)[],
-          $CollectionSchema<$IdentifierSchema>
+          readonly $Identifier[],
+          $CollectionSchema<$Identifier.Schema>
         >(
-          $listFromRdfResourceValues<BlankNode | NamedNode, $IdentifierSchema>(
-            $identifierFromRdfResourceValues,
+          $listFromRdfResourceValues<$Identifier, $Identifier.Schema>(
+            $Identifier.fromRdfResourceValues,
           ),
         ),
       }),
@@ -2446,7 +2468,7 @@ export namespace BaseShape {
       }),
       deactivated: $shaclPropertyFromRdf<
         Maybe<boolean>,
-        $MaybeSchema<$BooleanSchema<boolean>>
+        $MaybeSchema<$Boolean.Schema<boolean>>
       >({
         ...options,
         focusResource: resource,
@@ -2454,8 +2476,8 @@ export namespace BaseShape {
         propertySchema: BaseShape.schema.properties.deactivated,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           boolean,
-          $BooleanSchema<boolean>
-        >($booleanFromRdfResourceValues<boolean>),
+          $Boolean.Schema<boolean>
+        >($Boolean.fromRdfResourceValues<boolean>),
       }),
       flags: $shaclPropertyFromRdf<
         Maybe<string>,
@@ -2485,7 +2507,7 @@ export namespace BaseShape {
       }),
       ignore: $shaclPropertyFromRdf<
         boolean,
-        $DefaultValueSchema<$BooleanSchema<boolean>>
+        $DefaultValueSchema<$Boolean.Schema<boolean>>
       >({
         ...options,
         focusResource: resource,
@@ -2493,8 +2515,8 @@ export namespace BaseShape {
         propertySchema: BaseShape.schema.properties.ignore,
         typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
           boolean,
-          $BooleanSchema<boolean>
-        >($booleanFromRdfResourceValues<boolean>),
+          $Boolean.Schema<boolean>
+        >($Boolean.fromRdfResourceValues<boolean>),
       }),
       in_: $shaclPropertyFromRdf<
         Maybe<readonly (NamedNode | Literal)[]>,
@@ -2515,17 +2537,17 @@ export namespace BaseShape {
         ),
       }),
       isDefinedBy: $shaclPropertyFromRdf<
-        Maybe<BlankNode | NamedNode>,
-        $MaybeSchema<$IdentifierSchema>
+        Maybe<$Identifier>,
+        $MaybeSchema<$Identifier.Schema>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: BaseShape.schema.properties.isDefinedBy,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          BlankNode | NamedNode,
-          $IdentifierSchema
-        >($identifierFromRdfResourceValues),
+          $Identifier,
+          $Identifier.Schema
+        >($Identifier.fromRdfResourceValues),
       }),
       label: $shaclPropertyFromRdf<
         Maybe<string>,
@@ -2594,7 +2616,7 @@ export namespace BaseShape {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       message: $shaclPropertyFromRdf<
         Maybe<string>,
@@ -2646,11 +2668,11 @@ export namespace BaseShape {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       mutable: $shaclPropertyFromRdf<
         Maybe<boolean>,
-        $MaybeSchema<$BooleanSchema<boolean>>
+        $MaybeSchema<$Boolean.Schema<boolean>>
       >({
         ...options,
         focusResource: resource,
@@ -2658,21 +2680,21 @@ export namespace BaseShape {
         propertySchema: BaseShape.schema.properties.mutable,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           boolean,
-          $BooleanSchema<boolean>
-        >($booleanFromRdfResourceValues<boolean>),
+          $Boolean.Schema<boolean>
+        >($Boolean.fromRdfResourceValues<boolean>),
       }),
       node: $shaclPropertyFromRdf<
-        Maybe<BlankNode | NamedNode>,
-        $MaybeSchema<$IdentifierSchema>
+        Maybe<$Identifier>,
+        $MaybeSchema<$Identifier.Schema>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: BaseShape.schema.properties.node,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          BlankNode | NamedNode,
-          $IdentifierSchema
-        >($identifierFromRdfResourceValues),
+          $Identifier,
+          $Identifier.Schema
+        >($Identifier.fromRdfResourceValues),
       }),
       nodeKind: $shaclPropertyFromRdf<
         Maybe<
@@ -2729,32 +2751,32 @@ export namespace BaseShape {
         ),
       }),
       not: $shaclPropertyFromRdf<
-        readonly (BlankNode | NamedNode)[],
-        $CollectionSchema<$IdentifierSchema>
+        readonly $Identifier[],
+        $CollectionSchema<$Identifier.Schema>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: BaseShape.schema.properties.not,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
-          BlankNode | NamedNode,
-          $IdentifierSchema
-        >($identifierFromRdfResourceValues),
+          $Identifier,
+          $Identifier.Schema
+        >($Identifier.fromRdfResourceValues),
       }),
       or: $shaclPropertyFromRdf<
-        Maybe<readonly (BlankNode | NamedNode)[]>,
-        $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
+        Maybe<readonly $Identifier[]>,
+        $MaybeSchema<$CollectionSchema<$Identifier.Schema>>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: BaseShape.schema.properties.or,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          readonly (BlankNode | NamedNode)[],
-          $CollectionSchema<$IdentifierSchema>
+          readonly $Identifier[],
+          $CollectionSchema<$Identifier.Schema>
         >(
-          $listFromRdfResourceValues<BlankNode | NamedNode, $IdentifierSchema>(
-            $identifierFromRdfResourceValues,
+          $listFromRdfResourceValues<$Identifier, $Identifier.Schema>(
+            $Identifier.fromRdfResourceValues,
           ),
         ),
       }),
@@ -2863,19 +2885,19 @@ export namespace BaseShape {
         >($iriFromRdfResourceValues<string>),
       }),
       xone: $shaclPropertyFromRdf<
-        Maybe<readonly (BlankNode | NamedNode)[]>,
-        $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
+        Maybe<readonly $Identifier[]>,
+        $MaybeSchema<$CollectionSchema<$Identifier.Schema>>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: BaseShape.schema.properties.xone,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          readonly (BlankNode | NamedNode)[],
-          $CollectionSchema<$IdentifierSchema>
+          readonly $Identifier[],
+          $CollectionSchema<$Identifier.Schema>
         >(
-          $listFromRdfResourceValues<BlankNode | NamedNode, $IdentifierSchema>(
-            $identifierFromRdfResourceValues,
+          $listFromRdfResourceValues<$Identifier, $Identifier.Schema>(
+            $Identifier.fromRdfResourceValues,
           ),
         ),
       }),
@@ -2896,13 +2918,13 @@ export namespace BaseShape {
         defaultNamespace: parameters.$defaultNamespace,
       }),
       $type: Right("BaseShape" as const),
-      and: $convertToMaybe($convertToList($convertToIdentifier))(
+      and: $convertToMaybe($convertToList($Identifier.convert))(
         parameters.and,
         {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction))(
+        $validateMaybe($Array.validate($identityValidationFunction))(
           BaseShape.schema.properties.and.type,
           value,
         ),
@@ -2910,7 +2932,7 @@ export namespace BaseShape {
       classes: $convertToScalarSet($convertToIri)(parameters.classes, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           BaseShape.schema.properties.classes.type,
           value,
         ),
@@ -2959,7 +2981,7 @@ export namespace BaseShape {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           BaseShape.schema.properties.hasValues.type,
           value,
         ),
@@ -2976,12 +2998,12 @@ export namespace BaseShape {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction))(
+        $validateMaybe($Array.validate($identityValidationFunction))(
           BaseShape.schema.properties.in_.type,
           value,
         ),
       ),
-      isDefinedBy: $convertToMaybe($convertToIdentifier)(
+      isDefinedBy: $convertToMaybe($Identifier.convert)(
         parameters.isDefinedBy,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -3006,7 +3028,7 @@ export namespace BaseShape {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction))(
+        $validateMaybe($Array.validate($identityValidationFunction))(
           BaseShape.schema.properties.languageIn.type,
           value,
         ),
@@ -3033,7 +3055,7 @@ export namespace BaseShape {
           value,
         ),
       ),
-      maxLength: $convertToMaybe($convertToBigInt)(parameters.maxLength, {
+      maxLength: $convertToMaybe($BigInt.convert)(parameters.maxLength, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
@@ -3074,7 +3096,7 @@ export namespace BaseShape {
           value,
         ),
       ),
-      minLength: $convertToMaybe($convertToBigInt)(parameters.minLength, {
+      minLength: $convertToMaybe($BigInt.convert)(parameters.minLength, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
@@ -3093,7 +3115,7 @@ export namespace BaseShape {
           value,
         ),
       ),
-      node: $convertToMaybe($convertToIdentifier)(parameters.node, {
+      node: $convertToMaybe($Identifier.convert)(parameters.node, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
@@ -3118,18 +3140,18 @@ export namespace BaseShape {
           value,
         ),
       ),
-      not: $convertToScalarSet($convertToIdentifier)(parameters.not, {
+      not: $convertToScalarSet($Identifier.convert)(parameters.not, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           BaseShape.schema.properties.not.type,
           value,
         ),
       ),
-      or: $convertToMaybe($convertToList($convertToIdentifier))(parameters.or, {
+      or: $convertToMaybe($convertToList($Identifier.convert))(parameters.or, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction))(
+        $validateMaybe($Array.validate($identityValidationFunction))(
           BaseShape.schema.properties.or.type,
           value,
         ),
@@ -3173,7 +3195,7 @@ export namespace BaseShape {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           BaseShape.schema.properties.targetClasses.type,
           value,
         ),
@@ -3184,7 +3206,7 @@ export namespace BaseShape {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           BaseShape.schema.properties.targetNodes.type,
           value,
         ),
@@ -3195,7 +3217,7 @@ export namespace BaseShape {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           BaseShape.schema.properties.targetObjectsOf.type,
           value,
         ),
@@ -3206,7 +3228,7 @@ export namespace BaseShape {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           BaseShape.schema.properties.targetSubjectsOf.type,
           value,
         ),
@@ -3214,18 +3236,18 @@ export namespace BaseShape {
       types: $convertToScalarSet($convertToIri)(parameters.types, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           BaseShape.schema.properties.types.type,
           value,
         ),
       ),
-      xone: $convertToMaybe($convertToList($convertToIdentifier))(
+      xone: $convertToMaybe($convertToList($Identifier.convert))(
         parameters.xone,
         {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction))(
+        $validateMaybe($Array.validate($identityValidationFunction))(
           BaseShape.schema.properties.xone.type,
           value,
         ),
@@ -3250,7 +3272,7 @@ export namespace BaseShape {
           | (keyof $DefaultNamespaceT & string)
           | undefined
         )[]
-      | Maybe<readonly (BlankNode | NamedNode)[]>;
+      | Maybe<readonly $Identifier[]>;
     readonly classes?:
       | (keyof $DefaultNamespaceT & string)
       | NamedNode
@@ -3273,7 +3295,7 @@ export namespace BaseShape {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
+      | Maybe<$Identifier>;
     readonly label?: string | Maybe<string>;
     readonly languageIn?: readonly string[] | Maybe<readonly string[]>;
     readonly maxExclusive?:
@@ -3316,7 +3338,7 @@ export namespace BaseShape {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string)
-      | Maybe<BlankNode | NamedNode>;
+      | Maybe<$Identifier>;
     readonly nodeKind?:
       | (
           | "http://www.w3.org/ns/shacl#BlankNode"
@@ -3361,7 +3383,7 @@ export namespace BaseShape {
           | (keyof $DefaultNamespaceT & string)
           | undefined
         )[]
-      | Maybe<readonly (BlankNode | NamedNode)[]>;
+      | Maybe<readonly $Identifier[]>;
     readonly pattern?: string | Maybe<string>;
     readonly severity?: Severity["value"] | Severity | Maybe<Severity>;
     readonly shaclmateName?: string | Maybe<string>;
@@ -3391,7 +3413,7 @@ export namespace BaseShape {
           | (keyof $DefaultNamespaceT & string)
           | undefined
         )[]
-      | Maybe<readonly (BlankNode | NamedNode)[]>;
+      | Maybe<readonly $Identifier[]>;
   };
 
   export const createUnsafe: <
@@ -3416,9 +3438,9 @@ export namespace BaseShape {
         .chain((resource) => BaseShape.fromRdfResource(resource, options)),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isBaseShape: $ObjectTypeGuardFunction<
@@ -3809,9 +3831,9 @@ export namespace PropertyShape {
         .chain((resource) => PropertyShape.fromRdfResource(resource, options)),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isPropertyShape: $ObjectTypeGuardFunction<
@@ -3866,7 +3888,7 @@ export type NodeShapeSpecificProperties = {
 
   readonly ignoredProperties: Maybe<readonly NamedNode[]>;
 
-  readonly properties: readonly (BlankNode | NamedNode)[];
+  readonly properties: readonly $Identifier[];
 
   readonly rdfType: Maybe<NamedNode>;
 
@@ -3882,19 +3904,18 @@ export namespace NodeShapeSpecificProperties {
     NodeShapeSpecificProperties.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             NodeShapeSpecificProperties.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       closed: $shaclPropertyFromRdf<
         Maybe<boolean>,
-        $MaybeSchema<$BooleanSchema<boolean>>
+        $MaybeSchema<$Boolean.Schema<boolean>>
       >({
         ...options,
         focusResource: resource,
@@ -3902,8 +3923,8 @@ export namespace NodeShapeSpecificProperties {
         propertySchema: NodeShapeSpecificProperties.schema.properties.closed,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           boolean,
-          $BooleanSchema<boolean>
-        >($booleanFromRdfResourceValues<boolean>),
+          $Boolean.Schema<boolean>
+        >($Boolean.fromRdfResourceValues<boolean>),
       }),
       discriminantValue: $shaclPropertyFromRdf<
         Maybe<string>,
@@ -3921,7 +3942,7 @@ export namespace NodeShapeSpecificProperties {
       }),
       extern: $shaclPropertyFromRdf<
         Maybe<boolean>,
-        $MaybeSchema<$BooleanSchema<boolean>>
+        $MaybeSchema<$Boolean.Schema<boolean>>
       >({
         ...options,
         focusResource: resource,
@@ -3929,8 +3950,8 @@ export namespace NodeShapeSpecificProperties {
         propertySchema: NodeShapeSpecificProperties.schema.properties.extern,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           boolean,
-          $BooleanSchema<boolean>
-        >($booleanFromRdfResourceValues<boolean>),
+          $Boolean.Schema<boolean>
+        >($Boolean.fromRdfResourceValues<boolean>),
       }),
       fromRdfType: $shaclPropertyFromRdf<
         Maybe<NamedNode>,
@@ -3965,8 +3986,8 @@ export namespace NodeShapeSpecificProperties {
         ),
       }),
       properties: $shaclPropertyFromRdf<
-        readonly (BlankNode | NamedNode)[],
-        $CollectionSchema<$IdentifierSchema>
+        readonly $Identifier[],
+        $CollectionSchema<$Identifier.Schema>
       >({
         ...options,
         focusResource: resource,
@@ -3974,9 +3995,9 @@ export namespace NodeShapeSpecificProperties {
         propertySchema:
           NodeShapeSpecificProperties.schema.properties.properties,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
-          BlankNode | NamedNode,
-          $IdentifierSchema
-        >($identifierFromRdfResourceValues),
+          $Identifier,
+          $Identifier.Schema
+        >($Identifier.fromRdfResourceValues),
       }),
       rdfType: $shaclPropertyFromRdf<
         Maybe<NamedNode>,
@@ -4094,18 +4115,18 @@ export namespace NodeShapeSpecificProperties {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction))(
+        $validateMaybe($Array.validate($identityValidationFunction))(
           NodeShapeSpecificProperties.schema.properties.ignoredProperties.type,
           value,
         ),
       ),
-      properties: $convertToScalarSet($convertToIdentifier)(
+      properties: $convertToScalarSet($Identifier.convert)(
         parameters.properties,
         {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           NodeShapeSpecificProperties.schema.properties.properties.type,
           value,
         ),
@@ -4121,7 +4142,7 @@ export namespace NodeShapeSpecificProperties {
       subClassOf: $convertToScalarSet($convertToIri)(parameters.subClassOf, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           NodeShapeSpecificProperties.schema.properties.subClassOf.type,
           value,
         ),
@@ -4129,7 +4150,7 @@ export namespace NodeShapeSpecificProperties {
       toRdfTypes: $convertToScalarSet($convertToIri)(parameters.toRdfTypes, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           NodeShapeSpecificProperties.schema.properties.toRdfTypes.type,
           value,
         ),
@@ -4140,7 +4161,7 @@ export namespace NodeShapeSpecificProperties {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           NodeShapeSpecificProperties.schema.properties.tsImports.type,
           value,
         ),
@@ -4221,9 +4242,9 @@ export namespace NodeShapeSpecificProperties {
         ),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isNodeShapeSpecificProperties: $ObjectTypeGuardFunction<
@@ -4402,9 +4423,9 @@ export namespace NodeShape {
         .chain((resource) => NodeShape.fromRdfResource(resource, options)),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isNodeShape: $ObjectTypeGuardFunction<
@@ -4533,9 +4554,9 @@ export namespace Shape {
     return Right(collectedOutputValues);
   };
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isShape: $ObjectTypeGuardFunction<Shape> = (
@@ -4601,15 +4622,14 @@ export namespace Service {
     Service.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: Service.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       $rdfType: !options.ignoreRdfType
         ? $ensureRdfResourceType(
             resource,
@@ -4719,7 +4739,7 @@ export namespace Service {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           Service.schema.properties.operations.type,
           value,
         ),
@@ -4765,9 +4785,9 @@ export namespace Service {
         .chain((resource) => Service.fromRdfResource(resource, options)),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isService: $ObjectTypeGuardFunction<Service.Discriminated> = (
@@ -4856,15 +4876,14 @@ export namespace PropertyGroup {
     PropertyGroup.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: PropertyGroup.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       comment: $shaclPropertyFromRdf<
         Maybe<string>,
         $MaybeSchema<$StringSchema<string>>
@@ -4968,9 +4987,9 @@ export namespace PropertyGroup {
         .chain((resource) => PropertyGroup.fromRdfResource(resource, options)),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isPropertyGroup: $ObjectTypeGuardFunction<
@@ -5029,17 +5048,16 @@ export namespace OperationOutputSpecificProperties {
     OperationOutputSpecificProperties.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             OperationOutputSpecificProperties.schema.properties.$identifier
               .type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       httpBinding: $shaclPropertyFromRdf<
         Maybe<OperationOutputHttpBinding>,
         $MaybeSchema<OperationOutputHttpBinding.Schema>
@@ -5138,9 +5156,9 @@ export namespace OperationOutputSpecificProperties {
         ),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isOperationOutputSpecificProperties: $ObjectTypeGuardFunction<
@@ -5212,15 +5230,14 @@ export namespace OperationOutputHttpBinding {
     OperationOutputHttpBinding.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: OperationOutputHttpBinding.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       contentType: $shaclPropertyFromRdf<
         Maybe<OperationOutputHttpBindingContentType>,
         $MaybeSchema<$StringSchema<OperationOutputHttpBindingContentType>>
@@ -5313,9 +5330,9 @@ export namespace OperationOutputHttpBinding {
         ),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isOperationOutputHttpBinding: $ObjectTypeGuardFunction<
@@ -5428,9 +5445,9 @@ export namespace OperationOutput {
         ),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isOperationOutput: $ObjectTypeGuardFunction<
@@ -5463,16 +5480,15 @@ export namespace OperationInputSpecificProperties {
     OperationInputSpecificProperties.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             OperationInputSpecificProperties.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       httpBinding: $shaclPropertyFromRdf<
         Maybe<OperationInputHttpBinding>,
         $MaybeSchema<OperationInputHttpBinding.Schema>
@@ -5571,9 +5587,9 @@ export namespace OperationInputSpecificProperties {
         ),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isOperationInputSpecificProperties: $ObjectTypeGuardFunction<
@@ -5645,15 +5661,14 @@ export namespace OperationInputHttpBinding {
     OperationInputHttpBinding.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: OperationInputHttpBinding.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       contentType: $shaclPropertyFromRdf<
         Maybe<OperationInputHttpBindingContentType>,
         $MaybeSchema<$StringSchema<OperationInputHttpBindingContentType>>
@@ -5745,9 +5760,9 @@ export namespace OperationInputHttpBinding {
         ),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isOperationInputHttpBinding: $ObjectTypeGuardFunction<
@@ -5858,9 +5873,9 @@ export namespace OperationInput {
         .chain((resource) => OperationInput.fromRdfResource(resource, options)),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isOperationInput: $ObjectTypeGuardFunction<
@@ -5879,32 +5894,6 @@ export namespace OperationInput {
   export type Schema = typeof schema;
 }
 
-export type OperationHttpBindingStatusCode =
-  OperationHttpBindingStatusCode.Schema["in"][number];
-
-export namespace OperationHttpBindingStatusCode {
-  export const schema = {
-    datatype: $xsd_int,
-    in: [200, 201, 202, 203, 204, 205, 206, 207, 208, 226] as const,
-    kind: "Int",
-  } as const;
-
-  export type Schema = typeof schema;
-}
-
-export type OperationHttpBindingMethod =
-  OperationHttpBindingMethod.Schema["in"][number];
-
-export namespace OperationHttpBindingMethod {
-  export const schema = {
-    datatype: $xsd_string,
-    in: ["DELETE", "GET", "POST", "PUT"] as const,
-    kind: "String",
-  } as const;
-
-  export type Schema = typeof schema;
-}
-
 /**
  * HTTP binding for an operation.
  */
@@ -5914,12 +5903,12 @@ export type OperationHttpBinding = {
   /**
    * HTTP request body method. If this is not specified, it's inferred from the existence of path, query, and/or body parameters.
    */
-  readonly method: Maybe<OperationHttpBindingMethod>;
+  readonly method: Maybe<HttpMethod>;
 
   /**
    * HTTP result response status code. If not specified, it defaults to 200 if there is a result, 204 if not.
    */
-  readonly statusCode: Maybe<OperationHttpBindingStatusCode>;
+  readonly statusCode: Maybe<HttpSuccessStatusCode>;
 
   /**
    * RFC 6570 URI template for the HTTP request. Variables in the template must correspond to properties of the parameter. Any other properties of the parameter are serialized into the HTTP requets body following the given/inferred content type.
@@ -5932,40 +5921,39 @@ export namespace OperationHttpBinding {
     OperationHttpBinding.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: OperationHttpBinding.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       method: $shaclPropertyFromRdf<
-        Maybe<OperationHttpBindingMethod>,
-        $MaybeSchema<$StringSchema<OperationHttpBindingMethod>>
+        Maybe<HttpMethod>,
+        $MaybeSchema<$StringSchema<HttpMethod>>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: OperationHttpBinding.schema.properties.method,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          OperationHttpBindingMethod,
-          $StringSchema<OperationHttpBindingMethod>
-        >($stringFromRdfResourceValues<OperationHttpBindingMethod>),
+          HttpMethod,
+          $StringSchema<HttpMethod>
+        >($stringFromRdfResourceValues<HttpMethod>),
       }),
       statusCode: $shaclPropertyFromRdf<
-        Maybe<OperationHttpBindingStatusCode>,
-        $MaybeSchema<$NumericSchema<OperationHttpBindingStatusCode>>
+        Maybe<HttpSuccessStatusCode>,
+        $MaybeSchema<$NumericSchema<HttpSuccessStatusCode>>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: OperationHttpBinding.schema.properties.statusCode,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          OperationHttpBindingStatusCode,
-          $NumericSchema<OperationHttpBindingStatusCode>
-        >($intFromRdfResourceValues<OperationHttpBindingStatusCode>),
+          HttpSuccessStatusCode,
+          $NumericSchema<HttpSuccessStatusCode>
+        >($intFromRdfResourceValues<HttpSuccessStatusCode>),
       }),
       urlTemplate: $shaclPropertyFromRdf<string, $StringSchema<string>>({
         ...options,
@@ -6024,12 +6012,8 @@ export namespace OperationHttpBinding {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly method?:
-      | OperationHttpBindingMethod
-      | Maybe<OperationHttpBindingMethod>;
-    readonly statusCode?:
-      | OperationHttpBindingStatusCode
-      | Maybe<OperationHttpBindingStatusCode>;
+    readonly method?: HttpMethod | Maybe<HttpMethod>;
+    readonly statusCode?: HttpSuccessStatusCode | Maybe<HttpSuccessStatusCode>;
     readonly urlTemplate: string;
   };
 
@@ -6059,9 +6043,9 @@ export namespace OperationHttpBinding {
         ),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isOperationHttpBinding: $ObjectTypeGuardFunction<
@@ -6082,7 +6066,7 @@ export namespace OperationHttpBinding {
         get type() {
           return {
             get itemType() {
-              return OperationHttpBindingMethod.schema;
+              return HttpMethod.schema;
             },
             kind: "Option",
           } as const;
@@ -6096,7 +6080,7 @@ export namespace OperationHttpBinding {
         get type() {
           return {
             get itemType() {
-              return OperationHttpBindingStatusCode.schema;
+              return HttpSuccessStatusCode.schema;
             },
             kind: "Option",
           } as const;
@@ -6134,16 +6118,15 @@ export namespace OperationErrorSpecificProperties {
     OperationErrorSpecificProperties.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema:
             OperationErrorSpecificProperties.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       httpBinding: $shaclPropertyFromRdf<
         Maybe<OperationErrorHttpBinding>,
         $MaybeSchema<OperationErrorHttpBinding.Schema>
@@ -6242,9 +6225,9 @@ export namespace OperationErrorSpecificProperties {
         ),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isOperationErrorSpecificProperties: $ObjectTypeGuardFunction<
@@ -6286,23 +6269,6 @@ export namespace OperationErrorSpecificProperties {
     });
 }
 
-export type OperationErrorHttpBindingStatusCode =
-  OperationErrorHttpBindingStatusCode.Schema["in"][number];
-
-export namespace OperationErrorHttpBindingStatusCode {
-  export const schema = {
-    datatype: $xsd_int,
-    in: [
-      400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414,
-      415, 416, 417, 418, 421, 422, 423, 424, 425, 426, 428, 429, 431, 451, 500,
-      501, 502, 503, 504, 505, 506, 507, 508, 510, 511,
-    ] as const,
-    kind: "Int",
-  } as const;
-
-  export type Schema = typeof schema;
-}
-
 /**
  * HTTP binding for an operation error.
  */
@@ -6312,7 +6278,7 @@ export type OperationErrorHttpBinding = {
   /**
    * HTTP client/server error code for the bound error.
    */
-  readonly statusCode: OperationErrorHttpBindingStatusCode;
+  readonly statusCode: HttpErrorStatusCode;
 };
 
 export namespace OperationErrorHttpBinding {
@@ -6320,25 +6286,24 @@ export namespace OperationErrorHttpBinding {
     OperationErrorHttpBinding.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: OperationErrorHttpBinding.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       statusCode: $shaclPropertyFromRdf<
-        OperationErrorHttpBindingStatusCode,
-        $NumericSchema<OperationErrorHttpBindingStatusCode>
+        HttpErrorStatusCode,
+        $NumericSchema<HttpErrorStatusCode>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: OperationErrorHttpBinding.schema.properties.statusCode,
         typeFromRdfResourceValues:
-          $intFromRdfResourceValues<OperationErrorHttpBindingStatusCode>,
+          $intFromRdfResourceValues<HttpErrorStatusCode>,
       }),
     }).chain((properties) => OperationErrorHttpBinding.create(properties));
 
@@ -6375,7 +6340,7 @@ export namespace OperationErrorHttpBinding {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly statusCode: OperationErrorHttpBindingStatusCode;
+    readonly statusCode: HttpErrorStatusCode;
   };
 
   export const createUnsafe: <
@@ -6404,9 +6369,9 @@ export namespace OperationErrorHttpBinding {
         ),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isOperationErrorHttpBinding: $ObjectTypeGuardFunction<
@@ -6427,7 +6392,7 @@ export namespace OperationErrorHttpBinding {
           "http://purl.org/shaclmate/ontology#httpStatusCode",
         ),
         get type() {
-          return OperationErrorHttpBindingStatusCode.schema;
+          return HttpErrorStatusCode.schema;
         },
       } as const,
     },
@@ -6514,9 +6479,9 @@ export namespace OperationError {
         .chain((resource) => OperationError.fromRdfResource(resource, options)),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isOperationError: $ObjectTypeGuardFunction<
@@ -6576,15 +6541,14 @@ export namespace Operation {
     Operation.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: Operation.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       comment: $shaclPropertyFromRdf<
         Maybe<string>,
         $MaybeSchema<$StringSchema<string>>
@@ -6710,7 +6674,7 @@ export namespace Operation {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           Operation.schema.properties.errors.type,
           value,
         ),
@@ -6802,9 +6766,9 @@ export namespace Operation {
         .chain((resource) => Operation.fromRdfResource(resource, options)),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isOperation: $ObjectTypeGuardFunction<
@@ -6923,15 +6887,14 @@ export namespace Ontology {
     Ontology.Discriminated
   > = (resource, options) =>
     $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+      $identifier: $Identifier
+        .fromRdfResourceValues($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
           propertyPath: $rdf_subject,
           schema: Ontology.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
+        })
+        .chain((values) => values.head()),
       comment: $shaclPropertyFromRdf<
         Maybe<string>,
         $MaybeSchema<$StringSchema<string>>
@@ -7032,9 +6995,9 @@ export namespace Ontology {
         .chain((resource) => Ontology.fromRdfResource(resource, options)),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = $Identifier;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
+    export const parse = $Identifier.parse;
   }
 
   export const isOntology: $ObjectTypeGuardFunction<Ontology.Discriminated> = (
@@ -7076,6 +7039,46 @@ export namespace Ontology {
       $identifier: _ontology.$identifier().toString(),
       label: _ontology.label.map((item) => item.toString()).extract(),
     });
+}
+
+export type HttpSuccessStatusCode = HttpSuccessStatusCode.Schema["in"][number];
+
+export namespace HttpSuccessStatusCode {
+  export const schema = {
+    datatype: $xsd_int,
+    in: [200, 201, 202, 203, 204, 205, 206, 207, 208, 226] as const,
+    kind: "Int",
+  } as const;
+
+  export type Schema = typeof schema;
+}
+
+export type HttpMethod = HttpMethod.Schema["in"][number];
+
+export namespace HttpMethod {
+  export const schema = {
+    datatype: $xsd_string,
+    in: ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"] as const,
+    kind: "String",
+  } as const;
+
+  export type Schema = typeof schema;
+}
+
+export type HttpErrorStatusCode = HttpErrorStatusCode.Schema["in"][number];
+
+export namespace HttpErrorStatusCode {
+  export const schema = {
+    datatype: $xsd_int,
+    in: [
+      400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414,
+      415, 416, 417, 418, 421, 422, 423, 424, 425, 426, 428, 429, 431, 451, 500,
+      501, 502, 503, 504, 505, 506, 507, 508, 510, 511,
+    ] as const,
+    kind: "Int",
+  } as const;
+
+  export type Schema = typeof schema;
 }
 
 export type $Object =

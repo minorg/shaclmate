@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "4.0.114",
+    "@shaclmate/shacl-ast": "4.0.115",
     "@rdfjs/types": "~2.0.1",
     "@rdfx/collection": "0.0.67",
     "@rdfx/data-factory": "0.0.67",
@@ -30,7 +30,9 @@
   "files": [
     "dist/**/*.d.ts",
     "dist/**/*.js",
-    "dist/input/input.shaclmate.ttl"
+    "dist/input/http-input.shaclmate.ttl",
+    "dist/input/service-input.shaclmate.ttl",
+    "dist/input/shape-input.shaclmate.ttl"
   ],
   "license": "Apache-2.0",
   "main": "./dist/index.js",
@@ -41,7 +43,7 @@
     "url": "git+https://github.com/minorg/shaclmate.git"
   },
   "scripts": {
-    "build": "tsc -b && cp src/input/input.shaclmate.ttl dist/input/input.shaclmate.ttl",
+    "build": "tsc -b && cp src/input/http-input.shaclmate.ttl dist/input/http-input.shaclmate.ttl && cp src/input/service-input.shaclmate.ttl dist/input/service-input.shaclmate.ttl && cp src/input/shape-input.shaclmate.ttl dist/input/shape-input.shaclmate.ttl",
     "clean": "rimraf dist",
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
@@ -52,5 +54,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.114"
+  "version": "4.0.115"
 }
