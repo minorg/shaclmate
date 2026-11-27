@@ -10,7 +10,7 @@ export const snippets_BlankNode_fromJsonObject: SnippetFactory = ({
     `${syntheticNamePrefix}BlankNode.fromJsonObject`,
     code`\
 namespace ${syntheticNamePrefix}BlankNode {
-  export const fromJsonObject: ${snippets.FromJsonFunction}<${snippets.IdentifierJsonObject}, ${imports.BlankNode}, undefined> = 
+  export const fromJsonObject: ${snippets.FromJsonFunction}<${snippets.Identifier_JsonObject}, ${imports.BlankNode}, undefined> = 
     (jsonObject) => ${snippets.BlankNode_fromJsonString}(jsonObject["@id"]);
 }`,
   );

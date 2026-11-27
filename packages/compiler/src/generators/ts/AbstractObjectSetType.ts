@@ -49,7 +49,7 @@ export abstract class AbstractObjectSetType {
     return {
       ObjectT: code`ObjectT extends { readonly $identifier: () => ObjectIdentifierT; ${this.configuration.objectDiscriminantProperty.name}: string; }`,
       ObjectFilterT: code`ObjectFilterT`,
-      ObjectIdentifierT: code`ObjectIdentifierT extends ${this.reusables.imports.BlankNode} | ${this.reusables.imports.NamedNode}`,
+      ObjectIdentifierT: code`ObjectIdentifierT extends ${this.reusables.snippets.Identifier}`,
     };
   }
 

@@ -42,8 +42,8 @@ export abstract class AbstractIdentifierType<
       },
       {
         snippets: {
-          expression: code`${this.reusables.snippets.IdentifierJsonObject}`,
-          schema: code`${this.reusables.snippets.IdentifierJsonObject}.schema`,
+          expression: code`${this.reusables.snippets.Identifier_JsonObject}`,
+          schema: code`${this.reusables.snippets.Identifier_JsonObject}.schema`,
         },
       },
     );

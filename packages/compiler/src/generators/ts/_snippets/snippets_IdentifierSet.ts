@@ -2,7 +2,7 @@ import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_IdentifierSet: SnippetFactory = ({
-  imports,
+  snippets,
   syntheticNamePrefix,
 }) =>
   conditionalOutput(
@@ -12,7 +12,7 @@ class ${syntheticNamePrefix}IdentifierSet {
   private readonly blankNodeValues = new Set<string>();
   private readonly namedNodeValues = new Set<string>();
 
-  add(identifier: ${imports.BlankNode} | ${imports.NamedNode}): this {
+  add(identifier: ${snippets.Identifier}): this {
     switch (identifier.termType) {
       case "BlankNode":
         this.blankNodeValues.add(identifier.value);
@@ -23,7 +23,7 @@ class ${syntheticNamePrefix}IdentifierSet {
     }
   }
 
-  has(identifier: ${imports.BlankNode} | ${imports.NamedNode}): boolean {
+  has(identifier: ${snippets.Identifier}): boolean {
     switch (identifier.termType) {
       case "BlankNode":
         return this.blankNodeValues.has(identifier.value);

@@ -23,7 +23,7 @@ export interface ${syntheticNamePrefix}ObjectSet {
 }
 
 export namespace ${syntheticNamePrefix}ObjectSet {
-  export interface Query<ObjectFilterT, ObjectIdentifierT extends ${this.reusables.imports.BlankNode} | ${this.reusables.imports.NamedNode}> {
+  export interface Query<ObjectFilterT, ObjectIdentifierT extends ${this.reusables.snippets.Identifier}> {
     readonly filter?: ObjectFilterT;
     readonly graph?: Exclude<${this.reusables.imports.Quad_Graph}, ${this.reusables.imports.Variable}>;
     readonly identifiers?: readonly ObjectIdentifierT[];

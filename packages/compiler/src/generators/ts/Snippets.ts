@@ -65,10 +65,20 @@ import { snippets_FromRdfResourceFunction } from "./_snippets/snippets_FromRdfRe
 import { snippets_FromRdfResourceValuesFunction } from "./_snippets/snippets_FromRdfResourceValuesFunction.js";
 import { snippets_HashFunction } from "./_snippets/snippets_HashFunction.js";
 import { snippets_Hasher } from "./_snippets/snippets_Hasher.js";
-import { snippets_IdentifierFilter } from "./_snippets/snippets_IdentifierFilter.js";
-import { snippets_IdentifierJsonObject } from "./_snippets/snippets_IdentifierJsonObject.js";
-import { snippets_IdentifierSchema } from "./_snippets/snippets_IdentifierSchema.js";
+import { snippets_Identifier } from "./_snippets/snippets_Identifier.js";
 import { snippets_IdentifierSet } from "./_snippets/snippets_IdentifierSet.js";
+import { snippets_Identifier_Filter } from "./_snippets/snippets_Identifier_Filter.js";
+import { snippets_Identifier_JsonObject } from "./_snippets/snippets_Identifier_JsonObject.js";
+import { snippets_Identifier_Schema } from "./_snippets/snippets_Identifier_Schema.js";
+import { snippets_Identifier_convert } from "./_snippets/snippets_Identifier_convert.js";
+import { snippets_Identifier_filter_ } from "./_snippets/snippets_Identifier_filter_.js";
+import { snippets_Identifier_fromJsonObject } from "./_snippets/snippets_Identifier_fromJsonObject.js";
+import { snippets_Identifier_fromJsonString } from "./_snippets/snippets_Identifier_fromJsonString.js";
+import { snippets_Identifier_fromRdfResourceValues } from "./_snippets/snippets_Identifier_fromRdfResourceValues.js";
+import { snippets_Identifier_parse } from "./_snippets/snippets_Identifier_parse.js";
+import { snippets_Identifier_sparqlWherePatterns } from "./_snippets/snippets_Identifier_sparqlWherePatterns.js";
+import { snippets_Identifier_toJsonObject } from "./_snippets/snippets_Identifier_toJsonObject.js";
+import { snippets_Identifier_toJsonString } from "./_snippets/snippets_Identifier_toJsonString.js";
 import { snippets_IriFilter } from "./_snippets/snippets_IriFilter.js";
 import { snippets_IriSchema } from "./_snippets/snippets_IriSchema.js";
 import { snippets_LangStringJsonObject } from "./_snippets/snippets_LangStringJsonObject.js";
@@ -118,7 +128,6 @@ import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
 import { snippets_constrainPrimitive } from "./_snippets/snippets_constrainPrimitive.js";
 import { snippets_convertToArraySet } from "./_snippets/snippets_convertToArraySet.js";
 import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty.js";
-import { snippets_convertToIdentifier } from "./_snippets/snippets_convertToIdentifier.js";
 import { snippets_convertToIdentifierProperty } from "./_snippets/snippets_convertToIdentifierProperty.js";
 import { snippets_convertToIri } from "./_snippets/snippets_convertToIri.js";
 import { snippets_convertToIriIdentifierProperty } from "./_snippets/snippets_convertToIriIdentifierProperty.js";
@@ -156,7 +165,6 @@ import { snippets_defaultValueSparqlWherePatterns } from "./_snippets/snippets_d
 import { snippets_ensureRdfResourceType } from "./_snippets/snippets_ensureRdfResourceType.js";
 import { snippets_errorToProblemDetailsJson } from "./_snippets/snippets_errorToProblemDetailsJson.js";
 import { snippets_filterDate } from "./_snippets/snippets_filterDate.js";
-import { snippets_filterIdentifier } from "./_snippets/snippets_filterIdentifier.js";
 import { snippets_filterIri } from "./_snippets/snippets_filterIri.js";
 import { snippets_filterLiteral } from "./_snippets/snippets_filterLiteral.js";
 import { snippets_filterMaybe } from "./_snippets/snippets_filterMaybe.js";
@@ -172,12 +180,6 @@ import { snippets_hashMaybe } from "./_snippets/snippets_hashMaybe.js";
 import { snippets_hashNumeric } from "./_snippets/snippets_hashNumeric.js";
 import { snippets_hashString } from "./_snippets/snippets_hashString.js";
 import { snippets_hashTerm } from "./_snippets/snippets_hashTerm.js";
-import { snippets_identifierFromJsonObject } from "./_snippets/snippets_identifierFromJsonObject.js";
-import { snippets_identifierFromJsonString } from "./_snippets/snippets_identifierFromJsonString.js";
-import { snippets_identifierFromRdfResourceValues } from "./_snippets/snippets_identifierFromRdfResourceValues.js";
-import { snippets_identifierSparqlWherePatterns } from "./_snippets/snippets_identifierSparqlWherePatterns.js";
-import { snippets_identifierToJsonObject } from "./_snippets/snippets_identifierToJsonObject.js";
-import { snippets_identifierToJsonString } from "./_snippets/snippets_identifierToJsonString.js";
 import { snippets_identityConversionFunction } from "./_snippets/snippets_identityConversionFunction.js";
 import { snippets_identityValidationFunction } from "./_snippets/snippets_identityValidationFunction.js";
 import { snippets_intFromJsonNumber } from "./_snippets/snippets_intFromJsonNumber.js";
@@ -222,7 +224,6 @@ import { snippets_mutableListFromRdfResourceValues } from "./_snippets/snippets_
 import { snippets_mutableSetFromRdfResourceValues } from "./_snippets/snippets_mutableSetFromRdfResourceValues.js";
 import { snippets_normalizeSparqlWherePatterns } from "./_snippets/snippets_normalizeSparqlWherePatterns.js";
 import { snippets_numericSparqlWherePatterns } from "./_snippets/snippets_numericSparqlWherePatterns.js";
-import { snippets_parseIdentifier } from "./_snippets/snippets_parseIdentifier.js";
 import { snippets_parseIri } from "./_snippets/snippets_parseIri.js";
 import { snippets_primitiveToJsonObject } from "./_snippets/snippets_primitiveToJsonObject.js";
 import { snippets_primitiveToJsonValue } from "./_snippets/snippets_primitiveToJsonValue.js";
@@ -590,23 +591,73 @@ export class Snippets {
   }
 
   @Memoize()
-  get IdentifierFilter(): Snippet {
-    return this.snippet(snippets_IdentifierFilter);
-  }
-
-  @Memoize()
-  get IdentifierJsonObject(): Snippet {
-    return this.snippet(snippets_IdentifierJsonObject);
-  }
-
-  @Memoize()
-  get IdentifierSchema(): Snippet {
-    return this.snippet(snippets_IdentifierSchema);
+  get Identifier(): Snippet {
+    return this.snippet(snippets_Identifier);
   }
 
   @Memoize()
   get IdentifierSet(): Snippet {
     return this.snippet(snippets_IdentifierSet);
+  }
+
+  @Memoize()
+  get Identifier_Filter(): Snippet {
+    return this.snippet(snippets_Identifier_Filter);
+  }
+
+  @Memoize()
+  get Identifier_JsonObject(): Snippet {
+    return this.snippet(snippets_Identifier_JsonObject);
+  }
+
+  @Memoize()
+  get Identifier_Schema(): Snippet {
+    return this.snippet(snippets_Identifier_Schema);
+  }
+
+  @Memoize()
+  get Identifier_convert(): Snippet {
+    return this.snippet(snippets_Identifier_convert);
+  }
+
+  @Memoize()
+  get Identifier_filter_(): Snippet {
+    return this.snippet(snippets_Identifier_filter_);
+  }
+
+  @Memoize()
+  get Identifier_fromJsonObject(): Snippet {
+    return this.snippet(snippets_Identifier_fromJsonObject);
+  }
+
+  @Memoize()
+  get Identifier_fromJsonString(): Snippet {
+    return this.snippet(snippets_Identifier_fromJsonString);
+  }
+
+  @Memoize()
+  get Identifier_fromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_Identifier_fromRdfResourceValues);
+  }
+
+  @Memoize()
+  get Identifier_parse(): Snippet {
+    return this.snippet(snippets_Identifier_parse);
+  }
+
+  @Memoize()
+  get Identifier_sparqlWherePatterns(): Snippet {
+    return this.snippet(snippets_Identifier_sparqlWherePatterns);
+  }
+
+  @Memoize()
+  get Identifier_toJsonObject(): Snippet {
+    return this.snippet(snippets_Identifier_toJsonObject);
+  }
+
+  @Memoize()
+  get Identifier_toJsonString(): Snippet {
+    return this.snippet(snippets_Identifier_toJsonString);
   }
 
   @Memoize()
@@ -855,11 +906,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get convertToIdentifier(): Snippet {
-    return this.snippet(snippets_convertToIdentifier);
-  }
-
-  @Memoize()
   get convertToIdentifierProperty(): Snippet {
     return this.snippet(snippets_convertToIdentifierProperty);
   }
@@ -1045,11 +1091,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get filterIdentifier(): Snippet {
-    return this.snippet(snippets_filterIdentifier);
-  }
-
-  @Memoize()
   get filterIri(): Snippet {
     return this.snippet(snippets_filterIri);
   }
@@ -1122,36 +1163,6 @@ export class Snippets {
   @Memoize()
   get hashTerm(): Snippet {
     return this.snippet(snippets_hashTerm);
-  }
-
-  @Memoize()
-  get identifierFromJsonObject(): Snippet {
-    return this.snippet(snippets_identifierFromJsonObject);
-  }
-
-  @Memoize()
-  get identifierFromJsonString(): Snippet {
-    return this.snippet(snippets_identifierFromJsonString);
-  }
-
-  @Memoize()
-  get identifierFromRdfResourceValues(): Snippet {
-    return this.snippet(snippets_identifierFromRdfResourceValues);
-  }
-
-  @Memoize()
-  get identifierSparqlWherePatterns(): Snippet {
-    return this.snippet(snippets_identifierSparqlWherePatterns);
-  }
-
-  @Memoize()
-  get identifierToJsonObject(): Snippet {
-    return this.snippet(snippets_identifierToJsonObject);
-  }
-
-  @Memoize()
-  get identifierToJsonString(): Snippet {
-    return this.snippet(snippets_identifierToJsonString);
   }
 
   @Memoize()
@@ -1372,11 +1383,6 @@ export class Snippets {
   @Memoize()
   get numericSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_numericSparqlWherePatterns);
-  }
-
-  @Memoize()
-  get parseIdentifier(): Snippet {
-    return this.snippet(snippets_parseIdentifier);
   }
 
   @Memoize()

@@ -12,7 +12,7 @@ export const snippets_BlankNode_parse: SnippetFactory = ({
 namespace ${syntheticNamePrefix}BlankNode {    
   export function parse(identifier: string): ${imports.Either}<Error, ${imports.BlankNode}> {
     return \
-      ${snippets.parseIdentifier}(identifier)\
+      ${snippets.Identifier_parse}(identifier)\
         .chain((identifier) => (identifier.termType === "BlankNode") ? ${imports.Right}(identifier) : ${imports.Left}(new Error("expected identifier to be BlankNode"))) \
       as ${imports.Either}<Error, ${imports.BlankNode}>;
   }
