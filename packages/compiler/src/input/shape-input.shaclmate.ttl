@@ -1,0 +1,115 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+shaclmate:BaseShape
+    sh:property shaclmate:Shape-ignore, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
+
+shaclmate:NodeShape-discriminantValue
+    a sh:PropertyShape ;
+    rdfs:comment """The type discriminant value to use when a type in a discriminated union needs to be wrapped in a discriminant envelope.
+
+Example:
+
+    sh:xone ([
+            shaclmate:discriminantValue \"date\" ;
+            sh:datatype xsd:date
+        ]
+        [
+            shaclmate:discriminantValue \"dateTime\" ;
+            sh:datatype xsd:dateTime
+        ]
+    )
+
+Because xsd:date and xsd:dateTime are both Date in JavaScript, the generated discriminated union needs to be wrapped in an envelope like:
+
+{ $type: 'type1'; value: Date } | { $type: 'type2'; value: Date }
+
+in order to discriminate values at runtime. With shaclmate:discriminantValue from the example above, the generated type would be:
+
+{ $type: 'date'; value: Date } | { $type: 'dateTime'; value: Date }
+""" ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:path shaclmate:discriminantValue .
+
+shaclmate:NodeShape-extern
+    a sh:PropertyShape ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:path shaclmate:extern .
+
+shaclmate:NodeShape-fromRdfType
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:nodeKind sh:IRI ;
+    sh:path shaclmate:fromRdfType .
+
+shaclmate:NodeShape-rdfType
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:nodeKind sh:IRI ;
+    sh:path shaclmate:rdfType .
+
+shaclmate:NodeShape-toRdfType
+    a sh:PropertyShape ;
+    sh:name "toRdfTypes" ;
+    sh:nodeKind sh:IRI ;
+    sh:path shaclmate:toRdfType .
+
+shaclmate:NodeShape-tsImport
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:name "tsImports" ;
+    sh:path shaclmate:tsImport .
+
+shaclmate:NodeShapeSpecificProperties
+    a sh:NodeShape ;
+    sh:property shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfType, shaclmate:NodeShape-tsImport .
+
+shaclmate:PropertyShape-display
+    a sh:PropertyShape ;
+    rdfs:comment "Whether to include this property in a toString()-type display, defaults to false" ;
+    sh:datatype xsd:boolean ;
+    sh:defaultValue false ;
+    sh:maxCount 1 ;
+    sh:path shaclmate:display .
+
+shaclmate:PropertyShape-resolve
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "resolve" ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:path shaclmate:resolve .
+
+shaclmate:PropertyShapeSpecificProperties
+    sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve .
+
+shaclmate:Shape-ignore
+    a sh:PropertyShape ;
+    rdfs:comment "Whether to ignore this shape in code generation, defaults to false" ;
+    sh:datatype xsd:boolean ;
+    sh:defaultValue false ;
+    sh:maxCount 1 ;
+    sh:path shaclmate:ignore .
+
+shaclmate:Shape-mutable
+    a sh:PropertyShape ;
+    rdfs:comment "Whether the code generated from the shape should be mutable e.g., a mutable property, a mutable array, etc." ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:path shaclmate:mutable .
+
+shaclmate:Shape-shaclmateName
+    shaclmate:display true ;
+    a sh:PropertyShape ;
+    rdfs:comment "Name to use in generated code. Used on node shapes (which don't permit sh:name) and to override sh:name in property shapes." ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "shaclmateName" ;
+    sh:path shaclmate:name .
+

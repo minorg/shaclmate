@@ -5894,32 +5894,6 @@ export namespace OperationInput {
   export type Schema = typeof schema;
 }
 
-export type OperationHttpBindingStatusCode =
-  OperationHttpBindingStatusCode.Schema["in"][number];
-
-export namespace OperationHttpBindingStatusCode {
-  export const schema = {
-    datatype: $xsd_int,
-    in: [200, 201, 202, 203, 204, 205, 206, 207, 208, 226] as const,
-    kind: "Int",
-  } as const;
-
-  export type Schema = typeof schema;
-}
-
-export type OperationHttpBindingMethod =
-  OperationHttpBindingMethod.Schema["in"][number];
-
-export namespace OperationHttpBindingMethod {
-  export const schema = {
-    datatype: $xsd_string,
-    in: ["DELETE", "GET", "POST", "PUT"] as const,
-    kind: "String",
-  } as const;
-
-  export type Schema = typeof schema;
-}
-
 /**
  * HTTP binding for an operation.
  */
@@ -5929,12 +5903,12 @@ export type OperationHttpBinding = {
   /**
    * HTTP request body method. If this is not specified, it's inferred from the existence of path, query, and/or body parameters.
    */
-  readonly method: Maybe<OperationHttpBindingMethod>;
+  readonly method: Maybe<HttpMethod>;
 
   /**
    * HTTP result response status code. If not specified, it defaults to 200 if there is a result, 204 if not.
    */
-  readonly statusCode: Maybe<OperationHttpBindingStatusCode>;
+  readonly statusCode: Maybe<HttpSuccessStatusCode>;
 
   /**
    * RFC 6570 URI template for the HTTP request. Variables in the template must correspond to properties of the parameter. Any other properties of the parameter are serialized into the HTTP requets body following the given/inferred content type.
@@ -5956,30 +5930,30 @@ export namespace OperationHttpBinding {
         })
         .chain((values) => values.head()),
       method: $shaclPropertyFromRdf<
-        Maybe<OperationHttpBindingMethod>,
-        $MaybeSchema<$StringSchema<OperationHttpBindingMethod>>
+        Maybe<HttpMethod>,
+        $MaybeSchema<$StringSchema<HttpMethod>>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: OperationHttpBinding.schema.properties.method,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          OperationHttpBindingMethod,
-          $StringSchema<OperationHttpBindingMethod>
-        >($stringFromRdfResourceValues<OperationHttpBindingMethod>),
+          HttpMethod,
+          $StringSchema<HttpMethod>
+        >($stringFromRdfResourceValues<HttpMethod>),
       }),
       statusCode: $shaclPropertyFromRdf<
-        Maybe<OperationHttpBindingStatusCode>,
-        $MaybeSchema<$NumericSchema<OperationHttpBindingStatusCode>>
+        Maybe<HttpSuccessStatusCode>,
+        $MaybeSchema<$NumericSchema<HttpSuccessStatusCode>>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: OperationHttpBinding.schema.properties.statusCode,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          OperationHttpBindingStatusCode,
-          $NumericSchema<OperationHttpBindingStatusCode>
-        >($intFromRdfResourceValues<OperationHttpBindingStatusCode>),
+          HttpSuccessStatusCode,
+          $NumericSchema<HttpSuccessStatusCode>
+        >($intFromRdfResourceValues<HttpSuccessStatusCode>),
       }),
       urlTemplate: $shaclPropertyFromRdf<string, $StringSchema<string>>({
         ...options,
@@ -6038,12 +6012,8 @@ export namespace OperationHttpBinding {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly method?:
-      | OperationHttpBindingMethod
-      | Maybe<OperationHttpBindingMethod>;
-    readonly statusCode?:
-      | OperationHttpBindingStatusCode
-      | Maybe<OperationHttpBindingStatusCode>;
+    readonly method?: HttpMethod | Maybe<HttpMethod>;
+    readonly statusCode?: HttpSuccessStatusCode | Maybe<HttpSuccessStatusCode>;
     readonly urlTemplate: string;
   };
 
@@ -6096,7 +6066,7 @@ export namespace OperationHttpBinding {
         get type() {
           return {
             get itemType() {
-              return OperationHttpBindingMethod.schema;
+              return HttpMethod.schema;
             },
             kind: "Option",
           } as const;
@@ -6110,7 +6080,7 @@ export namespace OperationHttpBinding {
         get type() {
           return {
             get itemType() {
-              return OperationHttpBindingStatusCode.schema;
+              return HttpSuccessStatusCode.schema;
             },
             kind: "Option",
           } as const;
@@ -6299,23 +6269,6 @@ export namespace OperationErrorSpecificProperties {
     });
 }
 
-export type OperationErrorHttpBindingStatusCode =
-  OperationErrorHttpBindingStatusCode.Schema["in"][number];
-
-export namespace OperationErrorHttpBindingStatusCode {
-  export const schema = {
-    datatype: $xsd_int,
-    in: [
-      400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414,
-      415, 416, 417, 418, 421, 422, 423, 424, 425, 426, 428, 429, 431, 451, 500,
-      501, 502, 503, 504, 505, 506, 507, 508, 510, 511,
-    ] as const,
-    kind: "Int",
-  } as const;
-
-  export type Schema = typeof schema;
-}
-
 /**
  * HTTP binding for an operation error.
  */
@@ -6325,7 +6278,7 @@ export type OperationErrorHttpBinding = {
   /**
    * HTTP client/server error code for the bound error.
    */
-  readonly statusCode: OperationErrorHttpBindingStatusCode;
+  readonly statusCode: HttpErrorStatusCode;
 };
 
 export namespace OperationErrorHttpBinding {
@@ -6342,15 +6295,15 @@ export namespace OperationErrorHttpBinding {
         })
         .chain((values) => values.head()),
       statusCode: $shaclPropertyFromRdf<
-        OperationErrorHttpBindingStatusCode,
-        $NumericSchema<OperationErrorHttpBindingStatusCode>
+        HttpErrorStatusCode,
+        $NumericSchema<HttpErrorStatusCode>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: OperationErrorHttpBinding.schema.properties.statusCode,
         typeFromRdfResourceValues:
-          $intFromRdfResourceValues<OperationErrorHttpBindingStatusCode>,
+          $intFromRdfResourceValues<HttpErrorStatusCode>,
       }),
     }).chain((properties) => OperationErrorHttpBinding.create(properties));
 
@@ -6387,7 +6340,7 @@ export namespace OperationErrorHttpBinding {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly statusCode: OperationErrorHttpBindingStatusCode;
+    readonly statusCode: HttpErrorStatusCode;
   };
 
   export const createUnsafe: <
@@ -6439,7 +6392,7 @@ export namespace OperationErrorHttpBinding {
           "http://purl.org/shaclmate/ontology#httpStatusCode",
         ),
         get type() {
-          return OperationErrorHttpBindingStatusCode.schema;
+          return HttpErrorStatusCode.schema;
         },
       } as const,
     },
@@ -7086,6 +7039,46 @@ export namespace Ontology {
       $identifier: _ontology.$identifier().toString(),
       label: _ontology.label.map((item) => item.toString()).extract(),
     });
+}
+
+export type HttpSuccessStatusCode = HttpSuccessStatusCode.Schema["in"][number];
+
+export namespace HttpSuccessStatusCode {
+  export const schema = {
+    datatype: $xsd_int,
+    in: [200, 201, 202, 203, 204, 205, 206, 207, 208, 226] as const,
+    kind: "Int",
+  } as const;
+
+  export type Schema = typeof schema;
+}
+
+export type HttpMethod = HttpMethod.Schema["in"][number];
+
+export namespace HttpMethod {
+  export const schema = {
+    datatype: $xsd_string,
+    in: ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"] as const,
+    kind: "String",
+  } as const;
+
+  export type Schema = typeof schema;
+}
+
+export type HttpErrorStatusCode = HttpErrorStatusCode.Schema["in"][number];
+
+export namespace HttpErrorStatusCode {
+  export const schema = {
+    datatype: $xsd_int,
+    in: [
+      400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414,
+      415, 416, 417, 418, 421, 422, 423, 424, 425, 426, 428, 429, 431, 451, 500,
+      501, 502, 503, 504, 505, 506, 507, 508, 510, 511,
+    ] as const,
+    kind: "Int",
+  } as const;
+
+  export type Schema = typeof schema;
 }
 
 export type $Object =
