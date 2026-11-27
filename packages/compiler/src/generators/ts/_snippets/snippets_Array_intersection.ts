@@ -7,7 +7,7 @@ export const snippets_Array_intersection: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}Array.intersection`,
     code`\
-namespace ${syntheticNamePrefix}Array
+namespace ${syntheticNamePrefix}Array {
   export function intersection<T>(left: readonly T[], right: readonly T[]): readonly T[] {
     if (left.length === 0) {
       return right;

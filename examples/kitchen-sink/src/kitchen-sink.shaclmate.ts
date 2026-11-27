@@ -49,7 +49,7 @@ export type $_ToRdfResourceFunction<
   resourceSet: ResourceSet;
 }) => void;
 
-export namespace $Array {
+namespace $Array {
   /**
    * Compare two arrays element-wise with the provided elementEquals function.
    */
@@ -110,7 +110,7 @@ export namespace $Array {
   }
 }
 
-export namespace $Array {
+namespace $Array {
   export function fromJson<ItemJsonValueT, ItemT, ItemSchemaT>(
     itemFromJsonValue: $FromJsonFunction<ItemJsonValueT, ItemT, ItemSchemaT>,
   ): $FromJsonFunction<
@@ -136,40 +136,44 @@ export namespace $Array {
   }
 }
 
-function $arrayIntersection<T>(
-  left: readonly T[],
-  right: readonly T[],
-): readonly T[] {
-  if (left.length === 0) {
-    return right;
-  }
-  if (right.length === 0) {
-    return left;
-  }
+namespace $Array {
+  export function intersection<T>(
+    left: readonly T[],
+    right: readonly T[],
+  ): readonly T[] {
+    if (left.length === 0) {
+      return right;
+    }
+    if (right.length === 0) {
+      return left;
+    }
 
-  const intersection = new Set<T>();
-  if (left.length <= right.length) {
-    const rightSet = new Set(right);
-    for (const leftElement of left) {
-      if (rightSet.has(leftElement)) {
-        intersection.add(leftElement);
+    const intersection = new Set<T>();
+    if (left.length <= right.length) {
+      const rightSet = new Set(right);
+      for (const leftElement of left) {
+        if (rightSet.has(leftElement)) {
+          intersection.add(leftElement);
+        }
+      }
+    } else {
+      const leftSet = new Set(left);
+      for (const rightElement of right) {
+        if (leftSet.has(rightElement)) {
+          intersection.add(rightElement);
+        }
       }
     }
-  } else {
-    const leftSet = new Set(left);
-    for (const rightElement of right) {
-      if (leftSet.has(rightElement)) {
-        intersection.add(rightElement);
-      }
-    }
+    return [...intersection];
   }
-  return [...intersection];
 }
 
-function $arrayToJsonArray<ItemT, ItemJsonValueT>(
-  itemToJsonValue: $ToJsonFunction<ItemT, ItemJsonValueT>,
-): $ToJsonFunction<readonly ItemT[], ItemJsonValueT[]> {
-  return (array) => array.map(itemToJsonValue);
+namespace $Array {
+  export function toJson<ItemT, ItemJsonValueT>(
+    itemToJsonValue: $ToJsonFunction<ItemT, ItemJsonValueT>,
+  ): $ToJsonFunction<readonly ItemT[], ItemJsonValueT[]> {
+    return (array) => array.map(itemToJsonValue);
+  }
 }
 
 const $bigDecimalFromJsonObject: $FromJsonFunction<
@@ -2576,7 +2580,7 @@ function $literalSchemaSparqlPatterns({
     patterns.push($sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
   }
 
-  const languageIn = $arrayIntersection(
+  const languageIn = $Array.intersection(
     schema.languageIn ?? [],
     preferredLanguages ?? [],
   );
@@ -11071,7 +11075,7 @@ export namespace UnionDiscriminantsStruct {
 
           throw new Error("unable to serialize to JSON");
         })(_unionDiscriminantsStruct.requiredTerm),
-        setIriOrString: $arrayToJsonArray(((value) => {
+        setIriOrString: $Array.toJson(((value) => {
           if (typeof value === "object") {
             return { ...$iriToJsonObject<string>(value), $type: "object" };
           }
@@ -11088,7 +11092,7 @@ export namespace UnionDiscriminantsStruct {
           | ($IdentifierJsonObject & { $type: "object" })
           | ($TypedLiteralJsonObject & { $type: "string" })
         >)(_unionDiscriminantsStruct.setIriOrString),
-        setNodeOrLiteral: $arrayToJsonArray(((value) => {
+        setNodeOrLiteral: $Array.toJson(((value) => {
           if (value["termType"] === "StructDiscriminatedUnionMember1") {
             return {
               ...StructDiscriminatedUnionMember1.toJson(value.value),
@@ -11111,7 +11115,7 @@ export namespace UnionDiscriminantsStruct {
             })
           | ($LiteralJsonObject & { $type: "Literal" })
         >)(_unionDiscriminantsStruct.setNodeOrLiteral),
-        setNodeOrNodeOrString: $arrayToJsonArray(((value) => {
+        setNodeOrNodeOrString: $Array.toJson(((value) => {
           if (value["$type"] === "StructDiscriminatedUnionMember1") {
             return {
               ...StructDiscriminatedUnionMember1.toJson(value.value),
@@ -11150,7 +11154,7 @@ export namespace UnionDiscriminantsStruct {
             })
           | ($TypedLiteralJsonObject & { $type: "string" })
         >)(_unionDiscriminantsStruct.setNodeOrNodeOrString),
-        setTerm: $arrayToJsonArray(((value) => {
+        setTerm: $Array.toJson(((value) => {
           if (
             value["termType"] === "BlankNode" ||
             value["termType"] === "NamedNode"
@@ -23801,10 +23805,10 @@ export namespace PropertyCardinalitiesStruct {
           _propertyCardinalitiesStruct.$identifier().termType === "BlankNode"
             ? `_:${_propertyCardinalitiesStruct.$identifier().value}`
             : _propertyCardinalitiesStruct.$identifier().value,
-        emptySet: $arrayToJsonArray($primitiveToJsonValue<string>)(
+        emptySet: $Array.toJson($primitiveToJsonValue<string>)(
           _propertyCardinalitiesStruct.emptySet,
         ),
-        nonEmptySet: $arrayToJsonArray($primitiveToJsonValue<string>)(
+        nonEmptySet: $Array.toJson($primitiveToJsonValue<string>)(
           _propertyCardinalitiesStruct.nonEmptySet,
         ),
         optional: $maybeToJsonValue($primitiveToJsonValue<string>)(
@@ -33611,9 +33615,9 @@ export namespace MutablePropertiesStruct {
             : _mutablePropertiesStruct.$identifier().value,
         "@type": "http://example.com/MutablePropertiesStruct",
         mutableList: $maybeToJsonValue(
-          $arrayToJsonArray($primitiveToJsonValue<string>),
+          $Array.toJson($primitiveToJsonValue<string>),
         )(_mutablePropertiesStruct.mutableList),
-        mutableSet: $arrayToJsonArray($primitiveToJsonValue<string>)(
+        mutableSet: $Array.toJson($primitiveToJsonValue<string>)(
           _mutablePropertiesStruct.mutableSet,
         ),
         mutableString: $maybeToJsonValue($primitiveToJsonValue<string>)(
@@ -34879,16 +34883,16 @@ export namespace ListsStruct {
             ? `_:${_listsStruct.$identifier().value}`
             : _listsStruct.$identifier().value,
         "@type": "http://example.com/ListsStruct",
-        iriList: $maybeToJsonValue($arrayToJsonArray($iriToJsonString<string>))(
+        iriList: $maybeToJsonValue($Array.toJson($iriToJsonString<string>))(
           _listsStruct.iriList,
         ),
         stringList: $maybeToJsonValue(
-          $arrayToJsonArray($primitiveToJsonValue<string>),
+          $Array.toJson($primitiveToJsonValue<string>),
         )(_listsStruct.stringList),
         stringListList: $maybeToJsonValue(
-          $arrayToJsonArray($arrayToJsonArray($primitiveToJsonValue<string>)),
+          $Array.toJson($Array.toJson($primitiveToJsonValue<string>)),
         )(_listsStruct.stringListList),
-        structList: $maybeToJsonValue($arrayToJsonArray(NonClassStruct.toJson))(
+        structList: $maybeToJsonValue($Array.toJson(NonClassStruct.toJson))(
           _listsStruct.structList,
         ),
       }),
@@ -36283,7 +36287,7 @@ export namespace ListSetsStruct {
             ? `_:${_listSetsStruct.$identifier().value}`
             : _listSetsStruct.$identifier().value,
         "@type": "http://example.com/ListSetsStruct",
-        listDiscriminatedUnionSet: $arrayToJsonArray(((value) => {
+        listDiscriminatedUnionSet: $Array.toJson(((value) => {
           if (typeof value === "object") {
             return {
               ...$listToJsonObject($primitiveToJsonValue<string>)(value),
@@ -36303,12 +36307,12 @@ export namespace ListSetsStruct {
           | ({ "@list": string[] } & { $type: "object" })
           | ($TypedLiteralJsonObject & { $type: "string" })
         >)(_listSetsStruct.listDiscriminatedUnionSet),
-        listListSet: $arrayToJsonArray(
-          $arrayToJsonArray($arrayToJsonArray($primitiveToJsonValue<string>)),
+        listListSet: $Array.toJson(
+          $Array.toJson($Array.toJson($primitiveToJsonValue<string>)),
         )(_listSetsStruct.listListSet),
-        listSet: $arrayToJsonArray(
-          $arrayToJsonArray($primitiveToJsonValue<string>),
-        )(_listSetsStruct.listSet),
+        listSet: $Array.toJson($Array.toJson($primitiveToJsonValue<string>))(
+          _listSetsStruct.listSet,
+        ),
       }),
     );
 
@@ -38776,11 +38780,11 @@ export namespace LazyPropertiesStruct {
           _lazyPropertiesStruct.requiredPartialToResolvedBlankNodeOrIriIdentifier,
         ),
         setLazyToResolvedBlankNodeOrIriIdentifier: ((value) =>
-          $arrayToJsonArray($DefaultPartial.toJson)(value.partials))(
+          $Array.toJson($DefaultPartial.toJson)(value.partials))(
           _lazyPropertiesStruct.setLazyToResolvedBlankNodeOrIriIdentifier,
         ),
         setPartialToResolvedBlankNodeOrIriIdentifier: ((value) =>
-          $arrayToJsonArray(PartialStruct.toJson)(value.partials))(
+          $Array.toJson(PartialStruct.toJson)(value.partials))(
           _lazyPropertiesStruct.setPartialToResolvedBlankNodeOrIriIdentifier,
         ),
       }),
@@ -41995,7 +41999,7 @@ export namespace LanguageInStruct {
           _languageInStruct.$identifier().termType === "BlankNode"
             ? `_:${_languageInStruct.$identifier().value}`
             : _languageInStruct.$identifier().value,
-        languageIn: $arrayToJsonArray($langStringToJsonObject)(
+        languageIn: $Array.toJson($langStringToJsonObject)(
           _languageInStruct.languageIn,
         ),
       }),
@@ -61041,37 +61045,37 @@ export namespace ConvertibleTypesStruct {
         convertibleIri: $iriToJsonString<string>(
           _convertibleTypesStruct.convertibleIri,
         ),
-        convertibleIriNonEmptySet: $arrayToJsonArray($iriToJsonString<string>)(
+        convertibleIriNonEmptySet: $Array.toJson($iriToJsonString<string>)(
           _convertibleTypesStruct.convertibleIriNonEmptySet,
         ),
         convertibleIriOption: $maybeToJsonValue($iriToJsonString<string>)(
           _convertibleTypesStruct.convertibleIriOption,
         ),
-        convertibleIriSet: $arrayToJsonArray($iriToJsonString<string>)(
+        convertibleIriSet: $Array.toJson($iriToJsonString<string>)(
           _convertibleTypesStruct.convertibleIriSet,
         ),
         convertibleLiteral: $literalToJsonObject(
           _convertibleTypesStruct.convertibleLiteral,
         ),
-        convertibleLiteralNonEmptySet: $arrayToJsonArray($literalToJsonObject)(
+        convertibleLiteralNonEmptySet: $Array.toJson($literalToJsonObject)(
           _convertibleTypesStruct.convertibleLiteralNonEmptySet,
         ),
         convertibleLiteralOption: $maybeToJsonValue($literalToJsonObject)(
           _convertibleTypesStruct.convertibleLiteralOption,
         ),
-        convertibleLiteralSet: $arrayToJsonArray($literalToJsonObject)(
+        convertibleLiteralSet: $Array.toJson($literalToJsonObject)(
           _convertibleTypesStruct.convertibleLiteralSet,
         ),
         convertibleTerm: $termToJsonObject(
           _convertibleTypesStruct.convertibleTerm,
         ),
-        convertibleTermNonEmptySet: $arrayToJsonArray($termToJsonObject)(
+        convertibleTermNonEmptySet: $Array.toJson($termToJsonObject)(
           _convertibleTypesStruct.convertibleTermNonEmptySet,
         ),
         convertibleTermOption: $maybeToJsonValue($termToJsonObject)(
           _convertibleTypesStruct.convertibleTermOption,
         ),
-        convertibleTermSet: $arrayToJsonArray($termToJsonObject)(
+        convertibleTermSet: $Array.toJson($termToJsonObject)(
           _convertibleTypesStruct.convertibleTermSet,
         ),
       }),
