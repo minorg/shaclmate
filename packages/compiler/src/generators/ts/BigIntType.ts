@@ -19,7 +19,7 @@ export class BigIntType extends AbstractNumericType<bigint> {
     this.in_.length > 0
       ? Maybe.empty()
       : Maybe.of({
-          code: code`${this.reusables.snippets.convertToBigInt}`,
+          code: code`${this.reusables.snippets.BigInt_convert}`,
           sourceTypes: [
             {
               expression: code`bigint`,

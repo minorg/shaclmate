@@ -41,7 +41,7 @@ export abstract class AbstractCollectionType<
   @Memoize()
   get filterFunction(): Callable {
     return new InlineCallable(
-      code`${this.reusables.snippets.filterArray}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction.unannotatedUsage})`,
+      code`${this.reusables.snippets.Array_filter}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction.unannotatedUsage})`,
     );
   }
 
@@ -72,7 +72,7 @@ export abstract class AbstractCollectionType<
   @Memoize()
   get hashFunction(): Callable {
     return new InlineCallable(
-      code`${this.reusables.snippets.hashArray}(${this.itemType.hashFunction.annotatedUsage})`,
+      code`${this.reusables.snippets.Array_hash}(${this.itemType.hashFunction.annotatedUsage})`,
     );
   }
 
@@ -84,7 +84,7 @@ export abstract class AbstractCollectionType<
   override get validationFunction(): Maybe<Callable> {
     return Maybe.of(
       new InlineCallable(
-        code`${this._mutable ? this.reusables.snippets.validateMutableArray : this.reusables.snippets.validateArray}(${this.itemType.validationFunction
+        code`${this._mutable ? this.reusables.snippets.validateMutableArray : this.reusables.snippets.Array_validate}(${this.itemType.validationFunction
           .map((_) => _.unannotatedUsage)
           .orDefault(this.itemValidationFunctionDefault.unannotatedUsage)})`,
       ),

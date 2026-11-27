@@ -7,16 +7,23 @@ import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { snippets_Array_equals } from "./_snippets/snippets_Array_equals.js";
+import { snippets_Array_filter } from "./_snippets/snippets_Array_filter.js";
 import { snippets_Array_fromJson } from "./_snippets/snippets_Array_fromJson.js";
+import { snippets_Array_hash } from "./_snippets/snippets_Array_hash.js";
 import { snippets_Array_intersection } from "./_snippets/snippets_Array_intersection.js";
 import { snippets_Array_toJson } from "./_snippets/snippets_Array_toJson.js";
+import { snippets_Array_validate } from "./_snippets/snippets_Array_validate.js";
+import { snippets_BigDecimal_convert } from "./_snippets/snippets_BigDecimal_convert.js";
+import { snippets_BigDecimal_filter } from "./_snippets/snippets_BigDecimal_filter.js";
 import { snippets_BigDecimal_fromJsonObject } from "./_snippets/snippets_BigDecimal_fromJsonObject.js";
 import { snippets_BigDecimal_fromJsonString } from "./_snippets/snippets_BigDecimal_fromJsonString.js";
 import { snippets_BigDecimal_fromRdfResourceValues } from "./_snippets/snippets_BigDecimal_fromRdfResourceValues.js";
+import { snippets_BigDecimal_hash } from "./_snippets/snippets_BigDecimal_hash.js";
 import { snippets_BigDecimal_jsonSchema } from "./_snippets/snippets_BigDecimal_jsonSchema.js";
 import { snippets_BigDecimal_sparqlWherePatterns } from "./_snippets/snippets_BigDecimal_sparqlWherePatterns.js";
 import { snippets_BigDecimal_toJsonObject } from "./_snippets/snippets_BigDecimal_toJsonObject.js";
 import { snippets_BigDecimal_toJsonString } from "./_snippets/snippets_BigDecimal_toJsonString.js";
+import { snippets_BigInt_convert } from "./_snippets/snippets_BigInt_convert.js";
 import { snippets_BigInt_fromJsonObject } from "./_snippets/snippets_BigInt_fromJsonObject.js";
 import { snippets_BigInt_fromJsonString } from "./_snippets/snippets_BigInt_fromJsonString.js";
 import { snippets_BigInt_fromRdfResourceValues } from "./_snippets/snippets_BigInt_fromRdfResourceValues.js";
@@ -108,8 +115,6 @@ import { snippets_booleanSparqlWherePatterns } from "./_snippets/snippets_boolea
 import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
 import { snippets_constrainPrimitive } from "./_snippets/snippets_constrainPrimitive.js";
 import { snippets_convertToArraySet } from "./_snippets/snippets_convertToArraySet.js";
-import { snippets_convertToBigDecimal } from "./_snippets/snippets_convertToBigDecimal.js";
-import { snippets_convertToBigInt } from "./_snippets/snippets_convertToBigInt.js";
 import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty.js";
 import { snippets_convertToIdentifier } from "./_snippets/snippets_convertToIdentifier.js";
 import { snippets_convertToIdentifierProperty } from "./_snippets/snippets_convertToIdentifierProperty.js";
@@ -148,8 +153,6 @@ import { snippets_defaultValueFromRdfResourceValues } from "./_snippets/snippets
 import { snippets_defaultValueSparqlWherePatterns } from "./_snippets/snippets_defaultValueSparqlWherePatterns.js";
 import { snippets_ensureRdfResourceType } from "./_snippets/snippets_ensureRdfResourceType.js";
 import { snippets_errorToProblemDetailsJson } from "./_snippets/snippets_errorToProblemDetailsJson.js";
-import { snippets_filterArray } from "./_snippets/snippets_filterArray.js";
-import { snippets_filterBigDecimal } from "./_snippets/snippets_filterBigDecimal.js";
 import { snippets_filterBoolean } from "./_snippets/snippets_filterBoolean.js";
 import { snippets_filterDate } from "./_snippets/snippets_filterDate.js";
 import { snippets_filterIdentifier } from "./_snippets/snippets_filterIdentifier.js";
@@ -162,8 +165,6 @@ import { snippets_filterTerm } from "./_snippets/snippets_filterTerm.js";
 import { snippets_floatFromJsonNumber } from "./_snippets/snippets_floatFromJsonNumber.js";
 import { snippets_floatFromJsonObject } from "./_snippets/snippets_floatFromJsonObject.js";
 import { snippets_floatFromRdfResourceValues } from "./_snippets/snippets_floatFromRdfResourceValues.js";
-import { snippets_hashArray } from "./_snippets/snippets_hashArray.js";
-import { snippets_hashBigDecimal } from "./_snippets/snippets_hashBigDecimal.js";
 import { snippets_hashBoolean } from "./_snippets/snippets_hashBoolean.js";
 import { snippets_hashDate } from "./_snippets/snippets_hashDate.js";
 import { snippets_hashDateTime } from "./_snippets/snippets_hashDateTime.js";
@@ -253,7 +254,6 @@ import { snippets_termSparqlWherePatterns } from "./_snippets/snippets_termSparq
 import { snippets_termToJsonObject } from "./_snippets/snippets_termToJsonObject.js";
 import { snippets_toIsoDateString } from "./_snippets/snippets_toIsoDateString.js";
 import { snippets_typedLiteralToJsonObject } from "./_snippets/snippets_typedLiteralToJsonObject.js";
-import { snippets_validateArray } from "./_snippets/snippets_validateArray.js";
 import { snippets_validateMaybe } from "./_snippets/snippets_validateMaybe.js";
 import { snippets_validateMutableArray } from "./_snippets/snippets_validateMutableArray.js";
 import { snippets_wrap_FromRdfResourceFunction } from "./_snippets/snippets_wrap_FromRdfResourceFunction.js";
@@ -300,8 +300,18 @@ export class Snippets {
   }
 
   @Memoize()
+  get Array_filter(): Snippet {
+    return this.snippet(snippets_Array_filter);
+  }
+
+  @Memoize()
   get Array_fromJson(): Snippet {
     return this.snippet(snippets_Array_fromJson);
+  }
+
+  @Memoize()
+  get Array_hash(): Snippet {
+    return this.snippet(snippets_Array_hash);
   }
 
   @Memoize()
@@ -312,6 +322,21 @@ export class Snippets {
   @Memoize()
   get Array_toJson(): Snippet {
     return this.snippet(snippets_Array_toJson);
+  }
+
+  @Memoize()
+  get Array_validate(): Snippet {
+    return this.snippet(snippets_Array_validate);
+  }
+
+  @Memoize()
+  get BigDecimal_convert(): Snippet {
+    return this.snippet(snippets_BigDecimal_convert);
+  }
+
+  @Memoize()
+  get BigDecimal_filter(): Snippet {
+    return this.snippet(snippets_BigDecimal_filter);
   }
 
   @Memoize()
@@ -327,6 +352,11 @@ export class Snippets {
   @Memoize()
   get BigDecimal_fromRdfResourceValues(): Snippet {
     return this.snippet(snippets_BigDecimal_fromRdfResourceValues);
+  }
+
+  @Memoize()
+  get BigDecimal_hash(): Snippet {
+    return this.snippet(snippets_BigDecimal_hash);
   }
 
   @Memoize()
@@ -347,6 +377,11 @@ export class Snippets {
   @Memoize()
   get BigDecimal_toJsonString(): Snippet {
     return this.snippet(snippets_BigDecimal_toJsonString);
+  }
+
+  @Memoize()
+  get BigInt_convert(): Snippet {
+    return this.snippet(snippets_BigInt_convert);
   }
 
   @Memoize()
@@ -805,16 +840,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get convertToBigDecimal(): Snippet {
-    return this.snippet(snippets_convertToBigDecimal);
-  }
-
-  @Memoize()
-  get convertToBigInt(): Snippet {
-    return this.snippet(snippets_convertToBigInt);
-  }
-
-  @Memoize()
   get convertToBlankNodeIdentifierProperty(): Snippet {
     return this.snippet(snippets_convertToBlankNodeIdentifierProperty);
   }
@@ -1005,16 +1030,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get filterArray(): Snippet {
-    return this.snippet(snippets_filterArray);
-  }
-
-  @Memoize()
-  get filterBigDecimal(): Snippet {
-    return this.snippet(snippets_filterBigDecimal);
-  }
-
-  @Memoize()
   get filterBoolean(): Snippet {
     return this.snippet(snippets_filterBoolean);
   }
@@ -1072,16 +1087,6 @@ export class Snippets {
   @Memoize()
   get floatFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_floatFromRdfResourceValues);
-  }
-
-  @Memoize()
-  get hashArray(): Snippet {
-    return this.snippet(snippets_hashArray);
-  }
-
-  @Memoize()
-  get hashBigDecimal(): Snippet {
-    return this.snippet(snippets_hashBigDecimal);
   }
 
   @Memoize()
@@ -1527,11 +1532,6 @@ export class Snippets {
   @Memoize()
   get typedLiteralToJsonObject(): Snippet {
     return this.snippet(snippets_typedLiteralToJsonObject);
-  }
-
-  @Memoize()
-  get validateArray(): Snippet {
-    return this.snippet(snippets_validateArray);
   }
 
   @Memoize()

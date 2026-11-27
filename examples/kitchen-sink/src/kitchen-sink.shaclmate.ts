@@ -112,6 +112,33 @@ namespace $Array {
 }
 
 namespace $Array {
+  export function filter<ItemT, ItemFilterT>(
+    filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
+  ) {
+    return (
+      filter: $CollectionFilter<ItemFilterT>,
+      values: readonly ItemT[],
+    ): boolean => {
+      for (const value of values) {
+        if (!filterItem(filter, value)) {
+          return false;
+        }
+      }
+
+      if (filter.$maxCount !== undefined && values.length > filter.$maxCount) {
+        return false;
+      }
+
+      if (filter.$minCount !== undefined && values.length < filter.$minCount) {
+        return false;
+      }
+
+      return true;
+    };
+  }
+}
+
+namespace $Array {
   export function fromJson<ItemJsonValueT, ItemT, ItemSchemaT>(
     itemFromJsonValue: $FromJsonFunction<ItemJsonValueT, ItemT, ItemSchemaT>,
   ): $FromJsonFunction<
@@ -133,6 +160,18 @@ namespace $Array {
           itemFromJsonValue(itemJsonValue, itemFromJsonValueOptions),
         ),
       );
+    };
+  }
+}
+
+namespace $Array {
+  export function hash<ItemT>(
+    hashItem: $HashFunction<ItemT>,
+  ): $HashFunction<readonly ItemT[]> {
+    return (hasher, value) => {
+      for (const item of value) {
+        hashItem(hasher, item);
+      }
     };
   }
 }
@@ -177,6 +216,83 @@ namespace $Array {
   }
 }
 
+namespace $Array {
+  export function validate<ItemSchemaT, ItemValueT>(
+    validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
+  ): $ValidationFunction<
+    $CollectionSchema<ItemSchemaT>,
+    readonly ItemValueT[]
+  > {
+    return (schema, valueArray) => {
+      if (
+        schema.minCount !== undefined &&
+        valueArray.length < schema.minCount
+      ) {
+        return Left(
+          new Error(
+            `value array has length (${valueArray.length}) less than minCount (${schema.minCount})`,
+          ),
+        ) as Either<Error, readonly ItemValueT[]>;
+      }
+
+      return Either.sequence(
+        valueArray.map((value) => validateItem(schema.itemType, value)),
+      ) as Either<Error, readonly ItemValueT[]>;
+    };
+  }
+}
+
+namespace $BigDecimal {
+  export const convert: $ConversionFunction<
+    number | string | BigDecimal,
+    BigDecimal
+  > = (value) => Either.encase(() => new BigDecimal(value));
+}
+
+namespace $BigDecimal {
+  export const filter: $FilterFunction<
+    $NumericFilter<BigDecimal>,
+    BigDecimal
+  > = (filter, value) => {
+    if (
+      filter.in !== undefined &&
+      !filter.in.some((inValue) => inValue.equals(value))
+    ) {
+      return false;
+    }
+
+    if (
+      filter.maxExclusive !== undefined &&
+      value.greaterThanOrEqualTo(filter.maxExclusive)
+    ) {
+      return false;
+    }
+
+    if (
+      filter.maxInclusive !== undefined &&
+      value.greaterThan(filter.maxInclusive)
+    ) {
+      return false;
+    }
+
+    if (
+      filter.minExclusive !== undefined &&
+      value.lessThanOrEqualTo(filter.minExclusive)
+    ) {
+      return false;
+    }
+
+    if (
+      filter.minInclusive !== undefined &&
+      value.lessThan(filter.minInclusive)
+    ) {
+      return false;
+    }
+
+    return true;
+  };
+}
+
 namespace $BigDecimal {
   export const fromJsonObject: $FromJsonFunction<
     $TypedLiteralJsonObject,
@@ -204,6 +320,12 @@ namespace $BigDecimal {
     $termLikeFromRdfResourceValues(values, options).chain((values) =>
       values.chainMap((value) => value.toBigDecimal(options.schema.in)),
     );
+}
+
+namespace $BigDecimal {
+  export const hash: $HashFunction<BigDecimal> = (hasher, value) => {
+    hasher.update(value.toFixed());
+  };
 }
 
 namespace $BigDecimal {
@@ -346,6 +468,13 @@ namespace $BigDecimal {
   export const toJsonString: $ToJsonFunction<BigDecimal, string> = (
     bigDecimal,
   ) => bigDecimal.toFixed();
+}
+
+namespace $BigInt {
+  export const convert: $ConversionFunction<
+    bigint | number | string,
+    bigint
+  > = (value) => Either.encase(() => BigInt(value));
 }
 
 namespace $BigInt {
@@ -672,16 +801,6 @@ function $convertToArraySet<
           value.map((value) => convertToItem(value, options)),
         )) as Either<Error, readonly ItemTargetT[]>;
 }
-
-const $convertToBigDecimal: $ConversionFunction<
-  number | string | BigDecimal,
-  BigDecimal
-> = (value) => Either.encase(() => new BigDecimal(value));
-
-const $convertToBigInt: $ConversionFunction<
-  bigint | number | string,
-  bigint
-> = (value) => Either.encase(() => BigInt(value));
 
 function $convertToIdentifier<
   DefaultNamespaceT extends NamespaceBuilder = NamespaceBuilder,
@@ -1418,73 +1537,6 @@ export namespace $EqualsResult {
     | { readonly left: any; readonly type: "right-null" };
 }
 
-function $filterArray<ItemT, ItemFilterT>(
-  filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
-) {
-  return (
-    filter: $CollectionFilter<ItemFilterT>,
-    values: readonly ItemT[],
-  ): boolean => {
-    for (const value of values) {
-      if (!filterItem(filter, value)) {
-        return false;
-      }
-    }
-
-    if (filter.$maxCount !== undefined && values.length > filter.$maxCount) {
-      return false;
-    }
-
-    if (filter.$minCount !== undefined && values.length < filter.$minCount) {
-      return false;
-    }
-
-    return true;
-  };
-}
-
-const $filterBigDecimal: $FilterFunction<
-  $NumericFilter<BigDecimal>,
-  BigDecimal
-> = (filter, value) => {
-  if (
-    filter.in !== undefined &&
-    !filter.in.some((inValue) => inValue.equals(value))
-  ) {
-    return false;
-  }
-
-  if (
-    filter.maxExclusive !== undefined &&
-    value.greaterThanOrEqualTo(filter.maxExclusive)
-  ) {
-    return false;
-  }
-
-  if (
-    filter.maxInclusive !== undefined &&
-    value.greaterThan(filter.maxInclusive)
-  ) {
-    return false;
-  }
-
-  if (
-    filter.minExclusive !== undefined &&
-    value.lessThanOrEqualTo(filter.minExclusive)
-  ) {
-    return false;
-  }
-
-  if (
-    filter.minInclusive !== undefined &&
-    value.lessThan(filter.minInclusive)
-  ) {
-    return false;
-  }
-
-  return true;
-};
-
 const $filterBoolean: $FilterFunction<$BooleanFilter, boolean> = (
   filter,
   value,
@@ -1785,20 +1837,6 @@ export type $FromRdfResourceValuesFunction<ValueT, ValueSchemaT> = (
     schema: ValueSchemaT;
   },
 ) => Either<Error, Resource.Values<ValueT>>;
-
-function $hashArray<ItemT>(
-  hashItem: $HashFunction<ItemT>,
-): $HashFunction<readonly ItemT[]> {
-  return (hasher, value) => {
-    for (const item of value) {
-      hashItem(hasher, item);
-    }
-  };
-}
-
-const $hashBigDecimal: $HashFunction<BigDecimal> = (hasher, value) => {
-  hasher.update(value.toFixed());
-};
 
 const $hashBoolean: $HashFunction<boolean> = (hasher, value) => {
   hasher.update(value.toString());
@@ -4406,24 +4444,6 @@ const $typedLiteralToJsonObject: $ToJsonFunction<
   "@type": literal.datatype.value,
   "@value": literal.value,
 });
-
-function $validateArray<ItemSchemaT, ItemValueT>(
-  validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
-): $ValidationFunction<$CollectionSchema<ItemSchemaT>, readonly ItemValueT[]> {
-  return (schema, valueArray) => {
-    if (schema.minCount !== undefined && valueArray.length < schema.minCount) {
-      return Left(
-        new Error(
-          `value array has length (${valueArray.length}) less than minCount (${schema.minCount})`,
-        ),
-      ) as Either<Error, readonly ItemValueT[]>;
-    }
-
-    return Either.sequence(
-      valueArray.map((value) => validateItem(schema.itemType, value)),
-    ) as Either<Error, readonly ItemValueT[]>;
-  };
-}
 
 function $validateMaybe<ItemSchemaT, ItemValueT>(
   validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
@@ -7089,7 +7109,7 @@ export namespace UnionDiscriminantsStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setIriOrString.type,
           value,
         ),
@@ -7100,7 +7120,7 @@ export namespace UnionDiscriminantsStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setNodeOrLiteral.type,
           value,
         ),
@@ -7111,7 +7131,7 @@ export namespace UnionDiscriminantsStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setNodeOrNodeOrString.type,
           value,
         ),
@@ -7122,7 +7142,7 @@ export namespace UnionDiscriminantsStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setTerm.type,
           value,
         ),
@@ -8053,7 +8073,7 @@ export namespace UnionDiscriminantsStruct {
     }
     if (
       filter.setIriOrString !== undefined &&
-      !$filterArray<
+      !$Array.filter<
         NamedNode | string,
         {
           readonly on?: {
@@ -8080,7 +8100,7 @@ export namespace UnionDiscriminantsStruct {
     }
     if (
       filter.setNodeOrLiteral !== undefined &&
-      !$filterArray<
+      !$Array.filter<
         | {
             termType: "StructDiscriminatedUnionMember1";
             value: StructDiscriminatedUnionMember1;
@@ -8122,7 +8142,7 @@ export namespace UnionDiscriminantsStruct {
     }
     if (
       filter.setNodeOrNodeOrString !== undefined &&
-      !$filterArray<
+      !$Array.filter<
         | {
             $type: "StructDiscriminatedUnionMember1";
             value: StructDiscriminatedUnionMember1;
@@ -8182,7 +8202,7 @@ export namespace UnionDiscriminantsStruct {
     }
     if (
       filter.setTerm !== undefined &&
-      !$filterArray<
+      !$Array.filter<
         (BlankNode | NamedNode) | Literal,
         {
           readonly on?: {
@@ -10242,7 +10262,7 @@ export namespace UnionDiscriminantsStruct {
         }
       }) satisfies $HashFunction<(BlankNode | NamedNode) | Literal>
     )(hasher, _unionDiscriminantsStruct.requiredTerm);
-    $hashArray(((hasher, value) => {
+    $Array.hash(((hasher, value) => {
       if (typeof value === "object") {
         $hashTerm(hasher, value);
         return;
@@ -10255,7 +10275,7 @@ export namespace UnionDiscriminantsStruct {
       hasher,
       _unionDiscriminantsStruct.setIriOrString,
     );
-    $hashArray(((hasher, value) => {
+    $Array.hash(((hasher, value) => {
       if (value["termType"] === "StructDiscriminatedUnionMember1") {
         StructDiscriminatedUnionMember1.hash(hasher, value.value);
         return;
@@ -10271,7 +10291,7 @@ export namespace UnionDiscriminantsStruct {
         }
       | Literal
     >)(hasher, _unionDiscriminantsStruct.setNodeOrLiteral);
-    $hashArray(((hasher, value) => {
+    $Array.hash(((hasher, value) => {
       if (value["$type"] === "StructDiscriminatedUnionMember1") {
         StructDiscriminatedUnionMember1.hash(hasher, value.value);
         return;
@@ -10295,7 +10315,7 @@ export namespace UnionDiscriminantsStruct {
         }
       | { $type: "string"; value: string }
     >)(hasher, _unionDiscriminantsStruct.setNodeOrNodeOrString);
-    $hashArray(((hasher, value) => {
+    $Array.hash(((hasher, value) => {
       if (
         value["termType"] === "BlankNode" ||
         value["termType"] === "NamedNode"
@@ -23312,7 +23332,7 @@ export namespace PropertyCardinalitiesStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           PropertyCardinalitiesStruct.schema.properties.emptySet.type,
           value,
         ),
@@ -23323,7 +23343,7 @@ export namespace PropertyCardinalitiesStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           PropertyCardinalitiesStruct.schema.properties.nonEmptySet.type,
           value,
         ),
@@ -23435,7 +23455,7 @@ export namespace PropertyCardinalitiesStruct {
     }
     if (
       filter.emptySet !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
+      !$Array.filter<string, $StringFilter>($filterString)(
         filter.emptySet,
         value.emptySet,
       )
@@ -23444,7 +23464,7 @@ export namespace PropertyCardinalitiesStruct {
     }
     if (
       filter.nonEmptySet !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
+      !$Array.filter<string, $StringFilter>($filterString)(
         filter.nonEmptySet,
         value.nonEmptySet,
       )
@@ -23678,8 +23698,8 @@ export namespace PropertyCardinalitiesStruct {
     if (_propertyCardinalitiesStruct.$identifier) {
       hasher.update(_propertyCardinalitiesStruct.$identifier().value);
     }
-    $hashArray($hashString)(hasher, _propertyCardinalitiesStruct.emptySet);
-    $hashArray($hashString)(hasher, _propertyCardinalitiesStruct.nonEmptySet);
+    $Array.hash($hashString)(hasher, _propertyCardinalitiesStruct.emptySet);
+    $Array.hash($hashString)(hasher, _propertyCardinalitiesStruct.nonEmptySet);
     $hashMaybe($hashString)(hasher, _propertyCardinalitiesStruct.optional);
     $hashString(hasher, _propertyCardinalitiesStruct.required);
   };
@@ -27005,7 +27025,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      decimalNumeric: $convertToMaybe($convertToBigDecimal)(
+      decimalNumeric: $convertToMaybe($BigDecimal.convert)(
         parameters.decimalNumeric,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -27038,7 +27058,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      integerNumeric: $convertToMaybe($convertToBigInt)(
+      integerNumeric: $convertToMaybe($BigInt.convert)(
         parameters.integerNumeric,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -27060,7 +27080,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      longNumeric: $convertToMaybe($convertToBigInt)(parameters.longNumeric, {
+      longNumeric: $convertToMaybe($BigInt.convert)(parameters.longNumeric, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
         $validateMaybe($identityValidationFunction)(
@@ -27068,7 +27088,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      negativeIntegerNumeric: $convertToMaybe($convertToBigInt)(
+      negativeIntegerNumeric: $convertToMaybe($BigInt.convert)(
         parameters.negativeIntegerNumeric,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -27079,7 +27099,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      nonNegativeIntegerNumeric: $convertToMaybe($convertToBigInt)(
+      nonNegativeIntegerNumeric: $convertToMaybe($BigInt.convert)(
         parameters.nonNegativeIntegerNumeric,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -27090,7 +27110,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      nonPositiveIntegerNumeric: $convertToMaybe($convertToBigInt)(
+      nonPositiveIntegerNumeric: $convertToMaybe($BigInt.convert)(
         parameters.nonPositiveIntegerNumeric,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -27101,7 +27121,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      positiveIntegerNumeric: $convertToMaybe($convertToBigInt)(
+      positiveIntegerNumeric: $convertToMaybe($BigInt.convert)(
         parameters.positiveIntegerNumeric,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -27145,7 +27165,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      unsignedLongNumeric: $convertToMaybe($convertToBigInt)(
+      unsignedLongNumeric: $convertToMaybe($BigInt.convert)(
         parameters.unsignedLongNumeric,
         {
           defaultNamespace: parameters.$defaultNamespace,
@@ -27424,7 +27444,7 @@ export namespace NumericsStruct {
     }
     if (
       filter.decimalNumeric !== undefined &&
-      !$filterMaybe<BigDecimal, $NumericFilter<BigDecimal>>($filterBigDecimal)(
+      !$filterMaybe<BigDecimal, $NumericFilter<BigDecimal>>($BigDecimal.filter)(
         filter.decimalNumeric,
         value.decimalNumeric,
       )
@@ -28282,7 +28302,7 @@ export namespace NumericsStruct {
       hasher.update(_numericsStruct.$identifier().value);
     }
     $hashMaybe($hashNumeric)(hasher, _numericsStruct.byteNumeric);
-    $hashMaybe($hashBigDecimal)(hasher, _numericsStruct.decimalNumeric);
+    $hashMaybe($BigDecimal.hash)(hasher, _numericsStruct.decimalNumeric);
     $hashMaybe($hashNumeric)(hasher, _numericsStruct.doubleNumeric);
     $hashMaybe($hashNumeric)(hasher, _numericsStruct.floatNumeric);
     $hashMaybe($hashNumeric)(hasher, _numericsStruct.integerNumeric);
@@ -33198,14 +33218,14 @@ export namespace MutablePropertiesStruct {
     if (
       filter.mutableList !== undefined &&
       !$filterMaybe<string[], $CollectionFilter<$StringFilter>>(
-        $filterArray<string, $StringFilter>($filterString),
+        $Array.filter<string, $StringFilter>($filterString),
       )(filter.mutableList, value.mutableList)
     ) {
       return false;
     }
     if (
       filter.mutableSet !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
+      !$Array.filter<string, $StringFilter>($filterString)(
         filter.mutableSet,
         value.mutableSet,
       )
@@ -33476,11 +33496,11 @@ export namespace MutablePropertiesStruct {
     if (_mutablePropertiesStruct.$identifier) {
       hasher.update(_mutablePropertiesStruct.$identifier().value);
     }
-    $hashMaybe($hashArray($hashString))(
+    $hashMaybe($Array.hash($hashString))(
       hasher,
       _mutablePropertiesStruct.mutableList,
     );
-    $hashArray($hashString)(hasher, _mutablePropertiesStruct.mutableSet);
+    $Array.hash($hashString)(hasher, _mutablePropertiesStruct.mutableSet);
     $hashMaybe($hashString)(hasher, _mutablePropertiesStruct.mutableString);
   };
 
@@ -34191,7 +34211,7 @@ export namespace ListsStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction))(
+        $validateMaybe($Array.validate($identityValidationFunction))(
           ListsStruct.schema.properties.iriList.type,
           value,
         ),
@@ -34202,7 +34222,7 @@ export namespace ListsStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction))(
+        $validateMaybe($Array.validate($identityValidationFunction))(
           ListsStruct.schema.properties.stringList.type,
           value,
         ),
@@ -34213,7 +34233,7 @@ export namespace ListsStruct {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
         $validateMaybe(
-          $validateArray($validateArray($identityValidationFunction)),
+          $Array.validate($Array.validate($identityValidationFunction)),
         )(ListsStruct.schema.properties.stringListList.type, value),
       ),
       structList: $convertToMaybe($convertToList($identityConversionFunction))(
@@ -34222,7 +34242,7 @@ export namespace ListsStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction))(
+        $validateMaybe($Array.validate($identityValidationFunction))(
           ListsStruct.schema.properties.structList.type,
           value,
         ),
@@ -34346,7 +34366,7 @@ export namespace ListsStruct {
     if (
       filter.iriList !== undefined &&
       !$filterMaybe<readonly NamedNode[], $CollectionFilter<$IriFilter>>(
-        $filterArray<NamedNode, $IriFilter>($filterIri),
+        $Array.filter<NamedNode, $IriFilter>($filterIri),
       )(filter.iriList, value.iriList)
     ) {
       return false;
@@ -34354,7 +34374,7 @@ export namespace ListsStruct {
     if (
       filter.stringList !== undefined &&
       !$filterMaybe<readonly string[], $CollectionFilter<$StringFilter>>(
-        $filterArray<string, $StringFilter>($filterString),
+        $Array.filter<string, $StringFilter>($filterString),
       )(filter.stringList, value.stringList)
     ) {
       return false;
@@ -34365,8 +34385,8 @@ export namespace ListsStruct {
         readonly (readonly string[])[],
         $CollectionFilter<$CollectionFilter<$StringFilter>>
       >(
-        $filterArray<readonly string[], $CollectionFilter<$StringFilter>>(
-          $filterArray<string, $StringFilter>($filterString),
+        $Array.filter<readonly string[], $CollectionFilter<$StringFilter>>(
+          $Array.filter<string, $StringFilter>($filterString),
         ),
       )(filter.stringListList, value.stringListList)
     ) {
@@ -34378,7 +34398,7 @@ export namespace ListsStruct {
         readonly NonClassStruct[],
         $CollectionFilter<NonClassStruct.Filter>
       >(
-        $filterArray<NonClassStruct, NonClassStruct.Filter>(
+        $Array.filter<NonClassStruct, NonClassStruct.Filter>(
           NonClassStruct.filter,
         ),
       )(filter.structList, value.structList)
@@ -34713,13 +34733,13 @@ export namespace ListsStruct {
     if (_listsStruct.$identifier) {
       hasher.update(_listsStruct.$identifier().value);
     }
-    $hashMaybe($hashArray($hashTerm))(hasher, _listsStruct.iriList);
-    $hashMaybe($hashArray($hashString))(hasher, _listsStruct.stringList);
-    $hashMaybe($hashArray($hashArray($hashString)))(
+    $hashMaybe($Array.hash($hashTerm))(hasher, _listsStruct.iriList);
+    $hashMaybe($Array.hash($hashString))(hasher, _listsStruct.stringList);
+    $hashMaybe($Array.hash($Array.hash($hashString)))(
       hasher,
       _listsStruct.stringListList,
     );
-    $hashMaybe($hashArray(NonClassStruct.hash))(
+    $hashMaybe($Array.hash(NonClassStruct.hash))(
       hasher,
       _listsStruct.structList,
     );
@@ -35514,7 +35534,7 @@ export namespace ListSetsStruct {
       )(parameters.listDiscriminatedUnionSet, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           ListSetsStruct.schema.properties.listDiscriminatedUnionSet.type,
           value,
         ),
@@ -35524,8 +35544,8 @@ export namespace ListSetsStruct {
       )(parameters.listListSet, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
-        $validateArray(
-          $validateArray($validateArray($identityValidationFunction)),
+        $Array.validate(
+          $Array.validate($Array.validate($identityValidationFunction)),
         )(ListSetsStruct.schema.properties.listListSet.type, value),
       ),
       listSet: $convertToArraySet($convertToList($identityConversionFunction))(
@@ -35534,7 +35554,7 @@ export namespace ListSetsStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($validateArray($identityValidationFunction))(
+        $Array.validate($Array.validate($identityValidationFunction))(
           ListSetsStruct.schema.properties.listSet.type,
           value,
         ),
@@ -35658,7 +35678,7 @@ export namespace ListSetsStruct {
     }
     if (
       filter.listDiscriminatedUnionSet !== undefined &&
-      !$filterArray<
+      !$Array.filter<
         readonly string[] | string,
         {
           readonly on?: {
@@ -35669,7 +35689,7 @@ export namespace ListSetsStruct {
       >((filter, value) => {
         if (filter.on?.["object"] !== undefined && typeof value === "object") {
           if (
-            !$filterArray<string, $StringFilter>($filterString)(
+            !$Array.filter<string, $StringFilter>($filterString)(
               filter.on["object"],
               value,
             )
@@ -35690,12 +35710,12 @@ export namespace ListSetsStruct {
     }
     if (
       filter.listListSet !== undefined &&
-      !$filterArray<
+      !$Array.filter<
         readonly (readonly string[])[],
         $CollectionFilter<$CollectionFilter<$StringFilter>>
       >(
-        $filterArray<readonly string[], $CollectionFilter<$StringFilter>>(
-          $filterArray<string, $StringFilter>($filterString),
+        $Array.filter<readonly string[], $CollectionFilter<$StringFilter>>(
+          $Array.filter<string, $StringFilter>($filterString),
         ),
       )(filter.listListSet, value.listListSet)
     ) {
@@ -35703,8 +35723,8 @@ export namespace ListSetsStruct {
     }
     if (
       filter.listSet !== undefined &&
-      !$filterArray<readonly string[], $CollectionFilter<$StringFilter>>(
-        $filterArray<string, $StringFilter>($filterString),
+      !$Array.filter<readonly string[], $CollectionFilter<$StringFilter>>(
+        $Array.filter<string, $StringFilter>($filterString),
       )(filter.listSet, value.listSet)
     ) {
       return false;
@@ -36091,9 +36111,9 @@ export namespace ListSetsStruct {
     if (_listSetsStruct.$identifier) {
       hasher.update(_listSetsStruct.$identifier().value);
     }
-    $hashArray(((hasher, value) => {
+    $Array.hash(((hasher, value) => {
       if (typeof value === "object") {
-        $hashArray($hashString)(hasher, value);
+        $Array.hash($hashString)(hasher, value);
         return;
       }
       if (typeof value === "string") {
@@ -36104,11 +36124,11 @@ export namespace ListSetsStruct {
       hasher,
       _listSetsStruct.listDiscriminatedUnionSet,
     );
-    $hashArray($hashArray($hashArray($hashString)))(
+    $Array.hash($Array.hash($Array.hash($hashString)))(
       hasher,
       _listSetsStruct.listListSet,
     );
-    $hashArray($hashArray($hashString))(hasher, _listSetsStruct.listSet);
+    $Array.hash($Array.hash($hashString))(hasher, _listSetsStruct.listSet);
   };
 
   export type Identifier = BlankNode | NamedNode;
@@ -37571,7 +37591,7 @@ export namespace LazyPropertiesStruct {
     if (
       filter.setLazyToResolvedBlankNodeOrIriIdentifier !== undefined &&
       !((filter, value) =>
-        $filterArray<$DefaultPartial, $DefaultPartial.Filter>(
+        $Array.filter<$DefaultPartial, $DefaultPartial.Filter>(
           $DefaultPartial.filter,
         )(filter, value.partials))(
         filter.setLazyToResolvedBlankNodeOrIriIdentifier,
@@ -37583,10 +37603,9 @@ export namespace LazyPropertiesStruct {
     if (
       filter.setPartialToResolvedBlankNodeOrIriIdentifier !== undefined &&
       !((filter, value) =>
-        $filterArray<PartialStruct, PartialStruct.Filter>(PartialStruct.filter)(
-          filter,
-          value.partials,
-        ))(
+        $Array.filter<PartialStruct, PartialStruct.Filter>(
+          PartialStruct.filter,
+        )(filter, value.partials))(
         filter.setPartialToResolvedBlankNodeOrIriIdentifier,
         value.setPartialToResolvedBlankNodeOrIriIdentifier,
       )
@@ -38433,11 +38452,12 @@ export namespace LazyPropertiesStruct {
       _lazyPropertiesStruct.requiredPartialToResolvedBlankNodeOrIriIdentifier,
     );
     ((hasher, value) =>
-      $hashArray($DefaultPartial.hash)(hasher, value.partials))(
+      $Array.hash($DefaultPartial.hash)(hasher, value.partials))(
       hasher,
       _lazyPropertiesStruct.setLazyToResolvedBlankNodeOrIriIdentifier,
     );
-    ((hasher, value) => $hashArray(PartialStruct.hash)(hasher, value.partials))(
+    ((hasher, value) =>
+      $Array.hash(PartialStruct.hash)(hasher, value.partials))(
       hasher,
       _lazyPropertiesStruct.setPartialToResolvedBlankNodeOrIriIdentifier,
     );
@@ -41755,7 +41775,7 @@ export namespace LanguageInStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           LanguageInStruct.schema.properties.languageIn.type,
           value,
         ),
@@ -41819,7 +41839,7 @@ export namespace LanguageInStruct {
     }
     if (
       filter.languageIn !== undefined &&
-      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
+      !$Array.filter<Literal, $LiteralFilter>($filterLiteral)(
         filter.languageIn,
         value.languageIn,
       )
@@ -41932,7 +41952,7 @@ export namespace LanguageInStruct {
     if (_languageInStruct.$identifier) {
       hasher.update(_languageInStruct.$identifier().value);
     }
-    $hashArray($hashTerm)(hasher, _languageInStruct.languageIn);
+    $Array.hash($hashTerm)(hasher, _languageInStruct.languageIn);
   };
 
   export type Identifier = BlankNode | NamedNode;
@@ -56075,7 +56095,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       filter.decimalOrString !== undefined &&
       !((filter, value) => {
         if (filter.on?.["object"] !== undefined && typeof value === "object") {
-          if (!$filterBigDecimal(filter.on["object"], value)) {
+          if (!$BigDecimal.filter(filter.on["object"], value)) {
             return false;
           }
         }
@@ -56206,7 +56226,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }
         }
         if (filter.on?.["object"] !== undefined && typeof value === "object") {
-          if (!$filterBigDecimal(filter.on["object"], value)) {
+          if (!$BigDecimal.filter(filter.on["object"], value)) {
             return false;
           }
         }
@@ -57706,7 +57726,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     (
       ((hasher, value) => {
         if (typeof value === "object") {
-          $hashBigDecimal(hasher, value);
+          $BigDecimal.hash(hasher, value);
           return;
         }
         if (typeof value === "string") {
@@ -57786,7 +57806,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           return;
         }
         if (typeof value === "object") {
-          $hashBigDecimal(hasher, value);
+          $BigDecimal.hash(hasher, value);
           return;
         }
       }) satisfies $HashFunction<string | BigDecimal>
@@ -59719,7 +59739,7 @@ export namespace ConvertibleTypesStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleIriNonEmptySet
             .type,
           value,
@@ -59742,7 +59762,7 @@ export namespace ConvertibleTypesStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleIriSet.type,
           value,
         ),
@@ -59756,7 +59776,7 @@ export namespace ConvertibleTypesStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleLiteralNonEmptySet
             .type,
           value,
@@ -59780,7 +59800,7 @@ export namespace ConvertibleTypesStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleLiteralSet.type,
           value,
         ),
@@ -59791,7 +59811,7 @@ export namespace ConvertibleTypesStruct {
       )(parameters.convertibleTermNonEmptySet, {
         defaultNamespace: parameters.$defaultNamespace,
       }).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleTermNonEmptySet
             .type,
           value,
@@ -59814,7 +59834,7 @@ export namespace ConvertibleTypesStruct {
           defaultNamespace: parameters.$defaultNamespace,
         },
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
+        $Array.validate($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleTermSet.type,
           value,
         ),
@@ -60050,7 +60070,7 @@ export namespace ConvertibleTypesStruct {
     }
     if (
       filter.convertibleIriNonEmptySet !== undefined &&
-      !$filterArray<NamedNode, $IriFilter>($filterIri)(
+      !$Array.filter<NamedNode, $IriFilter>($filterIri)(
         filter.convertibleIriNonEmptySet,
         value.convertibleIriNonEmptySet,
       )
@@ -60068,7 +60088,7 @@ export namespace ConvertibleTypesStruct {
     }
     if (
       filter.convertibleIriSet !== undefined &&
-      !$filterArray<NamedNode, $IriFilter>($filterIri)(
+      !$Array.filter<NamedNode, $IriFilter>($filterIri)(
         filter.convertibleIriSet,
         value.convertibleIriSet,
       )
@@ -60083,7 +60103,7 @@ export namespace ConvertibleTypesStruct {
     }
     if (
       filter.convertibleLiteralNonEmptySet !== undefined &&
-      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
+      !$Array.filter<Literal, $LiteralFilter>($filterLiteral)(
         filter.convertibleLiteralNonEmptySet,
         value.convertibleLiteralNonEmptySet,
       )
@@ -60101,7 +60121,7 @@ export namespace ConvertibleTypesStruct {
     }
     if (
       filter.convertibleLiteralSet !== undefined &&
-      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
+      !$Array.filter<Literal, $LiteralFilter>($filterLiteral)(
         filter.convertibleLiteralSet,
         value.convertibleLiteralSet,
       )
@@ -60116,7 +60136,7 @@ export namespace ConvertibleTypesStruct {
     }
     if (
       filter.convertibleTermNonEmptySet !== undefined &&
-      !$filterArray<
+      !$Array.filter<
         BlankNode | NamedNode | Literal,
         $TermFilter<BlankNode | NamedNode | Literal>
       >($filterTerm)(
@@ -60137,7 +60157,7 @@ export namespace ConvertibleTypesStruct {
     }
     if (
       filter.convertibleTermSet !== undefined &&
-      !$filterArray<
+      !$Array.filter<
         BlankNode | NamedNode | Literal,
         $TermFilter<BlankNode | NamedNode | Literal>
       >($filterTerm)(filter.convertibleTermSet, value.convertibleTermSet)
@@ -60746,14 +60766,14 @@ export namespace ConvertibleTypesStruct {
       hasher.update(_convertibleTypesStruct.$identifier().value);
     }
     $hashTerm(hasher, _convertibleTypesStruct.convertibleIri);
-    $hashArray($hashTerm)(
+    $Array.hash($hashTerm)(
       hasher,
       _convertibleTypesStruct.convertibleIriNonEmptySet,
     );
     $hashMaybe($hashTerm)(hasher, _convertibleTypesStruct.convertibleIriOption);
-    $hashArray($hashTerm)(hasher, _convertibleTypesStruct.convertibleIriSet);
+    $Array.hash($hashTerm)(hasher, _convertibleTypesStruct.convertibleIriSet);
     $hashTerm(hasher, _convertibleTypesStruct.convertibleLiteral);
-    $hashArray($hashTerm)(
+    $Array.hash($hashTerm)(
       hasher,
       _convertibleTypesStruct.convertibleLiteralNonEmptySet,
     );
@@ -60761,12 +60781,12 @@ export namespace ConvertibleTypesStruct {
       hasher,
       _convertibleTypesStruct.convertibleLiteralOption,
     );
-    $hashArray($hashTerm)(
+    $Array.hash($hashTerm)(
       hasher,
       _convertibleTypesStruct.convertibleLiteralSet,
     );
     $hashTerm(hasher, _convertibleTypesStruct.convertibleTerm);
-    $hashArray($hashTerm)(
+    $Array.hash($hashTerm)(
       hasher,
       _convertibleTypesStruct.convertibleTermNonEmptySet,
     );
@@ -60774,7 +60794,7 @@ export namespace ConvertibleTypesStruct {
       hasher,
       _convertibleTypesStruct.convertibleTermOption,
     );
-    $hashArray($hashTerm)(hasher, _convertibleTypesStruct.convertibleTermSet);
+    $Array.hash($hashTerm)(hasher, _convertibleTypesStruct.convertibleTermSet);
   };
 
   export type Identifier = BlankNode | NamedNode;
