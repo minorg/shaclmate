@@ -348,66 +348,82 @@ namespace $BigDecimal {
   ) => bigDecimal.toFixed();
 }
 
-function $bigIntFromJsonObject<BigIntT extends bigint>(
-  jsonObject: $TypedLiteralJsonObject,
-  options: Parameters<
-    $FromJsonFunction<$TypedLiteralJsonObject, BigIntT, $NumericSchema<BigIntT>>
-  >[1],
-): Either<Error, BigIntT> {
-  const { schema } = options;
-  return $literalFromJsonObject(jsonObject)
-    .chain(LiteralDecoder.decodeBigIntLiteral)
-    .chain((value) =>
+namespace $BigInt {
+  export function fromJsonObject<BigIntT extends bigint>(
+    jsonObject: $TypedLiteralJsonObject,
+    options: Parameters<
+      $FromJsonFunction<
+        $TypedLiteralJsonObject,
+        BigIntT,
+        $NumericSchema<BigIntT>
+      >
+    >[1],
+  ): Either<Error, BigIntT> {
+    const { schema } = options;
+    return $literalFromJsonObject(jsonObject)
+      .chain(LiteralDecoder.decodeBigIntLiteral)
+      .chain((value) =>
+        $constrainPrimitive<BigIntT, bigint>(value, schema.in),
+      ) as Either<Error, BigIntT>;
+  }
+}
+
+namespace $BigInt {
+  export function fromJsonString<
+    JsonValueT extends string,
+    BigIntT extends bigint,
+  >(
+    jsonValue: JsonValueT,
+    options: Parameters<
+      $FromJsonFunction<string, BigIntT, $NumericSchema<BigIntT>>
+    >[1],
+  ): Either<Error, BigIntT> {
+    const { schema } = options;
+    return Either.encase(() => BigInt(jsonValue) as BigIntT).chain((value) =>
       $constrainPrimitive<BigIntT, bigint>(value, schema.in),
     ) as Either<Error, BigIntT>;
+  }
 }
 
-function $bigIntFromJsonString<
-  JsonValueT extends string,
-  BigIntT extends bigint,
->(
-  jsonValue: JsonValueT,
-  options: Parameters<
-    $FromJsonFunction<string, BigIntT, $NumericSchema<BigIntT>>
-  >[1],
-): Either<Error, BigIntT> {
-  const { schema } = options;
-  return Either.encase(() => BigInt(jsonValue) as BigIntT).chain((value) =>
-    $constrainPrimitive<BigIntT, bigint>(value, schema.in),
-  ) as Either<Error, BigIntT>;
+namespace $BigInt {
+  export function fromRdfResourceValues<BigIntT extends bigint>(
+    values: Resource.Values,
+    options: Parameters<
+      $FromRdfResourceValuesFunction<BigIntT, $NumericSchema<BigIntT>>
+    >[1],
+  ): Either<Error, Resource.Values<BigIntT>> {
+    return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+      values.chainMap((value) =>
+        options.schema.in
+          ? value.toBigInt(options.schema.in)
+          : (value.toBigInt() as Either<Error, BigIntT>),
+      ),
+    );
+  }
 }
 
-function $bigIntFromRdfResourceValues<BigIntT extends bigint>(
-  values: Resource.Values,
-  options: Parameters<
-    $FromRdfResourceValuesFunction<BigIntT, $NumericSchema<BigIntT>>
-  >[1],
-): Either<Error, Resource.Values<BigIntT>> {
-  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
-    values.chainMap((value) =>
-      options.schema.in
-        ? value.toBigInt(options.schema.in)
-        : (value.toBigInt() as Either<Error, BigIntT>),
-    ),
-  );
+namespace $BigInt {
+  export const jsonSchema = z
+    .union([z.string().regex(/^-?\d+$/), z.number().int()])
+    .transform((v) => BigInt(v).toString()) as unknown as z.ZodType<
+    string,
+    string
+  >;
 }
 
-const $bigIntJsonSchema = z
-  .union([z.string().regex(/^-?\d+$/), z.number().int()])
-  .transform((v) => BigInt(v).toString()) as unknown as z.ZodType<
-  string,
-  string
->;
-
-function $bigIntToJsonObject(
-  datatype: NamedNode,
-): $ToJsonFunction<bigint, $TypedLiteralJsonObject> {
-  return (value) =>
-    $typedLiteralToJsonObject($literalFactory.bigint(value, datatype));
+namespace $BigInt {
+  export function toJsonObject(
+    datatype: NamedNode,
+  ): $ToJsonFunction<bigint, $TypedLiteralJsonObject> {
+    return (value) =>
+      $typedLiteralToJsonObject($literalFactory.bigint(value, datatype));
+  }
 }
 
-const $bigIntToJsonString: $ToJsonFunction<bigint, string> = (bigInt) =>
-  bigInt.toString();
+namespace $BigInt {
+  export const toJsonString: $ToJsonFunction<bigint, string> = (bigInt) =>
+    bigInt.toString();
+}
 
 interface $BlankNodeFilter {}
 
@@ -26657,7 +26673,7 @@ export namespace NumericsStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       intNumeric: $shaclPropertyFromRdf<
         Maybe<number>,
@@ -26683,7 +26699,7 @@ export namespace NumericsStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       negativeIntegerNumeric: $shaclPropertyFromRdf<
         Maybe<bigint>,
@@ -26696,7 +26712,7 @@ export namespace NumericsStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       nonNegativeIntegerNumeric: $shaclPropertyFromRdf<
         Maybe<bigint>,
@@ -26710,7 +26726,7 @@ export namespace NumericsStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       nonPositiveIntegerNumeric: $shaclPropertyFromRdf<
         Maybe<bigint>,
@@ -26724,7 +26740,7 @@ export namespace NumericsStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       positiveIntegerNumeric: $shaclPropertyFromRdf<
         Maybe<bigint>,
@@ -26737,7 +26753,7 @@ export namespace NumericsStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       shortNumeric: $shaclPropertyFromRdf<
         Maybe<number>,
@@ -26789,7 +26805,7 @@ export namespace NumericsStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           bigint,
           $NumericSchema<bigint>
-        >($bigIntFromRdfResourceValues<bigint>),
+        >($BigInt.fromRdfResourceValues<bigint>),
       }),
       unsignedShortNumeric: $shaclPropertyFromRdf<
         Maybe<number>,
@@ -28144,7 +28160,7 @@ export namespace NumericsStruct {
         },
       ),
       integerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<string, bigint>,
+        $BigInt.fromJsonString<string, bigint>,
       )(jsonObject["integerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.integerNumeric.type,
@@ -28156,7 +28172,7 @@ export namespace NumericsStruct {
           schema: NumericsStruct.schema.properties.intNumeric.type,
         },
       ),
-      longNumeric: $maybeFromJsonValue($bigIntFromJsonString<string, bigint>)(
+      longNumeric: $maybeFromJsonValue($BigInt.fromJsonString<string, bigint>)(
         jsonObject["longNumeric"],
         {
           ...options,
@@ -28164,25 +28180,25 @@ export namespace NumericsStruct {
         },
       ),
       negativeIntegerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<string, bigint>,
+        $BigInt.fromJsonString<string, bigint>,
       )(jsonObject["negativeIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.negativeIntegerNumeric.type,
       }),
       nonNegativeIntegerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<string, bigint>,
+        $BigInt.fromJsonString<string, bigint>,
       )(jsonObject["nonNegativeIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.nonNegativeIntegerNumeric.type,
       }),
       nonPositiveIntegerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<string, bigint>,
+        $BigInt.fromJsonString<string, bigint>,
       )(jsonObject["nonPositiveIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.nonPositiveIntegerNumeric.type,
       }),
       positiveIntegerNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<string, bigint>,
+        $BigInt.fromJsonString<string, bigint>,
       )(jsonObject["positiveIntegerNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.positiveIntegerNumeric.type,
@@ -28209,7 +28225,7 @@ export namespace NumericsStruct {
         },
       ),
       unsignedLongNumeric: $maybeFromJsonValue(
-        $bigIntFromJsonString<string, bigint>,
+        $BigInt.fromJsonString<string, bigint>,
       )(jsonObject["unsignedLongNumeric"], {
         ...options,
         schema: NumericsStruct.schema.properties.unsignedLongNumeric.type,
@@ -28313,17 +28329,17 @@ export namespace NumericsStruct {
         decimalNumeric: $BigDecimal.jsonSchema.optional(),
         doubleNumeric: z.number().optional(),
         floatNumeric: z.number().optional(),
-        integerNumeric: $bigIntJsonSchema.optional(),
+        integerNumeric: $BigInt.jsonSchema.optional(),
         intNumeric: z.number().optional(),
-        longNumeric: $bigIntJsonSchema.optional(),
-        negativeIntegerNumeric: $bigIntJsonSchema.optional(),
-        nonNegativeIntegerNumeric: $bigIntJsonSchema.optional(),
-        nonPositiveIntegerNumeric: $bigIntJsonSchema.optional(),
-        positiveIntegerNumeric: $bigIntJsonSchema.optional(),
+        longNumeric: $BigInt.jsonSchema.optional(),
+        negativeIntegerNumeric: $BigInt.jsonSchema.optional(),
+        nonNegativeIntegerNumeric: $BigInt.jsonSchema.optional(),
+        nonPositiveIntegerNumeric: $BigInt.jsonSchema.optional(),
+        positiveIntegerNumeric: $BigInt.jsonSchema.optional(),
         shortNumeric: z.number().optional(),
         unsignedByteNumeric: z.number().optional(),
         unsignedIntNumeric: z.number().optional(),
-        unsignedLongNumeric: $bigIntJsonSchema.optional(),
+        unsignedLongNumeric: $BigInt.jsonSchema.optional(),
         unsignedShortNumeric: z.number().optional(),
       }) satisfies z.ZodType<Json>;
     }
@@ -28637,25 +28653,25 @@ export namespace NumericsStruct {
         floatNumeric: $maybeToJsonValue($primitiveToJsonValue<number>)(
           _numericsStruct.floatNumeric,
         ),
-        integerNumeric: $maybeToJsonValue($bigIntToJsonString)(
+        integerNumeric: $maybeToJsonValue($BigInt.toJsonString)(
           _numericsStruct.integerNumeric,
         ),
         intNumeric: $maybeToJsonValue($primitiveToJsonValue<number>)(
           _numericsStruct.intNumeric,
         ),
-        longNumeric: $maybeToJsonValue($bigIntToJsonString)(
+        longNumeric: $maybeToJsonValue($BigInt.toJsonString)(
           _numericsStruct.longNumeric,
         ),
-        negativeIntegerNumeric: $maybeToJsonValue($bigIntToJsonString)(
+        negativeIntegerNumeric: $maybeToJsonValue($BigInt.toJsonString)(
           _numericsStruct.negativeIntegerNumeric,
         ),
-        nonNegativeIntegerNumeric: $maybeToJsonValue($bigIntToJsonString)(
+        nonNegativeIntegerNumeric: $maybeToJsonValue($BigInt.toJsonString)(
           _numericsStruct.nonNegativeIntegerNumeric,
         ),
-        nonPositiveIntegerNumeric: $maybeToJsonValue($bigIntToJsonString)(
+        nonPositiveIntegerNumeric: $maybeToJsonValue($BigInt.toJsonString)(
           _numericsStruct.nonPositiveIntegerNumeric,
         ),
-        positiveIntegerNumeric: $maybeToJsonValue($bigIntToJsonString)(
+        positiveIntegerNumeric: $maybeToJsonValue($BigInt.toJsonString)(
           _numericsStruct.positiveIntegerNumeric,
         ),
         shortNumeric: $maybeToJsonValue($primitiveToJsonValue<number>)(
@@ -28667,7 +28683,7 @@ export namespace NumericsStruct {
         unsignedIntNumeric: $maybeToJsonValue($primitiveToJsonValue<number>)(
           _numericsStruct.unsignedIntNumeric,
         ),
-        unsignedLongNumeric: $maybeToJsonValue($bigIntToJsonString)(
+        unsignedLongNumeric: $maybeToJsonValue($BigInt.toJsonString)(
           _numericsStruct.unsignedLongNumeric,
         ),
         unsignedShortNumeric: $maybeToJsonValue($primitiveToJsonValue<number>)(
@@ -45754,7 +45770,7 @@ export namespace InPropertiesStruct {
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           1n | 2n,
           $NumericSchema<1n | 2n>
-        >($bigIntFromRdfResourceValues<1n | 2n>),
+        >($BigInt.fromRdfResourceValues<1n | 2n>),
       }),
       inIris: $shaclPropertyFromRdf<
         Maybe<
@@ -46419,7 +46435,7 @@ export namespace InPropertiesStruct {
         },
       ),
       inIntegers: $maybeFromJsonValue(
-        $bigIntFromJsonString<"1" | "2", 1n | 2n>,
+        $BigInt.fromJsonString<"1" | "2", 1n | 2n>,
       )(jsonObject["inIntegers"], {
         ...options,
         schema: InPropertiesStruct.schema.properties.inIntegers.type,
@@ -46721,7 +46737,7 @@ export namespace InPropertiesStruct {
         inDoubles: $maybeToJsonValue($primitiveToJsonValue<1 | 2>)(
           _inPropertiesStruct.inDoubles,
         ),
-        inIntegers: $maybeToJsonValue($bigIntToJsonString)(
+        inIntegers: $maybeToJsonValue($BigInt.toJsonString)(
           _inPropertiesStruct.inIntegers,
         ),
         inIris: $maybeToJsonValue(
@@ -54397,14 +54413,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             let memberOutputValuesEither: Either<Error, unknown> | undefined;
             for (let memberI = 0; memberI < 2; memberI++) {
               if (memberI === 0) {
-                memberOutputValuesEither = $bigIntFromRdfResourceValues<bigint>(
-                  inputValueAsValues,
-                  {
+                memberOutputValuesEither =
+                  $BigInt.fromRdfResourceValues<bigint>(inputValueAsValues, {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["bigint"].type,
-                  },
-                );
+                  });
                 if (memberOutputValuesEither.isRight()) {
                   memberInputValues[memberI] =
                     memberInputValues[memberI].concat(inputValue);
@@ -54443,14 +54457,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             switch (memberI) {
               case 0:
                 collectedOutputValues = collectedOutputValues.concat(
-                  ...$bigIntFromRdfResourceValues<bigint>(
-                    memberInputValues[memberI],
-                    {
+                  ...$BigInt
+                    .fromRdfResourceValues<bigint>(memberInputValues[memberI], {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["bigint"].type,
-                    },
-                  ).unsafeCoerce(),
+                    })
+                    .unsafeCoerce(),
                 );
                 break;
               case 1:
@@ -54539,14 +54552,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                   break;
                 }
               } else if (memberI === 2) {
-                memberOutputValuesEither = $bigIntFromRdfResourceValues<bigint>(
-                  inputValueAsValues,
-                  {
+                memberOutputValuesEither =
+                  $BigInt.fromRdfResourceValues<bigint>(inputValueAsValues, {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["bigint"].type,
-                  },
-                );
+                  });
                 if (memberOutputValuesEither.isRight()) {
                   memberInputValues[memberI] =
                     memberInputValues[memberI].concat(inputValue);
@@ -54610,14 +54621,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 break;
               case 2:
                 collectedOutputValues = collectedOutputValues.concat(
-                  ...$bigIntFromRdfResourceValues<bigint>(
-                    memberInputValues[memberI],
-                    {
+                  ...$BigInt
+                    .fromRdfResourceValues<bigint>(memberInputValues[memberI], {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["bigint"].type,
-                    },
-                  ).unsafeCoerce(),
+                    })
+                    .unsafeCoerce(),
                 );
                 break;
               case 3:
@@ -55033,14 +55043,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                   break;
                 }
               } else if (memberI === 1) {
-                memberOutputValuesEither = $bigIntFromRdfResourceValues<bigint>(
-                  inputValueAsValues,
-                  {
+                memberOutputValuesEither =
+                  $BigInt.fromRdfResourceValues<bigint>(inputValueAsValues, {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["bigint"].type,
-                  },
-                );
+                  });
                 if (memberOutputValuesEither.isRight()) {
                   memberInputValues[memberI] =
                     memberInputValues[memberI].concat(inputValue);
@@ -55077,14 +55085,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 break;
               case 1:
                 collectedOutputValues = collectedOutputValues.concat(
-                  ...$bigIntFromRdfResourceValues<bigint>(
-                    memberInputValues[memberI],
-                    {
+                  ...$BigInt
+                    .fromRdfResourceValues<bigint>(memberInputValues[memberI], {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["bigint"].type,
-                    },
-                  ).unsafeCoerce(),
+                    })
+                    .unsafeCoerce(),
                 );
                 break;
             }
@@ -57435,7 +57442,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       }),
       integerOrString: ((value, options) => {
         if (value.$type === "bigint") {
-          return $bigIntFromJsonObject<bigint>(value, {
+          return $BigInt.fromJsonObject<bigint>(value, {
             ...options,
             schema: { datatype: $xsd_integer, kind: "BigInt" } as const,
           }) as Either<Error, bigint | string>;
@@ -57468,7 +57475,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }) as Either<Error, boolean | number | bigint | string>;
         }
         if (value.$type === "bigint") {
-          return $bigIntFromJsonObject<bigint>(value, {
+          return $BigInt.fromJsonObject<bigint>(value, {
             ...options,
             schema: { datatype: $xsd_integer, kind: "BigInt" } as const,
           }) as Either<Error, boolean | number | bigint | string>;
@@ -57574,7 +57581,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }) as Either<Error, string | bigint>;
         }
         if (value.$type === "bigint") {
-          return $bigIntFromJsonObject<bigint>(value, {
+          return $BigInt.fromJsonObject<bigint>(value, {
             ...options,
             schema: { datatype: $xsd_integer, kind: "BigInt" } as const,
           }) as Either<Error, string | bigint>;
@@ -58439,7 +58446,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         integerOrString: ((value) => {
           if (typeof value === "bigint") {
             return {
-              ...$bigIntToJsonObject($xsd_integer)(value),
+              ...$BigInt.toJsonObject($xsd_integer)(value),
               $type: "bigint",
             };
           }
@@ -58467,7 +58474,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }
           if (typeof value === "bigint") {
             return {
-              ...$bigIntToJsonObject($xsd_integer)(value),
+              ...$BigInt.toJsonObject($xsd_integer)(value),
               $type: "bigint",
             };
           }
@@ -58537,7 +58544,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           }
           if (typeof value === "bigint") {
             return {
-              ...$bigIntToJsonObject($xsd_integer)(value),
+              ...$BigInt.toJsonObject($xsd_integer)(value),
               $type: "bigint",
             };
           }

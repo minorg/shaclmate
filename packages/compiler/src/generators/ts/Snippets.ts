@@ -17,6 +17,12 @@ import { snippets_BigDecimal_jsonSchema } from "./_snippets/snippets_BigDecimal_
 import { snippets_BigDecimal_sparqlWherePatterns } from "./_snippets/snippets_BigDecimal_sparqlWherePatterns.js";
 import { snippets_BigDecimal_toJsonObject } from "./_snippets/snippets_BigDecimal_toJsonObject.js";
 import { snippets_BigDecimal_toJsonString } from "./_snippets/snippets_BigDecimal_toJsonString.js";
+import { snippets_BigInt_fromJsonObject } from "./_snippets/snippets_BigInt_fromJsonObject.js";
+import { snippets_BigInt_fromJsonString } from "./_snippets/snippets_BigInt_fromJsonString.js";
+import { snippets_BigInt_fromRdfResourceValues } from "./_snippets/snippets_BigInt_fromRdfResourceValues.js";
+import { snippets_BigInt_jsonSchema } from "./_snippets/snippets_BigInt_jsonSchema.js";
+import { snippets_BigInt_toJsonObject } from "./_snippets/snippets_BigInt_toJsonObject.js";
+import { snippets_BigInt_toJsonString } from "./_snippets/snippets_BigInt_toJsonString.js";
 import { snippets_BlankNodeFilter } from "./_snippets/snippets_BlankNodeFilter.js";
 import { snippets_BlankNodeSchema } from "./_snippets/snippets_BlankNodeSchema.js";
 import { snippets_BooleanFilter } from "./_snippets/snippets_BooleanFilter.js";
@@ -85,12 +91,6 @@ import { snippets_ValueSparqlConstructTriplesFunction } from "./_snippets/snippe
 import { snippets_ValueSparqlWherePatternsFunction } from "./_snippets/snippets_ValueSparqlWherePatternsFunction.js";
 import { snippets__FromRdfResourceFunction } from "./_snippets/snippets__FromRdfResourceFunction.js";
 import { snippets__ToRdfResourceFunction } from "./_snippets/snippets__ToRdfResourceFunction.js";
-import { snippets_bigIntFromJsonObject } from "./_snippets/snippets_bigIntFromJsonObject.js";
-import { snippets_bigIntFromJsonString } from "./_snippets/snippets_bigIntFromJsonString.js";
-import { snippets_bigIntFromRdfResourceValues } from "./_snippets/snippets_bigIntFromRdfResourceValues.js";
-import { snippets_bigIntJsonSchema } from "./_snippets/snippets_bigIntJsonSchema.js";
-import { snippets_bigIntToJsonObject } from "./_snippets/snippets_bigIntToJsonObject.js";
-import { snippets_bigIntToJsonString } from "./_snippets/snippets_bigIntToJsonString.js";
 import { snippets_blankNodeFromJsonObject } from "./_snippets/snippets_blankNodeFromJsonObject.js";
 import { snippets_blankNodeFromJsonString } from "./_snippets/snippets_blankNodeFromJsonString.js";
 import { snippets_blankNodeFromRdfResourceValues } from "./_snippets/snippets_blankNodeFromRdfResourceValues.js";
@@ -347,6 +347,36 @@ export class Snippets {
   @Memoize()
   get BigDecimal_toJsonString(): Snippet {
     return this.snippet(snippets_BigDecimal_toJsonString);
+  }
+
+  @Memoize()
+  get BigInt_fromJsonObject(): Snippet {
+    return this.snippet(snippets_BigInt_fromJsonObject);
+  }
+
+  @Memoize()
+  get BigInt_fromJsonString(): Snippet {
+    return this.snippet(snippets_BigInt_fromJsonString);
+  }
+
+  @Memoize()
+  get BigInt_fromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_BigInt_fromRdfResourceValues);
+  }
+
+  @Memoize()
+  get BigInt_jsonSchema(): Snippet {
+    return this.snippet(snippets_BigInt_jsonSchema);
+  }
+
+  @Memoize()
+  get BigInt_toJsonObject(): Snippet {
+    return this.snippet(snippets_BigInt_toJsonObject);
+  }
+
+  @Memoize()
+  get BigInt_toJsonString(): Snippet {
+    return this.snippet(snippets_BigInt_toJsonString);
   }
 
   @Memoize()
@@ -687,36 +717,6 @@ export class Snippets {
   @Memoize()
   get _ToRdfResourceFunction(): Snippet {
     return this.snippet(snippets__ToRdfResourceFunction);
-  }
-
-  @Memoize()
-  get bigIntFromJsonObject(): Snippet {
-    return this.snippet(snippets_bigIntFromJsonObject);
-  }
-
-  @Memoize()
-  get bigIntFromJsonString(): Snippet {
-    return this.snippet(snippets_bigIntFromJsonString);
-  }
-
-  @Memoize()
-  get bigIntFromRdfResourceValues(): Snippet {
-    return this.snippet(snippets_bigIntFromRdfResourceValues);
-  }
-
-  @Memoize()
-  get bigIntJsonSchema(): Snippet {
-    return this.snippet(snippets_bigIntJsonSchema);
-  }
-
-  @Memoize()
-  get bigIntToJsonObject(): Snippet {
-    return this.snippet(snippets_bigIntToJsonObject);
-  }
-
-  @Memoize()
-  get bigIntToJsonString(): Snippet {
-    return this.snippet(snippets_bigIntToJsonString);
   }
 
   @Memoize()

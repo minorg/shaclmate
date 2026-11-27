@@ -492,7 +492,7 @@ class JsonStringType extends AbstractJsonPrimitiveType<string> {
               case "bigdecimal":
                 return code`${this.reusables.snippets.BigDecimal_jsonSchema}`;
               case "bigint":
-                return code`${this.reusables.snippets.bigIntJsonSchema}`;
+                return code`${this.reusables.snippets.BigInt_jsonSchema}`;
               case "date":
                 return code`${this.reusables.snippets.dateJsonSchema}`;
               case "datetime":
@@ -732,7 +732,6 @@ export namespace AbstractJsonType {
 
 export const AbstractType_JsonTypeFactory = JsonTypeFactory;
 
-// biome-ignore lint/correctness/noUnusedVariables: used for types
 namespace JsonObjectType {
   type MemberUiSchemaElementFunction = (parameters: {
     variables: { scopePrefix: Code };
@@ -778,7 +777,6 @@ namespace JsonObjectType {
   }
 }
 
-// biome-ignore lint/correctness/noUnusedVariables: used for types
 namespace JsonStringType {
   export type Format = "bigdecimal" | "bigint" | "date" | "datetime";
 }
