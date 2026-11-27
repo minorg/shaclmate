@@ -9,7 +9,7 @@ export const snippets_Array_equals: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}Array.equals`,
     code`\
-export namespace ${syntheticNamePrefix}Array {
+namespace ${syntheticNamePrefix}Array {
   /**
    * Compare two arrays element-wise with the provided elementEquals function.
    */  

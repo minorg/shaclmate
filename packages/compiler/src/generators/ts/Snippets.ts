@@ -8,6 +8,8 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { snippets_Array_equals } from "./_snippets/snippets_Array_equals.js";
 import { snippets_Array_fromJson } from "./_snippets/snippets_Array_fromJson.js";
+import { snippets_Array_intersection } from "./_snippets/snippets_Array_intersection.js";
+import { snippets_Array_toJson } from "./_snippets/snippets_Array_toJson.js";
 import { snippets_BlankNodeFilter } from "./_snippets/snippets_BlankNodeFilter.js";
 import { snippets_BlankNodeSchema } from "./_snippets/snippets_BlankNodeSchema.js";
 import { snippets_BooleanFilter } from "./_snippets/snippets_BooleanFilter.js";
@@ -76,8 +78,6 @@ import { snippets_ValueSparqlConstructTriplesFunction } from "./_snippets/snippe
 import { snippets_ValueSparqlWherePatternsFunction } from "./_snippets/snippets_ValueSparqlWherePatternsFunction.js";
 import { snippets__FromRdfResourceFunction } from "./_snippets/snippets__FromRdfResourceFunction.js";
 import { snippets__ToRdfResourceFunction } from "./_snippets/snippets__ToRdfResourceFunction.js";
-import { snippets_arrayIntersection } from "./_snippets/snippets_arrayIntersection.js";
-import { snippets_arrayToJsonArray } from "./_snippets/snippets_arrayToJsonArray.js";
 import { snippets_bigDecimalFromJsonObject } from "./_snippets/snippets_bigDecimalFromJsonObject.js";
 import { snippets_bigDecimalFromJsonString } from "./_snippets/snippets_bigDecimalFromJsonString.js";
 import { snippets_bigDecimalFromRdfResourceValues } from "./_snippets/snippets_bigDecimalFromRdfResourceValues.js";
@@ -303,6 +303,16 @@ export class Snippets {
   @Memoize()
   get Array_fromJson(): Snippet {
     return this.snippet(snippets_Array_fromJson);
+  }
+
+  @Memoize()
+  get Array_intersection(): Snippet {
+    return this.snippet(snippets_Array_intersection);
+  }
+
+  @Memoize()
+  get Array_toJson(): Snippet {
+    return this.snippet(snippets_Array_toJson);
   }
 
   @Memoize()
@@ -643,16 +653,6 @@ export class Snippets {
   @Memoize()
   get _ToRdfResourceFunction(): Snippet {
     return this.snippet(snippets__ToRdfResourceFunction);
-  }
-
-  @Memoize()
-  get arrayIntersection(): Snippet {
-    return this.snippet(snippets_arrayIntersection);
-  }
-
-  @Memoize()
-  get arrayToJsonArray(): Snippet {
-    return this.snippet(snippets_arrayToJsonArray);
   }
 
   @Memoize()
