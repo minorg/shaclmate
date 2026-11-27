@@ -41,8 +41,14 @@ import { snippets_BlankNode_parse } from "./_snippets/snippets_BlankNode_parse.j
 import { snippets_BlankNode_sparqlWherePatterns } from "./_snippets/snippets_BlankNode_sparqlWherePatterns.js";
 import { snippets_BlankNode_toJsonObject } from "./_snippets/snippets_BlankNode_toJsonObject.js";
 import { snippets_BlankNode_toJsonString } from "./_snippets/snippets_BlankNode_toJsonString.js";
-import { snippets_BooleanFilter } from "./_snippets/snippets_BooleanFilter.js";
-import { snippets_BooleanSchema } from "./_snippets/snippets_BooleanSchema.js";
+import { snippets_Boolean_Filter } from "./_snippets/snippets_Boolean_Filter.js";
+import { snippets_Boolean_Schema } from "./_snippets/snippets_Boolean_Schema.js";
+import { snippets_Boolean_filter_ } from "./_snippets/snippets_Boolean_filter_.js";
+import { snippets_Boolean_fromJsonBoolean } from "./_snippets/snippets_Boolean_fromJsonBoolean.js";
+import { snippets_Boolean_fromJsonObject } from "./_snippets/snippets_Boolean_fromJsonObject.js";
+import { snippets_Boolean_fromRdfResourceValues } from "./_snippets/snippets_Boolean_fromRdfResourceValues.js";
+import { snippets_Boolean_hash } from "./_snippets/snippets_Boolean_hash.js";
+import { snippets_Boolean_sparqlWherePatterns } from "./_snippets/snippets_Boolean_sparqlWherePatterns.js";
 import { snippets_CollectionFilter } from "./_snippets/snippets_CollectionFilter.js";
 import { snippets_CollectionSchema } from "./_snippets/snippets_CollectionSchema.js";
 import { snippets_ConversionFunction } from "./_snippets/snippets_ConversionFunction.js";
@@ -108,10 +114,6 @@ import { snippets_ValueSparqlWherePatternsFunction } from "./_snippets/snippets_
 import { snippets__FromRdfResourceFunction } from "./_snippets/snippets__FromRdfResourceFunction.js";
 import { snippets__ToRdfResourceFunction } from "./_snippets/snippets__ToRdfResourceFunction.js";
 import { snippets_booleanEquals } from "./_snippets/snippets_booleanEquals.js";
-import { snippets_booleanFromJsonBoolean } from "./_snippets/snippets_booleanFromJsonBoolean.js";
-import { snippets_booleanFromJsonObject } from "./_snippets/snippets_booleanFromJsonObject.js";
-import { snippets_booleanFromRdfResourceValues } from "./_snippets/snippets_booleanFromRdfResourceValues.js";
-import { snippets_booleanSparqlWherePatterns } from "./_snippets/snippets_booleanSparqlWherePatterns.js";
 import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
 import { snippets_constrainPrimitive } from "./_snippets/snippets_constrainPrimitive.js";
 import { snippets_convertToArraySet } from "./_snippets/snippets_convertToArraySet.js";
@@ -153,7 +155,6 @@ import { snippets_defaultValueFromRdfResourceValues } from "./_snippets/snippets
 import { snippets_defaultValueSparqlWherePatterns } from "./_snippets/snippets_defaultValueSparqlWherePatterns.js";
 import { snippets_ensureRdfResourceType } from "./_snippets/snippets_ensureRdfResourceType.js";
 import { snippets_errorToProblemDetailsJson } from "./_snippets/snippets_errorToProblemDetailsJson.js";
-import { snippets_filterBoolean } from "./_snippets/snippets_filterBoolean.js";
 import { snippets_filterDate } from "./_snippets/snippets_filterDate.js";
 import { snippets_filterIdentifier } from "./_snippets/snippets_filterIdentifier.js";
 import { snippets_filterIri } from "./_snippets/snippets_filterIri.js";
@@ -165,7 +166,6 @@ import { snippets_filterTerm } from "./_snippets/snippets_filterTerm.js";
 import { snippets_floatFromJsonNumber } from "./_snippets/snippets_floatFromJsonNumber.js";
 import { snippets_floatFromJsonObject } from "./_snippets/snippets_floatFromJsonObject.js";
 import { snippets_floatFromRdfResourceValues } from "./_snippets/snippets_floatFromRdfResourceValues.js";
-import { snippets_hashBoolean } from "./_snippets/snippets_hashBoolean.js";
 import { snippets_hashDate } from "./_snippets/snippets_hashDate.js";
 import { snippets_hashDateTime } from "./_snippets/snippets_hashDateTime.js";
 import { snippets_hashMaybe } from "./_snippets/snippets_hashMaybe.js";
@@ -470,13 +470,43 @@ export class Snippets {
   }
 
   @Memoize()
-  get BooleanFilter(): Snippet {
-    return this.snippet(snippets_BooleanFilter);
+  get Boolean_Filter(): Snippet {
+    return this.snippet(snippets_Boolean_Filter);
   }
 
   @Memoize()
-  get BooleanSchema(): Snippet {
-    return this.snippet(snippets_BooleanSchema);
+  get Boolean_Schema(): Snippet {
+    return this.snippet(snippets_Boolean_Schema);
+  }
+
+  @Memoize()
+  get Boolean_filter_(): Snippet {
+    return this.snippet(snippets_Boolean_filter_);
+  }
+
+  @Memoize()
+  get Boolean_fromJsonBoolean(): Snippet {
+    return this.snippet(snippets_Boolean_fromJsonBoolean);
+  }
+
+  @Memoize()
+  get Boolean_fromJsonObject(): Snippet {
+    return this.snippet(snippets_Boolean_fromJsonObject);
+  }
+
+  @Memoize()
+  get Boolean_fromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_Boolean_fromRdfResourceValues);
+  }
+
+  @Memoize()
+  get Boolean_hash(): Snippet {
+    return this.snippet(snippets_Boolean_hash);
+  }
+
+  @Memoize()
+  get Boolean_sparqlWherePatterns(): Snippet {
+    return this.snippet(snippets_Boolean_sparqlWherePatterns);
   }
 
   @Memoize()
@@ -805,26 +835,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get booleanFromJsonBoolean(): Snippet {
-    return this.snippet(snippets_booleanFromJsonBoolean);
-  }
-
-  @Memoize()
-  get booleanFromJsonObject(): Snippet {
-    return this.snippet(snippets_booleanFromJsonObject);
-  }
-
-  @Memoize()
-  get booleanFromRdfResourceValues(): Snippet {
-    return this.snippet(snippets_booleanFromRdfResourceValues);
-  }
-
-  @Memoize()
-  get booleanSparqlWherePatterns(): Snippet {
-    return this.snippet(snippets_booleanSparqlWherePatterns);
-  }
-
-  @Memoize()
   get compactRecord(): Snippet {
     return this.snippet(snippets_compactRecord);
   }
@@ -1030,11 +1040,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get filterBoolean(): Snippet {
-    return this.snippet(snippets_filterBoolean);
-  }
-
-  @Memoize()
   get filterDate(): Snippet {
     return this.snippet(snippets_filterDate);
   }
@@ -1087,11 +1092,6 @@ export class Snippets {
   @Memoize()
   get floatFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_floatFromRdfResourceValues);
-  }
-
-  @Memoize()
-  get hashBoolean(): Snippet {
-    return this.snippet(snippets_hashBoolean);
   }
 
   @Memoize()

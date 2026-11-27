@@ -637,6 +637,115 @@ namespace $BlankNode {
     `_:${blankNode.value}`;
 }
 
+namespace $Boolean {
+  export const filter: $FilterFunction<$Boolean.Filter, boolean> = (
+    filter,
+    value,
+  ) => {
+    if (filter.value !== undefined && value !== filter.value) {
+      return false;
+    }
+
+    return true;
+  };
+}
+
+namespace $Boolean {
+  export interface Filter {
+    readonly value?: boolean;
+  }
+}
+
+namespace $Boolean {
+  export function fromJsonBoolean<BooleanT extends boolean>(
+    jsonBoolean: BooleanT,
+    _options: Parameters<
+      $FromJsonFunction<BooleanT, BooleanT, $Boolean.Schema<BooleanT>>
+    >[1],
+  ): Either<Error, BooleanT> {
+    return Either.of(jsonBoolean);
+  }
+}
+
+namespace $Boolean {
+  export function fromJsonObject<BooleanT extends boolean>(
+    jsonObject: $TypedLiteralJsonObject,
+    options: Parameters<
+      $FromJsonFunction<
+        $TypedLiteralJsonObject,
+        BooleanT,
+        $Boolean.Schema<BooleanT>
+      >
+    >[1],
+  ): Either<Error, BooleanT> {
+    const { schema } = options;
+    return $literalFromJsonObject(jsonObject)
+      .chain(LiteralDecoder.decodeBooleanLiteral)
+      .chain((value) =>
+        $constrainPrimitive<BooleanT, boolean>(value, schema.in),
+      ) as Either<Error, BooleanT>;
+  }
+}
+
+namespace $Boolean {
+  export function fromRdfResourceValues<BooleanT extends boolean>(
+    values: Resource.Values,
+    options: Parameters<
+      $FromRdfResourceValuesFunction<BooleanT, $Boolean.Schema<BooleanT>>
+    >[1],
+  ): Either<Error, Resource.Values<BooleanT>> {
+    return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+      values.chainMap((value) =>
+        options.schema.in
+          ? value.toBoolean(options.schema.in)
+          : (value.toBoolean() as Either<Error, BooleanT>),
+      ),
+    );
+  }
+}
+
+namespace $Boolean {
+  export const hash: $HashFunction<boolean> = (hasher, value) => {
+    hasher.update(value.toString());
+  };
+}
+
+namespace $Boolean {
+  export interface Schema<BooleanT extends boolean> {
+    readonly datatype: NamedNode;
+    readonly hasValues?: readonly Literal[];
+    readonly in?: readonly BooleanT[];
+    readonly kind: "Boolean";
+  }
+}
+
+namespace $Boolean {
+  export const sparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    $Boolean.Filter,
+    $Boolean.Schema<boolean>
+  > = ({ filter, valueVariable, ...otherParameters }) => {
+    const filterPatterns: $SparqlFilterPattern[] = [];
+
+    if (filter) {
+      if (filter.value !== undefined) {
+        filterPatterns.push(
+          $sparqlValueInPattern({
+            lift: true,
+            valueVariable,
+            valueIn: [filter.value],
+          }),
+        );
+      }
+    }
+
+    return $termSchemaSparqlPatterns({
+      ...otherParameters,
+      filterPatterns,
+      valueVariable,
+    });
+  };
+}
+
 /**
  * Compare two objects with equals(other: T): boolean methods and return an $EqualsResult.
  */
@@ -646,84 +755,6 @@ function $booleanEquals<T extends { equals: (other: T) => boolean }>(
 ): $EqualsResult {
   return $EqualsResult.fromBooleanEqualsResult(left, right, left.equals(right));
 }
-
-interface $BooleanFilter {
-  readonly value?: boolean;
-}
-
-function $booleanFromJsonBoolean<BooleanT extends boolean>(
-  jsonBoolean: BooleanT,
-  _options: Parameters<
-    $FromJsonFunction<BooleanT, BooleanT, $BooleanSchema<BooleanT>>
-  >[1],
-): Either<Error, BooleanT> {
-  return Either.of(jsonBoolean);
-}
-
-function $booleanFromJsonObject<BooleanT extends boolean>(
-  jsonObject: $TypedLiteralJsonObject,
-  options: Parameters<
-    $FromJsonFunction<
-      $TypedLiteralJsonObject,
-      BooleanT,
-      $BooleanSchema<BooleanT>
-    >
-  >[1],
-): Either<Error, BooleanT> {
-  const { schema } = options;
-  return $literalFromJsonObject(jsonObject)
-    .chain(LiteralDecoder.decodeBooleanLiteral)
-    .chain((value) =>
-      $constrainPrimitive<BooleanT, boolean>(value, schema.in),
-    ) as Either<Error, BooleanT>;
-}
-
-function $booleanFromRdfResourceValues<BooleanT extends boolean>(
-  values: Resource.Values,
-  options: Parameters<
-    $FromRdfResourceValuesFunction<BooleanT, $BooleanSchema<BooleanT>>
-  >[1],
-): Either<Error, Resource.Values<BooleanT>> {
-  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
-    values.chainMap((value) =>
-      options.schema.in
-        ? value.toBoolean(options.schema.in)
-        : (value.toBoolean() as Either<Error, BooleanT>),
-    ),
-  );
-}
-
-interface $BooleanSchema<BooleanT extends boolean> {
-  readonly datatype: NamedNode;
-  readonly hasValues?: readonly Literal[];
-  readonly in?: readonly BooleanT[];
-  readonly kind: "Boolean";
-}
-
-const $booleanSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-  $BooleanFilter,
-  $BooleanSchema<boolean>
-> = ({ filter, valueVariable, ...otherParameters }) => {
-  const filterPatterns: $SparqlFilterPattern[] = [];
-
-  if (filter) {
-    if (filter.value !== undefined) {
-      filterPatterns.push(
-        $sparqlValueInPattern({
-          lift: true,
-          valueVariable,
-          valueIn: [filter.value],
-        }),
-      );
-    }
-  }
-
-  return $termSchemaSparqlPatterns({
-    ...otherParameters,
-    filterPatterns,
-    valueVariable,
-  });
-};
 
 type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $maxCount?: number;
@@ -1537,17 +1568,6 @@ export namespace $EqualsResult {
     | { readonly left: any; readonly type: "right-null" };
 }
 
-const $filterBoolean: $FilterFunction<$BooleanFilter, boolean> = (
-  filter,
-  value,
-) => {
-  if (filter.value !== undefined && value !== filter.value) {
-    return false;
-  }
-
-  return true;
-};
-
 const $filterDate: $FilterFunction<$DateFilter, Date> = (filter, value) => {
   if (
     filter.in !== undefined &&
@@ -1837,10 +1857,6 @@ export type $FromRdfResourceValuesFunction<ValueT, ValueSchemaT> = (
     schema: ValueSchemaT;
   },
 ) => Either<Error, Resource.Values<ValueT>>;
-
-const $hashBoolean: $HashFunction<boolean> = (hasher, value) => {
-  hasher.update(value.toString());
-};
 
 const $hashDate: $HashFunction<Date> = (hasher, value) => {
   hasher.update($toIsoDateString(value));
@@ -11583,7 +11599,7 @@ export namespace TermsStruct {
       }),
       booleanTerm: $shaclPropertyFromRdf<
         Maybe<boolean>,
-        $MaybeSchema<$BooleanSchema<boolean>>
+        $MaybeSchema<$Boolean.Schema<boolean>>
       >({
         ...options,
         focusResource: resource,
@@ -11591,8 +11607,8 @@ export namespace TermsStruct {
         propertySchema: TermsStruct.schema.properties.booleanTerm,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           boolean,
-          $BooleanSchema<boolean>
-        >($booleanFromRdfResourceValues<boolean>),
+          $Boolean.Schema<boolean>
+        >($Boolean.fromRdfResourceValues<boolean>),
       }),
       dateTerm: $shaclPropertyFromRdf<Maybe<Date>, $MaybeSchema<$DateSchema>>({
         ...options,
@@ -12119,7 +12135,7 @@ export namespace TermsStruct {
     }
     if (
       filter.booleanTerm !== undefined &&
-      !$filterMaybe<boolean, $BooleanFilter>($filterBoolean)(
+      !$filterMaybe<boolean, $Boolean.Filter>($Boolean.filter)(
         filter.booleanTerm,
         value.booleanTerm,
       )
@@ -12212,7 +12228,7 @@ export namespace TermsStruct {
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly blankNodeTerm?: $MaybeFilter<$BlankNode.Filter>;
-    readonly booleanTerm?: $MaybeFilter<$BooleanFilter>;
+    readonly booleanTerm?: $MaybeFilter<$Boolean.Filter>;
     readonly dateTerm?: $MaybeFilter<$DateFilter>;
     readonly dateTimeTerm?: $MaybeFilter<$DateFilter>;
     readonly doubleTerm?: $MaybeFilter<$NumericFilter<number>>;
@@ -12272,8 +12288,8 @@ export namespace TermsStruct {
         propertyName: "booleanTerm",
         propertySchema: TermsStruct.schema.properties.booleanTerm,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $BooleanFilter,
-          $BooleanSchema<boolean>
+          $Boolean.Filter,
+          $Boolean.Schema<boolean>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -12493,9 +12509,9 @@ export namespace TermsStruct {
         propertyName: "booleanTerm",
         propertySchema: TermsStruct.schema.properties.booleanTerm,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $BooleanFilter,
-          $BooleanSchema<boolean>
-        >($booleanSparqlWherePatterns),
+          $Boolean.Filter,
+          $Boolean.Schema<boolean>
+        >($Boolean.sparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -12654,7 +12670,7 @@ export namespace TermsStruct {
           schema: TermsStruct.schema.properties.blankNodeTerm.type,
         },
       ),
-      booleanTerm: $maybeFromJsonValue($booleanFromJsonBoolean<boolean>)(
+      booleanTerm: $maybeFromJsonValue($Boolean.fromJsonBoolean<boolean>)(
         jsonObject["booleanTerm"],
         {
           ...options,
@@ -12744,7 +12760,7 @@ export namespace TermsStruct {
       hasher.update(_termsStruct.$identifier().value);
     }
     $hashMaybe($hashTerm)(hasher, _termsStruct.blankNodeTerm);
-    $hashMaybe($hashBoolean)(hasher, _termsStruct.booleanTerm);
+    $hashMaybe($Boolean.hash)(hasher, _termsStruct.booleanTerm);
     $hashMaybe($hashDate)(hasher, _termsStruct.dateTerm);
     $hashMaybe($hashDateTime)(hasher, _termsStruct.dateTimeTerm);
     $hashMaybe($hashNumeric)(hasher, _termsStruct.doubleTerm);
@@ -45763,7 +45779,7 @@ export namespace InPropertiesStruct {
         : Right(true as const),
       inBooleans: $shaclPropertyFromRdf<
         Maybe<true>,
-        $MaybeSchema<$BooleanSchema<true>>
+        $MaybeSchema<$Boolean.Schema<true>>
       >({
         ...options,
         focusResource: resource,
@@ -45771,8 +45787,8 @@ export namespace InPropertiesStruct {
         propertySchema: InPropertiesStruct.schema.properties.inBooleans,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           true,
-          $BooleanSchema<true>
-        >($booleanFromRdfResourceValues<true>),
+          $Boolean.Schema<true>
+        >($Boolean.fromRdfResourceValues<true>),
       }),
       inDateTimes: $shaclPropertyFromRdf<
         Maybe<Date>,
@@ -46110,7 +46126,7 @@ export namespace InPropertiesStruct {
     }
     if (
       filter.inBooleans !== undefined &&
-      !$filterMaybe<true, $BooleanFilter>($filterBoolean)(
+      !$filterMaybe<true, $Boolean.Filter>($Boolean.filter)(
         filter.inBooleans,
         value.inBooleans,
       )
@@ -46167,7 +46183,7 @@ export namespace InPropertiesStruct {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly inBooleans?: $MaybeFilter<$BooleanFilter>;
+    readonly inBooleans?: $MaybeFilter<$Boolean.Filter>;
     readonly inDateTimes?: $MaybeFilter<$DateFilter>;
     readonly inDoubles?: $MaybeFilter<$NumericFilter<1 | 2>>;
     readonly inIntegers?: $MaybeFilter<$NumericFilter<1n | 2n>>;
@@ -46209,8 +46225,8 @@ export namespace InPropertiesStruct {
         propertyName: "inBooleans",
         propertySchema: InPropertiesStruct.schema.properties.inBooleans,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $BooleanFilter,
-          $BooleanSchema<true>
+          $Boolean.Filter,
+          $Boolean.Schema<true>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -46360,9 +46376,9 @@ export namespace InPropertiesStruct {
         propertyName: "inBooleans",
         propertySchema: InPropertiesStruct.schema.properties.inBooleans,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $BooleanFilter,
-          $BooleanSchema<true>
-        >($booleanSparqlWherePatterns),
+          $Boolean.Filter,
+          $Boolean.Schema<true>
+        >($Boolean.sparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -46454,7 +46470,7 @@ export namespace InPropertiesStruct {
         ...options,
         schema: InPropertiesStruct.schema.properties.$identifier.type,
       }),
-      inBooleans: $maybeFromJsonValue($booleanFromJsonBoolean<true>)(
+      inBooleans: $maybeFromJsonValue($Boolean.fromJsonBoolean<true>)(
         jsonObject["inBooleans"],
         {
           ...options,
@@ -46521,7 +46537,7 @@ export namespace InPropertiesStruct {
     if (_inPropertiesStruct.$identifier) {
       hasher.update(_inPropertiesStruct.$identifier().value);
     }
-    $hashMaybe($hashBoolean)(hasher, _inPropertiesStruct.inBooleans);
+    $hashMaybe($Boolean.hash)(hasher, _inPropertiesStruct.inBooleans);
     $hashMaybe($hashDateTime)(hasher, _inPropertiesStruct.inDateTimes);
     $hashMaybe($hashNumeric)(hasher, _inPropertiesStruct.inDoubles);
     $hashMaybe($hashNumeric)(hasher, _inPropertiesStruct.inIntegers);
@@ -52095,7 +52111,7 @@ export namespace DefaultValuesStruct {
       }),
       falseBooleanDefaultValue: $shaclPropertyFromRdf<
         boolean,
-        $DefaultValueSchema<$BooleanSchema<boolean>>
+        $DefaultValueSchema<$Boolean.Schema<boolean>>
       >({
         ...options,
         focusResource: resource,
@@ -52104,8 +52120,8 @@ export namespace DefaultValuesStruct {
           DefaultValuesStruct.schema.properties.falseBooleanDefaultValue,
         typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
           boolean,
-          $BooleanSchema<boolean>
-        >($booleanFromRdfResourceValues<boolean>),
+          $Boolean.Schema<boolean>
+        >($Boolean.fromRdfResourceValues<boolean>),
       }),
       numberDefaultValue: $shaclPropertyFromRdf<
         number,
@@ -52137,7 +52153,7 @@ export namespace DefaultValuesStruct {
       }),
       trueBooleanDefaultValue: $shaclPropertyFromRdf<
         boolean,
-        $DefaultValueSchema<$BooleanSchema<boolean>>
+        $DefaultValueSchema<$Boolean.Schema<boolean>>
       >({
         ...options,
         focusResource: resource,
@@ -52146,8 +52162,8 @@ export namespace DefaultValuesStruct {
           DefaultValuesStruct.schema.properties.trueBooleanDefaultValue,
         typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
           boolean,
-          $BooleanSchema<boolean>
-        >($booleanFromRdfResourceValues<boolean>),
+          $Boolean.Schema<boolean>
+        >($Boolean.fromRdfResourceValues<boolean>),
       }),
     }).chain((properties) => DefaultValuesStruct.create(properties));
 
@@ -52392,7 +52408,7 @@ export namespace DefaultValuesStruct {
     }
     if (
       filter.falseBooleanDefaultValue !== undefined &&
-      !$filterBoolean(
+      !$Boolean.filter(
         filter.falseBooleanDefaultValue,
         value.falseBooleanDefaultValue,
       )
@@ -52416,7 +52432,7 @@ export namespace DefaultValuesStruct {
     }
     if (
       filter.trueBooleanDefaultValue !== undefined &&
-      !$filterBoolean(
+      !$Boolean.filter(
         filter.trueBooleanDefaultValue,
         value.trueBooleanDefaultValue,
       )
@@ -52430,10 +52446,10 @@ export namespace DefaultValuesStruct {
     readonly $identifier?: $IdentifierFilter;
     readonly dateDefaultValue?: $DateFilter;
     readonly dateTimeDefaultValue?: $DateFilter;
-    readonly falseBooleanDefaultValue?: $BooleanFilter;
+    readonly falseBooleanDefaultValue?: $Boolean.Filter;
     readonly numberDefaultValue?: $NumericFilter<number>;
     readonly stringDefaultValue?: $StringFilter;
-    readonly trueBooleanDefaultValue?: $BooleanFilter;
+    readonly trueBooleanDefaultValue?: $Boolean.Filter;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -52640,9 +52656,9 @@ export namespace DefaultValuesStruct {
         propertySchema:
           DefaultValuesStruct.schema.properties.falseBooleanDefaultValue,
         typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
-          $BooleanFilter,
-          $BooleanSchema<boolean>
-        >($booleanSparqlWherePatterns),
+          $Boolean.Filter,
+          $Boolean.Schema<boolean>
+        >($Boolean.sparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -52688,9 +52704,9 @@ export namespace DefaultValuesStruct {
         propertySchema:
           DefaultValuesStruct.schema.properties.trueBooleanDefaultValue,
         typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
-          $BooleanFilter,
-          $BooleanSchema<boolean>
-        >($booleanSparqlWherePatterns),
+          $Boolean.Filter,
+          $Boolean.Schema<boolean>
+        >($Boolean.sparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -52723,7 +52739,7 @@ export namespace DefaultValuesStruct {
         },
       ),
       falseBooleanDefaultValue: $defaultValueFromJsonValue(
-        $booleanFromJsonBoolean<boolean>,
+        $Boolean.fromJsonBoolean<boolean>,
       )(jsonObject["falseBooleanDefaultValue"], {
         ...options,
         schema:
@@ -52742,7 +52758,7 @@ export namespace DefaultValuesStruct {
         schema: DefaultValuesStruct.schema.properties.stringDefaultValue.type,
       }),
       trueBooleanDefaultValue: $defaultValueFromJsonValue(
-        $booleanFromJsonBoolean<boolean>,
+        $Boolean.fromJsonBoolean<boolean>,
       )(jsonObject["trueBooleanDefaultValue"], {
         ...options,
         schema:
@@ -52775,10 +52791,10 @@ export namespace DefaultValuesStruct {
     }
     $hashDate(hasher, _defaultValuesStruct.dateDefaultValue);
     $hashDateTime(hasher, _defaultValuesStruct.dateTimeDefaultValue);
-    $hashBoolean(hasher, _defaultValuesStruct.falseBooleanDefaultValue);
+    $Boolean.hash(hasher, _defaultValuesStruct.falseBooleanDefaultValue);
     $hashNumeric(hasher, _defaultValuesStruct.numberDefaultValue);
     $hashString(hasher, _defaultValuesStruct.stringDefaultValue);
-    $hashBoolean(hasher, _defaultValuesStruct.trueBooleanDefaultValue);
+    $Boolean.hash(hasher, _defaultValuesStruct.trueBooleanDefaultValue);
   };
 
   export type Identifier = BlankNode | NamedNode;
@@ -54531,7 +54547,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           members: {
             readonly boolean: {
               discriminantValues: readonly (number | string)[];
-              type: $BooleanSchema<boolean>;
+              type: $Boolean.Schema<boolean>;
             };
             readonly number: {
               discriminantValues: readonly (number | string)[];
@@ -54568,7 +54584,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             for (let memberI = 0; memberI < 4; memberI++) {
               if (memberI === 0) {
                 memberOutputValuesEither =
-                  $booleanFromRdfResourceValues<boolean>(inputValueAsValues, {
+                  $Boolean.fromRdfResourceValues<boolean>(inputValueAsValues, {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["boolean"].type,
@@ -54638,14 +54654,16 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             switch (memberI) {
               case 0:
                 collectedOutputValues = collectedOutputValues.concat(
-                  ...$booleanFromRdfResourceValues<boolean>(
-                    memberInputValues[memberI],
-                    {
-                      ...options,
-                      ignoreRdfType: false,
-                      schema: options.schema.members["boolean"].type,
-                    },
-                  ).unsafeCoerce(),
+                  ...$Boolean
+                    .fromRdfResourceValues<boolean>(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["boolean"].type,
+                      },
+                    )
+                    .unsafeCoerce(),
                 );
                 break;
               case 1:
@@ -56136,7 +56154,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           filter.on?.["boolean"] !== undefined &&
           typeof value === "boolean"
         ) {
-          if (!$filterBoolean(filter.on["boolean"], value)) {
+          if (!$Boolean.filter(filter.on["boolean"], value)) {
             return false;
           }
         }
@@ -56311,7 +56329,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     };
     readonly jsPrimitive?: {
       readonly on?: {
-        readonly boolean?: $BooleanFilter;
+        readonly boolean?: $Boolean.Filter;
         readonly number?: $NumericFilter<number>;
         readonly bigint?: $NumericFilter<bigint>;
         readonly string?: $StringFilter;
@@ -57105,12 +57123,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
-            patterns: $booleanSparqlWherePatterns({
-              ...otherParameters,
-              filter: filter?.on?.["boolean"],
-              ignoreRdfType: false,
-              schema: schema.members["boolean"].type,
-            }).concat(),
+            patterns: $Boolean
+              .sparqlWherePatterns({
+                ...otherParameters,
+                filter: filter?.on?.["boolean"],
+                ignoreRdfType: false,
+                schema: schema.members["boolean"].type,
+              })
+              .concat(),
             type: "group",
           });
           unionPatterns.push({
@@ -57504,7 +57524,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       }),
       jsPrimitive: ((value, options) => {
         if (value.$type === "boolean") {
-          return $booleanFromJsonObject<boolean>(value, {
+          return $Boolean.fromJsonObject<boolean>(value, {
             ...options,
             schema: { datatype: $xsd_boolean, kind: "Boolean" } as const,
           }) as Either<Error, boolean | number | bigint | string>;
@@ -57750,7 +57770,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     (
       ((hasher, value) => {
         if (typeof value === "boolean") {
-          $hashBoolean(hasher, value);
+          $Boolean.hash(hasher, value);
           return;
         }
         if (typeof value === "number") {
