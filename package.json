@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@biomejs/biome": "2.3.10",
+    "@biomejs/biome": "2.6.9",
     "@rdfx/testing": "0.0.67",
     "@tsconfig/node22": "^22",
     "@tsconfig/strictest": "~2.0.8",
@@ -16,7 +16,7 @@
   },
   "name": "shaclmate",
   "optionalDependencies": {
-    "@biomejs/cli-linux-x64": "2.3.10"
+    "@biomejs/cli-linux-x64": "2.6.9"
   },
   "packageManager": "npm@11.11.0",
   "private": true,
